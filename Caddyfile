@@ -1,0 +1,40 @@
+{
+    # Enable self-signed certs for local HTTPS if you ever need it
+    # Uncomment for testing TLS locally
+    # local_certs
+    auto_https off
+}
+
+# === Development setup (always HTTP) ===
+http://app-dev.home.org {
+    reverse_proxy oldap-app:3000
+}
+
+http://api-dev.home.org {
+    reverse_proxy oldap-api:8000
+}
+
+http://app.rosy.home.org {
+    reverse_proxy oldap-app:3000
+    # Uncomment for local testing with self-signed TLS
+    # tls internal
+}
+
+http://api.rosy.home.org {
+    reverse_proxy oldap-api:8000
+    # Uncomment for local testing with self-signed TLS
+    # tls internal
+}
+
+# === Production setup (HTTPS) ===
+app.home.org {
+    reverse_proxy oldap-app:3000
+    # Uncomment for local testing with self-signed TLS
+    # tls internal
+}
+
+api.home.org {
+    reverse_proxy oldap-api:8000
+    # Uncomment for local testing with self-signed TLS
+    # tls internal
+}

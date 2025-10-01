@@ -1,0 +1,12 @@
+# group_vars/all.yml  (oder vars.yml neben dem Play)
+storage_uuid: "58392635-eb90-4be7-a644-7bd92afa1f2c"   # deine UUID
+docker_data_root: "/srv/storage/docker"
+compose_stack_dir: "/srv/storage/stacks/oldap"
+
+# Docker Pakete (falls Ubuntu 22.04/24.04)
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin

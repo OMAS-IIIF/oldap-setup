@@ -1,0 +1,88 @@
+
+services:
+  graphdb:
+    image: ontotext/graphdb:11.0.0
+    container_name: graphdb
+    ports:
+      - "7200:7200"
+    restart: unless-stopped
+    volumes:
+      - ${GRAPHDB_HOME:-./graphdb-home}:/opt/graphdb/home
+
+  graphdb-init:
+    image: curlimages/curl:8.9.0
+    depends_on:
+      - graphdb
+    networks:
+      - default
+    volumes:
+      - ${GRAPHDB_INIT:-./files}:/init
+    entrypoint: sh
+    command:
+      - -c
+      - |
+        echo 'Waiting for GraphDB...'
+        until curl -s http://graphdb:7200/rest/repositories >/dev/null; do
+          sleep 5
+        done
+        if ! curl -s http://graphdb:7200/rest/repositories | grep -q '"id":"oldap"'; then
+          echo 'Creating repository oldap...'
+          curl -X POST -H 'Content-Type: multipart/form-data' \
+               -F config=@/init/oldap-config.ttl \
+               http://graphdb:7200/rest/repositories
+          echo 'Loading initial TRIG files...'
+          for f in /init/*.trig; do
+            echo "Loading $$f"
+            curl -X POST -H 'Content-Type: application/x-trig' \
+                 --data-binary @$$f \
+                 http://graphdb:7200/repositories/oldap/statements
+          done
+        else
+          echo 'Repository oldap already exists, skipping init.'
+        fi
+    restart: "no"
+
+  oldap-api:
+    image: lrosenth/oldap-api:${OLDAP_API_TAG:-latest}
+    container_name: oldap-api
+    depends_on:
+      - graphdb
+    environment:
+      OLDAP_TS_SERVER: http://graphdb:7200
+      OLDAP_TS_REPO: oldap
+      OLDAP_API_PORT: 8000
+      APP_ENV: ${APP_ENV:-Dev}
+      UPLOAD_FOLDER: /data/upload
+      TMP_FOLDER: /data/tmp
+    volumes:
+      - ${OLDAP_DATA:-./data}/oldap-api:/data
+    expose:
+      - 8000
+    restart: unless-stopped
+
+  oldap-app:
+    image: lrosenth/oldap-app:${OLDAP_APP_TAG:-latest}
+    container_name: oldap-app
+    expose:
+      - 3000
+    environment:
+      API_URL: ${API_URL:-http://localhost:8000}
+    depends_on:
+      - oldap-api
+    volumes:
+      - ${OLDAP_DATA:-./data}/oldap-app:/data
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2.8
+    container_name: caddy
+    environment:
+      CADDY_MODE: ${CADDY_MODE:-dev}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    depends_on:
+      - oldap-api
+      - oldap-app

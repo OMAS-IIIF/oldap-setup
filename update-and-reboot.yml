@@ -1,0 +1,39 @@
+# update-and-reboot.yml
+- hosts: all
+  become: yes
+
+  tasks:
+    - name: Ensure apt cache is fresh
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Upgrade packages (safe)
+      ansible.builtin.apt:
+        upgrade: safe
+      register: apt_upgrade
+
+    - name: Check if reboot flag is present
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_flag
+
+    - name: Show reboot reason (packages)
+      ansible.builtin.command: cat /var/run/reboot-required.pkgs
+      register: reboot_pkgs
+      changed_when: false
+      failed_when: false
+      when: reboot_flag.stat.exists
+
+    - name: Reboot if packages changed OR reboot flag present
+      ansible.builtin.reboot:
+        msg: "Reboot after updates (or required by system)"
+        pre_reboot_delay: 5
+        post_reboot_delay: 20
+        reboot_timeout: 900
+      when: apt_upgrade.changed or reboot_flag.stat.exists
+
+    - name: Report what triggered the reboot
+      ansible.builtin.debug:
+        msg: "Rebooted due to: {{ reboot_pkgs.stdout_lines | default(['updates installed']) }}"
+      when: apt_upgrade.changed or reboot_flag.stat.exists

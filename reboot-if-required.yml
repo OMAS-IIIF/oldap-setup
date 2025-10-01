@@ -1,0 +1,30 @@
+# reboot-if-required.yml
+- hosts: all
+  become: yes
+  gather_facts: false
+
+  tasks:
+    - name: Check if reboot is required (Ubuntu/Debian)
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_flag
+
+    - name: Show reboot reason (packages)
+      ansible.builtin.command: cat /var/run/reboot-required.pkgs
+      register: reboot_pkgs
+      changed_when: false
+      failed_when: false
+      when: reboot_flag.stat.exists
+
+    - name: Reboot host if required
+      ansible.builtin.reboot:
+        msg: "Reboot triggered by Ansible: /var/run/reboot-required exists"
+        pre_reboot_delay: 5
+        post_reboot_delay: 20
+        reboot_timeout: 600
+      when: reboot_flag.stat.exists
+
+    - name: Report what triggered the reboot
+      ansible.builtin.debug:
+        msg: "Rebooted due to: {{ reboot_pkgs.stdout_lines | default([]) }}"
+      when: reboot_flag.stat.exists

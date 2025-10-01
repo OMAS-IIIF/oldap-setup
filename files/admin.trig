@@ -1,0 +1,198 @@
+@prefix http: <http://www.w3.org/2011/http#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix schema: <http://schema.org/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix oldap: <http://oldap.org/base#> .
+@prefix : <http://oldap.org/base#> .
+
+@prefix hyha: <http://hyperhamlet.unibas.ch/> .
+
+
+#
+# Here we define the basic instances in order to use the OLDAP system
+#
+:admin {
+
+    #==================================================================
+    # Define the administrative permissions here
+    #
+    :ADMIN_OLDAP a :AdminPermission ;
+        rdfs:label "ADMIN_OLDAP"@en ;
+        rdfs:comment "Quasi 'root'-permissions, system administration"@en .
+
+    :ADMIN_USERS a :AdminPermission ;
+        rdfs:label "ADMIN_USERS"@en ;
+        rdfs:comment "add/modify/delete users."@en .
+
+    :ADMIN_PERMISSION_SETS a :AdminPermission ;
+        rdfs:label "ADMIN_PERMISSION_SETS"@en ;
+        rdfs:comment "Add/change/remove permission sets"@en .
+
+    :ADMIN_RESOURCES a :AdminPermission ;
+        rdfs:label "ADMIN_RESOURCES"@en ;
+        rdfs:comment "Override resource permissions to manipulate any resources within the given project (All CRUD-operations)."@en .
+
+    :ADMIN_MODEL a :AdminPermission ;
+        rdfs:label "ADMIN_MODEL"@en ;
+        rdfs:comment "User has permission to modify the data model."@en .
+
+    :ADMIN_CREATE a :AdminPermission ;
+        rdfs:label "ADMIN_CREATE"@en ;
+        rdfs:comment "The user is allowed to add new resources."@en .
+
+    :ADMIN_LISTS a :AdminPermission ;
+        rdfs:label "ADMIN_LISTS"@en ;
+        rdfs:comment "The user is allowed to add/modify oldap lists."@en .
+
+    #==================================================================
+    # Define the data permissions here
+    #
+    :DATA_RESTRICTED a :DataPermission ;
+        rdfs:label "DATA_RESTRICTED"@en ;
+        rdfs:comment "Allows a restricted view of the resource."@en ;
+        :permissionValue "1"^^xsd:integer .
+
+    :DATA_VIEW a :DataPermission ;
+        rdfs:label "DATA_VIEW"@en ;
+        rdfs:comment "Readonly access to a resource (full view)."@en ;
+        :permissionValue "2"^^xsd:integer .
+
+    :DATA_EXTEND a :DataPermission ;
+        rdfs:label "EXTEND"@en ;
+        rdfs:comment "Allows to extend the data (e.g. adding a comment or annotation or adding data to a field that has a cardinality greater one)."@en ;
+        :permissionValue "3"^^xsd:integer .
+
+    :DATA_UPDATE a :DataPermission ;
+        rdfs:label "DATA_UPDATE"@en ;
+        rdfs:comment "Allows to modify or update an existing resource."@en ;
+        :permissionValue "4"^^xsd:integer .
+
+    :DATA_DELETE a :DataPermission ;
+        rdfs:label "DATA_DELETE"@en ;
+        rdfs:comment "Allows to completely remove a resource."@en ;
+        :permissionValue "5"^^xsd:integer .
+
+    :DATA_PERMISSIONS a :DataPermission ;
+        rdfs:label "DATA_PERMISSIONS"@en ;
+        rdfs:comment "Allows the user to change the assignments of groups and the ownership of a given resource."@en ;
+        :permissionValue "6"^^xsd:integer .
+
+
+    :SharedProject a :Project ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        :projectShortName "shared"^^xsd:NCName ;
+        :namespaceIri "http://oldap.org/shared#"^^xsd:anyURI ;
+        rdfs:label "Shared"@en, "Shared"@de, "Shared"@fr, "Shared"@it ;
+        rdfs:comment "Project for shared ontologies"@en ;
+        :projectStart "2024-01-01"^^xsd:date .
+
+    :SystemProject a :Project ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        :projectShortName "oldap"^^xsd:NCName ;
+        :namespaceIri "http://oldap.org/base#"^^xsd:anyURI ;
+        rdfs:label "System"@en, "System"@de, "Système"@fr, "Systema"@it ;
+        rdfs:comment "Project for system administration"@en ;
+        :projectStart "2024-01-01"^^xsd:date .
+
+
+
+    #==================================================================
+    # Define default permission sets here
+    #
+    :GenericRestricted a :PermissionSet ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        rdfs:label "Restricted"@en, "Restricted"@de, "Restricted"@fr, "Restricted"@it ;
+        :givesPermission :DATA_RESTRICTED ;
+        :definedByProject :SystemProject .
+
+    :GenericView a :PermissionSet ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        rdfs:label "GenericView"@en, "GenericView"@de, "GenericView"@fr, "GenericView"@it ;
+        :givesPermission :DATA_VIEW ;
+        :definedByProject :SystemProject .
+
+    :GenericExtend a :PermissionSet ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        rdfs:label "GenericExtend"@en, "GenericExtend"@de, "GenericExtend"@fr, "GenericExtend"@it ;
+        :givesPermission :DATA_EXTEND ;
+        :definedByProject :SystemProject .
+
+    :GenericUpdate a :PermissionSet ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        rdfs:label "GenericUpdate"@en, "GenericUpdate"@de, "GenericUpdate"@fr, "GenericUpdate"@it ;
+        :givesPermission :DATA_UPDATE ;
+        :definedByProject :SystemProject .
+
+    #==================================================================
+    # Define admin users
+    #
+
+    <https://orcid.org/0000-0003-1681-4036> a oldap:User ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        :userId "rosenth"^^xsd:NCName ;
+        schema:familyName "Rosenthaler"^^xsd:string ;
+        schema:givenName "Lukas"^^xsd:string ;
+        schema:email "lukas.rosenthaler@unibas.ch"^^xsd:string ;
+        :credentials "$2b$12$jWCJZ.qdXE9MSCPdUc0y4.9swWYJcgLZn0ePtRTu/7U8qH/OXXkB2"^^xsd:string ;
+        :inProject :SystemProject, :HyperHamlet, <http://www.salsah.org/version/2.0/SwissBritNet>, :SharedProject ;
+        :hasPermissions :GenericRestricted, :GenericView ;
+        :isActive true .
+
+    <<<https://orcid.org/0000-0003-1681-4036> :inProject :SystemProject>> :hasAdminPermission :ADMIN_OLDAP .
+    <<<https://orcid.org/0000-0003-1681-4036> :inProject :SharedProject>> :hasAdminPermission
+            :ADMIN_RESOURCES, :ADMIN_MODEL, :ADMIN_LISTS .
+
+
+    <urn:uuid:7e56b6c4-42e5-4a9d-94cf-d6e22577fb4b> a oldap:User ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        :userId "unknown"^^xsd:NCName ;
+        schema:familyName "Doe"^^xsd:string ;
+        schema:givenName "John"^^xsd:string ;
+        schema:email "john.doe@nowhere.com"^^xsd:string ;
+        :credentials "*"^^xsd:string ;
+        #:inProject <http://www.salsah.org/version/2.0/SwissBritNet> ;
+        :hasPermissions :GenericRestricted ;
+        :isActive true .
+
+    <https://orcid.org/0000-0001-9277-3921> a oldap:User ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        :userId "bugsbunny"^^xsd:NCName ;
+        schema:familyName "Bunny"^^xsd:string ;
+        schema:givenName "Bugs"^^xsd:string ;
+        schema:email "bugs.bunny@warnerbrothers.com"^^xsd:string ;
+        :credentials "$2b$12$YK2g0KFvkelCZwCcE38UguIE/3aMPjO4XIX.9FJgYJoz2m.5sDlZK"^^xsd:string ; # "DuffyDuck"
+        :inProject :HyperHamlet ;
+        :hasPermissions :GenericView ;
+        :isActive false .
+
+}

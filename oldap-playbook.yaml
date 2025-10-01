@@ -1,0 +1,190 @@
+# site.yml
+- hosts: oldap
+  become: yes
+  vars_files:
+    - group_vars/all.yml
+
+  pre_tasks:
+    - name: Ensure base packages
+      apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+          - lvm2
+        state: present
+        update_cache: yes
+
+  tasks:
+    - name: Ensure mountpoint exists
+      file:
+        path: /srv/storage
+        state: directory
+        mode: "0755"
+
+    - name: Mount /srv/storage by UUID and persist in fstab
+      mount:
+        path: /srv/storage
+        src: "UUID={{ storage_uuid }}"
+        fstype: ext4
+        opts: defaults
+        state: mounted
+
+    - name: Add Docker apt repo key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker apt repository
+      apt_repository:
+        repo: "deb [arch={{ ansible_architecture | default('amd64') }} signed-by=/etc/apt/trusted.gpg.d/download_docker_com_linux_ubuntu.gpg] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable"
+        state: present
+      register: docker_repo
+
+    - name: Update apt cache if repo changed
+      apt:
+        update_cache: yes
+      when: docker_repo is changed
+
+    - name: Install Docker packages
+      apt:
+        name: "{{ docker_packages }}"
+        state: present
+
+    - name: Ensure docker group for current admin (optional)
+      user:
+        name: "{{ ansible_user | default(ansible_user_id) }}"
+        groups: docker
+        append: yes
+
+    - name: Create Docker data root
+      file:
+        path: "{{ docker_data_root }}"
+        state: directory
+        mode: "0750"
+
+    - name: Write /etc/docker/daemon.json
+      copy:
+        dest: /etc/docker/daemon.json
+        mode: "0644"
+        content: |
+          {
+            "data-root": "{{ docker_data_root }}",
+            "log-driver": "json-file",
+            "log-opts": {
+              "max-size": "10m",
+              "max-file": "5"
+            },
+            "exec-opts": ["native.cgroupdriver=systemd"],
+            "default-address-pools": [
+              {"base":"10.88.0.0/16","size":24}
+            ],
+            "live-restore": true
+          }
+      notify: Restart docker
+
+    - name: Optional migration – copy existing /var/lib/docker if present and non-empty
+      block:
+        - name: Check if /var/lib/docker exists and non-empty
+          stat:
+            path: /var/lib/docker
+          register: docker_old
+
+        - name: Rsync old docker data into new data-root (first run only)
+          command: >
+            rsync -aHAX --delete --numeric-ids /var/lib/docker/ {{ docker_data_root }}/
+          when: docker_old.stat.exists and docker_old.stat.isdir
+      when: docker_data_root != "/var/lib/docker"
+
+    - name: Enable and start docker
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Create compose stack directory
+      file:
+        path: "{{ compose_stack_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Drop example docker-compose.yml (GraphDB/Redis/backend/Caddy)
+      copy:
+        dest: "{{ compose_stack_dir }}/docker-compose.yml"
+        mode: "0644"
+        content: |
+          services:
+            graphdb:
+              image: ontotext/graphdb:10.6.3
+              ports:
+                - "7200:7200"
+              volumes:
+                - ./graphdb:/opt/graphdb/home
+              restart: unless-stopped
+
+            redis:
+              image: redis:7-alpine
+              command: ["redis-server","--appendonly","yes"]
+              ports:
+                - "6379:6379"
+              volumes:
+                - ./redis:/data
+              restart: unless-stopped
+
+            backend:
+              build:
+                context: ./backend
+              environment:
+                - APP_ENV=Prod
+                - REDIS_URL=redis://redis:6379/0
+                - GRAPHDB_URL=http://graphdb:7200
+                - UPLOAD_FOLDER=/data/uploads
+              volumes:
+                - ./uploads:/data/uploads
+              depends_on:
+                - redis
+                - graphdb
+              restart: unless-stopped
+
+            caddy:
+              image: caddy:2
+              ports:
+                - "80:80"
+                - "443:443"
+              volumes:
+                - ./Caddyfile:/etc/caddy/Caddyfile:ro
+                - ./caddy-data:/data
+                - ./caddy-config:/config
+              depends_on:
+                - backend
+              restart: unless-stopped
+
+          networks:
+            default:
+              name: oldap-net
+              driver: bridge
+
+    - name: Drop example Caddyfile
+      copy:
+        dest: "{{ compose_stack_dir }}/Caddyfile"
+        mode: "0644"
+        content: |
+          your.domain.example {
+            encode zstd gzip
+            reverse_proxy backend:5000
+          }
+
+    # Falls du sofort starten willst (ohne extra Collection):
+    - name: docker compose up -d
+      command: docker compose up -d
+      args:
+        chdir: "{{ compose_stack_dir }}"
+      changed_when: "'Creating' in result.stdout or 'Recreating' in result.stdout"
+      register: result
+      failed_when: result.rc not in [0]
+
+  handlers:
+    - name: Restart docker
+      systemd:
+        name: docker
+        state: restarted

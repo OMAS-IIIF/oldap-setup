@@ -1,0 +1,215 @@
+---
+- name: Setup OLDAP server
+  hosts: rosy.home.org
+  become: true
+
+  vars:
+    deploy_root: /opt/oldap
+    compose_dir: "{{ deploy_root }}/compose"
+    env_dir: "{{ deploy_root }}/env"
+    # defaults that you can override at run-time or via group_vars
+    rollback: false     # set with -e rollback=true if you want to roll back
+    app_env: "Prod"
+    api_url: "http://api.rosy.home.org"
+    graphdb_home: "/srv/storage/graphdb"
+    graphdb_init: "/opt/oldap/graphdb-init"
+    oldap_data: "/srv/storage/oldap-data"
+    caddy_mode: "prod"
+
+  tasks:
+    # 0. Remove any old Docker repo definitions that might be broken
+    - name: Remove old Docker apt sources
+      ansible.builtin.file:
+        path: /etc/apt/sources.list.d/docker.list
+        state: absent
+
+    # 1. Install prerequisites for Docker (from Ubuntu repo only)
+    - name: Install base prerequisites (from Ubuntu repo)
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+        update_cache: yes
+
+    # 2. Ensure keyrings directory exists
+    - name: Ensure /etc/apt/keyrings exists
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    # 3. Download Docker GPG key
+    - name: Download Docker GPG key
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: '0644'
+
+    # 4. Add Docker apt repository
+    - name: Add Docker apt repository
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+        filename: docker
+
+    # 5. Install Docker packages
+    - name: Install Docker packages
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+        update_cache: yes
+
+    # 6. Ensure Docker service is running
+    - name: Ensure Docker is running
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    # 7a. Create directories for OLDAP
+    - name: Ensure OLDAP deployment directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+      loop:
+        - "{{ deploy_root }}"
+        - "{{ deploy_root }}/compose"
+        - "{{ env_dir }}"
+        - /opt/oldap/caddy
+        - /srv/storage
+        - "{{ graphdb_home }}"
+        - "{{ graphdb_home }}/conf"
+        - /srv/storage/oldap-app
+
+    - name: Ensure oldap-api subdirectories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: 101
+        group: 101
+        mode: "0755"
+      loop:
+        - "{{ oldap_data }}/oldap-api"
+        - "{{ oldap_data }}/oldap-api/upload"
+        - "{{ oldap_data }}/oldap-api/tmp"
+        - "{{ oldap_data }}/oldap-app"
+
+    # 7b. Copy GraphDB license to server
+    - name: Copy GraphDB license to server
+      ansible.builtin.copy:
+        src: ./graphdb.license
+        dest: "{{ graphdb_home }}/conf/graphdb.license"
+        owner: root
+        group: root
+        mode: '0644'
+
+    # 19. Copy initial TRIG files
+    - name: Copy initial TRIG files
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "{{graphdb_init}}/{{ item | basename }}"
+        owner: root
+        group: root
+        mode: '0644'
+      loop:
+        - files/admin.trig
+        - files/oldap.trig
+        - files/shared.trig
+
+    # 8. Add your user to the docker group
+    - name: Ensure user is in docker group
+      ansible.builtin.user:
+        name: rosenth
+        groups: docker
+        append: yes
+
+    # 9. Verify docker installation
+    - name: Check Docker version
+      ansible.builtin.command: docker --version
+      register: docker_version
+      changed_when: false
+
+    # 10. Bring up the stack
+    - name: Show Docker version
+      ansible.builtin.debug:
+        msg: "Docker is installed: {{ docker_version.stdout }}"
+
+    # 11. Copy docker-compose.yml and Caddyfile (if you need them)
+    - name: Copy docker-compose.yml
+      ansible.builtin.copy:
+        src: ./docker-compose.yml
+        dest: "{{ compose_dir }}/docker-compose.yml"
+        mode: "0644"
+
+    # 12. Copy Caddyfile (if you need it)
+    - name: Copy Caddyfile (if you need it)
+      ansible.builtin.copy:
+        src: ./Caddyfile
+        dest: "{{ compose_dir }}/Caddyfile"
+        mode: "0644"
+
+    # 13. Render .env file
+    - name: Render .env
+      ansible.builtin.template:
+        src: templates/oldap.env.j2
+        dest: "{{ compose_dir }}/.env"
+        mode: "0644"
+
+    # 14. Rollback or Bring up the stack
+    - name: Rollback stack (stop + remove containers)
+      community.docker.docker_compose_v2:
+        project_src: "{{ compose_dir }}"
+        state: absent
+      when: rollback | bool
+
+    - name: Bring stack up (pull images, create/update containers)
+      community.docker.docker_compose_v2:
+        project_src: "{{ compose_dir }}"
+        state: present
+        pull: missing
+        remove_orphans: true
+      when: not rollback | bool
+
+    # 15. Show running containers
+    - name: Show running containers
+      community.docker.docker_compose_v2:
+        project_src: "{{ compose_dir }}"
+        state: present
+      register: compose_result
+      when: not rollback | bool
+
+    # 16. Show services status
+    - name: Print services status
+      ansible.builtin.debug:
+        var: compose_result
+      when: not rollback | bool
+
+    # 17. Ensure graphdb-init directory exists
+    - name: Ensure graphdb-init directory exists
+      ansible.builtin.file:
+        path: /opt/oldap/graphdb-init
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    # 18. Copy GraphDB repository config file
+    - name: Copy GraphDB repo config
+      ansible.builtin.copy:
+        src: files/oldap-config.ttl
+        dest: "{{ graphdb_init }}/oldap-config.ttl"
+        owner: root
+        group: root
+        mode: '0644'
+

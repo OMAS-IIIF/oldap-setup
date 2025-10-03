@@ -1,40 +1,31 @@
+# --- Caddyfile Template ---
+{% if caddy_mode == "dev" %}
 {
-    # Enable self-signed certs for local HTTPS if you ever need it
-    # Uncomment for testing TLS locally
-    # local_certs
     auto_https off
 }
-
-# === Development setup (always HTTP) ===
-http://app-dev.home.org {
-    reverse_proxy oldap-app:3000
+{% elif caddy_mode == "prod" %}
+{
+    email {{ caddy_email }}
 }
+{% endif %}
 
-http://api-dev.home.org {
-    reverse_proxy oldap-api:8000
-}
 
+# Development setup (HTTP only)
+{% if caddy_mode == "dev" %}
 http://app.rosy.home.org {
     reverse_proxy oldap-app:3000
-    # Uncomment for local testing with self-signed TLS
-    # tls internal
 }
-
 http://api.rosy.home.org {
     reverse_proxy oldap-api:8000
-    # Uncomment for local testing with self-signed TLS
-    # tls internal
 }
+{% endif %}
 
-# === Production setup (HTTPS) ===
-app.home.org {
+# Production setup (HTTPS, handled by Caddy)
+{% if caddy_mode == "prod" %}
+app.oldap.org {
     reverse_proxy oldap-app:3000
-    # Uncomment for local testing with self-signed TLS
-    # tls internal
 }
-
-api.home.org {
+api.oldap.org {
     reverse_proxy oldap-api:8000
-    # Uncomment for local testing with self-signed TLS
-    # tls internal
 }
+{% endif %}

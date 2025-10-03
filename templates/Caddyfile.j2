@@ -1,0 +1,46 @@
+{% if caddy_mode == "prod" %}
+{
+    email {{ caddy_email }}
+}
+{% else %}
+{
+    auto_https off
+}
+{% endif %}
+
+
+# === Development setup (always HTTP) ===
+
+http://app-dev.home.org {
+    reverse_proxy oldap-app:3000
+}
+
+http://api-dev.home.org {
+    reverse_proxy oldap-api:8000
+}
+
+
+# === Test server (rosy) ===
+
+{% if caddy_mode != "prod" %}
+http://app.rosy.home.org {
+    reverse_proxy oldap-app:3000
+}
+
+http://api.rosy.home.org {
+    reverse_proxy oldap-api:8000
+}
+{% endif %}
+
+
+# === Production setup (HTTPS with Let's Encrypt) ===
+
+{% if caddy_mode == "prod" %}
+app.oldap.org {
+    reverse_proxy oldap-app:3000
+}
+
+api.oldap.org {
+    reverse_proxy oldap-api:8000
+}
+{% endif %}

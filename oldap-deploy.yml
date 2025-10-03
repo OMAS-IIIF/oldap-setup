@@ -1,6 +1,6 @@
 ---
 - name: Setup OLDAP server
-  hosts: rosy.home.org
+  hosts: oldap
   become: true
 
   vars:
@@ -10,13 +10,27 @@
     # defaults that you can override at run-time or via group_vars
     rollback: false     # set with -e rollback=true if you want to roll back
     app_env: "Prod"
-    api_url: "http://api.rosy.home.org"
-    graphdb_home: "/srv/storage/graphdb"
-    graphdb_init: "/opt/oldap/graphdb-init"
-    oldap_data: "/srv/storage/oldap-data"
-    caddy_mode: "prod"
+
+  pre_tasks:
+    - name: Debug inventory_hostname und caddy_mode
+      ansible.builtin.debug:
+        msg: "Running on {{ inventory_hostname }} with caddy_mode={{ caddy_mode | default('NOT SET') }}"
 
   tasks:
+    -
+    - name: Show caddy_mode
+      debug:
+        var: caddy_mode
+
+    - name: Ensure firewall allows HTTP and HTTPS
+      community.general.ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      loop:
+        - "80"
+        - "443"
+
     # 0. Remove any old Docker repo definitions that might be broken
     - name: Remove old Docker apt sources
       ansible.builtin.file:
@@ -105,6 +119,15 @@
         - "{{ oldap_data }}/oldap-api/tmp"
         - "{{ oldap_data }}/oldap-app"
 
+    # 17. Ensure graphdb-init directory exists
+    - name: Ensure graphdb-init directory exists
+      ansible.builtin.file:
+        path: /opt/oldap/graphdb-init
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
     # 7b. Copy GraphDB license to server
     - name: Copy GraphDB license to server
       ansible.builtin.copy:
@@ -152,12 +175,24 @@
         dest: "{{ compose_dir }}/docker-compose.yml"
         mode: "0644"
 
-    # 12. Copy Caddyfile (if you need it)
-    - name: Copy Caddyfile (if you need it)
-      ansible.builtin.copy:
-        src: ./Caddyfile
+    # 12. Render Caddyfile (if you need it)
+    - name: Render Caddyfile
+      ansible.builtin.template:
+        src: templates/Caddyfile.j2
         dest: "{{ compose_dir }}/Caddyfile"
         mode: "0644"
+
+    # 12.1. Ensure Caddy directories exist
+    - name: Ensure Caddy directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      loop:
+        - "{{ caddy_data }}"
+        - "{{ caddy_conf }}"
 
     # 13. Render .env file
     - name: Render .env
@@ -194,15 +229,6 @@
       ansible.builtin.debug:
         var: compose_result
       when: not rollback | bool
-
-    # 17. Ensure graphdb-init directory exists
-    - name: Ensure graphdb-init directory exists
-      ansible.builtin.file:
-        path: /opt/oldap/graphdb-init
-        state: directory
-        owner: root
-        group: root
-        mode: '0755'
 
     # 18. Copy GraphDB repository config file
     - name: Copy GraphDB repo config

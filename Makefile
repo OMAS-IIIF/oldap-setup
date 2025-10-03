@@ -1,4 +1,4 @@
-.PHONY: deploy-rosy rollback-rosy
+.PHONY: deploy-rosy rollback-rosy deploy-vm
 
 #deploy-rosy:
 #	 ansible-playbook -i inventory.ini deploy-oldap.yml \
@@ -6,11 +6,19 @@
 #		-e oldap_app_tag=v0.3.2 \
 #		--ask-become-pass
 deploy-rosy:
-	 ansible-playbook -i inventory.ini oldap-rosy.yml \
+	ansible-playbook -i inventory.ini oldap-deploy.yml \
+		-l oldap-test \
 		--ask-become-pass
 
+deploy-vm:
+	ansible-playbook -i inventory.ini oldap-deploy.yml \
+		-l oldap-prod \
+		--ask-become-pass
+
+
 rollback-rosy:
-	ansible-playbook -i inventory.ini oldap-rosy.yml \
+	ansible-playbook -i inventory.ini oldap-deploy.yml \
+		-l oldap-test \
 		-e rollback=true \
 		--ask-become-pass
 

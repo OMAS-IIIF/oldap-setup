@@ -7,11 +7,15 @@
 #		--ask-become-pass
 deploy-rosy:
 	ansible-playbook -i inventory.ini oldap-deploy.yml \
+		-e oldap_api_tag=$(API_VERSION) \
+		-e oldap_app_tag=$(APP_VERSION)
 		-l oldap-test \
 		--ask-become-pass
 
 deploy-vm:
 	ansible-playbook -i inventory.ini oldap-deploy.yml \
+		-e oldap_api_tag=$(API_VERSION) \
+		-e oldap_app_tag=$(APP_VERSION)
 		-l oldap-prod \
 		--ask-become-pass
 

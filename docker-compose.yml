@@ -48,6 +48,7 @@ services:
     depends_on:
       - graphdb
     environment:
+      OLDAP_JWT_SECRET: ${OLDAP_JWT_SECRET:-secret}
       OLDAP_TS_SERVER: http://graphdb:7200
       OLDAP_TS_REPO: oldap
       OLDAP_API_PORT: 8000

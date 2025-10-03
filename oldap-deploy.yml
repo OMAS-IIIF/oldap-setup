@@ -17,10 +17,15 @@
         msg: "Running on {{ inventory_hostname }} with caddy_mode={{ caddy_mode | default('NOT SET') }}"
 
   tasks:
-    -
-    - name: Show caddy_mode
-      debug:
-        var: caddy_mode
+    - name: Warn if oldap-api is deployed with latest tag
+      ansible.builtin.debug:
+        msg: "⚠️ WARNING: oldap-api is running with 'latest' tag. This may cause non-reproducible deployments!"
+      when: oldap_api_tag is not defined or oldap_api_tag == "latest"
+
+    - name: Warn if oldap-app is deployed with latest tag
+      ansible.builtin.debug:
+        msg: "⚠️ WARNING: oldap-app is running with 'latest' tag. This may cause non-reproducible deployments!"
+      when: oldap_app_tag is not defined or oldap_app_tag == "latest"
 
     - name: Ensure firewall allows HTTP and HTTPS
       community.general.ufw:
@@ -212,7 +217,7 @@
       community.docker.docker_compose_v2:
         project_src: "{{ compose_dir }}"
         state: present
-        pull: missing
+        pull: "{{ 'always' if app_env == 'Dev' else 'missing' }}"
         remove_orphans: true
       when: not rollback | bool
 

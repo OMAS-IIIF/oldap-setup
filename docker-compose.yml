@@ -37,6 +37,21 @@ services:
                  --data-binary @$$f \
                  http://graphdb:7200/repositories/oldap/statements
           done
+          echo 'Loading SKOS ontology...'
+          curl -X POST \
+            -H 'Content-Type: text/turtle' \
+            --data-binary @oldaplib/ontologies/standard/skos.ttl \
+            'http://localhost:7200/repositories/oldap/statements?context=%3Curn:oldap:vocab:skos%3E'
+          echo 'Loading DCTERMS ontology...'
+          curl -X POST \
+            -H 'Content-Type: text/turtle' \
+            --data-binary @oldaplib/ontologies/standard/dcterms.ttl \
+            'http://localhost:7200/repositories/oldap/statements?context=%3Curn:oldap:vocab:dcterms%3E'
+          echo 'Loading SCHEMA:ORG ontology...'
+          curl -X POST \
+            -H 'Content-Type: text/turtle' \
+            --data-binary @oldaplib/ontologies/standard/schemaorg.ttl \
+            'http://localhost:7200/repositories/oldap/statements?context=%3Curn:oldap:vocab:schema%3E'
         else
           echo 'Repository oldap already exists, skipping init.'
         fi
@@ -72,6 +87,17 @@ services:
       - oldap-api
     volumes:
       - ${OLDAP_DATA:-./data}/oldap-app:/data
+    restart: unless-stopped
+
+  fasnachts-page:
+    image: lrosenth/fasnachts-page:${FASNACHTS_PAGE_TAG:-latest}
+    container_name: fasnachts-page
+    expose:
+      - 3100
+    environment:
+      API_URL: ${API_URL:-http://localhost:8000}
+    depends_on:
+      - oldap-api
     restart: unless-stopped
 
   caddy:

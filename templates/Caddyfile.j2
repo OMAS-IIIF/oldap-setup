@@ -19,6 +19,11 @@ http://api-dev.home.org {
     reverse_proxy oldap-api:8000
 }
 
+ http://fasnacht-dev.home.org {
+    reverse_proxy fasnachts-page:8000
+}
+
+
 
 # === Test server (rosy) ===
 
@@ -30,6 +35,11 @@ http://app.rosy.home.org {
 http://api.rosy.home.org {
     reverse_proxy oldap-api:8000
 }
+
+http://fasnacht.rosy.home.org {
+    reverse_proxy fasnachts-page:8000
+}
+
 {% endif %}
 
 
@@ -43,4 +53,14 @@ app.oldap.org {
 api.oldap.org {
     reverse_proxy oldap-api:8000
 }
+
+fasnacht.digital {
+    reverse_proxy fasnachts-page:3100
+}
+
+
+fasnacht.oldap.org {
+    reverse_proxy fasnachts-page:3100
+}
+
 {% endif %}

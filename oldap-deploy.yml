@@ -4,6 +4,11 @@
   become: true
 
   vars:
+    # the version numbers to be used for deployment
+    oldap_api_tag: "v0.1.4"
+    oldap_app_tag: "0.0.2"
+    fasnachts_page_tag: "v0.0.5"
+
     deploy_root: /opt/oldap
     compose_dir: "{{ deploy_root }}/compose"
     env_dir: "{{ deploy_root }}/env"

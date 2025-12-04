@@ -1,0 +1,7 @@
+$ sudo vgdisplay sysvg
+$ sudo lvcreate -L 950G -n datalv sysvg
+$ sudo mkfs.ext4 /dev/sysvg/datalv
+$ sudo mount /dev/sysvg/datalv /data
+$ sudo blkid /dev/sysvg/datalv
+$ # in /etc/fstab
+$ UUID=abcd-1234-ef56...   /data   ext4   defaults   0   2

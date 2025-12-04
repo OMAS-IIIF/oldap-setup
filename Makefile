@@ -36,7 +36,7 @@ copy-ssh-key:
 deploy-rosy:
 	ansible-playbook -i inventory.ini oldap-deploy.yml \
 		-e oldap_api_tag=$(API_VERSION) \
-		-e oldap_app_tag=$(APP_VERSION)
+		-e oldap_app_tag=$(APP_VERSION) \
 		-l oldap-test \
 		--ask-become-pass
 

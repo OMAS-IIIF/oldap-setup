@@ -1,66 +1,66 @@
 {% if caddy_mode == "prod" %}
 {
     email {{ caddy_email }}
-}
-{% else %}
-{
-    auto_https off
+    # Use acme_dns / acme_http_challenge options here if needed
 }
 {% endif %}
 
+#
+# === Test environment (rosy) ===
+#
+{% if caddy_mode == "dev" %}
+# Rosy Test Server (internal TLS)
+app.rosy.home.org, api.rosy.home.org, fasnacht.rosy.home.org {
+    tls internal
 
-# === Development setup (always HTTP) ===
+    @app host app.rosy.home.org
+    handle @app {
+        reverse_proxy oldap-app:3000
+    }
 
-http://app-dev.home.org {
-    reverse_proxy oldap-app:3000
+    @api host api.rosy.home.org
+    handle @api {
+        reverse_proxy oldap-api:8000
+    }
+
+    @fasnacht host fasnacht.rosy.home.org
+    handle @fasnacht {
+        reverse_proxy fasnachts-page:3100
+    }
 }
-
-http://api-dev.home.org {
-    reverse_proxy oldap-api:8000
-}
-
- http://fasnacht-dev.home.org {
-    reverse_proxy fasnachts-page:8000
-}
-
-
-
-# === Test server (rosy) ===
-
-{% if caddy_mode != "prod" %}
-http://app.rosy.home.org {
-    reverse_proxy oldap-app:3000
-}
-
-http://api.rosy.home.org {
-    reverse_proxy oldap-api:8000
-}
-
-http://fasnacht.rosy.home.org {
-    reverse_proxy fasnachts-page:3100
-}
-
 {% endif %}
 
-
-# === Production setup (HTTPS with Let's Encrypt) ===
-
+#
+# === Production environment (Let’s Encrypt) ===
+#
 {% if caddy_mode == "prod" %}
+# API
+api.oldap.org {
+    # Preflight CORS
+    @apiCors method OPTIONS
+    handle @apiCors {
+        header Access-Control-Allow-Origin *
+        header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        header Access-Control-Allow-Headers "Authorization, Content-Type"
+        respond "" 204
+    }
+
+    # Proxy normal API requests
+    reverse_proxy oldap-api:8000 {
+        # forward Authorization header upstream (Flask needs it)
+        header_up Authorization {http.request.header.Authorization}
+    }
+}
+
+# SPA / App
 app.oldap.org {
+    encode gzip zstd
     reverse_proxy oldap-app:3000
 }
 
-api.oldap.org {
-    reverse_proxy oldap-api:8000
-}
-
-fasnacht.digital {
+# Fasnacht page (two domains possible)
+fasnacht.digital, fasnacht.oldap.org {
+    encode gzip zstd
     reverse_proxy fasnachts-page:3100
 }
-
-
-fasnacht.oldap.org {
-    reverse_proxy fasnachts-page:3100
-}
-
 {% endif %}

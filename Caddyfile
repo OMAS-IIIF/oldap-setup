@@ -1,8 +1,4 @@
 # --- Caddyfile Template ---
-{% if caddy_mode == "dev" %}
-{
-    auto_https off
-}
 {% elif caddy_mode == "prod" %}
 {
     email {{ caddy_email }}
@@ -10,16 +6,25 @@
 {% endif %}
 
 
-# Development setup (HTTP only)
+# Development / Local setup with HTTPS
 {% if caddy_mode == "dev" %}
-http://app.rosy.home.org {
-    reverse_proxy oldap-app:3000
-}
-http://api.rosy.home.org {
-    reverse_proxy oldap-api:8000
-}
-http://fasnacht.rosy.home.org {
-    reverse_proxy fasnachts-page:3100
+app.rosy.home.org, api.rosy.home.org, fasnacht.rosy.home.org {
+    tls internal
+    
+    @app host app.rosy.home.org
+    handle @app {
+        reverse_proxy oldap-app:3000
+    }
+
+    @api host api.rosy.home.org
+    handle @api {
+        reverse_proxy oldap-api:8000
+    }
+
+    @fasnacht host fasnacht.rosy.home.org
+    handle @fasnacht {
+        reverse_proxy fasnachts-page:3100
+    }
 }
 {% endif %}
 

@@ -1,0 +1,8 @@
+# Default image tags (can be overridden via -e)
+oldap_api_tag: "latest"
+oldap_app_tag: "latest"
+oldap_tools_tag: "latest"
+
+# Soft reset behavior
+oldap_soft_reset: false
+oldap_pull_images: false

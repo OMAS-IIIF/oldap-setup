@@ -3,11 +3,9 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dcmitype: <http://purl.org/dc/dcmitype/> .
 @prefix schema: <http://schema.org/> .
-@prefix cidoc:  <http://www.cidoc-crm.org/cidoc-crm/> .
 @prefix oldap: <http://oldap.org/base#> .
 
 
@@ -16,6 +14,20 @@
 
 shared:shacl {
     shared:shapes schema:version "0.1.0"^^xsd:string .
+
+    ###########################################################################
+    # Shared properties
+    ###########################################################################
+    :commentStringShape a sh:PropertyShape ;
+        sh:path :commentString ;
+        oldap:statementProperty true ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        sh:name "Simple comment"@en ;
+        sh:description "A simple comment as a string"@en ;
+        sh:datatype xsd:string .
 
     ###########################################################################
     # Chronology Date definitions
@@ -44,7 +56,7 @@ shared:shacl {
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:nonNegativeInteger ;
             sh:datatype xsd:decimal ;
         ] ;
         sh:property [
@@ -53,7 +65,7 @@ shared:shacl {
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:nonNegativeInteger ;
             sh:datatype xsd:string ;
             sh:in ("GREGORIAN"^^xsd:string "JULIAN"^^xsd:string "HEBREW"^^xsd:string "ISLAMIC"^^xsd:string "PERSIAN"^^xsd:string) ;
        ] ;
@@ -63,7 +75,7 @@ shared:shacl {
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:nonNegativeInteger ;
             sh:class oldap:ChronolgyStatement ;
         ] ;
         sh:property [
@@ -72,7 +84,7 @@ shared:shacl {
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:nonNegativeInteger ;
             sh:class oldap:ChronolgyStatement ;
         ] ;
         sh:property [
@@ -81,7 +93,7 @@ shared:shacl {
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:nonNegativeInteger ;
             sh:datatype xsd:decimal ;
         ] ;
         sh:property [
@@ -90,11 +102,220 @@ shared:shacl {
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:nonNegativeInteger ;
             sh:datatype xsd:decimal ;
         ] .
 
+    ###############################################################################
+    # Media object
+    ###############################################################################
 
+#    dcmitype:CollectionShape a sh:NodeShape ;
+#        sh:targetClass shared:Collection ;
+#        dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+#        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+#        dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+#        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+#        oldap:externalOntology "true"^^xsd:boolean ;
+#        rdfs:label "Collection"@en, "Sammlung"@de, "Collection"@fr, "Collezione"@it ;
+#        sh:property [
+#            sh:path rdf:type ;
+#        ] .
+#
+#    dcmitype:DatasetShape a sh:NodeShape ;
+#        sh:targetClass shared:Dataset ;
+#        dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+#        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+#        dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+#        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+#        oldap:externalOntology "true"^^xsd:boolean ;
+#        rdfs:label "Dataset"@en, "Dataset"@de, "Dataset"@fr, "Dataset"@it ;
+#        sh:property [
+#            sh:path rdf:type ;
+#        ] .
+#
+#    dcmitype:StillImageShape a sh:NodeShape ;
+#        sh:targetClass shared:StillImage ;
+#        dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+#        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+#        dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+#        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+#        oldap:externalOntology "true"^^xsd:boolean ;
+#        rdfs:label "StillImage"@en, "Standbild"@de, "Image fixe"@fr, "Immagine fissa"@it ;
+#        sh:property [
+#            sh:path rdf:type ;
+#        ] .
+#
+#    dcmitype:ImageShape a sh:NodeShape ;
+#        sh:targetClass shared:Image ;
+#        dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+#        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+#        dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+#        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+#        oldap:externalOntology "true"^^xsd:boolean ;
+#        rdfs:label "Image"@en, "Bild"@de, "Image"@fr, "Immagine"@it ;
+#        sh:property [
+#            sh:path rdf:type ;
+#        ] .
+#
+#    dcmitype:MovingImageShape a sh:NodeShape ;
+#        sh:targetClass shared:MovingImage ;
+#        dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+#        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+#        dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+#        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+#        oldap:externalOntology "true"^^xsd:boolean ;
+#        rdfs:label "MovingImage"@en, "Bewegtbild"@de, "Image animée"@fr, "Immagine in movimento"@it ;
+#        sh:property [
+#            sh:path rdf:type ;
+#        ] .
+#
+#    dcmitype:SoundShape a sh:NodeShape ;
+#        sh:targetClass shared:Sound ;
+#        dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+#        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+#        dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+#        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+#        oldap:externalOntology "true"^^xsd:boolean ;
+#        rdfs:label "Sound"@en, "Ton"@de, "Son"@fr, "Sound"@it ;
+#        sh:property [
+#            sh:path rdf:type ;
+#        ] .
+#
+#    dcmitype:TextShape a sh:NodeShape ;
+#        sh:targetClass shared:Text ;
+#        dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+#        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+#        dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+#        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+#        oldap:externalOntology "true"^^xsd:boolean ;
+#        rdfs:label "Text"@en, "Text"@de, "Texte"@fr, "Testo"@it ;
+#        sh:property [
+#            sh:path rdf:type ;
+#        ] .
+
+    shared:MediaObjectShape a sh:NodeShape ;
+        sh:targetClass shared:MediaObject ;
+        dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        oldap:externalOntology "false"^^xsd:boolean ;
+        rdfs:label "MediaObject"@en, "Medienobjekt"@de, "MediaObject"@fr, "MediaObject"@it ;
+        sh:closed "true"^^xsd:boolean ;
+        sh:node oldap:ThingShape ;
+        sh:property [
+            sh:path rdf:type ;
+        ] ;
+        sh:property [
+            sh:path dcterms:type ;
+            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+            oldap:statementProperty "false"^^xsd:boolean ;
+            oldap:externalOntology "false"^^xsd:boolean ;
+            sh:nodeKind sh:IRI ;
+            sh:in (
+                dcmitype:Collection
+                dcmitype:Dataset
+                dcmitype:StillImage
+                dcmitype:Image
+                dcmitype:MovingImage
+                dcmitype:Sound
+                dcmitype:Text
+            ) ;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
+            sh:order "0.5"^^xsd:decimal ;
+        ] ;
+        sh:property [
+                sh:path shared:originalName ;
+                schema:version "0.1.0"^^xsd:string ;
+                dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+                dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+                dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+                dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+                oldap:statementProperty "false"^^xsd:boolean ;
+                oldap:externalOntology "false"^^xsd:boolean ;
+                sh:datatype xsd:string ;
+                sh:name "Original Filename"@en, "Originaler Dateiname"@de, "Nom orignal du fichier"@fr, "Nome documento originale"@it ;
+                sh:minCount "1"^^xsd:integer ;
+                sh:maxCount "1"^^xsd:integer ;
+                sh:order "1.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+                sh:path shared:originalMimeType ;
+                schema:version "0.1.0"^^xsd:string ;
+                dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+                dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+                dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+                dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+                oldap:statementProperty "false"^^xsd:boolean ;
+                oldap:externalOntology "false"^^xsd:boolean ;
+                sh:datatype xsd:string ;
+                sh:name "Original mimetype"@en, "Originaler Mimetype"@de, "Mimetype original"@fr, "Mimetype originale"@it ;
+                sh:minCount "1"^^xsd:integer ;
+                sh:maxCount "1"^^xsd:integer ;
+                sh:order "2.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+                sh:path shared:serverUrl ;
+                schema:version "0.1.0"^^xsd:string ;
+                dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+                dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+                dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+                dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+                oldap:statementProperty "false"^^xsd:boolean ;
+                oldap:externalOntology "false"^^xsd:boolean ;
+                sh:datatype xsd:anyURI ;
+                sh:name "Server URL"@en, "URL des servers"@de, "Server URL"@fr, "Server URL"@it ;
+                sh:minCount "1"^^xsd:integer ;
+                sh:maxCount "1"^^xsd:integer ;
+                sh:order "3.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+                sh:path shared:imageId ;
+                schema:version "0.1.0"^^xsd:string ;
+                dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+                dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+                dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+                dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+                oldap:statementProperty "false"^^xsd:boolean ;
+                oldap:externalOntology "false"^^xsd:boolean ;
+                sh:datatype xsd:string ;
+                sh:name "Image ID"@en, "ID des Bilder"@de, "ID de l\'image"@fr, "ID de l\'immagine"@it ;
+                sh:minCount "1"^^xsd:integer ;
+                sh:maxCount "1"^^xsd:integer ;
+                sh:order "3.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path shared:protocol ;
+            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+            oldap:statementProperty "false"^^xsd:boolean ;
+            oldap:externalOntology "false"^^xsd:boolean ;
+            sh:datatype xsd:string ;
+            sh:in ( 'iiif' 'http' 'custom') ;
+            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "4.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path shared:path ;
+            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+            oldap:statementProperty "false"^^xsd:boolean ;
+            oldap:externalOntology "false"^^xsd:boolean ;
+            sh:datatype xsd:string ;
+            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "4.0"^^xsd:decimal ;
+       ] .
 }
 
 shared:onto {
@@ -102,7 +323,18 @@ shared:onto {
         owl:versionInfo "0.1.0"^^xsd:string .
 
     ###############################################################################
-    # Properties used for :Project
+    # Generic comment property
+    ###############################################################################
+
+    :commentString rdf:type rdf:Property, owl:DatatypeProperty ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        rdfs:range xsd:string .
+
+    ###############################################################################
+    # Properties used for :ChronologyObject
     ###############################################################################
 
     oldap:startJDC rdf:type owl:DatatypeProperty ;
@@ -164,6 +396,7 @@ shared:onto {
     ###########################################################################
     # Chronology Date Resource
     ###########################################################################
+
     oldap:ChronolgyStatement rdf:type owl:Class ;
         dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
         dcterms:created "2023-11-04T12:00:00Z"^^xsd:dateTime ;
@@ -212,6 +445,119 @@ shared:onto {
                 owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
                 owl:onDataRange xsd:decimal
             ] .
+
+    ###########################################################################
+    # Media object
+    ###########################################################################
+
+#        shared:mediaType rdf:type owl:ObjectProperty ;
+#            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+#            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+#            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+#            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime .
+#            #owl:subPropertyOf dcterms:type ;
+#            rdfs:domain shared:MediaObject ;
+#            rdfs:range rdfs:Class ;
+
+        shared:originalName rdf:type owl:DatatypeProperty ;
+            rdfs:domain shared:MediaObject ;
+            rdfs:range xsd:string ;
+            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime .
+
+        shared:originalMimeType rdf:type owl:DatatypeProperty ;
+            rdfs:domain shared:MediaObject ;
+            rdfs:range xsd:string ;
+            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime .
+
+        shared:serverUrl rdf:type owl:DatatypeProperty ;
+            rdfs:domain shared:MediaObject ;
+            rdfs:range xsd:anyURI ;
+            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime .
+
+        shared:imageId rdf:type owl:DatatypeProperty ;
+            rdfs:domain shared:MediaObject ;
+            rdfs:range xsd:string ;
+            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime .
+
+        shared:protocol rdf:type owl:DatatypeProperty ;
+            rdfs:domain shared:MediaObject ;
+            rdfs:range xsd:string ;
+            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime .
+
+        shared:path rdf:type owl:DatatypeProperty ;
+            rdfs:domain shared:MediaObject ;
+            rdfs:range xsd:string ;
+            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime .
+
+        shared:MediaObject rdf:type owl:Class ;
+            schema:version "0.1.0"^^xsd:string ;
+            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+            rdfs:label "MediaObject"@en, "Medienobjekt"@de, "MediaObject"@fr, "MediaObject"@it ;
+            rdfs:comment "Page of a book"@en, "Seite eines Buches"@de ;
+            rdfs:subClassOf oldap:Thing ,
+                [
+                    rdf:type owl:Restriction ;
+                    owl:onProperty dcterms:type ;
+                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onClass rdfs:Class ;
+                ] ,
+                [
+                    rdf:type owl:Restriction ;
+                    owl:onProperty shared:originalName ;
+                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onDataRange xsd:string ;
+                ] ,
+                [
+                    rdf:type owl:Restriction ;
+                    owl:onProperty shared:originalMimeType ;
+                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onDataRange xsd:string ;
+                ] ,
+                [
+                    rdf:type owl:Restriction ;
+                    owl:onProperty shared:serverUrl ;
+                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onDataRange xsd:anyURI ;
+                ] ,
+                [
+                    rdf:type owl:Restriction ;
+                    owl:onProperty shared:imageId ;
+                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onDataRange xsd:string ;
+                ],
+                [
+                    rdf:type owl:Restriction ;
+                    owl:onProperty shared:protocol ;
+                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onDataRange xsd:string ;
+                ],
+                [
+                    rdf:type owl:Restriction ;
+                    owl:onProperty shared:path ;
+                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onDataRange xsd:string ;
+                ] .
 
 }
 

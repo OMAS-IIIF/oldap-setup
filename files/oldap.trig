@@ -1,14 +1,14 @@
-@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix schema: <http://schema.org/> .
-@prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix oldap: <http://oldap.org/base#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
 @prefix : <http://oldap.org/base#> .
 
@@ -23,12 +23,92 @@
     :statementProperty a sh:Property ;
         sh:annotationProperty :statementProperty .
 
+    ###########################################################################
+    # Some properties to be reused
+    ###########################################################################
+
+    #
+    # is used to indicate the the property is a RDF*Star property for statements about statements
+    #
     :statementPropertyShape
         a sh:PropertyShape ;
         sh:path :statementProperty ;
         sh:datatype xsd:boolean ;
         sh:minCount 0 ;
         sh:maxCount 1 .
+
+    #
+    # This property will be reused wherever we need a namespace IRI
+    #
+    :namespaceIriShape a sh:PropertyShape ;
+        sh:path :namespaceIri ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        sh:name "Namespace IRI"@en ;
+        sh:description "Describes a namespace"@en ;
+        sh:nodeKind sh:IRI .
+
+
+    ###########################################################################
+    # Node shapes for the OLDAP system
+    ###########################################################################
+
+    #
+    # Definition of an external ontology
+    #
+    :ExternalOntologyShape a sh:NodeShape ;
+        sh:targetClass :ExternalOntology ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        rdfs:label "External Ontology"@en, "Externe Ontology"@de, "Ontologie externe"@fr, "External Ontology"@it ;
+        rdfs:comment "Reference to an external ontology that is being used. Includes prefix and namespace IRI."@en ;
+        sh:property [
+            sh:path rdf:type ;
+        ] ;
+        sh:property [
+            sh:path dcterms:creator ;
+            sh:class :User ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+        ] ;
+        sh:property [
+            sh:path dcterms:created ;
+            sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+        ] ;
+        sh:property [
+            sh:path dcterms:contributor ;
+            sh:class :User ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+        ] ;
+        sh:property [
+            sh:path dcterms:modified ;
+            sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+        ] ;
+        sh:property [
+            sh:path :prefix ;
+            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+            dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+            sh:datatype xsd:NCName ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+        ] ;
+        sh:property :namespaceIriShape ;
+        sh:property [
+            sh:path :namespaceIri ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+        ] .
 
     #
     # Define a SHACL property group for all system properties. This info can be used to hide these properties from
@@ -42,7 +122,7 @@
     #
     # SHACL definition of the oldap:AdminPermission class. The AdminPermission instances are attached as
     # RDF*star to the triple that defines to which oldap:project as oldap:User belongs to.
-    # E.g. <<<https://orcid.org/0000-0003-1681-4036> :inProject :SystemProject>> :hasRights :ADMIN_PROJECT .
+    # E.g. <<<https://orcid.org/0000-0003-1681-4036> :inProject :SystemProject>> :hasAdminPermission :ADMIN_PROJECT .
     #
     :AdminPermissionShape a sh:NodeShape ;
         sh:targetClass :AdminPermission ;
@@ -68,10 +148,31 @@
             sh:uniqueLang true ;
         ] .
 
+    #
+    # Property to assign a admin permission
+    # E.g. <<<https://orcid.org/0000-0003-1681-4036> :inProject :SystemProject>> :hasAdminPermission :ADMIN_PROJECT .
+    #
     :hasAdminPermissionShape a sh:PropertyShape ;
         sh:path :hasAdminPermission ;
+        :statementProperty true ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
         sh:class :AdminPermission .
 
+    :hasDefaultDataPermissionShape a sh:PropertyShape ;
+        sh:path :hasDefaultDataPermission ;
+        :statementProperty true ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        sh:class :DataPermission .
+
+    #
+    # Data permission shape
+    #
     :DataPermissionShape a sh:NodeShape ;
         sh:targetClass :DataPermission ;
         dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
@@ -90,8 +191,8 @@
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             sh:datatype xsd:integer ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
             sh:name "Permission value"@en, "Berechtigungswert"@de, "Valeur de permission"@fr, "Valore di autorizzazione"@it ;
         ] ;
         sh:property [
@@ -107,63 +208,74 @@
             sh:uniqueLang true ;
         ] .
 
+    # TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    # SHACL to define a permission sets. A permission set assigns data permissions to both
+    # a given user and a given data instance.
+    # Let's assume a PermissionSet instance :MyPermSet which I will use. Then I can give the following
+    # permissions:
     #
-    # SHACL to define a permission sets. For each resource, there are RDF-triples which define the
-    # permissions for permission sets.
+    #  <<:MyInstance oldap:attachedToRole :MyRole>> oldap:hasDataPermission :DATA_EXTEND .
     #
-    :PermissionSetShape a sh:NodeShape ;
-        sh:targetClass :PermissionSet ;
+    # A user with:
+    #
+    # :ThisUser oldap:hasRole :MyRole, MyRole2 .
+    #
+    # we may add default values that are proposed as standard values for creating instances:
+    #
+    # <<:ThisUser oldap:hasRole :MyRole>> oldap:hasDefaultDataPermission :DATA_EXTEND
+    # <<:ThisUser oldap:hasRole :MyRole2>> oldap:hasDefaultDataPermission :DATA_RESTRICTED
+    #
+    # Thus, the user should have maximal :DATA_VIEW access to the given instance
+    #
+    #    PREFIX : <https://gaga.com/>
+    #    PREFIX o: <http://www.ooo.org/ns#>
+    #
+    #    SELECT ?predicate ?value ?permval
+    #    WHERE {
+    #        GRAPH :test {
+    #            :InstanceA ?predicate ?value ;
+    #            	o:attachedToRole ?role .
+    #            :UserA o:hasRole ?role .
+    #           <<:InstanceA  o:attachedToRole ?role>> o:dataPermission ?permval .
+    #        }
+    #        FILTER(?permval >= 1)
+    #   }
+    #
+
+    :RoleShape a sh:NodeShape ;
+        sh:targetClass :Role ;
         dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
         dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
         dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
         dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-        rdfs:label "Permission set"@en, "Berechtigungssatz"@de, "Ensemble de permissions"@fr, "Set di permessi"@it ;
-        rdfs:comment "A set of permissions a user and a resource grants."@en ;
+        rdfs:label "Permission role"@en, "Berechtigungsrolle"@de, "Rôle d'autorisation"@fr, "Ruolo di autorizzazione"@it ;
+        rdfs:comment "Defines a role regarding data permissions, e.g. Editor, Unknown, Contributor etc."@en ;
         sh:property [
             sh:path rdf:type ;
         ] ;
         sh:property [
             sh:path dcterms:creator ;
             sh:class :User ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path dcterms:created ;
             sh:datatype xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path dcterms:contributor ;
             sh:class :User ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path dcterms:modified ;
             sh:datatype xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
-        ] ;
-        sh:property [
-            sh:path :givesPermission ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
-            sh:class :DataPermission ;
-            sh:in (:DATA_RESTRICTED :DATA_VIEW :DATA_EXTEND :DATA_UPDATE :DATA_DELETE :DATA_PERMISSIONS) ;
-            sh:name "Data permission"@en,
-                    "Data permission"@de,
-                    "Data permission"@fr,
-                    "Data permission"@it ;
-            sh:description "Permission type to access a resource"@en,
-                           "Berechtigungstyp für Ressource"@de,
-                           "Type d'autorisation pour accéder à une ressource"@fr,
-                           "Tipo di autorizzazione per accedere a una risorsa"@it ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path :definedByProject ;
@@ -171,14 +283,14 @@
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:minCount "1"^^xsd:integer ;
-            sh:maxCount "1"^^xsd:integer;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
             sh:class :Project;
             sh:name "Defined by"@en, "Definiert durch"@de, "Défini par"@fr, "Definito da"@it ;
-            sh:description "Permission set is define by project"@en,
-                           "Der Berechtigungssatz wird definiert durch das Projekt"@de,
-                           "L'ensemble des autorisations est défini par le projet"@fr,
-                           "Il set di permessi è definito dal progetto"@it ;
+            sh:description "Permission role is define by project"@en,
+                           "Der Berechtigungsrolle wird definiert durch das Projekt"@de,
+                           "Le rôle d'autorisation est défini par projet."@fr,
+                           "Il ruolo di autorizzazione è definito dal progetto"@it ;
         ] ;
         sh:property [
             sh:path rdfs:label ;
@@ -193,29 +305,6 @@
             sh:uniqueLang true ;
         ] .
 
-    :ExternalOntologyShape a sh:NodeShape ;
-        sh:targetClass :ExternalOntology ;
-        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-        rdfs:label "Project"@en, "Projekt"@de, "Projet"@fr, "Progetto"@it ;
-        rdfs:comment "Metadata about a project"@en ;
-        sh:property [
-            sh:path rdf:type ;
-        ] ;
-        sh:property [
-            sh:path :prefix ;
-            sh:datatype xsd:NCName ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
-        ] ;
-        sh:property [
-            sh:path :fullIri ;
-            sh:datatype xsd:anyURI ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
-        ] .
 
     #
     # SHACl definition for project descriptions. Projects are important definitions because the define the namespaces
@@ -236,26 +325,26 @@
         sh:property [
             sh:path dcterms:creator ;
             sh:class :User ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path dcterms:created ;
             sh:datatype xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path dcterms:contributor ;
             sh:class :User ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path dcterms:modified ;
             sh:datatype xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path rdfs:label ;
@@ -275,8 +364,8 @@
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:minCount "1"^^xsd:integer ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
             sh:datatype xsd:NCName ;
             sh:name "Project ID"@en, "Projekt ID"@de ;
             sh:description "A unique NCName identifying the project"@en ;
@@ -285,17 +374,11 @@
         sh:property [
             sh:path :externalOntology
         ] ;
+        sh:property :namespaceIriShape ;
         sh:property [
             sh:path :namespaceIri ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:minCount "1"^^xsd:integer ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:datatype xsd:anyURI ;
-            sh:name "Namespace IRI"@en ;
-            sh:description "The namespace to use for this project."@en ;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
             sh:order "2"^^xsd:decimal ;
         ] ;
         sh:property [
@@ -304,8 +387,8 @@
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:minCount "1"^^xsd:integer ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
             sh:name "Start date"@en ;
             sh:description "The date when the project will start/has started" ;
             sh:datatype xsd:date ;
@@ -317,18 +400,10 @@
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
             sh:datatype xsd:date ;
             sh:name "The date when the project wll end/has ended"@en ;
             sh:order "6"^^xsd:decimal ;
-        ] ;
-        sh:property [
-            sh:path :usesExternalOntology ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:class :ExternalOntology ;
         ] .
 
 
@@ -351,8 +426,8 @@
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             sh:class :User ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path dcterms:created ;
@@ -361,8 +436,8 @@
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             sh:datatype xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path dcterms:contributor ;
@@ -371,8 +446,8 @@
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             sh:class :User ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path dcterms:modified ;
@@ -381,8 +456,8 @@
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             sh:datatype xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path :userId ;
@@ -390,8 +465,8 @@
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
             sh:minLength "3"^^xsd:integer ;
             sh:maxLength "32"^^xsd:integer ;
             sh:datatype xsd:NCName ;
@@ -405,8 +480,8 @@
             sh:datatype xsd:string ;
             sh:name "Family name"@en, "Familiennamen"@de, "Nom de famillie"@fr, "Nome della famiglia"@it ;
             sh:description "The family name of some person."@en ;
-            sh:minCount "1"^^xsd:integer ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
         ] ;
         sh:property [
             sh:path schema:givenName ;
@@ -417,8 +492,8 @@
             sh:datatype xsd:string ;
             sh:name "Given name"@en, "Vornamen"@de, "Prénom"@fr, "Nome"@it ;
             sh:description "The given name of some person"@en ;
-            sh:minCount "1"^^xsd:integer ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
         ] ;
         sh:property [
             sh:path schema:email ;
@@ -431,8 +506,8 @@
             sh:message "Email address must be a valid format (user@example.org)." ;
             sh:name "Email"@en, "Email"@de, "Courriel"@fr, "E-mail"@it ;
             sh:description "Email address."@en ;
-            sh:minCount "1"^^xsd:integer ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
         ] ;
         sh:property [
             sh:path :credentials ;
@@ -440,8 +515,8 @@
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:minCount "1"^^xsd:integer ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
             sh:datatype xsd:string ;
             sh:or (
                 [ sh:pattern "^\\$2[aby]\\$\\d{2}\\$[A-Za-z0-9./]{53}$" ]                # bcrypt
@@ -465,23 +540,29 @@
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:minCount "1"^^xsd:integer ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
             sh:datatype xsd:boolean ;
         ] ;
         sh:property [
-            sh:path :hasPermissions ;
+            sh:path :hasRole ;
             dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:class :PermissionSet ;
+            sh:class :Role ;
         ] .
 
     :inProjectStatementShape a sh:NodeShape ;
         sh:property [
             sh:path :hasAdminPermission ;
             sh:class :AdminPermission ;
+        ] .
+
+    :hasRoleStatementShape a sh:NodeShape ;
+        sh:property [
+            sh:path :hasDefaultDataPermission ;
+            sh:class :DataPermission ;
         ] .
 
     #
@@ -499,26 +580,26 @@
         sh:property [
             sh:path dcterms:creator ;
             sh:class :User ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path dcterms:created ;
             sh:datatype xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path dcterms:contributor ;
             sh:class :User ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path dcterms:modified ;
             sh:datatype xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path skos:prefLabel ;
@@ -526,7 +607,7 @@
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:minCount 1 ;
             sh:datatype rdf:langString ;
             sh:uniqueLang true ;
             sh:order "1"^^xsd:decimal ;
@@ -555,26 +636,26 @@
         sh:property [
             sh:path dcterms:creator ;
             sh:class :User ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path dcterms:created ;
             sh:datatype xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path dcterms:contributor ;
             sh:class :User ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path dcterms:modified ;
             sh:datatype xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
         ] ;
         sh:property [
             sh:path skos:inScheme ;
@@ -582,8 +663,8 @@
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:minCount "1"^^xsd:integer ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
             sh:class :OldapList ;
         ] ;
         sh:property [
@@ -592,7 +673,7 @@
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
             sh:class :OldapListNode ;
         ] ;
         sh:property [
@@ -601,8 +682,8 @@
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:minCount "1"^^xsd:integer ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
             sh:datatype xsd:positiveInteger ;
         ] ;
         sh:property [
@@ -611,8 +692,8 @@
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:minCount "1"^^xsd:integer ;
-            sh:maxCount "1"^^xsd:integer ;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
             sh:datatype xsd:positiveInteger ;
         ] ;
         sh:property [
@@ -621,7 +702,7 @@
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:minCount 1 ;
             sh:datatype rdf:langString ;
             sh:uniqueLang true ;
             sh:order "1"^^xsd:decimal ;
@@ -637,6 +718,24 @@
         ] ;
         sh:closed true .
 
+    ###########################################################################
+    # Statment property (RDF#star) for assigning a data permission to a :Thing
+    ###########################################################################
+    :hasDataPermissionShape a sh:PropertyShape ;
+        :statementProperty true ;
+        sh:targetClass :hasDataPermission ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        sh:name "has data permission"@en ;
+        sh:description "Assigns a data permission"@en ;
+        sh:class :DataPermission .
+
+
+    ###########################################################################
+    # :Thing is a superclass of all instance classes that OLDAP defines
+    ###########################################################################
     :ThingShape a sh:NodeShape ;
         sh:targetClass :Thing ;
         dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
@@ -652,8 +751,8 @@
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
             sh:class :User ;
         ] ;
         sh:property [
@@ -662,8 +761,8 @@
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
             sh:datatype xsd:dateTimeStamp ;
         ] ;
         sh:property [
@@ -672,8 +771,8 @@
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
             sh:class :User ;
         ] ;
         sh:property [
@@ -682,17 +781,17 @@
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:integer ;
-            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
             sh:datatype xsd:dateTimeStamp ;
         ] ;
         sh:property [
-            sh:path :grantsPermission ;
+            sh:path :attachedToRole ;
             dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
             dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
             dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:class :PermissionSet ;
+            sh:class :Role ;
         ] .
 
 }
@@ -726,9 +825,30 @@
     ###############################################################################
     # Standard Properties that are used everywhere
     ###############################################################################
-    :hasAdminPermission a owl:ObjectProperty ;
-        rdfs:range :AdminPermission .
+#    :hasAdminPermission a owl:ObjectProperty ;
+#        rdfs:range :AdminPermission .
+#
+#    :hasDefaultDataPermission a owl:Objectproperty ;
+#        rdfs:range :DataPermission .
 
+    :namespaceIri a owl:ObjectProperty ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        rdfs:domain :ExternalOntology ;
+        rdfs:range owl:Thing .
+
+    ###############################################################################
+    # Properties used for extrernal ontologies
+    ###############################################################################
+    :prefix a owl:DatatypeProperty ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        rdfs:domain :ExternalOntology ;
+        rdfs:range xsd:NCName .
 
     ###############################################################################
     # Properties that are used by the :DataPermission class
@@ -779,28 +899,20 @@
         rdfs:domain :Thing ;
         rdfs:range xsd:dateTimeStamp .
 
-    :grantsPermission rdf:type owl:ObjectProperty ;
+    :attachedToRole rdf:type owl:ObjectProperty ;
         dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
         dcterms:created "2023-11-04T12:00:00Z"^^xsd:dateTime ;
         dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
         dcterms:modified "2023-11-04T12:00:00Z"^^xsd:dateTime ;
         rdfs:domain :Thing ;
-        rdfs:range :PermissionSet .
-
-    :givesPermission rdf:type owl:ObjectProperty ;
-        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        rdfs:domain :PermissionSet ;
-        rdfs:range :DataPermission .
+        rdfs:range :Role .
 
     :definedByProject rdf:type owl:ObjectProperty ;
         dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
         dcterms:created "2023-11-04T12:00:00Z"^^xsd:dateTime ;
         dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
         dcterms:modified "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        rdfs:domain :PermissionSet ;
+        rdfs:domain :Role ;
         rdfs:range :Project .
 
 
@@ -840,14 +952,30 @@
         rdfs:domain :User ;
         rdfs:range xsd:boolean .
 
-    :hasPermissions rdf:type owl:ObjectProperty ;
+    :hasRole rdf:type owl:ObjectProperty ;
         dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
         dcterms:created "2023-11-04T12:00:00Z"^^xsd:dateTime ;
         dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
         dcterms:modified "2023-11-04T12:00:00Z"^^xsd:dateTime ;
         rdfs:domain :User ;
-        rdfs:range :PermissionSet .
+        rdfs:range :Role .
 
+    #
+    # RDF*Star property to assign an admin permission to a user/project combination
+    #
+    :hasAdminPermission a rdf:Property, owl:ObjectProperty ;  # TODO: May be owl:ObjectProperty interferes and have to be delete
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        rdfs:range :AdminPermission .
+
+    :hasDefaultDataPermission a rdf:Property, owl:ObjectProperty ;  # TODO: May be owl:ObjectProperty interferes and have to be delete
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        rdfs:range :DataPermission .
 
     ###############################################################################
     # Properties used for :Project
@@ -860,14 +988,6 @@
         dcterms:modified "2023-11-04T12:00:00Z"^^xsd:dateTime ;
         rdfs:domain oldap:Project ;
         rdfs:range xsd:NCName .
-
-    :namespaceIri rdf:type owl:DatatypeProperty ;
-        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        rdfs:domain oldap:Project ;
-        rdfs:range xsd:anyURI .
 
     :projectStart rdf:type owl:DatatypeProperty ;
         dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
@@ -909,6 +1029,19 @@
         rdfs:domain :OldapListNode ;
         rdfs:range xsd:positiveInteger .
 
+    ###############################################################################
+    # Properties used for assigning data permission to an instance (RDF*star)
+    ###############################################################################
+
+    #
+    # Example: <<:MyInstance :attachedToRole>> :hasDataPermission :DATA_RESTRICTED .
+    #
+    :hasDataPermission rdf:type rdf:Property, owl:ObjectProperty ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        rdfs:range :DataPermission .
 
 
     #################################################################
@@ -918,6 +1051,45 @@
     #################################################################
     # AdminPermission class (template for administrative permissions)
     #################################################################
+
+    :ExternalOntology rdf:type owl:Class ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2023-11-04T12:00:00Z"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2023-11-04T12:00:00Z"^^xsd:dateTime ;
+        rdfs:subClassOf [
+            rdf:type owl:Restriction ;
+            owl:onProperty dcterms:creator ;
+            owl:onClass :User ;
+            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+        ] , [
+            rdf:type owl:Restriction ;
+            owl:onProperty dcterms:created ;
+            owl:onDataRange xsd:dateTime ;
+            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+        ] , [
+            rdf:type owl:Restriction ;
+            owl:onProperty dcterms:contributor ;
+            owl:onClass :User ;
+            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+        ] , [
+            rdf:type owl:Restriction ;
+            owl:onProperty dcterms:modified ;
+            owl:onDataRange xsd:dateTime ;
+            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+        ] , [
+            rdf:type owl:Restriction ;
+            owl:onProperty :prefix ;
+            owl:onDataRange xsd:NCname ;
+            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+        ] ,
+        [
+            rdf:type owl:Restriction ;
+            owl:onProperty :namespaceIri ;
+            owl:onClass owl:Thing ;
+            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+        ] .
+
 
     oldap:AdminPermission rdf:type owl:Class ;
         dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
@@ -973,10 +1145,10 @@
 
 
     #################################################################
-    # PermissionSet class (Holding class of resource permissions)
+    # Role class (Holding class of resource permissions)
     #################################################################
 
-    :PermissionSet a owl:class ;
+    :Role a owl:class ;
         dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
         dcterms:created "2023-11-04T12:00:00Z"^^xsd:dateTime ;
         dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
@@ -1005,12 +1177,6 @@
                 owl:onProperty dcterms:modified ;
                 owl:onDataRange xsd:dateTime ;
                 owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            ],
-            [
-                rdf:type owl:Restriction ;
-                owl:onProperty :givesPermission ;
-                owl:onClass :DataPermission ;
-                owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
             ],
             [
                 rdf:type owl:Restriction ;
@@ -1179,9 +1345,9 @@
             ] ,
             [
                 rdf:type owl:Restriction ;
-                owl:onProperty :hasPermissions ;
+                owl:onProperty :hasRole ;
                 owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
-                owl:onClass :PermissionSet
+                owl:onClass :Role
             ] .
 
 
@@ -1337,9 +1503,9 @@
             ] ,
             [
                 rdf:type owl:Restriction ;
-                owl:onProperty :grantsPermission ;
+                owl:onProperty :attachedToRole ;
                 owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
-                owl:onClass :PermissionSet
+                owl:onClass :Rolse
             ] ;
         rdfs:comment "General super class of all things (resources) in tghe OMAS universe"@en .
 

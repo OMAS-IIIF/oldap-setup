@@ -1,5 +1,3 @@
-@prefix http: <http://www.w3.org/2011/http#> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -27,9 +25,9 @@
         rdfs:label "ADMIN_USERS"@en ;
         rdfs:comment "add/modify/delete users."@en .
 
-    :ADMIN_PERMISSION_SETS a :AdminPermission ;
-        rdfs:label "ADMIN_PERMISSION_SETS"@en ;
-        rdfs:comment "Add/change/remove permission sets"@en .
+    :ADMIN_ROLES a :AdminPermission ;
+        rdfs:label "ADMIN_ROLES"@en ;
+        rdfs:comment "Add/change/remove roles"@en .
 
     :ADMIN_RESOURCES a :AdminPermission ;
         rdfs:label "ADMIN_RESOURCES"@en ;
@@ -87,7 +85,7 @@
         dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
         dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
         :projectShortName "shared"^^xsd:NCName ;
-        :namespaceIri "http://oldap.org/shared#"^^xsd:anyURI ;
+        :namespaceIri <http://oldap.org/shared#> ;
         rdfs:label "Shared"@en, "Shared"@de, "Shared"@fr, "Shared"@it ;
         rdfs:comment "Project for shared ontologies"@en ;
         :projectStart "2024-01-01"^^xsd:date .
@@ -98,7 +96,7 @@
         dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
         dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
         :projectShortName "oldap"^^xsd:NCName ;
-        :namespaceIri "http://oldap.org/base#"^^xsd:anyURI ;
+        :namespaceIri <http://oldap.org/base#> ;
         rdfs:label "System"@en, "System"@de, "Système"@fr, "Systema"@it ;
         rdfs:comment "Project for system administration"@en ;
         :projectStart "2024-01-01"^^xsd:date .
@@ -108,40 +106,12 @@
     #==================================================================
     # Define default permission sets here
     #
-    :GenericRestricted a :PermissionSet ;
+    :Unknown a :Role ;
         dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
         dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
         dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
         dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-        rdfs:label "Restricted"@en, "Restricted"@de, "Restricted"@fr, "Restricted"@it ;
-        :givesPermission :DATA_RESTRICTED ;
-        :definedByProject :SystemProject .
-
-    :GenericView a :PermissionSet ;
-        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-        rdfs:label "GenericView"@en, "GenericView"@de, "GenericView"@fr, "GenericView"@it ;
-        :givesPermission :DATA_VIEW ;
-        :definedByProject :SystemProject .
-
-    :GenericExtend a :PermissionSet ;
-        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-        rdfs:label "GenericExtend"@en, "GenericExtend"@de, "GenericExtend"@fr, "GenericExtend"@it ;
-        :givesPermission :DATA_EXTEND ;
-        :definedByProject :SystemProject .
-
-    :GenericUpdate a :PermissionSet ;
-        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-        rdfs:label "GenericUpdate"@en, "GenericUpdate"@de, "GenericUpdate"@fr, "GenericUpdate"@it ;
-        :givesPermission :DATA_UPDATE ;
+        rdfs:label "Unknown user"@en, "Unbekannte(r) Nutzer:in"@de, "Utilisateur inconnu"@fr, "Utenti sconosciuti"@it ;
         :definedByProject :SystemProject .
 
     #==================================================================
@@ -158,13 +128,13 @@
         schema:givenName "Lukas"^^xsd:string ;
         schema:email "lukas.rosenthaler@unibas.ch"^^xsd:string ;
         :credentials "$2b$12$jWCJZ.qdXE9MSCPdUc0y4.9swWYJcgLZn0ePtRTu/7U8qH/OXXkB2"^^xsd:string ;
-        :inProject :SystemProject, :HyperHamlet, <http://www.salsah.org/version/2.0/SwissBritNet>, :SharedProject ;
-        :hasPermissions :GenericRestricted, :GenericView ;
+        :inProject :SystemProject, :SharedProject ;
+        :hasRole :Unknown ;
         :isActive true .
 
     <<<https://orcid.org/0000-0003-1681-4036> :inProject :SystemProject>> :hasAdminPermission :ADMIN_OLDAP .
-    <<<https://orcid.org/0000-0003-1681-4036> :inProject :SharedProject>> :hasAdminPermission
-            :ADMIN_RESOURCES, :ADMIN_MODEL, :ADMIN_LISTS .
+    <<<https://orcid.org/0000-0003-1681-4036> :inProject :SharedProject>> :hasAdminPermission :ADMIN_OLDAP .
+    <<<https://orcid.org/0000-0003-1681-4036> :hasRole :Unknown>> :hasDefaultDataPermission :DATA_PERMISSIONS .
 
 
     <urn:uuid:7e56b6c4-42e5-4a9d-94cf-d6e22577fb4b> a oldap:User ;
@@ -177,21 +147,9 @@
         schema:givenName "John"^^xsd:string ;
         schema:email "john.doe@nowhere.com"^^xsd:string ;
         :credentials "*"^^xsd:string ;
-        :hasPermissions :GenericRestricted ;
+        :hasRole :Unknown ;
         :isActive true .
 
-    <https://orcid.org/0000-0001-9277-3921> a oldap:User ;
-        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-        :userId "bugsbunny"^^xsd:NCName ;
-        schema:familyName "Bunny"^^xsd:string ;
-        schema:givenName "Bugs"^^xsd:string ;
-        schema:email "bugs.bunny@warnerbrothers.com"^^xsd:string ;
-        :credentials "$2b$12$YK2g0KFvkelCZwCcE38UguIE/3aMPjO4XIX.9FJgYJoz2m.5sDlZK"^^xsd:string ; # "DuffyDuck"
-        :inProject :HyperHamlet ;
-        :hasPermissions :GenericView ;
-        :isActive false .
+    <<<urn:uuid:7e56b6c4-42e5-4a9d-94cf-d6e22577fb4b> :hasRole :Unknown>> :hasDefaultDataPermission :DATA_RESTRICTED .
 
 }

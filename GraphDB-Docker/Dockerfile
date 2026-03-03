@@ -1,4 +1,4 @@
-FROM ontotext/graphdb:11.1.0
+FROM ontotext/graphdb:11.2.0
 
 LABEL authors="rosenth"
 

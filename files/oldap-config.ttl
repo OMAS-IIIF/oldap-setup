@@ -9,7 +9,7 @@
 
 [] a rep:Repository ;
     rep:repositoryID "oldap" ;
-    rdfs:label "Open Linked Data Application Platform repository" ;
+    rdfs:label "" ;
     rep:repositoryImpl [
         rep:repositoryType "graphdb:SailRepository" ;
         sr:sailImpl [
@@ -18,15 +18,15 @@
             graphdb:read-only "false" ;
 
             # Inference and Validation
-            graphdb:ruleset "owl-max" ;
+            graphdb:ruleset "owl-max-optimized" ;
             graphdb:disable-sameAs "false" ;
             graphdb:check-for-inconsistencies "false" ;
 
             # Indexing
             graphdb:entity-id-size "32" ;
-            graphdb:enable-context-index "true" ;
+            graphdb:enable-context-index "false" ;
             graphdb:enablePredicateList "true" ;
-            graphdb:enable-fts-index "true" ;
+            graphdb:enable-fts-index "false" ;
             graphdb:fts-indexes ("default" "iri") ;
             graphdb:fts-string-literals-index "default" ;
             graphdb:fts-iris-index "none" ;

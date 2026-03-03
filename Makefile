@@ -1,6 +1,8 @@
-.PHONY: deploy-rosy rollback-rosy deploy-vm
+.PHONY: deploy-rosy rollback-rosy deploy-vm show-version
 
 API_VERSION = $(shell cd ../oldap-api; git describe --tags --abbrev=0)
+APP_VERSION = $(shell cd ../oldap-app; git describe --tags --abbrev=0)
+TOOLS_VERSION = $(shell cd ../oldap-tools; git describe --tags --abbrev=0)
 
 # Docker image repo (adjust to yours)
 IMAGE_API = lrosenth/oldap-api
@@ -15,6 +17,10 @@ define latest_tag
 	| sort -V \
 	| tail -1
 endef
+
+show-versions:
+	echo "API-VERSION=$(API_VERSION)"
+	echo "APP-VERSION=$(APP_VERSION)"
 
 latest-api:
 	$(call latest_tag,$(IMAGE_API))
@@ -35,24 +41,27 @@ copy-ssh-key:
 #		--ask-become-pass
 deploy-rosy:
 	ansible-playbook -i inventory.ini oldap-deploy.yml \
-		-e oldap_api_tag=$(API_VERSION) \
-		-e oldap_app_tag=$(APP_VERSION) \
+		$(if $(API_VERSION),-e oldap_api_tag=$(API_VERSION),) \
+		$(if $(APP_VERSION),-e oldap_app_tag=$(APP_VERSION),) \
+		$(if $(TOOLS_VERSION),-e oldap_tools_tag=$(TOOLS_VERSION),) \
+		-l oldap-test \
+		--ask-become-pass
+
+soft-reset-rosy:
+	ansible-playbook -i inventory.ini oldap-playbook.yaml \
+		-e oldap_reset=soft \
 		-l oldap-test \
 		--ask-become-pass
 
 deploy-vm:
 	ansible-playbook -i inventory.ini oldap-deploy.yml \
-		-e oldap_api_tag=$(API_VERSION) \
-		-e oldap_app_tag=$(APP_VERSION) \
+		$(if $(API_VERSION),-e oldap_api_tag=$(API_VERSION),) \
+		$(if $(APP_VERSION),-e oldap_app_tag=$(APP_VERSION),) \
+		$(if $(TOOLS_VERSION),-e oldap_tools_tag=$(TOOLS_VERSION),) \
 		-l oldap-prod \
 		--ask-become-pass
 
 
-rollback-rosy:
-	ansible-playbook -i inventory.ini oldap-deploy.yml \
-		-l oldap-test \
-		-e rollback=true \
-		--ask-become-pass
 
 copy-trigs:
 	cp ../oldaplib/oldaplib/ontologies/admin.trig ./files/

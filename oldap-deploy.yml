@@ -5,13 +5,15 @@
 
   vars:
     # the version numbers to be used for deployment
-    oldap_api_tag: "v0.1.4"
-    oldap_app_tag: "0.0.2"
-    fasnachts_page_tag: "v0.0.12"
+    oldap_api_tag: "v0.1.6"
+    oldap_app_tag: "v0.1.1"
+    oldap_tools_tag: "v0.1.6"
+    fasnachts_page_tag: "v0.1.3"
+    force_pull: false   # set with -e force_pull=true to always pull images (useful for 'latest' tags)
 
     deploy_root: /opt/oldap
     compose_dir: "{{ deploy_root }}/compose"
-    env_dir: "{{ deploy_root }}/env"
+    env_dir: "{{ deploy_root }}/.env"
     # defaults that you can override at run-time or via group_vars
     rollback: false     # set with -e rollback=true if you want to roll back
     app_env: "Prod"
@@ -159,6 +161,9 @@
         - files/admin.trig
         - files/oldap.trig
         - files/shared.trig
+        - files/dcterms.ttl
+        - files/schemaorg.ttl
+        - files/skos.ttl
 
     # 8. Add your user to the docker group
     - name: Ensure user is in docker group
@@ -222,7 +227,7 @@
       community.docker.docker_compose_v2:
         project_src: "{{ compose_dir }}"
         state: present
-        pull: "{{ 'always' if app_env == 'Dev' else 'missing' }}"
+        pull: "{{ 'always' if (app_env == 'Dev' or force_pull | bool) else 'missing' }}"
         remove_orphans: true
       when: not rollback | bool
 

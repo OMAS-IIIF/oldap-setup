@@ -118,6 +118,7 @@ services:
       SERVER_API_URL: ${SERVER_API_URL:-http://oldap-api:8000}
       PUBLIC_IIIF_URL: ${PUBLIC_IIIF_URL}
       PUBLIC_UPLOAD_URL: ${PUBLIC_UPLOAD_URL}
+      PUBLIC_MEDIASERVER_URL: ${PUBLIC_MEDIASERVER_URL}
     depends_on:
       - oldap-api
     volumes:
@@ -134,6 +135,7 @@ services:
       SERVER_API_URL: ${SERVER_API_URL:-http://oldap-api:8000}
       PUBLIC_IIIF_URL: ${PUBLIC_IIIF_URL}
       PUBLIC_UPLOAD_URL: ${PUBLIC_UPLOAD_URL}
+      PUBLIC_MEDIASERVER_URL: ${PUBLIC_MEDIASERVER_URL}
     depends_on:
       - oldap-api
     restart: unless-stopped

@@ -10,7 +10,7 @@
 #
 {% if caddy_mode == "dev" %}
 # Rosy Test Server (internal TLS)
-app.rosy.home.org, api.rosy.home.org, fasnacht.rosy.home.org {
+app.rosy.home.org, api.rosy.home.org, fasnacht.rosy.home.org, graphdb.rosy.home.org {
     tls internal
 
     @app host app.rosy.home.org
@@ -26,6 +26,15 @@ app.rosy.home.org, api.rosy.home.org, fasnacht.rosy.home.org {
     @fasnacht host fasnacht.rosy.home.org
     handle @fasnacht {
         reverse_proxy fasnachts-page:3100
+    }
+
+    @graphdb host graphdb.rosy.home.org
+    handle @graphdb {
+        # Protect GraphDB Workbench with HTTP Basic Auth
+        basicauth {
+            {env.GRAPHDB_BASIC_USER} {env.GRAPHDB_BASIC_HASH}
+        }
+        reverse_proxy graphdb:7200
     }
 }
 {% endif %}
@@ -50,6 +59,18 @@ api.oldap.org {
         # forward Authorization header upstream (Flask needs it)
         header_up Authorization {http.request.header.Authorization}
     }
+}
+
+# GraphDB (protected)
+graphdb.oldap.org {
+    encode gzip zstd
+
+    # Protect GraphDB Workbench with HTTP Basic Auth
+    basicauth {
+        {env.GRAPHDB_BASIC_USER} {env.GRAPHDB_BASIC_HASH}
+    }
+
+    reverse_proxy graphdb:7200
 }
 
 # SPA / App

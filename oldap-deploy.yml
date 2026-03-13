@@ -6,7 +6,7 @@
   vars:
     # the version numbers to be used for deployment
     oldap_api_tag: "v0.1.8"
-    oldap_app_tag: "v0.1.1"
+    oldap_app_tag: "v0.1.2"
     oldap_tools_tag: "v0.1.8"
     fasnachts_page_tag: "v0.1.4"
     force_pull: false   # set with -e force_pull=true to always pull images (useful for 'latest' tags)

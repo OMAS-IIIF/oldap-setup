@@ -1,4 +1,8 @@
-{% if caddy_mode == "prod" %}
+{% if caddy_mode == "dev" %}
+{
+    auto_https disable_redirects
+}
+{% elif caddy_mode == "prod" %}
 {
     email {{ caddy_email }}
     # Use acme_dns / acme_http_challenge options here if needed
@@ -9,10 +13,8 @@
 # === Test environment (rosy) ===
 #
 {% if caddy_mode == "dev" %}
-# Rosy Test Server (internal TLS)
-app.rosy.home.org, api.rosy.home.org, fasnacht.rosy.home.org, graphdb.rosy.home.org {
-    tls internal
-
+# Shared routes for Rosy, imported by both HTTP and local HTTPS.
+(rosy_test_routes) {
     @app host app.rosy.home.org
     handle @app {
         reverse_proxy oldap-app:3000
@@ -36,6 +38,17 @@ app.rosy.home.org, api.rosy.home.org, fasnacht.rosy.home.org, graphdb.rosy.home.
         }
         reverse_proxy graphdb:7200
     }
+}
+
+# Rosy Test Server (HTTP)
+http://app.rosy.home.org, http://api.rosy.home.org, http://fasnacht.rosy.home.org, http://graphdb.rosy.home.org {
+    import rosy_test_routes
+}
+
+# Rosy Test Server (local HTTPS)
+https://app.rosy.home.org, https://api.rosy.home.org, https://fasnacht.rosy.home.org, https://graphdb.rosy.home.org {
+    tls internal
+    import rosy_test_routes
 }
 {% endif %}
 

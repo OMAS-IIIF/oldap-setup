@@ -12,7 +12,7 @@ services:
     restart: unless-stopped
 
   graphdb:
-    image: ontotext/graphdb:11.2.0
+    image: ontotext/graphdb:11.3.0
     container_name: graphdb
     ports:
       - "7200:7200"

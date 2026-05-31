@@ -3,6 +3,7 @@
 API_VERSION = $(shell cd ../oldap-api; git describe --tags --abbrev=0)
 APP_VERSION = $(shell cd ../oldap-app; git describe --tags --abbrev=0)
 TOOLS_VERSION = $(shell cd ../oldap-tools; git describe --tags --abbrev=0)
+FASNACHTS_VERSION ?= v0.1.18
 
 # Docker image repo (adjust to yours)
 IMAGE_API = lrosenth/oldap-api
@@ -21,6 +22,7 @@ endef
 show-versions:
 	echo "API-VERSION=$(API_VERSION)"
 	echo "APP-VERSION=$(APP_VERSION)"
+	echo "FASNACHTS-VERSION=$(FASNACHTS_VERSION)"
 
 latest-api:
 	$(call latest_tag,$(IMAGE_API))
@@ -44,13 +46,14 @@ deploy-rosy:
 		$(if $(API_VERSION),-e oldap_api_tag=$(API_VERSION),) \
 		$(if $(APP_VERSION),-e oldap_app_tag=$(APP_VERSION),) \
 		$(if $(TOOLS_VERSION),-e oldap_tools_tag=$(TOOLS_VERSION),) \
-		-l oldap-test \
+		$(if $(FASNACHTS_VERSION),-e fasnachts_page_tag=$(FASNACHTS_VERSION),) \
+		-l oldap_test \
 		--ask-become-pass
 
 soft-reset-rosy:
 	ansible-playbook -i inventory.ini oldap-playbook.yaml \
 		-e oldap_reset=soft \
-		-l oldap-test \
+		-l oldap_test \
 		--ask-become-pass
 
 deploy-vm:
@@ -58,7 +61,8 @@ deploy-vm:
 		$(if $(API_VERSION),-e oldap_api_tag=$(API_VERSION),) \
 		$(if $(APP_VERSION),-e oldap_app_tag=$(APP_VERSION),) \
 		$(if $(TOOLS_VERSION),-e oldap_tools_tag=$(TOOLS_VERSION),) \
-		-l oldap-prod \
+		$(if $(FASNACHTS_VERSION),-e fasnachts_page_tag=$(FASNACHTS_VERSION),) \
+		-l oldap_prod \
 		--ask-become-pass
 
 

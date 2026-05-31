@@ -1,4 +1,8 @@
 # --- Caddyfile Template ---
+{% if caddy_mode == "dev" %}
+{
+    auto_https disable_redirects
+}
 {% elif caddy_mode == "prod" %}
 {
     email {{ caddy_email }}
@@ -8,9 +12,8 @@
 
 # Development / Local setup with HTTPS
 {% if caddy_mode == "dev" %}
-app.rosy.home.org, api.rosy.home.org, fasnacht.rosy.home.org {
-    tls internal
-    
+# Shared routes for Rosy, imported by both HTTP and local HTTPS.
+(rosy_test_routes) {
     @app host app.rosy.home.org
     handle @app {
         reverse_proxy oldap-app:3000
@@ -25,6 +28,26 @@ app.rosy.home.org, api.rosy.home.org, fasnacht.rosy.home.org {
     handle @fasnacht {
         reverse_proxy fasnachts-page:3100
     }
+
+    @graphdb host graphdb.rosy.home.org
+    handle @graphdb {
+        # Protect GraphDB Workbench with HTTP Basic Auth
+        basicauth {
+            {env.GRAPHDB_BASIC_USER} {env.GRAPHDB_BASIC_HASH}
+        }
+        reverse_proxy graphdb:7200
+    }
+}
+
+# Rosy Test Server (HTTP)
+http://app.rosy.home.org, http://api.rosy.home.org, http://fasnacht.rosy.home.org, http://graphdb.rosy.home.org {
+    import rosy_test_routes
+}
+
+# Rosy Test Server (local HTTPS)
+https://app.rosy.home.org, https://api.rosy.home.org, https://fasnacht.rosy.home.org, https://graphdb.rosy.home.org {
+    tls internal
+    import rosy_test_routes
 }
 {% endif %}
 

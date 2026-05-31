@@ -5,9 +5,11 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix dcmitype: <http://purl.org/dc/dcmitype/> .
-@prefix schema: <http://schema.org/> .
+@prefix schema: <https://schema.org/> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix sf:     <http://www.opengis.net/ont/sf#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
 @prefix oldap: <http://oldap.org/base#> .
-
 
 @prefix shared: <http://oldap.org/shared#> .
 @prefix : <http://oldap.org/shared#> .
@@ -16,205 +18,230 @@ shared:shacl {
     shared:shapes schema:version "0.1.0"^^xsd:string .
 
     ###########################################################################
-    # Shared properties
+    # External standard onologies used
     ###########################################################################
-    :commentStringShape a sh:PropertyShape ;
-        sh:path :commentString ;
-        oldap:statementProperty true ;
+
+  :dcterms a oldap:ExternalOntology ;
         dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:created "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
         dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-        sh:name "Simple comment"@en ;
-        sh:description "A simple comment as a string"@en ;
-        sh:datatype xsd:string .
+        dcterms:modified "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
+        oldap:prefix "dcterms"^^xsd:NCName ;
+        oldap:namespaceIri <http://purl.org/dc/terms/> ;
+        rdfs:label "Dublin Core"@en ;
+        rdfs:comment "Canonical dublin core vocabulary used by OLDAP."@en ;
+        oldap:proposedResourceClass "AgentClass"^^xsd:NCName ;
+        oldap:proposedResourceClass "Agent"^^xsd:NCName ;
+        oldap:proposedResourceClass "BibliographicResource"^^xsd:NCName ;
+        oldap:proposedResourceClass "Frequency"^^xsd:NCName ;
+        oldap:proposedResourceClass "Jurisdiction"^^xsd:NCName ;
+        oldap:proposedResourceClass "LicenseDocument"^^xsd:NCName ;
+        oldap:proposedResourceClass "Location"^^xsd:NCName ;
+        oldap:proposedResourceClass "MediaType"^^xsd:NCName ;
+        oldap:proposedResourceClass "MethodOfAccrual"^^xsd:NCName ;
+        oldap:proposedResourceClass "PeriodOfTime"^^xsd:NCName ;
+        oldap:proposedResourceClass "PhysicalMedium"^^xsd:NCName ;
+        oldap:proposedResourceClass "PhysicalResource"^^xsd:NCName ;
+        oldap:proposedResourceClass "ProvenanceStatement"^^xsd:NCName ;
+        oldap:proposedResourceClass "RightsStatement"^^xsd:NCName ;
+        oldap:proposedResourceClass "SizeOrDuration"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "description"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "abstract"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "alternative"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "available"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "bibliographicCitation"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "created"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "date"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "dateAccepted"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "dateCopyrighted"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "dateSubmitted"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "identifier"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "issued"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "modified"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "subject"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "tableOfContents"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "title"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "audience"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "contributor"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "coverage"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "creator"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "extent"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "hasFormat"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "hasPart"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "hasVersion"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "isFormatOf"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "isPartOf"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "isReferencedBy"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "isReplacedBy"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "isRequiredBy"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "isVersionOf"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "publisher"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "references"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "relation"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "replaces"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "requires"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "rightsHolder"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "spatial"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "temporal"^^xsd:NCName .
+
+    :schema a oldap:ExternalOntology ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
+        oldap:prefix "schema"^^xsd:NCName ;
+        oldap:namespaceIri <https://schema.org/> ;
+        rdfs:label "schema.org"@en ;
+        rdfs:comment "Canonical schema.org vocabulary used by OLDAP."@en ;
+        oldap:proposedResourceClass "Thing"^^xsd:NCName ;
+        oldap:proposedResourceClass "Person"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "name"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "givenName"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "familyName"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "email"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "about"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "creator"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "description"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "alternative"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "available"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "bibliographicCitation"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "created"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "date"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "dateAccepted"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "dateCopyrighted"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "dateSubmitted"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "identifier"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "issued"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "modified"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "title"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "valid"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "audience"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "contributor"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "coverage"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "creator"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "extent"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "format"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "isPartOf"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "isReferencedBy"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "isReplacedBy"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "isRequiredBy"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "isVersionOf"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "medium"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "references"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "replaces"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "rightsHolder"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "spatial"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "requires"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "title"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "type"^^xsd:NCName .
+
+    :skos a oldap:ExternalOntology ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:created "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
+        oldap:prefix "skos"^^xsd:NCName ;
+        oldap:namespaceIri <http://www.w3.org/2004/02/skos/core#> ;
+        rdfs:label "SKOS"@en ;
+        rdfs:comment "SKOS Simple Knowledge Organization System, used by oldap."@en ;
+        oldap:proposedResourceClass "Collection"^^xsd:NCName ;
+        oldap:proposedResourceClass "Concept"^^xsd:NCName ;
+        oldap:proposedResourceClass "ConceptScheme"^^xsd:NCName ;
+        oldap:proposedResourceClass "OrderedCollection"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "altLabel"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "definition"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "notation"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "editorialNote"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "hiddenLabel"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "historyNote"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "changeNote"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "semanticRelation"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "broader"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "narrower"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "broaderTransitive"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "narrowerTransitive"^^xsd:NCName ;
+        oldap:proposedObjectPropertyClass "related"^^xsd:NCName .
 
     ###########################################################################
     # Chronology Date definitions
     ###########################################################################
-    oldap:ChronolgyStatementShape a sh:NodeShape ;
-        sh:targetClass oldap:ChronolgyStatement ;
+    oldap:DatingShape a sh:NodeShape ;
+        sh:targetClass oldap:Dating ;
         dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:created "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
         dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+        dcterms:modified "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
+        rdfs:label "Dating object"@en, "Datumsobjekt"@de, "Objet de date"@fr, "Oggetto data"@it ;
+        sh:closed "true"^^xsd:boolean ;
+        #sh:node oldap:ThingShape ;
         sh:property [
-            sh:path rdf:type ;
-        ] ;
-        sh:property [
-            sh:path oldap:startJDC ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+            sh:path oldap:verbatimDate ;
+            sh:name "Verbatim date"@en, "Wörtliche Zeitangabe"@de, "Citation littérale"@fr, "Tempo letterale"@it ;
             sh:maxCount "1"^^xsd:integer ;
-            sh:datatype xsd:decimal ;
-        ] ;
-        sh:property [
-            sh:path oldap:endJDC ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:nonNegativeInteger ;
-            sh:datatype xsd:decimal ;
-        ] ;
-        sh:property [
-            sh:path oldap:calendar ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:nonNegativeInteger ;
             sh:datatype xsd:string ;
-            sh:in ("GREGORIAN"^^xsd:string "JULIAN"^^xsd:string "HEBREW"^^xsd:string "ISLAMIC"^^xsd:string "PERSIAN"^^xsd:string) ;
+            sh:order 1.0 ;
+        ] ;
+        sh:property [
+            sh:path oldap:normalizedStart ;
+            sh:name "Normalized Start (ISO Gregorian)"@en,
+                        "Normierter Startn (ISO-Gregorian)"@de,
+                        "Début normalisé (calendrier grégorien ISO)"@fr,
+                        "Inizio normalizzato (calendario gregoriano ISO)"@it ;
+            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:datatype xsd:date ;
+            sh:order 2.0 ;
+        ] ;
+        sh:property [
+            sh:path oldap:normalizedEnd ;
+            sh:name "Normalized end (ISO Gregorian)"@en, "Normalisiertes Ende (ISO-Gregorian)"@de, "Fin normalisée (calendrier grégorien ISO)"@fr, "Fine normalizzata (calendario gregoriano ISO)"@it ;
+            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:nonNegativeInteger ;
+            sh:datatype xsd:date ;
+            sh:order 3.0 ;
+        ] ;
+        sh:property [
+            sh:path oldap:datePrecision ;
+            sh:name "Precision of normalized date"@en,
+                    "Genauigkeit des normierten Datums"@de,
+                    "Précision de la date normalisée"@fr,
+                    "Precisione della data normalizzata"@it ;
+            sh:maxCount "1"^^xsd:nonNegativeInteger ;
+            sh:class oldap:DatePrecision ;
+            sh:in (oldap:DayPrecision oldap:MonthPrecision oldap:YearPrecision oldap:DecadePrecision oldap:CenturyPrecision) ;
+            sh:order 4.0 ;
        ] ;
         sh:property [
-            sh:path oldap:before ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
+            sh:path oldap:inCalendar ;
+            sh:name "Calendar of the original date"@en, "Kalender des ursprünglichen Datums"@de, "Calendrier de la date d'origine"@fr, "Calendario della data originale"@it ;
+            sh:minCount "1"^^xsd:integer ;
             sh:maxCount "1"^^xsd:nonNegativeInteger ;
-            sh:class oldap:ChronolgyStatement ;
-        ] ;
+            sh:class oldap:Calendar ;
+            sh:in (oldap:GregorianCalendar oldap:JulianCalendar oldap:HebrewCalendar oldap:IslamicCalendar oldap:PersianCalendar) ;
+            sh:order 5.0 ;
+       ] ;
         sh:property [
-            sh:path oldap:after ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:nonNegativeInteger ;
-            sh:class oldap:ChronolgyStatement ;
-        ] ;
-        sh:property [
-            sh:path oldap:minDelta ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:nonNegativeInteger ;
-            sh:datatype xsd:decimal ;
-        ] ;
-        sh:property [
-            sh:path oldap:maxDelta ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-            sh:maxCount "1"^^xsd:nonNegativeInteger ;
-            sh:datatype xsd:decimal ;
+            sh:path oldap:beforeDating ;
+            sh:class oldap:Dating ;
+            sh:name "before other event"@en, "vor einem anderen Ereignis"@de, "avant un autre événement"@fr, "prima di un altro evento"@it ;
+            sh:order 6.0 ;
         ] .
 
     ###############################################################################
     # Media object
     ###############################################################################
 
-#    dcmitype:CollectionShape a sh:NodeShape ;
-#        sh:targetClass shared:Collection ;
-#        dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-#        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-#        dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-#        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-#        oldap:externalOntology "true"^^xsd:boolean ;
-#        rdfs:label "Collection"@en, "Sammlung"@de, "Collection"@fr, "Collezione"@it ;
-#        sh:property [
-#            sh:path rdf:type ;
-#        ] .
-#
-#    dcmitype:DatasetShape a sh:NodeShape ;
-#        sh:targetClass shared:Dataset ;
-#        dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-#        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-#        dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-#        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-#        oldap:externalOntology "true"^^xsd:boolean ;
-#        rdfs:label "Dataset"@en, "Dataset"@de, "Dataset"@fr, "Dataset"@it ;
-#        sh:property [
-#            sh:path rdf:type ;
-#        ] .
-#
-#    dcmitype:StillImageShape a sh:NodeShape ;
-#        sh:targetClass shared:StillImage ;
-#        dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-#        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-#        dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-#        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-#        oldap:externalOntology "true"^^xsd:boolean ;
-#        rdfs:label "StillImage"@en, "Standbild"@de, "Image fixe"@fr, "Immagine fissa"@it ;
-#        sh:property [
-#            sh:path rdf:type ;
-#        ] .
-#
-#    dcmitype:ImageShape a sh:NodeShape ;
-#        sh:targetClass shared:Image ;
-#        dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-#        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-#        dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-#        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-#        oldap:externalOntology "true"^^xsd:boolean ;
-#        rdfs:label "Image"@en, "Bild"@de, "Image"@fr, "Immagine"@it ;
-#        sh:property [
-#            sh:path rdf:type ;
-#        ] .
-#
-#    dcmitype:MovingImageShape a sh:NodeShape ;
-#        sh:targetClass shared:MovingImage ;
-#        dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-#        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-#        dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-#        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-#        oldap:externalOntology "true"^^xsd:boolean ;
-#        rdfs:label "MovingImage"@en, "Bewegtbild"@de, "Image animée"@fr, "Immagine in movimento"@it ;
-#        sh:property [
-#            sh:path rdf:type ;
-#        ] .
-#
-#    dcmitype:SoundShape a sh:NodeShape ;
-#        sh:targetClass shared:Sound ;
-#        dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-#        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-#        dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-#        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-#        oldap:externalOntology "true"^^xsd:boolean ;
-#        rdfs:label "Sound"@en, "Ton"@de, "Son"@fr, "Sound"@it ;
-#        sh:property [
-#            sh:path rdf:type ;
-#        ] .
-#
-#    dcmitype:TextShape a sh:NodeShape ;
-#        sh:targetClass shared:Text ;
-#        dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-#        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-#        dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-#        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-#        oldap:externalOntology "true"^^xsd:boolean ;
-#        rdfs:label "Text"@en, "Text"@de, "Texte"@fr, "Testo"@it ;
-#        sh:property [
-#            sh:path rdf:type ;
-#        ] .
-
     shared:MediaObjectShape a sh:NodeShape ;
         sh:targetClass shared:MediaObject ;
-        dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+        dcterms:created "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
         dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
+        dcterms:modified "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
         dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        oldap:externalOntology "false"^^xsd:boolean ;
         rdfs:label "MediaObject"@en, "Medienobjekt"@de, "MediaObject"@fr, "MediaObject"@it ;
         sh:closed "true"^^xsd:boolean ;
         sh:node oldap:ThingShape ;
         sh:property [
-            sh:path rdf:type ;
-        ] ;
-        sh:property [
             sh:path dcterms:type ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-            oldap:statementProperty "false"^^xsd:boolean ;
-            oldap:externalOntology "false"^^xsd:boolean ;
             sh:nodeKind sh:IRI ;
             sh:in (
                 dcmitype:Collection
@@ -227,94 +254,61 @@ shared:shacl {
             ) ;
             sh:minCount 1 ;
             sh:maxCount 1 ;
-            sh:order "0.5"^^xsd:decimal ;
+            sh:order "1.0"^^xsd:decimal ;
         ] ;
         sh:property [
                 sh:path shared:originalName ;
-                schema:version "0.1.0"^^xsd:string ;
-                dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-                dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-                dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-                dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-                oldap:statementProperty "false"^^xsd:boolean ;
-                oldap:externalOntology "false"^^xsd:boolean ;
                 sh:datatype xsd:string ;
                 sh:name "Original Filename"@en, "Originaler Dateiname"@de, "Nom orignal du fichier"@fr, "Nome documento originale"@it ;
-                sh:minCount "1"^^xsd:integer ;
-                sh:maxCount "1"^^xsd:integer ;
-                sh:order "1.0"^^xsd:decimal ;
-        ] ;
-        sh:property [
-                sh:path shared:originalMimeType ;
-                schema:version "0.1.0"^^xsd:string ;
-                dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-                dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-                dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-                dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-                oldap:statementProperty "false"^^xsd:boolean ;
-                oldap:externalOntology "false"^^xsd:boolean ;
-                sh:datatype xsd:string ;
-                sh:name "Original mimetype"@en, "Originaler Mimetype"@de, "Mimetype original"@fr, "Mimetype originale"@it ;
                 sh:minCount "1"^^xsd:integer ;
                 sh:maxCount "1"^^xsd:integer ;
                 sh:order "2.0"^^xsd:decimal ;
         ] ;
         sh:property [
+                sh:path shared:originalMimeType ;
+                sh:datatype xsd:string ;
+                sh:name "Original mimetype"@en, "Originaler Mimetype"@de, "Mimetype original"@fr, "Mimetype originale"@it ;
+                sh:minCount "1"^^xsd:integer ;
+                sh:maxCount "1"^^xsd:integer ;
+                sh:order "3.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
                 sh:path shared:serverUrl ;
-                schema:version "0.1.0"^^xsd:string ;
-                dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-                dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-                dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-                dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-                oldap:statementProperty "false"^^xsd:boolean ;
-                oldap:externalOntology "false"^^xsd:boolean ;
                 sh:datatype xsd:anyURI ;
                 sh:name "Server URL"@en, "URL des servers"@de, "Server URL"@fr, "Server URL"@it ;
                 sh:minCount "1"^^xsd:integer ;
                 sh:maxCount "1"^^xsd:integer ;
-                sh:order "3.0"^^xsd:decimal ;
+                sh:order "4.0"^^xsd:decimal ;
         ] ;
         sh:property [
-                sh:path shared:imageId ;
-                schema:version "0.1.0"^^xsd:string ;
-                dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-                dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-                dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-                dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-                oldap:statementProperty "false"^^xsd:boolean ;
-                oldap:externalOntology "false"^^xsd:boolean ;
+                sh:path shared:assetId ;
                 sh:datatype xsd:string ;
                 sh:name "Image ID"@en, "ID des Bilder"@de, "ID de l\'image"@fr, "ID de l\'immagine"@it ;
                 sh:minCount "1"^^xsd:integer ;
                 sh:maxCount "1"^^xsd:integer ;
-                sh:order "3.0"^^xsd:decimal ;
+                sh:order "5.0"^^xsd:decimal ;
         ] ;
         sh:property [
             sh:path shared:protocol ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-            oldap:statementProperty "false"^^xsd:boolean ;
-            oldap:externalOntology "false"^^xsd:boolean ;
             sh:datatype xsd:string ;
             sh:in ( 'iiif' 'http' 'custom') ;
             sh:minCount "1"^^xsd:integer ;
             sh:maxCount "1"^^xsd:integer ;
-            sh:order "4.0"^^xsd:decimal ;
+            sh:order "6.0"^^xsd:decimal ;
         ] ;
         sh:property [
-            sh:path shared:path ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-            oldap:statementProperty "false"^^xsd:boolean ;
-            oldap:externalOntology "false"^^xsd:boolean ;
+            sh:path shared:derivativeName ;
             sh:datatype xsd:string ;
             sh:minCount "1"^^xsd:integer ;
             sh:maxCount "1"^^xsd:integer ;
-            sh:order "4.0"^^xsd:decimal ;
+            sh:order "7.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path shared:path ;
+            sh:datatype xsd:string ;
+            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "8.0"^^xsd:decimal ;
        ] .
 }
 
@@ -322,242 +316,156 @@ shared:onto {
     shared:ontology rdf:type owl:Ontology ;
         owl:versionInfo "0.1.0"^^xsd:string .
 
-    ###############################################################################
-    # Generic comment property
-    ###############################################################################
+    ###########################################################################
+    # Calendar vocabulary for historical dating
+    ###########################################################################
 
-    :commentString rdf:type rdf:Property, owl:DatatypeProperty ;
-        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00+00:00"^^xsd:dateTime ;
-        rdfs:range xsd:string .
+    oldap:Calendar rdf:type owl:Class ;
+        rdfs:label "Calendar"@en, "Kalender"@de, "Calendrier"@fr, "Calendario"@it ;
+        rdfs:comment "Controlled vocabulary of calendrical systems used for historical dating."@en,
+                     "Kontrolliertes Vokabular der Kalendersysteme für historische Datierungen."@de,
+                     "Vocabulaire contrôlé des systèmes calendaires utilisés pour la datation historique."@fr,
+                     "Vocabolario controllato dei sistemi di calendario usati per la datazione storica."@it .
+
+    oldap:DatePrecision rdf:type owl:Class ;
+        rdfs:label "Date precision"@en, "Datumsgenauigkeit"@de, "Précision de date"@fr, "Precisione della data"@it ;
+        rdfs:comment "Controlled vocabulary of precision levels used for normalized historical datings."@en,
+                     "Kontrolliertes Vokabular der Genauigkeitsstufen für normierte historische Datierungen."@de,
+                     "Vocabulaire contrôlé des niveaux de précision utilisés pour les datations historiques normalisées."@fr,
+                     "Vocabolario controllato dei livelli di precisione usati per le datazioni storiche normalizzate."@it .
+
+    oldap:DayPrecision rdf:type oldap:DatePrecision, owl:NamedIndividual ;
+        rdfs:label "day"@en, "Tag"@de, "jour"@fr, "giorno"@it ;
+        rdfs:comment "The normalized dating is precise to the day."@en,
+                     "Die normierte Datierung ist bis auf den Tag genau."@de,
+                     "La datation normalisée est précise au jour près."@fr,
+                     "La datazione normalizzata è precisa fino al giorno."@it .
+
+    oldap:MonthPrecision rdf:type oldap:DatePrecision, owl:NamedIndividual ;
+        rdfs:label "month"@en, "Monat"@de, "mois"@fr, "mese"@it ;
+        rdfs:comment "The normalized dating is precise to the month."@en,
+                     "Die normierte Datierung ist bis auf den Monat genau."@de,
+                     "La datation normalisée est précise au mois près."@fr,
+                     "La datazione normalizzata è precisa fino al mese."@it .
+
+    oldap:YearPrecision rdf:type oldap:DatePrecision, owl:NamedIndividual ;
+        rdfs:label "year"@en, "Jahr"@de, "année"@fr, "anno"@it ;
+        rdfs:comment "The normalized dating is precise to the year."@en,
+                     "Die normierte Datierung ist bis auf das Jahr genau."@de,
+                     "La datation normalisée est précise à l'année près."@fr,
+                     "La datazione normalizzata è precisa fino all'anno."@it .
+
+    oldap:DecadePrecision rdf:type oldap:DatePrecision, owl:NamedIndividual ;
+        rdfs:label "decade"@en, "Jahrzehnt"@de, "décennie"@fr, "decennio"@it ;
+        rdfs:comment "The normalized dating is precise to the decade."@en,
+                     "Die normierte Datierung ist bis auf das Jahrzehnt genau."@de,
+                     "La datation normalisée est précise à la décennie près."@fr,
+                     "La datazione normalizzata è precisa fino al decennio."@it .
+
+    oldap:CenturyPrecision rdf:type oldap:DatePrecision, owl:NamedIndividual ;
+        rdfs:label "century"@en, "Jahrhundert"@de, "siècle"@fr, "secolo"@it ;
+        rdfs:comment "The normalized dating is precise to the century."@en,
+                     "Die normierte Datierung ist bis auf das Jahrhundert genau."@de,
+                     "La datation normalisée est précise au siècle près."@fr,
+                     "La datazione normalizzata è precisa fino al secolo."@it .
+
+    oldap:GregorianCalendar rdf:type oldap:Calendar, owl:NamedIndividual ;
+        rdfs:label "Gregorian calendar"@en, "Gregorianischer Kalender"@de, "Calendrier grégorien"@fr, "Calendario gregoriano"@it ;
+        rdfs:comment "The Gregorian calendar."@en,
+                     "Der gregorianische Kalender."@de,
+                     "Le calendrier grégorien."@fr,
+                     "Il calendario gregoriano."@it .
+
+    oldap:JulianCalendar rdf:type oldap:Calendar, owl:NamedIndividual ;
+        rdfs:label "Julian calendar"@en, "Julianischer Kalender"@de, "Calendrier julien"@fr, "Calendario giuliano"@it ;
+        rdfs:comment "The Julian calendar."@en,
+                     "Der julianische Kalender."@de,
+                     "Le calendrier julien."@fr,
+                     "Il calendario giuliano."@it .
+
+    oldap:HebrewCalendar rdf:type oldap:Calendar, owl:NamedIndividual ;
+        rdfs:label "Hebrew calendar"@en, "Hebräischer Kalender"@de, "Calendrier hébraïque"@fr, "Calendario ebraico"@it ;
+        rdfs:comment "The Hebrew calendar."@en,
+                     "Der hebräische Kalender."@de,
+                     "Le calendrier hébraïque."@fr,
+                     "Il calendario ebraico."@it .
+
+    oldap:IslamicCalendar rdf:type oldap:Calendar, owl:NamedIndividual ;
+        rdfs:label "Islamic calendar"@en, "Islamischer Kalender"@de, "Calendrier islamique"@fr, "Calendario islamico"@it ;
+        rdfs:comment "The Islamic calendar."@en,
+                     "Der islamische Kalender."@de,
+                     "Le calendrier islamique."@fr,
+                     "Il calendario islamico."@it .
+
+    oldap:PersianCalendar rdf:type oldap:Calendar, owl:NamedIndividual ;
+        rdfs:label "Persian calendar"@en, "Persischer Kalender"@de, "Calendrier persan"@fr, "Calendario persiano"@it ;
+        rdfs:comment "The Persian calendar."@en,
+                     "Der persische Kalender."@de,
+                     "Le calendrier persan."@fr,
+                     "Il calendario persiano."@it .
+
+    oldap:inCalendar rdf:type owl:ObjectProperty ;
+        rdfs:domain oldap:Dating ;
+        rdfs:range oldap:Calendar ;
+        rdfs:label "calendar"@en, "Kalender"@de, "calendrier"@fr, "calendario"@it ;
+        rdfs:comment "Links a dating resource to the calendrical system in which it is expressed."@en,
+                     "Verknüpft eine Datierungsressource mit dem Kalendersystem, in dem sie ausgedrückt ist."@de,
+                     "Relie une ressource de datation au système calendaire dans lequel elle est exprimée."@fr,
+                     "Collega una risorsa di datazione al sistema di calendario in cui è espressa."@it .
+
+    oldap:datePrecision rdf:type owl:ObjectProperty ;
+        rdfs:domain oldap:Dating ;
+        rdfs:range oldap:DatePrecision ;
+        rdfs:label "date precision"@en, "Datumsgenauigkeit"@de, "précision de date"@fr, "precisione della data"@it ;
+        rdfs:comment "Links a dating resource to the precision level used for its normalized Start and end dates."@en,
+                     "Verknüpft eine Datierungsressource mit der Genauigkeitsstufe, die für ihre normierten Anfangs- und Enddaten verwendet wird."@de,
+                     "Relie une ressource de datation au niveau de précision utilisé pour ses dates de début et de fin normalisées."@fr,
+                     "Collega una risorsa di datazione al livello di precisione usato per le sue date normalizzate di inizio e fine."@it .
+
 
     ###############################################################################
     # Properties used for :ChronologyObject
     ###############################################################################
 
-    oldap:startJDC rdf:type owl:DatatypeProperty ;
-        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        rdfs:domain oldap:ChronolgyStatement ;
-        rdfs:range xsd:decimal .
+    oldap:verbatimDate rdf:type owl:DatatypeProperty .
 
-    oldap:endJDC rdf:type owl:DatatypeProperty ;
-        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        rdfs:domain oldap:ChronolgyStatement ;
-        rdfs:range xsd:decimal .
+    oldap:normalizedStart rdf:type owl:DatatypeProperty .
 
-    oldap:calendar rdf:type owl:DatatypeProperty ;
-        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        rdfs:domain oldap:ChronolgyStatement ;
-        rdfs:range xsd:string .
+    oldap:normalizedEnd rdf:type owl:DatatypeProperty .
 
-    oldap:before rdf:type owl:ObjectProperty ;
-        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        rdfs:domain oldap:ChronolgyStatement ;
-        rdfs:range oldap:ChronolgyStatement .
+    oldap:datePrecision rdf:type owl:ObjectProperty .
 
-    oldap:after rdf:type owl:ObjectProperty ;
-        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        rdfs:domain oldap:ChronolgyStatement ;
-        rdfs:range oldap:ChronolgyStatement .
-
-    oldap:minDelta rdf:type owl:DatatypeProperty ;
-        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        rdfs:domain oldap:ChronolgyStatement ;
-        rdfs:range xsd:decimal .
-
-    oldap:maxDelta rdf:type owl:DatatypeProperty ;
-        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        rdfs:domain oldap:ChronolgyStatement ;
-        rdfs:range xsd:decimal .
+    oldap:beforeDating rdf:type owl:ObjectProperty, owl:TransitiveProperty .
 
     ###########################################################################
     # Chronology Date Resource
     ###########################################################################
 
-    oldap:ChronolgyStatement rdf:type owl:Class ;
-        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:created "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2023-11-04T12:00:00Z"^^xsd:dateTime ;
-        rdfs:subClassOf
-            [
-                rdf:type owl:Restriction ;
-                owl:onProperty oldap:startJDC ;
-                owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-                owl:onDataRange xsd:decimal
-            ] ,
-            [
-                rdf:type owl:Restriction ;
-                owl:onProperty oldap:endJDC ;
-                owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-                owl:onDataRange xsd:decimal
-            ] ,
-            [
-                rdf:type owl:Restriction ;
-                owl:onProperty oldap:chronoCalendar ;
-                owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-                owl:onDataRange xsd:string
-            ] ,
-            [
-                rdf:type owl:Restriction ;
-                owl:onProperty oldap:before ;
-                owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-                owl:onClass oldap:ChronolgyStatement
-            ] ,
-            [
-                rdf:type owl:Restriction ;
-                owl:onProperty oldap:after ;
-                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-                owl:onClass oldap:ChronolgyStatement
-            ] ,
-            [
-                rdf:type owl:Restriction ;
-                owl:onProperty oldap:minDelta ;
-                owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-                owl:onDataRange xsd:decimal
-            ] ,
-            [
-                rdf:type owl:Restriction ;
-                owl:onProperty oldap:maxDelta ;
-                owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-                owl:onDataRange xsd:decimal
-            ] .
+    oldap:Dating rdf:type owl:Class ;
+        rdfs:subClassOf dcterms:PeriodOfTime .
 
     ###########################################################################
     # Media object
     ###########################################################################
 
-#        shared:mediaType rdf:type owl:ObjectProperty ;
-#            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-#            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-#            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-#            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime .
-#            #owl:subPropertyOf dcterms:type ;
-#            rdfs:domain shared:MediaObject ;
-#            rdfs:range rdfs:Class ;
+    dcterms:type rdf:type owl:ObjectProperty .
 
-        shared:originalName rdf:type owl:DatatypeProperty ;
-            rdfs:domain shared:MediaObject ;
-            rdfs:range xsd:string ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime .
+    shared:originalName rdf:type owl:DatatypeProperty .
 
-        shared:originalMimeType rdf:type owl:DatatypeProperty ;
-            rdfs:domain shared:MediaObject ;
-            rdfs:range xsd:string ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime .
+    shared:originalMimeType rdf:type owl:DatatypeProperty .
 
-        shared:serverUrl rdf:type owl:DatatypeProperty ;
-            rdfs:domain shared:MediaObject ;
-            rdfs:range xsd:anyURI ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime .
+    shared:serverUrl rdf:type owl:DatatypeProperty .
 
-        shared:imageId rdf:type owl:DatatypeProperty ;
-            rdfs:domain shared:MediaObject ;
-            rdfs:range xsd:string ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime .
+    shared:assetId rdf:type owl:DatatypeProperty .
 
-        shared:protocol rdf:type owl:DatatypeProperty ;
-            rdfs:domain shared:MediaObject ;
-            rdfs:range xsd:string ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime .
+    shared:derivativeName rdf:type owl:DatatypeProperty .
 
-        shared:path rdf:type owl:DatatypeProperty ;
-            rdfs:domain shared:MediaObject ;
-            rdfs:range xsd:string ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime .
+    shared:protocol rdf:type owl:DatatypeProperty .
 
-        shared:MediaObject rdf:type owl:Class ;
-            schema:version "0.1.0"^^xsd:string ;
-            dcterms:created "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-            dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
-            dcterms:modified "2025-11-21T00:15:09.037880+01:00"^^xsd:dateTime ;
-            dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-            rdfs:label "MediaObject"@en, "Medienobjekt"@de, "MediaObject"@fr, "MediaObject"@it ;
-            rdfs:comment "Page of a book"@en, "Seite eines Buches"@de ;
-            rdfs:subClassOf oldap:Thing ,
-                [
-                    rdf:type owl:Restriction ;
-                    owl:onProperty dcterms:type ;
-                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-                    owl:onClass rdfs:Class ;
-                ] ,
-                [
-                    rdf:type owl:Restriction ;
-                    owl:onProperty shared:originalName ;
-                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-                    owl:onDataRange xsd:string ;
-                ] ,
-                [
-                    rdf:type owl:Restriction ;
-                    owl:onProperty shared:originalMimeType ;
-                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-                    owl:onDataRange xsd:string ;
-                ] ,
-                [
-                    rdf:type owl:Restriction ;
-                    owl:onProperty shared:serverUrl ;
-                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-                    owl:onDataRange xsd:anyURI ;
-                ] ,
-                [
-                    rdf:type owl:Restriction ;
-                    owl:onProperty shared:imageId ;
-                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-                    owl:onDataRange xsd:string ;
-                ],
-                [
-                    rdf:type owl:Restriction ;
-                    owl:onProperty shared:protocol ;
-                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-                    owl:onDataRange xsd:string ;
-                ],
-                [
-                    rdf:type owl:Restriction ;
-                    owl:onProperty shared:path ;
-                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-                    owl:onDataRange xsd:string ;
-                ] .
+    shared:path rdf:type owl:DatatypeProperty .
+
+    shared:MediaObject rdf:type owl:Class ;
+        rdfs:subClassOf oldap:Thing .
 
 }
 

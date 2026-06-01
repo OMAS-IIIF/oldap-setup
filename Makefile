@@ -3,7 +3,7 @@
 API_VERSION = $(shell cd ../oldap-api; git describe --tags --abbrev=0)
 APP_VERSION = $(shell cd ../oldap-app; git describe --tags --abbrev=0)
 TOOLS_VERSION = $(shell cd ../oldap-tools; git describe --tags --abbrev=0)
-FASNACHTS_VERSION ?= v0.1.18
+FASNACHTS_VERSION ?= v0.1.19
 
 # Docker image repo (adjust to yours)
 IMAGE_API = lrosenth/oldap-api

@@ -1,0 +1,37 @@
+[europeana]
+api_key_file = "/run/secrets/oldap-harvesters/europeana.key"
+api_key_env = "EUROPEANA_API_KEY"
+default_rows = {{ oldap_harvesters_europeana_default_rows | default(50) }}
+default_max_pages = {{ oldap_harvesters_europeana_default_max_pages | default(1) }}
+default_profile = "{{ oldap_harvesters_europeana_default_profile | default('standard') }}"
+
+[oldap]
+server = "http://graphdb:7200"
+repo = "oldap"
+project = "fasnacht"
+user_id = "{{ oldap_harvesters_oldap_user_id | default('rosenth') }}"
+credentials_file = "/run/secrets/oldap-harvesters/oldap.password"
+context_name = "{{ oldap_harvesters_oldap_context_name | default('DEFAULT') }}"
+
+[fasnacht.permissions]
+"oldap:Unknown" = "DATA_VIEW"
+"fasnacht:Editor" = "DATA_PERMISSIONS"
+
+[logging]
+file = "/var/log/oldap-harvesters/europeana.log"
+level = "{{ oldap_harvesters_log_level | default('INFO') }}"
+
+[[queries]]
+source = "europeana"
+terms = "Basler Fasnacht"
+title_contains = "Fasnacht"
+media = true
+thumbnail = true
+landingpage = true
+
+[[queries]]
+source = "europeana"
+terms = "Waggis"
+media = true
+thumbnail = true
+landingpage = true

@@ -5,15 +5,20 @@
 
   vars:
     # the version numbers to be used for deployment
-    oldap_api_tag: "v0.2.4"
-    oldap_app_tag: "v0.2.2"
-    oldap_tools_tag: "v0.3.5"
-    fasnachts_page_tag: "v0.1.19"
+    oldap_api_tag: "v0.2.7"
+    oldap_app_tag: "v0.2.3"
+    oldap_tools_tag: "v0.3.7"
+    oldap_harvesters_tag: "latest"
+    fasnachts_page_tag: "v0.1.21"
     force_pull: false   # set with -e force_pull=true to always pull images (useful for 'latest' tags)
 
     deploy_root: /opt/oldap
     compose_dir: "{{ deploy_root }}/compose"
     env_dir: "{{ deploy_root }}/.env"
+    oldap_harvesters_root: "{{ oldap_data }}/oldap-harvesters"
+    oldap_harvesters_config: "{{ oldap_harvesters_root }}/harvesters.toml"
+    oldap_harvesters_secrets: "{{ oldap_harvesters_root }}/secrets"
+    oldap_harvesters_logs: "{{ oldap_harvesters_root }}/logs"
     # defaults that you can override at run-time or via group_vars
     rollback: false     # set with -e rollback=true if you want to roll back
     app_env: "Prod"
@@ -33,6 +38,11 @@
       ansible.builtin.debug:
         msg: "⚠️ WARNING: oldap-app is running with 'latest' tag. This may cause non-reproducible deployments!"
       when: oldap_app_tag is not defined or oldap_app_tag == "latest"
+
+    - name: Warn if oldap-harvesters is deployed with latest tag
+      ansible.builtin.debug:
+        msg: "⚠️ WARNING: oldap-harvesters is running with 'latest' tag. This may cause non-reproducible deployments!"
+      when: oldap_harvesters_tag is not defined or oldap_harvesters_tag == "latest"
 
     - name: Ensure firewall allows HTTP and HTTPS
       community.general.ufw:
@@ -131,6 +141,21 @@
         - "{{ oldap_data }}/oldap-api/tmp"
         - "{{ oldap_data }}/oldap-app"
 
+    - name: Ensure oldap-harvesters directories exist
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "{{ item.mode }}"
+      loop:
+        - path: "{{ oldap_harvesters_root }}"
+          mode: "0755"
+        - path: "{{ oldap_harvesters_secrets }}"
+          mode: "0700"
+        - path: "{{ oldap_harvesters_logs }}"
+          mode: "0777"
+
     # 17. Ensure graphdb-init directory exists
     - name: Ensure graphdb-init directory exists
       ansible.builtin.file:
@@ -208,6 +233,34 @@
       loop:
         - "{{ caddy_data }}"
         - "{{ caddy_conf }}"
+
+    - name: Render oldap-harvesters config
+      ansible.builtin.template:
+        src: templates/harvesters.toml.j2
+        dest: "{{ oldap_harvesters_config }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Write oldap-harvesters Europeana API key from Ansible secret
+      ansible.builtin.copy:
+        content: "{{ oldap_harvesters_europeana_api_key }}\n"
+        dest: "{{ oldap_harvesters_secrets }}/europeana.key"
+        owner: root
+        group: root
+        mode: "0600"
+      when: oldap_harvesters_europeana_api_key is defined
+      no_log: true
+
+    - name: Write oldap-harvesters OLDAP password from Ansible secret
+      ansible.builtin.copy:
+        content: "{{ oldap_harvesters_oldap_password }}\n"
+        dest: "{{ oldap_harvesters_secrets }}/oldap.password"
+        owner: root
+        group: root
+        mode: "0600"
+      when: oldap_harvesters_oldap_password is defined
+      no_log: true
 
     # 13. Render .env file
     - name: Render .env

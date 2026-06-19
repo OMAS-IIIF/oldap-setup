@@ -108,6 +108,19 @@ services:
       - ${OLDAP_DATA:-./data}/backups:/backups
     restart: "no"
 
+  oldap-harvesters:
+    image: lrosenth/oldap-harvesters:${OLDAP_HARVESTERS_TAG:-latest}
+    container_name: oldap-harvesters
+    profiles: ["tools", "harvesters"]
+    depends_on:
+      - graphdb
+    command: ["--config", "/app/harvesters.toml", "--write-oldap"]
+    volumes:
+      - ${OLDAP_HARVESTERS_CONFIG:-./oldap-harvesters/harvesters.toml}:/app/harvesters.toml:ro
+      - ${OLDAP_HARVESTERS_SECRETS:-./oldap-harvesters/secrets}:/run/secrets/oldap-harvesters:ro
+      - ${OLDAP_HARVESTERS_LOGS:-./oldap-harvesters/logs}:/var/log/oldap-harvesters
+    restart: "no"
+
   oldap-app:
     image: lrosenth/oldap-app:${OLDAP_APP_TAG:-latest}
     container_name: oldap-app

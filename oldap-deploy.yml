@@ -5,11 +5,11 @@
 
   vars:
     # the version numbers to be used for deployment
-    oldap_api_tag: "v0.2.7"
+    oldap_api_tag: "v0.2.9"
     oldap_app_tag: "v0.2.3"
     oldap_tools_tag: "v0.3.7"
-    oldap_harvesters_tag: "latest"
-    fasnachts_page_tag: "v0.1.21"
+    oldap_harvesters_tag: "v0.1.1"
+    fasnachts_page_tag: "v0.1.23"
     force_pull: false   # set with -e force_pull=true to always pull images (useful for 'latest' tags)
 
     deploy_root: /opt/oldap
@@ -24,6 +24,30 @@
     app_env: "Prod"
 
   pre_tasks:
+    - name: Validate required OLDAP authentication configuration
+      ansible.builtin.assert:
+        that:
+          - (oldap_access_jwt_secret | default('') | string | length) >= 32
+          - (oldap_refresh_jwt_secret | default('') | string | length) >= 32
+          - (oldap_media_jwt_secret | default('') | string | length) >= 32
+          - (oldap_password_reset_jwt_secret | default('') | string | length) >= 32
+          - (oldap_access_jwt_secret | default('')) != (oldap_refresh_jwt_secret | default(''))
+          - (oldap_access_jwt_secret | default('')) != (oldap_media_jwt_secret | default(''))
+          - (oldap_access_jwt_secret | default('')) != (oldap_password_reset_jwt_secret | default(''))
+          - (oldap_refresh_jwt_secret | default('')) != (oldap_media_jwt_secret | default(''))
+          - (oldap_refresh_jwt_secret | default('')) != (oldap_password_reset_jwt_secret | default(''))
+          - (oldap_media_jwt_secret | default('')) != (oldap_password_reset_jwt_secret | default(''))
+          - (oldap_auth_admin_user | default('') | string | length) > 0
+          - (oldap_auth_admin_password | default('') | string | length) > 0
+          - (oldap_auth_allowed_origins | default('') | string | length) > 0
+          - (oldap_password_reset_frontend_url | default('') | string | length) > 0
+          - (public_app_url | default('') | string | length) > 0
+        fail_msg: >-
+          Authentication deployment variables are missing or invalid. Supply
+          four distinct JWT secrets of at least 32 bytes plus the OLDAP auth
+          service credentials through auth-secrets.yml or Ansible Vault.
+      no_log: true
+
     - name: Debug inventory_hostname und caddy_mode
       ansible.builtin.debug:
         msg: "Running on {{ inventory_hostname }} with caddy_mode={{ caddy_mode | default('NOT SET') }}"
@@ -267,7 +291,17 @@
       ansible.builtin.template:
         src: templates/oldap.env.j2
         dest: "{{ compose_dir }}/.env"
-        mode: "0644"
+        owner: root
+        group: root
+        mode: "0600"
+      no_log: true
+
+    - name: Validate rendered Docker Compose configuration
+      ansible.builtin.command:
+        cmd: docker compose config --quiet
+        chdir: "{{ compose_dir }}"
+      changed_when: false
+      no_log: true
 
     # 14. Rollback or Bring up the stack
     - name: Rollback stack (stop + remove containers)

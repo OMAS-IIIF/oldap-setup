@@ -28,6 +28,58 @@ make deploy-vm
 `deploy-rosy` targets the `oldap_test` inventory group. `deploy-vm` targets
 `oldap_prod`.
 
+## API authentication secrets
+
+The API requires four independent JWT signing keys and an OLDAP service
+account for refresh and global logout. These values must never be committed.
+The normal deployment reads the encrypted, shared Vault file at
+`$HOME/ProgDev/OLDAP/auth/auth.vault.yml` and prompts for its Vault password.
+This same protected file can also supply the matching access and media keys to
+the `oldap-mediaserver` deployment. To create a new equivalent file, start from
+the documented variable set:
+
+```bash
+ansible-vault create "$HOME/ProgDev/OLDAP/auth/auth.vault.yml"
+openssl rand -hex 32
+openssl rand -hex 32
+openssl rand -hex 32
+openssl rand -hex 32
+```
+
+Store the four generated values under `oldap_access_jwt_secret`,
+`oldap_refresh_jwt_secret`, `oldap_media_jwt_secret`, and
+`oldap_password_reset_jwt_secret`. The media key signs short-lived asset
+capabilities and must be copied to the media deployment; it must not equal the
+access key used to verify upload Bearer credentials. Configure
+`oldap_auth_admin_user` and `oldap_auth_admin_password` for an active OLDAP
+service account. Password reset uses the same account by default; optional
+separate reset credentials are documented in the example.
+
+`make deploy-rosy` and `make deploy-vm` automatically pass the shared Vault
+file and use `--ask-vault-pass`. To override either default, use:
+
+```bash
+make deploy-vm \
+  AUTH_SECRETS_FILE=/secure/path/oldap-auth.vault.yml \
+  ANSIBLE_VAULT_ARGS='--vault-id production@prompt'
+```
+
+The playbook rejects missing, short, or reused signing keys before changing the
+host. It renders `/opt/oldap/compose/.env` as root-only mode `0600`, validates
+the final Compose configuration, and only then recreates containers.
+
+The API receives all four keys. The media deployment receives the same
+`oldap_media_jwt_secret` for asset/IIIF capability validation and the same
+`oldap_access_jwt_secret` for upload authentication. Its Cantaloupe container
+receives only the media key; only the Flask media helper receives both.
+
+The browser-facing applications and API are on different origins. Exact
+allowed origins are therefore set per inventory host and Flask handles both
+preflight and credentialed CORS responses. Caddy must not add wildcard CORS
+headers. Production refresh cookies remain `Secure`, `HttpOnly`, and
+`SameSite=Lax`; authenticated administration should use `app.oldap.org` or
+`fasnacht.oldap.org`, which are same-site with `api.oldap.org`.
+
 To override only the harvester image during a manual deployment:
 
 ```bash

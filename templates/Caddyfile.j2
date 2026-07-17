@@ -58,16 +58,8 @@ https://app.rosy.home.org, https://api.rosy.home.org, https://fasnacht.rosy.home
 {% if caddy_mode == "prod" %}
 # API
 api.oldap.org {
-    # Preflight CORS
-    @apiCors method OPTIONS
-    handle @apiCors {
-        header Access-Control-Allow-Origin *
-        header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
-        header Access-Control-Allow-Headers "Authorization, Content-Type"
-        respond "" 204
-    }
-
-    # Proxy normal API requests
+    # Flask owns the exact-origin, credentialed CORS policy for all requests,
+    # including preflight responses.
     reverse_proxy oldap-api:8000 {
         # forward Authorization header upstream (Flask needs it)
         header_up Authorization {http.request.header.Authorization}

@@ -4,6 +4,18 @@ oldap_app_tag: "latest"
 oldap_tools_tag: "latest"
 oldap_harvesters_tag: "latest"
 
+# Authentication defaults. Signing keys and service credentials are required
+# separately and must be supplied through an ignored file or Ansible Vault.
+oldap_access_token_ttl_seconds: 900
+oldap_refresh_token_ttl_seconds: 1209600
+oldap_media_token_ttl_seconds: 3600
+oldap_jwt_issuer: "https://oldap.org"
+oldap_jwt_audience: "oldap-api"
+oldap_refresh_cookie_name: "oldap_refresh"
+oldap_refresh_cookie_secure: true
+oldap_refresh_cookie_samesite: "Lax"
+oldap_password_reset_email_backend: "console"
+
 # Soft reset behavior
 oldap_soft_reset: false
 oldap_pull_images: false

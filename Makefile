@@ -1,10 +1,12 @@
-.PHONY: deploy-rosy rollback-rosy deploy-vm show-versions latest-api latest-app latest-fasnacht latest-harvesters
+.PHONY: deploy-rosy rollback-rosy deploy-vm show-versions latest-api latest-app latest-fasnacht latest-harvesters check-auth-secrets
 
 API_VERSION = $(shell cd ../oldap-api; git describe --tags --abbrev=0)
 APP_VERSION = $(shell cd ../oldap-app; git describe --tags --abbrev=0)
 TOOLS_VERSION = $(shell cd ../oldap-tools; git describe --tags --abbrev=0)
-HARVESTERS_VERSION = $(shell cd ../oldap-harvesters; git describe --tags --abbrev=0)
+HARVESTERS_VERSION = $(shell cd ../oldap-harvesters; poetry version -s)
 FASNACHTS_VERSION = v$(shell cd ../FasnachtsPage; node -p "require('./package.json').version")
+AUTH_SECRETS_FILE ?= $(HOME)/ProgDev/OLDAP/auth/auth.vault.yml
+ANSIBLE_VAULT_ARGS ?= --ask-vault-pass
 
 # Docker image repo (adjust to yours)
 IMAGE_API = lrosenth/oldap-api
@@ -48,8 +50,15 @@ copy-ssh-key:
 #		-e oldap_api_tag=v0.1.3 \
 #		-e oldap_app_tag=v0.3.2 \
 #		--ask-become-pass
-deploy-rosy:
+check-auth-secrets:
+	@test -f "$(AUTH_SECRETS_FILE)" || { \
+		echo "Missing authentication Vault file: $(AUTH_SECRETS_FILE)"; \
+		exit 1; \
+	}
+
+deploy-rosy: check-auth-secrets
 	ansible-playbook -i inventory.ini oldap-deploy.yml \
+		-e "@$(AUTH_SECRETS_FILE)" $(ANSIBLE_VAULT_ARGS) \
 		$(if $(API_VERSION),-e oldap_api_tag=$(API_VERSION),) \
 		$(if $(APP_VERSION),-e oldap_app_tag=$(APP_VERSION),) \
 		$(if $(TOOLS_VERSION),-e oldap_tools_tag=$(TOOLS_VERSION),) \
@@ -64,8 +73,9 @@ soft-reset-rosy:
 		-l oldap_test \
 		--ask-become-pass
 
-deploy-vm:
+deploy-vm: check-auth-secrets
 	ansible-playbook -i inventory.ini oldap-deploy.yml \
+		-e "@$(AUTH_SECRETS_FILE)" $(ANSIBLE_VAULT_ARGS) \
 		$(if $(API_VERSION),-e oldap_api_tag=$(API_VERSION),) \
 		$(if $(APP_VERSION),-e oldap_app_tag=$(APP_VERSION),) \
 		$(if $(TOOLS_VERSION),-e oldap_tools_tag=$(TOOLS_VERSION),) \

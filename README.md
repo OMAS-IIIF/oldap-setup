@@ -124,6 +124,14 @@ frontends and API are same-site. Production overrides the cookie to
 This flow depends on the browser permitting third-party cookies for the site;
 verify the supported production browsers after deployment.
 
+> **Long-term authentication note:** Move the FasnachtsPage API endpoint to
+> `https://api.fasnacht.digital` when DNS and domain administration permit it.
+> This would make the frontend and API same-site again, allow production to
+> return to `SameSite=Lax`, and avoid Safari requiring users to disable
+> "Prevent cross-site tracking". Until then, `SameSite=None` is an intentional
+> compatibility measure for the cross-site `fasnacht.digital` → `api.oldap.org`
+> refresh flow.
+
 To override only the harvester image during a manual deployment:
 
 ```bash

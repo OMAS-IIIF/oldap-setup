@@ -22,20 +22,33 @@ This repository deploys the OLDAP stack with Ansible and Docker Compose. It prep
 
 ## Architecture and Conventions
 - Deployment configuration is Ansible-first, with host-specific values in the inventory and shared defaults in group variables or common inventory vars.
-- Inventory group names use underscores (`oldap_test`, `oldap_prod`) to avoid Ansible warnings about invalid characters.
+- Inventory group names use underscores (`oldap_home`, `oldap_prod`) to avoid Ansible warnings about invalid characters.
 - Flask is the single CORS authority for the API. Inventory supplies exact
   browser origins and Caddy must not emit wildcard API CORS headers.
+- Production refresh cookies use `Secure=true` and `SameSite=None` because the
+  canonical `fasnacht.digital` frontend authenticates against the cross-site
+  `api.oldap.org` origin. Same-site home deployments retain the shared
+  `SameSite=Lax` default.
 - Production public media URLs currently use `media.oldap.org`; uploads are exposed at `https://media.oldap.org/upload`.
 - `oldap-harvesters` is deployed as a no-restart Compose job with both `tools` and `harvesters` profiles. Its configuration, secrets, and logs live under `/srv/storage/oldap-data/oldap-harvesters` by default; secrets are supplied as server-side files and are never committed.
 - Keep changes proportional and close to the existing Ansible/Docker Compose structure.
 
 ## Operational Notes
-- `make deploy-rosy` deploys to the test host.
+- `make deploy-home` deploys to the local VM through `api.home.org`; its public
+  service URLs mirror production under `*.home.org`, including the separately
+  deployed media service at `media.home.org`. The home inventory uses
+  `/usr/bin/sudo.ws` for Ansible Become because Ubuntu 26.04's default
+  `sudo-rs` is incompatible with the current control-node prompt handling.
 - `make deploy-vm` deploys to production.
 - Running a deployment re-renders `/opt/oldap/compose/.env` from `templates/oldap.env.j2` using the selected inventory host variables.
-- `make deploy-rosy` and `make deploy-vm` default to the shared encrypted
+- `make deploy-home` and `make deploy-vm` default to the shared encrypted
   `$HOME/ProgDev/OLDAP/auth/auth.vault.yml` and prompt for its Vault password;
   `AUTH_SECRETS_FILE` and `ANSIBLE_VAULT_ARGS` remain overridable.
+- The first purpose-specific authentication rollout is a coordinated API,
+  browser-client, and media-stack maintenance window. Legacy and split-token
+  deployments are not cross-compatible; rollback must restore both API and
+  media component versions together. Production preflight requires a
+  refresh-capable `oldap-app` release at `v0.2.4` or newer.
 - Run the Europeana Fasnacht harvester on the server with `docker compose --profile tools run --rm oldap-harvesters` from `/opt/oldap/compose`.
 
 ## Next Steps

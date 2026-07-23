@@ -21,11 +21,30 @@ repositories:
 
 ```bash
 make show-versions
-make deploy-rosy
+make deploy-home
 make deploy-vm
 ```
 
-`deploy-rosy` targets the `oldap_test` inventory group. `deploy-vm` targets
+`deploy-home` targets the `oldap_home` inventory group and connects to the
+local VM through `api.home.org`. `deploy-vm` targets `oldap_prod`.
+
+The home environment mirrors the production host layout under the local
+`home.org` DNS zone:
+
+- API: `https://api.home.org`
+- App: `https://app.home.org`
+- GraphDB: `https://graphdb.home.org`
+- Fasnacht page: `https://fasnacht.home.org`
+- Media/IIIF: `https://media.home.org`, with uploads below `/upload`
+
+The media URL is configured for the OLDAP applications, but the media server
+itself is deployed separately. Persistent OLDAP, GraphDB, Caddy, and harvester
+data continue to use the existing `/srv/storage` data disk.
+
+Ubuntu 26.04 uses `sudo-rs` as its default `sudo`. Until the Ansible version on
+the control machine includes compatible prompt handling, the `oldap_home`
+inventory explicitly uses Ubuntu's supported classic implementation at
+`/usr/bin/sudo.ws`. This override is local to the home VM and does not affect
 `oldap_prod`.
 
 ## API authentication secrets
@@ -55,7 +74,7 @@ access key used to verify upload Bearer credentials. Configure
 service account. Password reset uses the same account by default; optional
 separate reset credentials are documented in the example.
 
-`make deploy-rosy` and `make deploy-vm` automatically pass the shared Vault
+`make deploy-home` and `make deploy-vm` automatically pass the shared Vault
 file and use `--ask-vault-pass`. To override either default, use:
 
 ```bash
@@ -73,12 +92,37 @@ The API receives all four keys. The media deployment receives the same
 `oldap_access_jwt_secret` for upload authentication. Its Cantaloupe container
 receives only the media key; only the Flask media helper receives both.
 
+### Coordinated production authentication cutover
+
+The legacy API/media pair and the purpose-specific token pair cannot validate
+each other's tokens. Treat the first production rollout as one maintenance
+window rather than two independent deployments:
+
+1. Publish and verify the versioned API, browser-client, mediahelper, and
+   imageserver images before changing either host.
+2. Confirm that the shared Vault contains the same access and media keys used by
+   both playbooks, and that the four API keys are distinct.
+3. Deploy the OLDAP stack and media stack back-to-back. A short incompatible
+   interval is unavoidable, so do not allow administrative uploads during it.
+4. Verify API health/version, named-user login and refresh, anonymous access,
+   one protected API request, one upload authorization, one protected asset,
+   and one IIIF request before reopening the system.
+
+Do not cut over the API while the deployed `oldap-app` image still lacks the
+cookie-backed refresh flow. The production playbook blocks `oldap-app` versions
+older than `v0.2.4` for this reason. Rollback must restore the previous API and
+both previous media component tags together; rolling back only one side
+recreates the token-contract mismatch.
+
 The browser-facing applications and API are on different origins. Exact
 allowed origins are therefore set per inventory host and Flask handles both
 preflight and credentialed CORS responses. Caddy must not add wildcard CORS
-headers. Production refresh cookies remain `Secure`, `HttpOnly`, and
-`SameSite=Lax`; authenticated administration should use `app.oldap.org` or
-`fasnacht.oldap.org`, which are same-site with `api.oldap.org`.
+headers. The home environment keeps refresh cookies `SameSite=Lax` because its
+frontends and API are same-site. Production overrides the cookie to
+`Secure`, `HttpOnly`, and `SameSite=None` so the canonical cross-site
+`https://fasnacht.digital` frontend can send the `api.oldap.org` refresh cookie.
+This flow depends on the browser permitting third-party cookies for the site;
+verify the supported production browsers after deployment.
 
 To override only the harvester image during a manual deployment:
 

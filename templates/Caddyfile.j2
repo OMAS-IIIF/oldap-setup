@@ -10,27 +10,27 @@
 {% endif %}
 
 #
-# === Test environment (rosy) ===
+# === Home environment ===
 #
 {% if caddy_mode == "dev" %}
-# Shared routes for Rosy, imported by both HTTP and local HTTPS.
-(rosy_test_routes) {
-    @app host app.rosy.home.org
+# Shared routes for the home VM, imported by both HTTP and local HTTPS.
+(home_routes) {
+    @app host app.home.org
     handle @app {
         reverse_proxy oldap-app:3000
     }
 
-    @api host api.rosy.home.org
+    @api host api.home.org
     handle @api {
         reverse_proxy oldap-api:8000
     }
 
-    @fasnacht host fasnacht.rosy.home.org
+    @fasnacht host fasnacht.home.org
     handle @fasnacht {
         reverse_proxy fasnachts-page:3100
     }
 
-    @graphdb host graphdb.rosy.home.org
+    @graphdb host graphdb.home.org
     handle @graphdb {
         # Protect GraphDB Workbench with HTTP Basic Auth
         basicauth {
@@ -40,15 +40,15 @@
     }
 }
 
-# Rosy Test Server (HTTP)
-http://app.rosy.home.org, http://api.rosy.home.org, http://fasnacht.rosy.home.org, http://graphdb.rosy.home.org {
-    import rosy_test_routes
+# Home Server (HTTP)
+http://app.home.org, http://api.home.org, http://fasnacht.home.org, http://graphdb.home.org {
+    import home_routes
 }
 
-# Rosy Test Server (local HTTPS)
-https://app.rosy.home.org, https://api.rosy.home.org, https://fasnacht.rosy.home.org, https://graphdb.rosy.home.org {
+# Home Server (local HTTPS)
+https://app.home.org, https://api.home.org, https://fasnacht.home.org, https://graphdb.home.org {
     tls internal
-    import rosy_test_routes
+    import home_routes
 }
 {% endif %}
 

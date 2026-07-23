@@ -1,0 +1,5 @@
+---
+# fasnacht.digital is cross-site with api.oldap.org. The secure refresh cookie
+# must therefore opt into cross-site requests for the production group only.
+oldap_refresh_cookie_secure: true
+oldap_refresh_cookie_samesite: "None"

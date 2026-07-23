@@ -5,7 +5,7 @@
 
   vars:
     # the version numbers to be used for deployment
-    oldap_api_tag: "v0.2.9"
+    oldap_api_tag: "v0.2.10"
     oldap_app_tag: "v0.2.3"
     oldap_tools_tag: "v0.3.7"
     oldap_harvesters_tag: "v0.1.1"
@@ -47,6 +47,27 @@
           four distinct JWT secrets of at least 32 bytes plus the OLDAP auth
           service credentials through auth-secrets.yml or Ansible Vault.
       no_log: true
+
+    - name: Validate production browser refresh compatibility
+      ansible.builtin.assert:
+        that:
+          - >-
+            (oldap_app_tag | regex_replace('^v', ''))
+            is version('0.2.4', '>=')
+        fail_msg: >-
+          Production authentication requires a refresh-capable oldap-app image
+          (v0.2.4 or newer). Publish that client before the split-token cutover.
+      when: inventory_hostname in groups['oldap_prod']
+
+    - name: Validate production cross-site refresh cookie
+      ansible.builtin.assert:
+        that:
+          - oldap_refresh_cookie_secure | bool
+          - (oldap_refresh_cookie_samesite | string | lower) == 'none'
+        fail_msg: >-
+          Production serves fasnacht.digital through api.oldap.org. Its refresh
+          cookie must therefore use Secure=true and SameSite=None.
+      when: inventory_hostname in groups['oldap_prod']
 
     - name: Debug inventory_hostname und caddy_mode
       ansible.builtin.debug:

@@ -47,10 +47,12 @@ inventory explicitly uses Ubuntu's supported classic implementation at
 `/usr/bin/sudo.ws`. This override is local to the home VM and does not affect
 `oldap_prod`.
 
-## API authentication secrets
+## API authentication and ZIP-import secrets
 
-The API requires four independent JWT signing keys and an OLDAP service
-account for refresh and global logout. These values must never be committed.
+The API requires seven independent JWT signing keys and OLDAP service
+credentials. Four keys cover access, refresh, media delivery, and password
+reset; three further keys isolate ZIP upload, media-to-API import callbacks, and
+API-to-media retained-record reads. These values must never be committed.
 The normal deployment reads the encrypted, shared Vault file at
 `$HOME/ProgDev/OLDAP/auth/auth.vault.yml` and prompts for its Vault password.
 This same protected file can also supply the matching access and media keys to
@@ -59,20 +61,30 @@ the documented variable set:
 
 ```bash
 ansible-vault create "$HOME/ProgDev/OLDAP/auth/auth.vault.yml"
-openssl rand -hex 32
-openssl rand -hex 32
-openssl rand -hex 32
-openssl rand -hex 32
+for purpose in access refresh media password-reset import-upload import-service import-records; do
+  openssl rand -hex 32
+done
 ```
 
-Store the four generated values under `oldap_access_jwt_secret`,
+Store the seven generated values under `oldap_access_jwt_secret`,
 `oldap_refresh_jwt_secret`, `oldap_media_jwt_secret`, and
-`oldap_password_reset_jwt_secret`. The media key signs short-lived asset
+`oldap_password_reset_jwt_secret`, plus `oldap_import_upload_jwt_secret`,
+`oldap_import_service_jwt_secret`, and `oldap_import_records_jwt_secret`. The
+media key signs short-lived asset
 capabilities and must be copied to the media deployment; it must not equal the
 access key used to verify upload Bearer credentials. Configure
 `oldap_auth_admin_user` and `oldap_auth_admin_password` for an active OLDAP
 service account. Password reset uses the same account by default; optional
 separate reset credentials are documented in the example.
+Configure `oldap_import_service_user` and `oldap_import_service_password` for
+the dedicated OLDAP identity used by ZIP imports. Browser ingest and delivery
+use the public `oldap_media_ingest_url`. API-to-media report retrieval uses
+`oldap_media_internal_url`, falling back to the public URL when both routes are
+the same. Production uses verified `https://media.oldap.org` for both. The home
+test deployment keeps browser traffic on `https://media.home.org` but uses
+`http://media.home.org` internally because Caddy's private CA is not installed
+in the API container. Production import-mail links use
+`https://fasnacht.digital`.
 
 `make deploy-home` and `make deploy-vm` automatically pass the shared Vault
 file and use `--ask-vault-pass`. To override either default, use:
@@ -87,10 +99,25 @@ The playbook rejects missing, short, or reused signing keys before changing the
 host. It renders `/opt/oldap/compose/.env` as root-only mode `0600`, validates
 the final Compose configuration, and only then recreates containers.
 
-The API receives all four keys. The media deployment receives the same
+## Production password-reset mail
+
+Production sends password-reset messages through the University of Basel relay
+at `smtp.unibas.ch:25` with STARTTLS. The relay accepts the production host by
+network location, so SMTP username and password remain unset and no additional
+mail credential belongs in Ansible Vault. The production group variables hold
+the non-secret SMTP endpoint, sender, and TLS settings; the environment template
+and Docker Compose pass them to `oldap-api`.
+
+The canonical reset page is `https://fasnacht.digital/password-reset`. The
+deployment preflight rejects production configuration that falls back to the
+console mail backend, points reset links elsewhere, omits the relay or sender,
+or disables TLS. SMTP server acceptance was verified independently from inside
+the production API container; inbox placement remains an operational check.
+
+The API receives all seven keys. The media deployment receives the matching
 `oldap_media_jwt_secret` for asset/IIIF capability validation and the same
-`oldap_access_jwt_secret` for upload authentication. Its Cantaloupe container
-receives only the media key; only the Flask media helper receives both.
+access, import-upload, import-service, and import-records keys required at its
+bounded trust boundaries. Its Cantaloupe container receives only the media key.
 
 ### Coordinated production authentication cutover
 

@@ -14,10 +14,10 @@ This repository deploys the OLDAP stack with Ansible and Docker Compose. It prep
 - API authentication secrets come from ignored `auth-secrets.yml` or an
   external Ansible Vault file. The playbook validates them before deployment,
   renders a root-only Compose environment, and validates the resolved Compose
-  model before containers are recreated. Access, refresh, media, and
-  password-reset signing keys are independent; the access and media values must
-  be shared with `oldap-mediaserver` through its separate ignored/Vault vars
-  file, never by committing either value.
+  model before containers are recreated. Access, refresh, media,
+  password-reset, import-upload, import-service, and import-record signing keys
+  are independent. The five media-facing values are shared with
+  `oldap-mediaserver` through the protected Vault, never committed.
 - `files/` contains ontology and initialization files copied to GraphDB init storage.
 
 ## Architecture and Conventions
@@ -30,6 +30,17 @@ This repository deploys the OLDAP stack with Ansible and Docker Compose. It prep
   `api.oldap.org` origin. Same-site home deployments retain the shared
   `SameSite=Lax` default.
 - Production public media URLs currently use `media.oldap.org`; uploads are exposed at `https://media.oldap.org/upload`.
+- Production password-reset links target `https://fasnacht.digital` and mail is
+  submitted through the network-trusted University of Basel relay at
+  `smtp.unibas.ch:25` with STARTTLS and no SMTP credentials. The playbook
+  validates this production-only contract before deployment.
+- ZIP imports use a public media URL for browser ingest/delivery and an
+  independently configurable internal URL for API-to-media report retrieval.
+  Production uses verified `https://media.oldap.org` for both; the home API
+  uses `http://media.home.org` internally while browsers retain HTTPS. Owner-facing
+  production report links use `https://fasnacht.digital`. The
+  API receives a dedicated OLDAP import identity plus three purpose-specific
+  import JWT keys from the same external Vault used by the media deployment.
 - `oldap-harvesters` is deployed as a no-restart Compose job with both `tools` and `harvesters` profiles. Its configuration, secrets, and logs live under `/srv/storage/oldap-data/oldap-harvesters` by default; secrets are supplied as server-side files and are never committed.
 - Keep changes proportional and close to the existing Ansible/Docker Compose structure.
 
@@ -52,6 +63,9 @@ This repository deploys the OLDAP stack with Ansible and Docker Compose. It prep
 - Run the Europeana Fasnacht harvester on the server with `docker compose --profile tools run --rm oldap-harvesters` from `/opt/oldap/compose`.
 
 ## Next Steps
-- Deploy the updated API image and authentication configuration, then continue
-  with browser integration from authentication work package 6.
+- Populate and validate the three ZIP-import keys and dedicated import service
+  identity in the shared Vault, then deploy API `v0.2.15` and FasnachtsPage
+  `v0.1.28` in the coordinated maintenance window.
+- Deploy and verify SMTP-backed password reset end to end, including inbox
+  delivery and one successful password change from the emailed link.
 - Keep this context file updated only for strategic workflow, architecture, or convention changes.

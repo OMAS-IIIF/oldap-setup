@@ -15,7 +15,7 @@
 @prefix : <http://oldap.org/shared#> .
 
 shared:shacl {
-    shared:shapes schema:version "0.1.0"^^xsd:string .
+    shared:shapes schema:version "0.6.0"^^xsd:string .
 
     ###########################################################################
     # External standard onologies used
@@ -25,7 +25,7 @@ shared:shacl {
         dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
         dcterms:created "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
         dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
+        dcterms:modified "2026-08-02T22:45:00+02:00"^^xsd:dateTime ;
         oldap:prefix "dcterms"^^xsd:NCName ;
         oldap:namespaceIri <http://purl.org/dc/terms/> ;
         rdfs:label "Dublin Core"@en ;
@@ -58,6 +58,7 @@ shared:shacl {
         oldap:proposedDatatypePropertyClass "identifier"^^xsd:NCName ;
         oldap:proposedDatatypePropertyClass "issued"^^xsd:NCName ;
         oldap:proposedDatatypePropertyClass "modified"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "provenance"^^xsd:NCName ;
         oldap:proposedDatatypePropertyClass "subject"^^xsd:NCName ;
         oldap:proposedDatatypePropertyClass "tableOfContents"^^xsd:NCName ;
         oldap:proposedDatatypePropertyClass "title"^^xsd:NCName ;
@@ -88,7 +89,7 @@ shared:shacl {
         dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
         dcterms:created "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
         dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
-        dcterms:modified "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
+        dcterms:modified "2026-08-02T22:45:00+02:00"^^xsd:dateTime ;
         oldap:prefix "schema"^^xsd:NCName ;
         oldap:namespaceIri <https://schema.org/> ;
         rdfs:label "schema.org"@en ;
@@ -105,6 +106,7 @@ shared:shacl {
         oldap:proposedDatatypePropertyClass "alternative"^^xsd:NCName ;
         oldap:proposedDatatypePropertyClass "available"^^xsd:NCName ;
         oldap:proposedDatatypePropertyClass "bibliographicCitation"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "conditionsOfAccess"^^xsd:NCName ;
         oldap:proposedDatatypePropertyClass "created"^^xsd:NCName ;
         oldap:proposedDatatypePropertyClass "date"^^xsd:NCName ;
         oldap:proposedDatatypePropertyClass "dateAccepted"^^xsd:NCName ;
@@ -112,7 +114,9 @@ shared:shacl {
         oldap:proposedDatatypePropertyClass "dateSubmitted"^^xsd:NCName ;
         oldap:proposedDatatypePropertyClass "identifier"^^xsd:NCName ;
         oldap:proposedDatatypePropertyClass "issued"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "materialExtent"^^xsd:NCName ;
         oldap:proposedDatatypePropertyClass "modified"^^xsd:NCName ;
+        oldap:proposedDatatypePropertyClass "position"^^xsd:NCName ;
         oldap:proposedDatatypePropertyClass "title"^^xsd:NCName ;
         oldap:proposedDatatypePropertyClass "valid"^^xsd:NCName ;
         oldap:proposedObjectPropertyClass "audience"^^xsd:NCName ;
@@ -257,36 +261,47 @@ shared:shacl {
             sh:order "1.0"^^xsd:decimal ;
         ] ;
         sh:property [
+            sh:path shared:mediaAccessMode ;
+            sh:datatype xsd:string ;
+            sh:in ("local" "external") ;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
+            sh:order "2.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
                 sh:path shared:originalName ;
                 sh:datatype xsd:string ;
                 sh:name "Original Filename"@en, "Originaler Dateiname"@de, "Nom orignal du fichier"@fr, "Nome documento originale"@it ;
-                sh:minCount "1"^^xsd:integer ;
                 sh:maxCount "1"^^xsd:integer ;
-                sh:order "2.0"^^xsd:decimal ;
+                sh:order "3.0"^^xsd:decimal ;
         ] ;
         sh:property [
                 sh:path shared:originalMimeType ;
                 sh:datatype xsd:string ;
                 sh:name "Original mimetype"@en, "Originaler Mimetype"@de, "Mimetype original"@fr, "Mimetype originale"@it ;
-                sh:minCount "1"^^xsd:integer ;
                 sh:maxCount "1"^^xsd:integer ;
-                sh:order "3.0"^^xsd:decimal ;
+                sh:order "4.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+                sh:path shared:checksum ;
+                sh:datatype xsd:string ;
+                sh:name "Checksum"@en, "Prüfsumme"@de, "Somme de contrôle"@fr, "soma di controllo"@it ;
+                sh:maxCount "1"^^xsd:integer ;
+                sh:order "5.0"^^xsd:decimal ;
         ] ;
         sh:property [
                 sh:path shared:serverUrl ;
                 sh:datatype xsd:anyURI ;
                 sh:name "Server URL"@en, "URL des servers"@de, "Server URL"@fr, "Server URL"@it ;
-                sh:minCount "1"^^xsd:integer ;
                 sh:maxCount "1"^^xsd:integer ;
-                sh:order "4.0"^^xsd:decimal ;
+                sh:order "6.0"^^xsd:decimal ;
         ] ;
         sh:property [
                 sh:path shared:assetId ;
                 sh:datatype xsd:string ;
                 sh:name "Image ID"@en, "ID des Bilder"@de, "ID de l\'image"@fr, "ID de l\'immagine"@it ;
-                sh:minCount "1"^^xsd:integer ;
                 sh:maxCount "1"^^xsd:integer ;
-                sh:order "5.0"^^xsd:decimal ;
+                sh:order "7.0"^^xsd:decimal ;
         ] ;
         sh:property [
             sh:path shared:protocol ;
@@ -294,27 +309,265 @@ shared:shacl {
             sh:in ( 'iiif' 'http' 'custom') ;
             sh:minCount "1"^^xsd:integer ;
             sh:maxCount "1"^^xsd:integer ;
-            sh:order "6.0"^^xsd:decimal ;
+            sh:order "8.0"^^xsd:decimal ;
         ] ;
         sh:property [
             sh:path shared:derivativeName ;
             sh:datatype xsd:string ;
-            sh:minCount "1"^^xsd:integer ;
             sh:maxCount "1"^^xsd:integer ;
-            sh:order "7.0"^^xsd:decimal ;
+            sh:order "9.0"^^xsd:decimal ;
         ] ;
         sh:property [
             sh:path shared:path ;
             sh:datatype xsd:string ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "10.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            # Only if shared:mediaAccessMode "external
+            sh:path shared:mediaUrl ;
+            sh:datatype xsd:anyURI ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "11.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            # Only if shared:mediaAccessMode "external
+            sh:path shared:thumbnailUrl ;
+            sh:datatype xsd:anyURI ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "12.0"^^xsd:decimal ;
+        ]
+    .
+
+    ###############################################################################
+    # Archive unit
+    ###############################################################################
+
+    shared:ArchiveUnitShape a sh:NodeShape ;
+        sh:targetClass shared:ArchiveUnit ;
+        dcterms:created "2026-07-30T23:55:00+02:00"^^xsd:dateTime ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2026-08-03T00:32:00+02:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        rdfs:label "Archive unit"@en, "Archiveinheit"@de, "Unité archivistique"@fr, "Unità archivistica"@it ;
+        sh:closed "true"^^xsd:boolean ;
+        sh:node oldap:ThingShape ;
+        sh:property [
+            sh:path schema:name ;
+            sh:datatype rdf:langString ;
+            sh:name "Title"@en, "Titel"@de, "Titre"@fr, "Titolo"@it ;
+            sh:minCount "1"^^xsd:integer ;
+            sh:uniqueLang true ;
+            sh:order "1.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path shared:archiveLevel ;
+            sh:class shared:ArchiveLevel ;
+            sh:in (
+                shared:ArchiveGroup
+                shared:Fonds
+                shared:Subfonds
+                shared:Series
+                shared:Subseries
+                shared:File
+                shared:Item
+            ) ;
+            sh:name "Archive level"@en, "Archivstufe"@de, "Niveau de description"@fr, "Livello archivistico"@it ;
             sh:minCount "1"^^xsd:integer ;
             sh:maxCount "1"^^xsd:integer ;
+            sh:order "2.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path shared:parentArchiveUnit ;
+            sh:class shared:ArchiveUnit ;
+            sh:name "Parent archive unit"@en, "Übergeordnete Archiveinheit"@de, "Unité archivistique parente"@fr, "Unità archivistica superiore"@it ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "3.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path schema:identifier ;
+            sh:datatype xsd:string ;
+            sh:name "Reference code"@en, "Signatur"@de, "Cote"@fr, "Segnatura"@it ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "4.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path schema:description ;
+            sh:datatype rdf:langString ;
+            sh:name "Scope and content"@en, "Inhalt und Zusammenfassung"@de, "Contenu et résumé"@fr, "Contenuto e sintesi"@it ;
+            sh:uniqueLang true ;
+            sh:order "5.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path dcterms:temporal ;
+            sh:class oldap:Dating ;
+            sh:name "Date or date range"@en, "Laufzeit"@de, "Date ou période"@fr, "Data o intervallo"@it ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "6.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path schema:materialExtent ;
+            sh:datatype rdf:langString ;
+            sh:name "Extent and medium"@en, "Umfang und Medium"@de, "Importance matérielle et support"@fr, "Consistenza e supporto"@it ;
+            sh:uniqueLang true ;
+            sh:order "7.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path dcterms:creator ;
+            sh:class dcterms:Agent ;
+            sh:name "Record creator"@en, "Bestandsbildner"@de, "Producteur d'archives"@fr, "Soggetto produttore"@it ;
             sh:order "8.0"^^xsd:decimal ;
-       ] .
+        ] ;
+        sh:property [
+            sh:path dcterms:provenance ;
+            sh:datatype rdf:langString ;
+            sh:name "Custodial history"@en, "Überlieferungs- und Besitzgeschichte"@de, "Historique de la conservation"@fr, "Storia archivistica e proprietà"@it ;
+            sh:uniqueLang true ;
+            sh:order "9.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path schema:conditionsOfAccess ;
+            sh:datatype rdf:langString ;
+            sh:name "Conditions of access"@en, "Zugangsbedingungen"@de, "Conditions d'accès"@fr, "Condizioni di accesso"@it ;
+            sh:uniqueLang true ;
+            sh:order "10.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path schema:about ;
+            sh:class oldap:Thing ;
+            sh:name "Subject"@en, "Inhaltlicher Bezug"@de, "Sujet"@fr, "Riferimento tematico"@it ;
+            sh:order "11.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path schema:position ;
+            sh:datatype xsd:integer ;
+            sh:name "Position"@en, "Position"@de, "Position"@fr, "Posizione"@it ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "12.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path shared:hasMediaObject ;
+            sh:class shared:MediaObject ;
+            sh:name "Media object"@en, "Medienobjekt"@de, "Objet multimédia"@fr, "Oggetto multimediale"@it ;
+            sh:order "13.0"^^xsd:decimal ;
+        ] .
+
+    shared:StagingAreaShape a sh:NodeShape ;
+        sh:targetClass shared:StagingArea ;
+        dcterms:created "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2026-08-04T23:42:00+02:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        rdfs:label "Staging area"@en, "Vorbereitungsbereich"@de, "Zone de préparation"@fr, "Area di sosta"@it ;
+        sh:property [
+            sh:path schema:name ;
+            sh:datatype xsd:string ;
+            sh:name "Staging area name"@en, "Name des Vorbereitungsbereichs"@de, "Nom de la zone de préparation"@fr, "Nome dell'area di sosta"@it ;
+            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "1.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path shared:mediaPath ;
+            sh:datatype xsd:string ;
+            sh:name "Media path"@en, "Medienpfad"@de, "Chemin d'accès au média"@fr, "Percorso media"@it ;
+            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "2.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path shared:stagingDefaultRole ;
+            sh:class oldap:Role ;
+            sh:name "Default role"@en, "Standardrolle"@de, "Rôle par défaut"@fr, "Ruolo predefinito"@it ;
+            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "3.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path shared:stagingQuotaBytes ;
+            sh:datatype xsd:integer ;
+            sh:name "Staging quota in bytes"@en, "Staging-Quote in Bytes"@de, "Quota de staging en octets"@fr, "Quota di staging in byte"@it ;
+            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:minInclusive "1"^^xsd:integer ;
+            sh:order "4.0"^^xsd:decimal ;
+        ] .
+
+    shared:StagingFolderShape a sh:NodeShape ;
+        sh:targetClass shared:StagingFolder ;
+        dcterms:created "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        rdfs:label "Staging folder"@en, "Staging Ordner"@de, "Dossier de préparation"@fr, "Cartella di staging"@it ;
+        sh:property [
+            sh:path schema:name ;
+            sh:datatype xsd:string ;
+            sh:name "Folder"@en, "Ordner"@de, "Dossier"@fr, "Cartella"@it ;
+            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "1.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path shared:inStagingArea ;
+            sh:class shared:StagingArea ;
+            sh:name "Staging area"@en, "Vorbereitungsbereich"@de, "Zone de préparation"@fr, "Area di sosta"@it ;
+            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "2.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path shared:inStagingFolder ;
+            sh:class shared:StagingFolder ;
+            sh:name "Subfolder of"@en, "Unterordner von"@de, "Sous-dossiers de"@fr, "Sottocartelle di"@it ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "3.0"^^xsd:decimal ;
+        ] .
+
+    shared:StagingMediaObjectShape a sh:NodeShape ;
+        sh:targetClass shared:StagingMediaObject ;
+        dcterms:created "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
+        dcterms:creator <https://orcid.org/0000-0003-1681-4036> ;
+        dcterms:modified "2025-01-01T00:00:00+02:00"^^xsd:dateTime ;
+        dcterms:contributor <https://orcid.org/0000-0003-1681-4036> ;
+        rdfs:label "Staged media object"@en, "Bereitgestelltes Medienobjekt"@de, "Objet multimédia proposé"@fr, "Oggetto multimediale disponibile"@it ;
+        sh:node shared:MediaObjectShape ;
+        sh:property [
+            sh:path shared:inStagingArea ;
+            sh:class shared:StagingArea ;
+            sh:name "Staging area"@en, "Vorbereitungsbereich"@de, "Zone de préparation"@fr, "Area di sosta"@it ;
+            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "1.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path shared:inStagingFolder ;
+            sh:class shared:StagingFolder ;
+            sh:name "In folder"@en, "Im Ordner"@de, "Dans le Dossier"@fr, "Nella cartella"@it ;
+            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "2.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path schema:comment ;
+            sh:datatype rdf:langString ;
+            sh:name "Comment"@en, "Kommentar"@de, "Commentaire"@fr, "Commento"@it ;
+            sh:order "3.0"^^xsd:decimal ;
+        ] ;
+        sh:property [
+            sh:path shared:stagingStatus ;
+            sh:class shared:StagingStatus ;
+            sh:name "Status"@en, "Status"@de, "Statut"@fr, "Stato"@it ;
+            sh:minCount "1"^^xsd:integer ;
+            sh:maxCount "1"^^xsd:integer ;
+            sh:order "4.0"^^xsd:decimal ;
+        ] .
+
 }
 
 shared:onto {
     shared:ontology rdf:type owl:Ontology ;
-        owl:versionInfo "0.1.0"^^xsd:string .
+        owl:versionInfo "0.6.0"^^xsd:string .
 
     ###########################################################################
     # Calendar vocabulary for historical dating
@@ -424,6 +677,24 @@ shared:onto {
 
 
     ###############################################################################
+    # Staging states
+    ###############################################################################
+    shared:StagingStatus rdf:type owl:Class ;
+        rdfs:label "Staging state"@en, "Staging Status"@de, "État du staging"@fr, "Stato di allestimento"@it .
+
+    shared:StagingStatusNew rdf:type owl:NamedIndividual, shared:StagingStatus ;
+        rdfs:label "new"@en, "neu"@de, "nouveau"@fr, "nuovo"@it .
+
+    shared:StagingStatusInProgress rdf:type owl:NamedIndividual, shared:StagingStatus ;
+        rdfs:label "in progress"@en, "in Bearbeitung"@de, "en cours"@fr, "in corso"@it .
+
+    shared:StagingStatusPublishedInArchive rdf:type owl:NamedIndividual, shared:StagingStatus ;
+        rdfs:label "published in archive"@en, "im Archiv veröffentlicht"@de, "publié dans les archives"@fr, "pubblicato nell'archivio"@it .
+
+    shared:StagingStatusDeleted rdf:type owl:NamedIndividual, shared:StagingStatus ;
+        rdfs:label "deleted"@en, "gelöscht"@de, "supprimé"@fr, "cancellato"@it .
+
+    ###############################################################################
     # Properties used for :ChronologyObject
     ###############################################################################
 
@@ -448,11 +719,19 @@ shared:onto {
     # Media object
     ###########################################################################
 
+    shared:mediaAccessMode rdf:type owl:DatatypeProperty .
+
+    shared:mediaUrl rdf:type owl:DatatypeProperty .
+
+    shared:thumbnailUrl rdf:type owl:DatatypeProperty .
+
     dcterms:type rdf:type owl:ObjectProperty .
 
     shared:originalName rdf:type owl:DatatypeProperty .
 
     shared:originalMimeType rdf:type owl:DatatypeProperty .
+
+    shared:checksum rdf:type owl:DatatypeProperty .
 
     shared:serverUrl rdf:type owl:DatatypeProperty .
 
@@ -467,5 +746,103 @@ shared:onto {
     shared:MediaObject rdf:type owl:Class ;
         rdfs:subClassOf oldap:Thing .
 
-}
+    ###########################################################################
+    # Archive unit and archive levels
+    ###########################################################################
 
+    shared:ArchiveUnit rdf:type owl:Class ;
+        rdfs:subClassOf oldap:Thing ;
+        rdfs:label "Archive unit"@en, "Archiveinheit"@de, "Unité archivistique"@fr, "Unità archivistica"@it .
+
+    shared:ArchiveLevel rdf:type owl:Class ;
+        rdfs:label "Archive level"@en, "Archivstufe"@de, "Niveau de description"@fr, "Livello archivistico"@it .
+
+    shared:ArchiveGroup rdf:type owl:NamedIndividual, shared:ArchiveLevel ;
+        rdfs:label "Archive group"@en, "Bestandsgruppe"@de, "Groupe de fonds"@fr, "Gruppo di fondi"@it .
+
+    shared:Fonds rdf:type owl:NamedIndividual, shared:ArchiveLevel ;
+        rdfs:label "Fonds"@en, "Bestand"@de, "Fonds"@fr, "Fondo"@it .
+
+    shared:Subfonds rdf:type owl:NamedIndividual, shared:ArchiveLevel ;
+        rdfs:label "Subfonds"@en, "Teilbestand"@de, "Sous-fonds"@fr, "Subfondo"@it .
+
+    shared:Series rdf:type owl:NamedIndividual, shared:ArchiveLevel ;
+        rdfs:label "Series"@en, "Serie"@de, "Série"@fr, "Serie"@it .
+
+    shared:Subseries rdf:type owl:NamedIndividual, shared:ArchiveLevel ;
+        rdfs:label "Subseries"@en, "Teilserie"@de, "Sous-série"@fr, "Sottoserie"@it .
+
+    shared:File rdf:type owl:NamedIndividual, shared:ArchiveLevel ;
+        rdfs:label "File"@en, "Dossier/Akte"@de, "Dossier"@fr, "Fascicolo"@it .
+
+    shared:Item rdf:type owl:NamedIndividual, shared:ArchiveLevel ;
+        rdfs:label "Item"@en, "Dokument/Einzelstück"@de, "Pièce"@fr, "Unità documentaria"@it .
+
+    shared:archiveLevel rdf:type owl:ObjectProperty ;
+        rdfs:domain shared:ArchiveUnit ;
+        rdfs:range shared:ArchiveLevel .
+
+    shared:parentArchiveUnit rdf:type owl:ObjectProperty ;
+        rdfs:domain shared:ArchiveUnit ;
+        rdfs:range shared:ArchiveUnit .
+
+    shared:hasMediaObject rdf:type owl:ObjectProperty ;
+        rdfs:domain shared:ArchiveUnit ;
+        rdfs:range shared:MediaObject .
+
+    # Standard properties used by ArchiveUnit. ArchiveUnit-specific
+    # cardinalities and value classes remain in SHACL so these standard
+    # properties do not receive an incorrect global OLDAP domain.
+    dcterms:temporal rdf:type owl:ObjectProperty .
+
+    dcterms:creator rdf:type owl:ObjectProperty .
+
+    dcterms:provenance rdf:type owl:DatatypeProperty .
+
+    schema:conditionsOfAccess rdf:type owl:DatatypeProperty .
+
+    # The ArchiveUnit-specific target class remains in SHACL; no global
+    # domain or range is imposed on the external schema.org property.
+    schema:about rdf:type owl:ObjectProperty .
+
+    schema:materialExtent rdf:type owl:DatatypeProperty .
+
+    ###########################################################################
+    # Staging Area
+    ###########################################################################
+
+    shared:mediaPath rdf:type owl:DatatypeProperty ;
+        rdfs:range xsd:string .
+
+    shared:stagingDefaultRole rdf:type owl:ObjectProperty ;
+        rdfs:range oldap:Role .
+
+    shared:stagingQuotaBytes rdf:type owl:DatatypeProperty ;
+        rdfs:range xsd:integer .
+
+    shared:StagingArea rdf:type owl:Class ;
+        rdfs:subClassOf oldap:Thing .
+
+    shared:inStagingArea rdf:type owl:ObjectProperty ;
+        rdfs:range shared:StagingArea .
+
+    ###########################################################################
+    # Staging folder
+    ###########################################################################
+
+    shared:inStagingFolder rdf:type owl:ObjectProperty ;
+        rdfs:range shared:StagingFolder .
+
+    shared:StagingFolder rdf:type owl:Class ;
+        rdfs:subClassOf oldap:Thing .
+
+    ###########################################################################
+    # Staging Media Object
+    ###########################################################################
+    shared:stagingStatus rdf:type owl:ObjectProperty ;
+        rdfs:range shared:StagingStatus .
+
+    shared:StagingMediaObject rdf:type owl:Class ;
+        rdfs:subClassOf shared:MediaObject .
+
+}

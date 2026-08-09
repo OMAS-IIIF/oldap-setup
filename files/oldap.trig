@@ -1,3 +1,4 @@
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -634,6 +635,16 @@
         sh:property [
             sh:path :hasRole ;
             sh:class :Role ;
+        ] ;
+        sh:property [
+            sh:path :passwordResetRequestAt ;
+            sh:datatype xsd:dateTimeStamp ;
+            sh:maxCount 1 ;
+        ] ;
+        sh:property [
+            sh:path :authVersion ;
+            sh:datatype xsd:nonNegativeInteger ;
+            sh:maxCount 1 ;
         ] .
 
 
@@ -874,6 +885,10 @@
 
     :hasRole rdf:type owl:ObjectProperty .
 
+    :passwordResetRequestAt rdf:type owl:DatatypeProperty .
+
+    :authVersion rdf:type owl:DatatypeProperty .
+
     #
     # RDF*Star property to assign an admin permission to a user/project combination
     #
@@ -964,6 +979,5 @@
     :Thing rdf:type owl:Class .
 
 }
-
 
 

@@ -1,5 +1,23 @@
 # CODEX_LOG
 
+### Update 2026-08-09 23:35
+- Decisions: Separate browser-facing media ingest/delivery from API-to-media report retrieval; keep verified HTTPS for both production routes and use home-only internal HTTP instead of distributing Caddy's private CA.
+- Implementation: Added `oldap_media_internal_url` to both inventories, Ansible preflight/rendering, Compose, deployment regression tests, and operational/project documentation. Home resolves internally to `http://media.home.org`; production is pinned to `https://media.oldap.org`; the direct-playbook API fallback is v0.2.15.
+- Open: Publish and deploy the API release containing `OLDAP_MEDIA_INTERNAL_URL` support, then refresh the existing READY import report on the home test system.
+- Risks/Assumptions: HTTP is restricted to server-to-server traffic between the trusted home test VMs. Browser upload capabilities and persisted public media delivery URLs remain HTTPS; production preflight rejects any noncanonical internal media URL.
+
+### Update 2026-08-08 23:16
+- Decisions: Extend the existing deployment boundary with the three purpose-specific ZIP-import keys and a dedicated import identity; keep import links on FasnachtsPage and direct binary/report traffic on the media host.
+- Implementation: Wired all import secrets, credentials, URLs, and mail backend through Vault-backed Ansible rendering and Docker Compose; strengthened preflight to require seven distinct keys; pinned direct-playbook defaults to API v0.2.13 and FasnachtsPage v0.1.28; added production inventory contracts, examples, tests, and documentation.
+- Open: Add the five new Vault variables locally, verify them through Ansible preflight, and deploy only after GraphDB backup plus the explicit ontology migration plan.
+- Risks/Assumptions: `make copy-trigs` updates deployment source files but does not mutate an existing GraphDB repository; the import OLDAP identity must exist and have its intended project-neutral permissions before cutover.
+
+### Update 2026-08-04 15:13
+- Decisions: Keep the unauthenticated, network-trusted UniBasel SMTP relay settings outside Vault and scope them to production; retain console delivery for home/default deployments.
+- Implementation: Pointed production reset links to `https://fasnacht.digital`, configured `smtp.unibas.ch:25` with STARTTLS and the verified sender, rendered and forwarded all API mail variables, added a production preflight assertion, regression coverage, and synchronized deployment documentation.
+- Open: Run `make deploy-vm`, request a fresh password-reset message, verify inbox delivery and link host, and complete one password change.
+- Risks/Assumptions: The UniBasel relay continues to trust the production host by network location and accept `lukas.rosenthaler@unibas.ch`; SMTP acceptance alone does not guarantee inbox placement.
+
 ### Update 2026-07-24 00:50
 - Decisions: Keep `api.oldap.org` as the FasnachtsPage API and permit the canonical cross-site `fasnacht.digital` frontend to use cookie-backed refresh without changing DNS or frontend API routing.
 - Implementation: Added a production-only `Secure=true`, `SameSite=None` refresh-cookie override, a deployment preflight assertion, inventory regression coverage, and synchronized operational/project documentation; home and local environments retain `SameSite=Lax`.

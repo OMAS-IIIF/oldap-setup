@@ -5,11 +5,11 @@
 
   vars:
     # the version numbers to be used for deployment
-    oldap_api_tag: "v0.2.17"
+    oldap_api_tag: "v0.2.20"
     oldap_app_tag: "v0.2.4"
     oldap_tools_tag: "v0.3.10"
     oldap_harvesters_tag: "v0.1.1"
-    fasnachts_page_tag: "v0.1.30"
+    fasnachts_page_tag: "v0.1.33"
     force_pull: false   # set with -e force_pull=true to always pull images (useful for 'latest' tags)
 
     deploy_root: /opt/oldap

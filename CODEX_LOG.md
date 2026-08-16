@@ -1,5 +1,11 @@
 # CODEX_LOG
 
+### Update 2026-08-17 00:34
+- Decisions: Pin the default coordinated deployment to the ZIP-export-capable API and FasnachtsPage releases while retaining Makefile-derived overrides for normal deployments.
+- Implementation: Updated `oldap-deploy.yml` defaults to oldap-api `v0.2.20` and FasnachtsPage `v0.1.33`.
+- Open: Publish the matching Docker images and deploy the API/frontend and media stacks to home.org.
+- Risks/Assumptions: Both release tags contain the previously verified ZIP-export feature commits.
+
 ### Update 2026-08-16 23:44
 - Decisions: Keep ZIP-export size, retention, and quota policy in non-secret Ansible variables; reserve Vault exclusively for credentials and signing keys.
 - Implementation: Rendered seven bounded Phase-3 operating variables into the API container, added deployment preflight ranges and defaults, and extended deployment regression coverage. Nine focused tests and Ansible syntax-check pass.

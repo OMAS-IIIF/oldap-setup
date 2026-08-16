@@ -133,6 +133,48 @@ class ProductionAuthenticationConfigTest(unittest.TestCase):
             template,
         )
 
+    def test_zip_export_contract_reaches_api_container(self) -> None:
+        """Export credentials, delivery origin, and mail mode must be deployed."""
+        host = _production_host()
+        template = ENV_TEMPLATE.read_text(encoding="utf-8")
+        compose = COMPOSE_FILE.read_text(encoding="utf-8")
+
+        self.assertEqual(host["oldap_public_app_url"], "https://fasnacht.digital")
+        self.assertEqual(host["oldap_media_export_url"], "https://media.oldap.org")
+        self.assertEqual(host["oldap_export_email_backend"], "smtp")
+        for variable in (
+            "OLDAP_EXPORT_SERVICE_JWT_SECRET",
+            "OLDAP_EXPORT_DOWNLOAD_JWT_SECRET",
+            "OLDAP_EXPORT_SERVICE_USER",
+            "OLDAP_EXPORT_SERVICE_PASSWORD",
+            "OLDAP_EXPORT_MAX_ARCHIVE_BYTES",
+            "OLDAP_EXPORT_READY_RETENTION_HOURS",
+            "OLDAP_EXPORT_AUDIT_RETENTION_DAYS",
+            "OLDAP_EXPORT_MAX_ACTIVE_JOBS_PER_USER",
+            "OLDAP_EXPORT_MAX_ACTIVE_JOBS_TOTAL",
+            "OLDAP_EXPORT_MAX_RESERVED_BYTES_PER_USER",
+            "OLDAP_EXPORT_MAX_RESERVED_BYTES_TOTAL",
+            "OLDAP_MEDIA_EXPORT_URL",
+            "OLDAP_EXPORT_EMAIL_BACKEND",
+        ):
+            self.assertIn(f"{variable}=", template)
+            self.assertIn(f"{variable}:", compose)
+
+        defaults = (REPOSITORY_ROOT / "group_vars" / "all.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("oldap_export_max_archive_bytes: 50000000000", defaults)
+        self.assertIn("oldap_export_ready_retention_hours: 24", defaults)
+        self.assertIn("oldap_export_audit_retention_days: 60", defaults)
+        self.assertIn("oldap_export_max_active_jobs_per_user: 3", defaults)
+        self.assertIn("oldap_export_max_active_jobs_total: 20", defaults)
+        self.assertIn(
+            "oldap_export_max_reserved_bytes_per_user: 100000000000", defaults
+        )
+        self.assertIn(
+            "oldap_export_max_reserved_bytes_total: 500000000000", defaults
+        )
+
     def test_home_uses_internal_http_without_changing_public_media_https(self) -> None:
         """The test API must avoid the untrusted private CA server-to-server."""
         host = _home_host()
@@ -163,7 +205,8 @@ class ProductionAuthenticationConfigTest(unittest.TestCase):
         self.assertIn("oldap_refresh_cookie_secure | bool", content)
         self.assertIn("Validate SMTP password-reset delivery configuration", content)
         self.assertIn("Validate production ZIP-import integration", content)
-        self.assertIn("seven distinct JWT secrets", content)
+        self.assertIn("Validate production ZIP-export integration", content)
+        self.assertIn("nine distinct JWT secrets", content)
         self.assertIn("when: inventory_hostname in groups['oldap_prod']", content)
 
 

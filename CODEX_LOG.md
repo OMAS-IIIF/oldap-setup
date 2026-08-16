@@ -1,5 +1,17 @@
 # CODEX_LOG
 
+### Update 2026-08-16 23:44
+- Decisions: Keep ZIP-export size, retention, and quota policy in non-secret Ansible variables; reserve Vault exclusively for credentials and signing keys.
+- Implementation: Rendered seven bounded Phase-3 operating variables into the API container, added deployment preflight ranges and defaults, and extended deployment regression coverage. Nine focused tests and Ansible syntax-check pass.
+- Open: Choose any environment-specific overrides after representative load measurement, then deploy and verify SMTP-backed export notification.
+- Risks/Assumptions: Pilot defaults are 50 GB, 24 hours, 60 days, 3/20 active jobs and 100/500 GB retained bytes; no live host was mutated.
+
+### Update 2026-08-15 00:20
+- Decisions: Wire ZIP-export trust and mail settings through the existing Vault-backed deployment boundary without populating tracked secrets. Require service/download keys to differ from all seven existing JWT purposes and use the canonical FasnachtsPage/media URLs in production.
+- Implementation: Added export-service/download secrets, dedicated OLDAP service credentials, media export URL, export mail backend, production preflight, Compose/template rendering, example placeholders, inventory defaults, and deployment regression coverage.
+- Open: Populate the four new Vault values, ensure the export service identity exists, publish compatible API/frontend images, and perform the coordinated deployed smoke test.
+- Risks/Assumptions: Production continues to use the network-trusted SMTP relay. No real secret or host configuration was changed by this repository edit.
+
 ### Update 2026-08-09 23:35
 - Decisions: Separate browser-facing media ingest/delivery from API-to-media report retrieval; keep verified HTTPS for both production routes and use home-only internal HTTP instead of distributing Caddy's private CA.
 - Implementation: Added `oldap_media_internal_url` to both inventories, Ansible preflight/rendering, Compose, deployment regression tests, and operational/project documentation. Home resolves internally to `http://media.home.org`; production is pinned to `https://media.oldap.org`; the direct-playbook API fallback is v0.2.15.

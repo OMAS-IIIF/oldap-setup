@@ -9,6 +9,7 @@ oldap_refresh_cookie_samesite: "None"
 # configured or stored in Ansible Vault.
 oldap_password_reset_email_backend: "smtp"
 oldap_import_email_backend: "smtp"
+oldap_export_email_backend: "smtp"
 oldap_mail_host: "smtp.unibas.ch"
 oldap_mail_port: 25
 oldap_mail_from: "lukas.rosenthaler@unibas.ch"

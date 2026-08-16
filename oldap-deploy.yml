@@ -5,11 +5,11 @@
 
   vars:
     # the version numbers to be used for deployment
-    oldap_api_tag: "v0.2.15"
-    oldap_app_tag: "v0.2.3"
-    oldap_tools_tag: "v0.3.7"
+    oldap_api_tag: "v0.2.17"
+    oldap_app_tag: "v0.2.4"
+    oldap_tools_tag: "v0.3.10"
     oldap_harvesters_tag: "v0.1.1"
-    fasnachts_page_tag: "v0.1.28"
+    fasnachts_page_tag: "v0.1.30"
     force_pull: false   # set with -e force_pull=true to always pull images (useful for 'latest' tags)
 
     deploy_root: /opt/oldap
@@ -34,6 +34,8 @@
           - (oldap_import_upload_jwt_secret | default('') | string | length) >= 32
           - (oldap_import_service_jwt_secret | default('') | string | length) >= 32
           - (oldap_import_records_jwt_secret | default('') | string | length) >= 32
+          - (oldap_export_service_jwt_secret | default('') | string | length) >= 32
+          - (oldap_export_download_jwt_secret | default('') | string | length) >= 32
           - >-
             ([oldap_access_jwt_secret | default(''),
               oldap_refresh_jwt_secret | default(''),
@@ -41,22 +43,40 @@
               oldap_password_reset_jwt_secret | default(''),
               oldap_import_upload_jwt_secret | default(''),
               oldap_import_service_jwt_secret | default(''),
-              oldap_import_records_jwt_secret | default('')]
-            | unique | length) == 7
+              oldap_import_records_jwt_secret | default(''),
+              oldap_export_service_jwt_secret | default(''),
+              oldap_export_download_jwt_secret | default('')]
+            | unique | length) == 9
           - (oldap_auth_admin_user | default('') | string | length) > 0
           - (oldap_auth_admin_password | default('') | string | length) > 0
           - (oldap_import_service_user | default('') | string | length) > 0
           - (oldap_import_service_password | default('') | string | length) > 0
+          - (oldap_export_service_user | default('') | string | length) > 0
+          - (oldap_export_service_password | default('') | string | length) > 0
           - (oldap_auth_allowed_origins | default('') | string | length) > 0
           - (oldap_password_reset_frontend_url | default('') | string | length) > 0
           - (oldap_public_app_url | default('') | string | length) > 0
           - (oldap_media_ingest_url | default('') | string | length) > 0
           - >-
             (oldap_media_internal_url | default(oldap_media_ingest_url) | string | length) > 0
+          - (oldap_media_export_url | default('') | string | length) > 0
+          - (oldap_export_max_archive_bytes | int) >= 1
+          - (oldap_export_max_archive_bytes | int) <= 50000000000
+          - (oldap_export_ready_retention_hours | int) >= 1
+          - (oldap_export_ready_retention_hours | int) <= 744
+          - (oldap_export_audit_retention_days | int) >= 1
+          - (oldap_export_audit_retention_days | int) <= 3650
+          - (oldap_export_max_active_jobs_per_user | int) >= 1
+          - (oldap_export_max_active_jobs_total | int) >= (oldap_export_max_active_jobs_per_user | int)
+          - (oldap_export_max_active_jobs_total | int) <= 10000
+          - (oldap_export_max_reserved_bytes_per_user | int) >= 1
+          - (oldap_export_max_reserved_bytes_total | int) >= (oldap_export_max_reserved_bytes_per_user | int)
+          - (oldap_export_max_reserved_bytes_total | int) <= 5000000000000
         fail_msg: >-
           Authentication deployment variables are missing or invalid. Supply
-          seven distinct JWT secrets of at least 32 bytes plus the OLDAP auth
-          and import service credentials through auth-secrets.yml or Ansible Vault.
+          nine distinct JWT secrets of at least 32 bytes plus the OLDAP auth,
+          import-service, and export-service credentials through
+          auth-secrets.yml or Ansible Vault.
       no_log: true
 
     - name: Validate production browser refresh compatibility
@@ -105,6 +125,17 @@
         fail_msg: >-
           Production ZIP imports require the public FasnachtsPage URL, the
           public and internal HTTPS media URLs, and SMTP import notifications.
+      when: inventory_hostname in groups['oldap_prod']
+
+    - name: Validate production ZIP-export integration
+      ansible.builtin.assert:
+        that:
+          - (oldap_public_app_url | default('')) == 'https://fasnacht.digital'
+          - (oldap_media_export_url | default('')) == 'https://media.oldap.org'
+          - (oldap_export_email_backend | default('console') | lower) == 'smtp'
+        fail_msg: >-
+          Production ZIP exports require the FasnachtsPage status URL, the
+          canonical HTTPS media-export URL, and SMTP notifications.
       when: inventory_hostname in groups['oldap_prod']
 
     - name: Debug inventory_hostname und caddy_mode

@@ -416,6 +416,37 @@
       register: compose_result
       when: not rollback | bool
 
+    - name: Wait for the deployed OLDAP API health endpoint
+      ansible.builtin.uri:
+        url: "{{ public_api_url }}/health"
+        method: GET
+        status_code: 200
+        timeout: 10
+        validate_certs: "{{ inventory_hostname in groups['oldap_prod'] }}"
+      register: oldap_api_health
+      until: oldap_api_health.status == 200
+      retries: 24
+      delay: 5
+      when: not rollback | bool
+
+    - name: Verify ZIP export service account authentication
+      ansible.builtin.uri:
+        url: "{{ public_api_url }}/mobile/v1/auth/login"
+        method: POST
+        body_format: json
+        body:
+          userId: "{{ oldap_export_service_user }}"
+          password: "{{ oldap_export_service_password }}"
+        status_code: 200
+        timeout: 15
+        validate_certs: "{{ inventory_hostname in groups['oldap_prod'] }}"
+      register: oldap_export_service_login
+      until: oldap_export_service_login.status == 200
+      retries: 3
+      delay: 5
+      when: not rollback | bool
+      no_log: true
+
     # 16. Show services status
     - name: Print services status
       ansible.builtin.debug:

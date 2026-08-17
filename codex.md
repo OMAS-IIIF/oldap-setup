@@ -61,6 +61,10 @@ This repository deploys the OLDAP stack with Ansible and Docker Compose. It prep
   `sudo-rs` is incompatible with the current control-node prompt handling.
 - `make deploy-vm` deploys to production.
 - Running a deployment re-renders `/opt/oldap/compose/.env` from `templates/oldap.env.j2` using the selected inventory host variables.
+- A normal deployment waits for the public API health endpoint and then logs in
+  once with the Vault-backed ZIP export service credentials. This fails the
+  rollout immediately when that account is missing, inactive, or has a
+  mismatching password instead of leaving the export worker in a retry loop.
 - `make deploy-home` and `make deploy-vm` default to the shared encrypted
   `$HOME/ProgDev/OLDAP/auth/auth.vault.yml` and prompt for its Vault password;
   `AUTH_SECRETS_FILE` and `ANSIBLE_VAULT_ARGS` remain overridable.

@@ -206,6 +206,9 @@ class ProductionAuthenticationConfigTest(unittest.TestCase):
         self.assertIn("Validate SMTP password-reset delivery configuration", content)
         self.assertIn("Validate production ZIP-import integration", content)
         self.assertIn("Validate production ZIP-export integration", content)
+        self.assertIn("Wait for the deployed OLDAP API health endpoint", content)
+        self.assertIn("Verify ZIP export service account authentication", content)
+        self.assertIn("/mobile/v1/auth/login", content)
         self.assertIn("nine distinct JWT secrets", content)
         self.assertIn("when: inventory_hostname in groups['oldap_prod']", content)
 

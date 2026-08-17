@@ -1,5 +1,11 @@
 # CODEX_LOG
 
+### Update 2026-08-17 23:14
+- Decisions: Treat a running API container as insufficient deployment evidence; the ZIP export service identity must authenticate successfully before a rollout completes.
+- Implementation: Added a public API health wait and a secret-safe post-deploy login probe for the Vault-backed export service account, with regression coverage and operational documentation.
+- Open: Confirm the production `exporter` account is active and its password matches the Vault, then perform the coordinated production rollout and authenticated export smoke tests.
+- Risks/Assumptions: The login probe issues short-lived tokens but does not retain or expose them; home TLS validation remains disabled only for its private Caddy CA, while production certificate validation stays enabled.
+
 ### Update 2026-08-17 00:34
 - Decisions: Pin the default coordinated deployment to the ZIP-export-capable API and FasnachtsPage releases while retaining Makefile-derived overrides for normal deployments.
 - Implementation: Updated `oldap-deploy.yml` defaults to oldap-api `v0.2.20` and FasnachtsPage `v0.1.33`.

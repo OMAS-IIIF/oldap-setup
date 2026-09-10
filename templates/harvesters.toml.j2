@@ -6,8 +6,8 @@ default_max_pages = {{ oldap_harvesters_europeana_default_max_pages | default(1)
 default_profile = "{{ oldap_harvesters_europeana_default_profile | default('standard') }}"
 
 [oldap]
-server = "http://graphdb:7200"
-repo = "oldap"
+server = {{ (oldap_writer_graphdb_url if oldap_writer_enabled | default(false) else "http://graphdb:7200") | to_json }}
+repo = {{ (oldap_writer_repository if oldap_writer_enabled | default(false) else "oldap") | to_json }}
 project = "fasnacht"
 user_id = "{{ oldap_harvesters_oldap_user_id | default('rosenth') }}"
 credentials_file = "/run/secrets/oldap-harvesters/oldap.password"

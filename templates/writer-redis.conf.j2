@@ -1,0 +1,17 @@
+# Dedicated coordination state: never use cache eviction or automatic expiry.
+bind 0.0.0.0
+port 0
+tls-port {{ oldap_writer_port }}
+tls-cert-file /run/oldap-writer/server.crt
+tls-key-file /run/oldap-writer/server.key
+tls-ca-cert-file /run/oldap-writer/ca.crt
+tls-auth-clients no
+protected-mode yes
+daemonize no
+dir /data
+appendonly yes
+appendfsync always
+aof-load-truncated no
+maxmemory-policy noeviction
+save ""
+aclfile /run/oldap-writer/users.acl

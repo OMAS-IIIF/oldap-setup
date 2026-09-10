@@ -1,0 +1,17 @@
+#!/bin/sh
+# Docker publishes via forwarding/NAT, so INPUT/UFW rules alone are insufficient.
+# Replace our chain atomically and preserve unrelated operator firewall rules.
+set -eu
+iptables -w -N DOCKER-USER 2>/dev/null || iptables -w -nL DOCKER-USER >/dev/null
+iptables-restore --wait --noflush <<'RULES'
+*filter
+:OLDAP-WRITER - [0:0]
+-F OLDAP-WRITER
+{% for source in oldap_writer_allowed_sources %}
+-A OLDAP-WRITER -s {{ source }} -j RETURN
+{% endfor %}
+-A OLDAP-WRITER -j DROP
+COMMIT
+RULES
+iptables -w -C DOCKER-USER -i {{ oldap_writer_interface }} -p tcp -m conntrack --ctorigdst {{ oldap_writer_publish_address }} --ctorigdstport {{ oldap_writer_port }} -j OLDAP-WRITER 2>/dev/null || \
+iptables -w -I DOCKER-USER 1 -i {{ oldap_writer_interface }} -p tcp -m conntrack --ctorigdst {{ oldap_writer_publish_address }} --ctorigdstport {{ oldap_writer_port }} -j OLDAP-WRITER

@@ -1,0 +1,68 @@
+---
+# Included before Compose configuration is rendered. No automatic provisioning
+# or migration of the application model/roles is performed here.
+- name: Validate explicit writer deployment contract
+  ansible.builtin.assert:
+    that:
+      - oldap_writer_compatible_releases | bool
+      - oldap_writer_owner in hostvars
+      - inventory_hostname in oldap_writer_members
+      - oldap_writer_owner in oldap_writer_members
+      - oldap_writer_domain is match('^[a-zA-Z0-9][a-zA-Z0-9_-]+$')
+      - oldap_writer_hostname is match('^[a-zA-Z0-9][a-zA-Z0-9.-]+$')
+      - oldap_writer_password is match('^[a-fA-F0-9]{64}$')
+      - oldap_writer_image is match('^redis:[0-9]+\.[0-9]+\.[0-9]+-alpine(@sha256:[a-f0-9]{64})?$')
+      - oldap_writer_port | int >= 1024
+      - oldap_writer_port | int <= 65535
+      - oldap_writer_graphdb_url is match('^https?://[^ ]+$')
+      - oldap_writer_repository is match('^[a-zA-Z0-9_-]+$')
+      - oldap_writer_members | length == 1 or oldap_writer_graphdb_url is match('^https://')
+      - oldap_writer_ca_file | length > 0
+      - oldap_writer_policy_file | length > 0
+      - oldap_writer_members | length == 1 or oldap_writer_publish_address | length > 0
+    fail_msg: "Writer topology, compatible releases, policy, TLS and Vault password must be configured explicitly."
+  no_log: true
+
+- name: Require consistent shared endpoint and policy on every writer host
+  ansible.builtin.assert:
+    that:
+      - hostvars[item].oldap_writer_enabled | default(false) | bool
+      - hostvars[item].oldap_writer_owner == oldap_writer_owner
+      - hostvars[item].oldap_writer_graphdb_url == oldap_writer_graphdb_url
+      - hostvars[item].oldap_writer_repository == oldap_writer_repository
+      - hostvars[item].oldap_writer_domain == oldap_writer_domain
+      - hostvars[item].oldap_writer_hostname == oldap_writer_hostname
+      - hostvars[item].oldap_writer_port | int == oldap_writer_port | int
+      - hostvars[item].oldap_writer_password == oldap_writer_password
+      - hostvars[item].oldap_writer_policy_file == oldap_writer_policy_file
+      - hostvars[item].oldap_writer_ca_file == oldap_writer_ca_file
+      - hostvars[item].oldap_writer_members | sort == oldap_writer_members | sort
+    fail_msg: "Writer members must share one owner, domain, endpoint, credentials and policy."
+  loop: "{{ oldap_writer_members }}"
+  no_log: true
+
+- name: Validate distinct recovery service credentials and explicit role
+  ansible.builtin.assert:
+    that:
+      - oldap_writer_recovery_password is match('^[a-fA-F0-9]{64}$')
+      - oldap_writer_operator_password is match('^[a-fA-F0-9]{64}$')
+      - oldap_writer_recovery_password != oldap_writer_password
+      - oldap_writer_operator_password != oldap_writer_password
+      - oldap_writer_operator_password != oldap_writer_recovery_password
+      - oldap_writer_recovery_role_iri is match('^(https?://|urn:)[^ <>]+$')
+      - oldap_writer_recovery_inventory_sha256 is match('^[a-f0-9]{64}$')
+    fail_msg: "Recovery requires a dedicated ordinary role and separate Vault credentials."
+  when: oldap_writer_recovery_enabled | default(false) | bool
+  no_log: true
+
+- name: Require consistent recovery activation and credentials across members
+  ansible.builtin.assert:
+    that:
+      - (hostvars[item].oldap_writer_recovery_enabled | default(false) | bool) == (oldap_writer_recovery_enabled | default(false) | bool)
+      - not (oldap_writer_recovery_enabled | default(false) | bool) or hostvars[item].oldap_writer_recovery_password == oldap_writer_recovery_password
+      - not (oldap_writer_recovery_enabled | default(false) | bool) or hostvars[item].oldap_writer_operator_password == oldap_writer_operator_password
+      - not (oldap_writer_recovery_enabled | default(false) | bool) or hostvars[item].oldap_writer_recovery_role_iri == oldap_writer_recovery_role_iri
+      - not (oldap_writer_recovery_enabled | default(false) | bool) or hostvars[item].oldap_writer_recovery_inventory_sha256 == oldap_writer_recovery_inventory_sha256
+    fail_msg: "Recovery activation, role and credentials must agree on all domain members."
+  loop: "{{ oldap_writer_members }}"
+  no_log: true

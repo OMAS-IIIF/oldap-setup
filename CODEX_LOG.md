@@ -1,5 +1,29 @@
 # CODEX_LOG
 
+### Update 2026-09-10 12:10
+- Decisions: Complete WR-04 local operational acceptance; enable only the explicitly authorized rosenth operator. Production remains a separate target-specific rollout.
+- Implementation: Added native service entry points, startup refusal tests and real isolated GraphDB/native writer fault/restore probe. Production inventory and templates remain unchanged in WR-04. Acceptance: 50 recovery/native, 19 deployment, 49 authentication/Capture transport and 8 frontend tests pass; 10 native and 15 pinned Redis checks pass. Both live/fixture UI flows and builds pass; FP typecheck baseline remains 23 errors/37 warnings, SALSAH is clean.
+- Open: Production multi-host/SSH partition, whole-host reboot and independent-storage restore acceptance; native Capture acceptance retains the user's local waiver.
+- Risks/Assumptions: Native services must remain foreground and within the reviewed inventory; unmanaged direct writers are maintenance-only. Persistent controller/gate state never expires. No commit, push or production deployment.
+
+### Update 2026-09-10 01:05
+- Decisions: Separate normal writer, recovery API and offline operator Redis ACL identities; operational evidence is read-only to the API.
+- Implementation: Added optional recovery credentials/role/inventory digest validation across members, API-only secret injection and restricted ACL selectors for Lua key checks. Added deployment tests and detailed offline Docker/SSH maintenance procedure; extended pinned runtime probe for evidence-denial/audited retry.
+- Open: Explicit reviewed inventory, compatible rollout and WR-04 target rehearsal/native MacBook control are required before enabling recovery. Operator secrets/configuration remain outside application containers.
+- Risks/Assumptions: 16 deployment/auth tests, syntax check and all 15 pinned Redis runtime checks pass; backend suite adds 51 checks. No real inventory, remote deployment, application RDF or running recovery changed. Existing WR-01 and ontology changes preserved.
+
+### Update 2026-09-10 00:40
+- Decisions: Complete WR-01 deployment implementation with explicit one-owner/member topology; keep existing environments disabled until coordinated rollout. Use TLS even internally and reject empty-state recreation after provisioning.
+- Implementation: oldap-setup adds guarded AOF bootstrap, pinned Redis service/ACL/health, private Docker forwarding firewall, shared policy/endpoint/GraphDB configuration and image preflight for API/tools/harvesters. Deployment contract markers reject accidental disablement/retargeting. Documented raw/model migration bypasses and operator procedure. Evidence: FasnachtsPage/docs/wr-01.
+- Open: WR-02 verified recovery/privilege/audit. Full Linux VM reboot and target cross-VM routing remain WR-04/rollout acceptance; no production enablement or release publication.
+- Risks/Assumptions: 14 tests, Ansible syntax, generated Compose idempotence, actual TLS/ACL/two-process/persistent restart/cache isolation and Linux namespace firewall checks pass. All owned fixtures removed; application services/data and CaptureApp unchanged.
+
+### Update 2026-09-07 20:36
+- Decisions: Keep the Shared initialization asset identical to oldaplib for AS-01; do not deploy or reload live ontology graphs in this step.
+- Implementation: Synchronized files/shared.trig to Shared 0.7.0 with only optional folder archive-default/media-reference relationships; updated stable context.
+- Open: Coordinate loading with later backend lifecycle/permission changes and accepted rollout.
+- Risks/Assumptions: Byte-for-byte comparison with oldaplib passes; only additive ontology terms and version/modified metadata changed. No playbook, environment, role or running-service change.
+
 ### Update 2026-08-17 23:14
 - Decisions: Treat a running API container as insufficient deployment evidence; the ZIP export service identity must authenticate successfully before a rollout completes.
 - Implementation: Added a public API health wait and a secret-safe post-deploy login probe for the Vault-backed export service account, with regression coverage and operational documentation.

@@ -249,3 +249,10 @@ Check the log file:
 ```bash
 sudo tail -f /srv/storage/oldap-data/oldap-harvesters/logs/europeana.log
 ```
+
+## Dedicated archive writer coordination
+
+WR-01 deployment and recovery prerequisites are documented in
+[docs/writer-deployment.md](docs/writer-deployment.md). The feature is explicitly
+disabled in existing inventory until coordinated rollout. Owner and consumer VMs
+share one TLS-protected persistent Redis store; the ordinary cache is unchanged.

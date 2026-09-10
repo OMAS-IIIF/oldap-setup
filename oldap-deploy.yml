@@ -376,6 +376,40 @@
       when: oldap_harvesters_oldap_password is defined
       no_log: true
 
+    - name: Inspect existing writer deployment before changing topology
+      ansible.builtin.stat:
+        path: "{{ env_dir }}/archive-writer-provisioned"
+      register: existing_writer_owner
+
+    - name: Refuse accidental removal of a provisioned writer owner
+      ansible.builtin.assert:
+        that:
+          - not existing_writer_owner.stat.exists or (oldap_writer_enabled | bool and inventory_hostname == oldap_writer_owner)
+        fail_msg: "An existing writer owner requires an explicit maintenance migration before disabling or moving it."
+
+    - name: Inspect existing writer client contract
+      ansible.builtin.stat:
+        path: "{{ env_dir }}/archive-writer-client-contract"
+      register: existing_writer_client
+
+    - name: Read existing writer client contract
+      ansible.builtin.slurp:
+        src: "{{ env_dir }}/archive-writer-client-contract"
+      register: existing_writer_contract
+      when: existing_writer_client.stat.exists
+
+    - name: Refuse accidental writer disablement or endpoint migration
+      ansible.builtin.assert:
+        that:
+          - oldap_writer_enabled | bool
+          - (existing_writer_contract.content | b64decode) == ([oldap_writer_domain, oldap_writer_owner, oldap_writer_hostname, oldap_writer_port | string, oldap_writer_graphdb_url, oldap_writer_repository] | join(' '))
+        fail_msg: "Changing a provisioned coordination domain requires maintenance recovery, not an ordinary redeployment."
+      when: existing_writer_client.stat.exists
+
+    - name: Configure dedicated archive writer coordination
+      ansible.builtin.include_tasks: tasks/writer-store.yml
+      when: oldap_writer_enabled | bool
+
     # 13. Render .env file
     - name: Render .env
       ansible.builtin.template:
@@ -392,6 +426,33 @@
         chdir: "{{ compose_dir }}"
       changed_when: false
       no_log: true
+
+    - name: Start the designated writer store before application writers
+      community.docker.docker_compose_v2:
+        project_src: "{{ compose_dir }}"
+        services: [archive-writer]
+        state: present
+        wait: true
+        wait_timeout: 60
+      when: oldap_writer_enabled | bool and inventory_hostname == oldap_writer_owner and not rollback | bool
+
+    - name: Verify storage from each participating writer image
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - run
+          - --rm
+          - --no-deps
+          - --entrypoint
+          - python
+          - "{{ item }}"
+          - /run/oldap-writer-client/check-writer-store.py
+        chdir: "{{ compose_dir }}"
+      loop: [oldap-api, oldap-tools, oldap-harvesters]
+      changed_when: false
+      no_log: true
+      when: oldap_writer_enabled | bool and not rollback | bool
 
     # 14. Rollback or Bring up the stack
     - name: Rollback stack (stop + remove containers)

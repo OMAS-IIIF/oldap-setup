@@ -28,3 +28,27 @@ oldap_export_max_reserved_bytes_total: 500000000000
 # Soft reset behavior
 oldap_soft_reset: false
 oldap_pull_images: false
+
+# Archive writer coordination is an explicit coordinated rollout, never enabled
+# merely by deploying new infrastructure code to an existing environment.
+oldap_writer_enabled: false
+oldap_writer_owner: ""  # inventory hostname, identical for every participant
+oldap_writer_domain: ""  # stable environment/coordination identifier
+oldap_writer_members: []  # all participating inventory hosts, including the owner
+oldap_writer_image: "redis:7.4.6-alpine@sha256:3b73847e72874be07e6657b129a94761662b79bc0f679273757d4218573b2a98"
+oldap_writer_port: 6379
+oldap_writer_publish_address: ""  # private owner address; empty for one-host Docker only
+oldap_writer_allowed_sources: []  # required cross-VM source CIDRs; enforced by host operator firewall
+oldap_writer_bootstrap: false  # explicit first installation only; never recovery
+oldap_writer_compatible_releases: false
+oldap_writer_graphdb_url: "http://graphdb:7200"
+oldap_writer_repository: "oldap"
+# Optional HTTP Basic Auth for the shared GraphDB endpoint, supplied from Vault.
+oldap_writer_ts_user: ""
+oldap_writer_ts_password: ""
+
+# WR-02 recovery is separately opt-in; never assign the operational role here.
+# Supply distinct 64-hex recovery/operator passwords using Vault when enabled.
+oldap_writer_recovery_enabled: false
+oldap_writer_recovery_role_iri: ""
+oldap_writer_recovery_inventory_sha256: ""

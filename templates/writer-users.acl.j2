@@ -1,0 +1,6 @@
+user default off
+user writer on #{{ oldap_writer_password | hash('sha256') }} ~oldap-api:staging:mutation %R~oldap-api:staging:recovery:barrier +ping +info +config|get +waitaof +select +get +set +del +eval +evalsha (+eval +evalsha ~oldap-api:staging:*)
+{% if oldap_writer_recovery_enabled | default(false) %}
+user recovery-api on #{{ oldap_writer_recovery_password | hash('sha256') }} ~oldap-api:staging:mutation ~oldap-api:staging:recovery:barrier ~oldap-api:staging:recovery:operation:* %R~oldap-api:staging:recovery:evidence:* %R~oldap-api:staging:recovery:controller +ping +info +config|get +waitaof +select +get +set +del +eval +evalsha (+eval +evalsha ~oldap-api:staging:*)
+user recovery-operator on #{{ oldap_writer_operator_password | hash('sha256') }} %R~oldap-api:staging:mutation %R~oldap-api:staging:recovery:barrier %R~oldap-api:staging:recovery:operation:* ~oldap-api:staging:recovery:evidence:* ~oldap-api:staging:recovery:runtime:* ~oldap-api:staging:recovery:controller +ping +info +config|get +waitaof +select +get +set +del +eval +evalsha (+eval +evalsha ~oldap-api:staging:*)
+{% endif %}

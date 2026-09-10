@@ -1,0 +1,29 @@
+# Example environment-group variables; do not copy into all.yml globally.
+# Values below are placeholders. Private keys/passwords belong in Vault.
+oldap_writer_enabled: true
+oldap_writer_compatible_releases: true  # only after matching release review
+oldap_writer_domain: oldap-example
+oldap_writer_owner: example-owner
+oldap_writer_members: [example-owner]
+oldap_writer_hostname: writer.internal.example.org
+oldap_writer_port: 6379
+oldap_writer_policy_file: /secure/deployment/archive-policy.json
+oldap_writer_ca_file: /secure/deployment/writer-ca.crt
+oldap_writer_cert_file: /secure/deployment/writer-server.crt
+oldap_writer_key_file: /secure/deployment/writer-server.key
+oldap_writer_password: "{{ vault_oldap_writer_password }}"
+oldap_writer_bootstrap: false  # enable once on explicitly approved empty installation
+oldap_writer_publish_address: ""  # single host: internal Docker network only
+oldap_writer_graphdb_url: http://graphdb:7200
+oldap_writer_repository: oldap
+
+# Cross-VM variant: common variables for every member, owner included.
+# oldap_writer_members: [example-owner, example-worker]
+# oldap_writer_publish_address: 10.20.0.2
+# oldap_writer_interface: ens3
+# oldap_writer_allowed_sources: [10.20.0.3/32]
+# oldap_writer_graphdb_url: https://graphdb.internal.example.org
+# oldap_writer_ts_user: "{{ vault_graphdb_user }}"
+# oldap_writer_ts_password: "{{ vault_graphdb_password }}"
+# DNS writer.internal.example.org must resolve to the owner's private address
+# on consumers; owner containers use the same hostname as a Docker network alias.

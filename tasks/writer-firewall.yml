@@ -1,0 +1,45 @@
+---
+- name: Validate writer firewall sources
+  ansible.builtin.assert:
+    that:
+      - item is match('^[0-9.]+/[0-9]{1,2}$')
+      - item != '0.0.0.0/0'
+  loop: "{{ oldap_writer_allowed_sources }}"
+
+- name: Install Docker forwarding firewall prerequisites
+  ansible.builtin.apt:
+    name: iptables
+    state: present
+
+- name: Render Docker writer firewall script
+  ansible.builtin.template:
+    src: writer-firewall.sh.j2
+    dest: /usr/local/sbin/oldap-writer-firewall
+    owner: root
+    group: root
+    mode: '0700'
+  register: writer_firewall_script
+
+- name: Install persistent writer firewall service
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/oldap-writer-firewall.service
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=Restrict OLDAP writer Redis published Docker port
+      Before=docker.service
+      PartOf=docker.service
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/local/sbin/oldap-writer-firewall
+      RemainAfterExit=yes
+      [Install]
+      WantedBy=docker.service
+  register: writer_firewall_service
+
+- name: Apply writer firewall before publishing the service
+  ansible.builtin.systemd_service:
+    name: oldap-writer-firewall
+    enabled: true
+    daemon_reload: true
+    state: "{{ 'restarted' if writer_firewall_script.changed or writer_firewall_service.changed else 'started' }}"

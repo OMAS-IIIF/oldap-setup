@@ -1,0 +1,188 @@
+---
+- name: Validate writer coordination inventory
+  ansible.builtin.import_tasks: writer-preflight.yml
+
+- name: Set writer deployment paths and authenticated TLS URL
+  ansible.builtin.set_fact:
+    oldap_writer_data_dir: "{{ oldap_data }}/archive-writer"
+    oldap_writer_config_dir: "{{ env_dir }}/archive-writer"
+    oldap_writer_client_dir: "{{ env_dir }}/archive-writer-client"
+    oldap_writer_url: "rediss://writer:{{ oldap_writer_password }}@{{ oldap_writer_hostname }}:{{ oldap_writer_port }}/1?ssl_cert_reqs=required&ssl_check_hostname=true&ssl_ca_certs=/run/oldap-writer-client/ca.crt"
+  no_log: true
+
+- name: Create writer client configuration directory
+  ansible.builtin.file:
+    path: "{{ oldap_writer_client_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Install shared policy and TLS trust for participating clients
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ oldap_writer_client_dir }}/{{ item.name }}"
+    owner: root
+    group: root
+    mode: '0444'
+  loop:
+    - {src: "{{ oldap_writer_policy_file }}", name: archive-policy.json}
+    - {src: "{{ oldap_writer_ca_file }}", name: ca.crt}
+
+  register: writer_client_files
+
+- name: Install read-only writer preflight
+  ansible.builtin.copy:
+    src: scripts/check-writer-store.py
+    dest: "{{ oldap_writer_client_dir }}/check-writer-store.py"
+    owner: root
+    group: root
+    mode: '0444'
+
+- name: Provision the one designated writer owner
+  when: inventory_hostname == oldap_writer_owner
+  block:
+    - name: Validate owner TLS and private network settings
+      ansible.builtin.assert:
+        that:
+          - oldap_writer_cert_file | length > 0
+          - oldap_writer_key_file | length > 0
+          - oldap_writer_publish_address == '' or oldap_writer_publish_address is match('^(10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[01])\.)[0-9.]+$')
+          - oldap_writer_publish_address == '' or oldap_writer_allowed_sources | length > 0
+          - oldap_writer_publish_address == '' or oldap_writer_interface is match('^[a-zA-Z0-9_.-]+$')
+    - name: Create protected writer directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: 999
+        group: 999
+        mode: '0700'
+      loop:
+        - "{{ oldap_writer_data_dir }}"
+        - "{{ oldap_writer_config_dir }}"
+    - name: Check free storage before writer startup
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - "import os,sys; s=os.statvfs(sys.argv[1]); assert s.f_bavail*s.f_frsize >= int(sys.argv[2]), 'Insufficient writer storage reserve'"
+          - "{{ oldap_writer_data_dir }}"
+          - "{{ oldap_writer_min_free_bytes | default(1073741824) | string }}"
+      changed_when: false
+    - name: Install writer service scripts
+      ansible.builtin.copy:
+        src: scripts/writer-store.sh
+        dest: "{{ oldap_writer_config_dir }}/writer-store.sh"
+        owner: 999
+        group: 999
+        mode: '0500'
+      register: writer_script_file
+    - name: Render Redis configuration and restricted ACL
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ oldap_writer_config_dir }}/{{ item.name }}"
+        owner: 999
+        group: 999
+        mode: '0400'
+      loop:
+        - {src: writer-redis.conf.j2, name: redis.conf}
+        - {src: writer-users.acl.j2, name: users.acl}
+      no_log: true
+      register: writer_config_files
+    - name: Install writer TLS material
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ oldap_writer_config_dir }}/{{ item.name }}"
+        owner: 999
+        group: 999
+        mode: '0400'
+      loop:
+        - {src: "{{ oldap_writer_ca_file }}", name: ca.crt}
+        - {src: "{{ oldap_writer_cert_file }}", name: server.crt}
+        - {src: "{{ oldap_writer_key_file }}", name: server.key}
+      no_log: true
+      register: writer_tls_files
+    - name: Install healthcheck authentication file
+      ansible.builtin.copy:
+        content: "{{ oldap_writer_password }}\n"
+        dest: "{{ oldap_writer_config_dir }}/password"
+        owner: 999
+        group: 999
+        mode: '0400'
+      no_log: true
+    - name: Inspect persisted writer AOF
+      ansible.builtin.stat:
+        path: "{{ oldap_writer_data_dir }}/appendonlydir/appendonly.aof.manifest"
+      register: writer_aof
+    - name: Inspect provisioning marker outside the Redis volume
+      ansible.builtin.stat:
+        path: "{{ env_dir }}/archive-writer-provisioned"
+      register: writer_provisioned
+    - name: Read existing owner domain marker
+      ansible.builtin.slurp:
+        src: "{{ env_dir }}/archive-writer-provisioned"
+      register: writer_owner_domain
+      when: writer_provisioned.stat.exists
+    - name: Refuse reuse of storage assigned to another coordination domain
+      ansible.builtin.assert:
+        that:
+          - (writer_owner_domain.content | b64decode | trim) == oldap_writer_domain
+      when: writer_provisioned.stat.exists
+    - name: Refuse missing state except explicit first bootstrap
+      ansible.builtin.assert:
+        that:
+          - writer_aof.stat.exists or (oldap_writer_bootstrap | bool and not writer_provisioned.stat.exists)
+        fail_msg: "Writer AOF disappeared or is uninitialized. Stop writers and use the recovery runbook; ordinary deployment never creates empty ownership."
+    - name: Bootstrap empty writer AOF once without network access
+      ansible.builtin.command:
+        argv:
+          - docker
+          - run
+          - --rm
+          - --network
+          - none
+          - --user
+          - '999:999'
+          - -v
+          - "{{ oldap_writer_data_dir }}:/data"
+          - -v
+          - "{{ oldap_writer_config_dir }}:/run/oldap-writer:ro"
+          - --entrypoint
+          - /bin/sh
+          - "{{ oldap_writer_image }}"
+          - /run/oldap-writer/writer-store.sh
+          - bootstrap
+      when: not writer_aof.stat.exists
+      changed_when: true
+    - name: Retain external provisioning marker
+      ansible.builtin.copy:
+        content: "{{ oldap_writer_domain }}\n"
+        dest: "{{ env_dir }}/archive-writer-provisioned"
+        owner: root
+        group: root
+        mode: '0400'
+        force: false
+    - name: Bind service recreation to installed configuration checksums
+      ansible.builtin.set_fact:
+        writer_service_revision: "{{ ([writer_script_file.checksum] + (writer_config_files.results | map(attribute='checksum') | list) + (writer_tls_files.results | map(attribute='checksum') | list)) | join(':') | hash('sha256') }}"
+    - name: Configure cross-VM writer firewall
+      ansible.builtin.include_tasks: writer-firewall.yml
+      when: oldap_writer_publish_address | length > 0
+
+- name: Render coordination Compose overlay
+  ansible.builtin.template:
+    src: writer-compose.yml.j2
+    dest: "{{ compose_dir }}/writer-compose.yml"
+    owner: root
+    group: root
+    mode: '0600'
+  no_log: true
+
+- name: Retain deployment contract outside operational Redis storage
+  ansible.builtin.copy:
+    content: "{{ [oldap_writer_domain, oldap_writer_owner, oldap_writer_hostname, oldap_writer_port | string, oldap_writer_graphdb_url, oldap_writer_repository] | join(' ') }}"
+    dest: "{{ env_dir }}/archive-writer-client-contract"
+    owner: root
+    group: root
+    mode: '0400'
+    force: false

@@ -1,0 +1,54 @@
+# Generated only for an explicitly enabled, coordinated archive deployment.
+services:
+{% if inventory_hostname == oldap_writer_owner %}
+  archive-writer:
+    image: {{ oldap_writer_image | to_json }}
+    user: "999:999"
+    labels:
+      org.oldap.writer.config: {{ writer_service_revision | to_json }}
+    restart: unless-stopped
+    entrypoint: ["/bin/sh", "/run/oldap-writer/writer-store.sh", "run"]
+    volumes:
+      - {{ (oldap_writer_data_dir ~ ':/data') | to_json }}
+      - {{ (oldap_writer_config_dir ~ ':/run/oldap-writer:ro') | to_json }}
+    environment:
+      WRITER_HOST: {{ oldap_writer_hostname | to_json }}
+      WRITER_PORT: {{ oldap_writer_port | string | to_json }}
+    networks:
+      default:
+        aliases: [{{ oldap_writer_hostname | to_json }}]
+{% if oldap_writer_publish_address %}
+    ports:
+      - {{ (oldap_writer_publish_address ~ ':' ~ oldap_writer_port ~ ':' ~ oldap_writer_port) | to_json }}
+{% endif %}
+    healthcheck:
+      test: ["CMD-SHELL", "/bin/sh /run/oldap-writer/writer-store.sh health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+{% endif %}
+{% for service in ['oldap-api', 'oldap-tools', 'oldap-harvesters'] %}
+  {{ service }}:
+    labels:
+      org.oldap.writer.config: {{ ((writer_client_files.results | map(attribute='checksum') | join(':')) ~ oldap_writer_url) | hash('sha256') | to_json }}
+    environment:
+      OLDAP_STAGING_LOCK_REDIS_URL: {{ oldap_writer_url | replace('$', '$$') | to_json }}
+      OLDAP_TS_SERVER: {{ oldap_writer_graphdb_url | to_json }}
+      OLDAP_TS_REPO: {{ oldap_writer_repository | to_json }}
+      OLDAP_TS_USER: {{ oldap_writer_ts_user | replace('$', '$$') | to_json }}
+      OLDAP_TS_PASSWORD: {{ oldap_writer_ts_password | replace('$', '$$') | to_json }}
+      OLDAP_ARCHIVE_POLICY_FILE: /run/oldap-writer-client/archive-policy.json
+{% if service == 'oldap-api' and oldap_writer_recovery_enabled | default(false) %}
+      OLDAP_WRITER_DOMAIN: {{ oldap_writer_domain | to_json }}
+      OLDAP_WRITER_RECOVERY_INVENTORY_SHA256: {{ oldap_writer_recovery_inventory_sha256 | to_json }}
+      OLDAP_WRITER_RECOVERY_ROLE_IRI: {{ oldap_writer_recovery_role_iri | to_json }}
+      OLDAP_WRITER_RECOVERY_REDIS_URL: {{ ('rediss://recovery-api:' ~ oldap_writer_recovery_password ~ '@' ~ oldap_writer_hostname ~ ':' ~ oldap_writer_port ~ '/1?ssl_cert_reqs=required&ssl_check_hostname=true&ssl_ca_certs=/run/oldap-writer-client/ca.crt') | to_json }}
+{% endif %}
+    volumes:
+      - {{ (oldap_writer_client_dir ~ ':/run/oldap-writer-client:ro') | to_json }}
+{% if inventory_hostname == oldap_writer_owner %}
+    depends_on:
+      archive-writer:
+        condition: service_healthy
+{% endif %}
+{% endfor %}

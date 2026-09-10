@@ -1,9 +1,16 @@
 # OLDAP Setup Context
 
+- WR-04: The MacBook now uses private launchd API/GraphDB/writer-Redis services via `scripts/native-services.py`; native Redis rejects missing/corrupt AOF and uses separate ACL identities. Production remains the reviewed opt-in Docker/SSH topology. See `docs/writer-recovery.md` and FasnachtsPage `docs/wr-04/README.md`.
+
+- WR-02 adds separately opt-in recovery API/operator ACL identities, API-only credential distribution, reviewed inventory digest and cross-member validation. `docs/writer-recovery.md` specifies the offline Docker/SSH proof and interrupted-controller procedure. Recovery remains disabled pending real target and native MacBook acceptance; no operator socket is mounted into applications.
+
+- WR-01 (2026-09-10): dedicated writer deployment implemented and locally verified; see `docs/writer-deployment.md`. Existing inventories remain disabled; all participating writers use one owner/TLS endpoint. Missing operational storage requires recovery, not automatic initialization. Next: WR-02 safe recovery and operational authorization; target VM acceptance remains separate.
+
 ## Purpose
 This repository deploys the OLDAP stack with Ansible and Docker Compose. It prepares host directories, installs Docker, copies GraphDB initialization data, renders Caddy, harvester, and Compose environment files, and starts the OLDAP API, app, tools, harvesters, Fasnacht page, GraphDB, Redis, and Caddy services.
 
 ## Repository State
+- `files/shared.trig` is synchronized with oldaplib Shared 0.7.0 (AS-01): only optional StagingFolder archive-default and media-reference relationships were added. This prepares initialization assets; existing environments have not been reloaded or deployed. Load only during the coordinated archive-workflow rollout after backend authorization and lifecycle support are accepted.
 - `inventory.ini` is the source of environment-specific deployment variables.
 - `oldap-deploy.yml` is the main deployment playbook for the Docker Compose stack.
 - `oldap-playbook.yaml` handles OLDAP reset workflows.

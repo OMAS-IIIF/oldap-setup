@@ -1,0 +1,19 @@
+{
+  "realGraphDBRestart": true,
+  "writerContainerRemoved": true,
+  "barrierEnforced": true,
+  "committedDataPreserved": true,
+  "uncommittedTransactionRolledBack": true,
+  "operatorCLI": true,
+  "exactEvidenceAndFinishRetry": true,
+  "newWriterAllowedAfterFinish": true,
+  "environment": "Isolated local Docker fixtures; not production",
+  "graphdbImage": "ontotext/graphdb:11.3.0@sha256:6d3c839cdc48c88ff9ceac79b9a8c272ee4f86951e967c1e2ff5dd366d198cb0",
+  "operatorImageId": "sha256:e9d06b435b1d42b0ac4ca4839b4f320364b3ed915767027b2c75ffc69850a63c",
+  "limits": [
+    "Backend begin/finish exercised directly, not via production HTTP/UI",
+    "One controlled transaction plus one committed marker; not all crash/partition histories",
+    "Fixture writer container was a controlled idle process; GraphDB transaction issued by fixture client",
+    "Host reboot, real VM installation and restore remain untested"
+  ]
+}

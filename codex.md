@@ -1,5 +1,15 @@
 # OLDAP Setup Context
 
+- Routine production application updates now use `make deploy-vm` / `oldap-update.yml`: retain installed server secrets/Writer configuration, pull explicit images, preflight all writer images, persist only version tags, update API/frontends without dependencies. No Docker provisioning, data migration, infrastructure restart or timer changes. Local Vault inputs are only needed for configuration/provisioning workflows. See `docs/routine-production-updates.md`.
+
+- `make activate-vm` is the explicit first-start boundary after migration/operator acceptance. It loads the same private inputs as prepare-vm, requires stopped writers and bootstrap=false, and starts only API plus frontends without dependency/init/harvester startup. Public/media acceptance and backup timer resumption remain separate.
+
+- Production archive migration now has an isolated final-backup rehearsal in `tests/probe_archive_migration.py` and a reviewed executor in sibling FasnachtsPage `docs/production-rollout/`. Migration plus exact retry passed; writer Redis is provisioned, application writers/timer remain stopped, production graph migration and independent live verification are complete; recovery operator installation and read-only checks are complete; coordinated activation remains pending.
+
+- `make prepare-vm` / `oldap_deploy_phase=prepare` now provide an existing-host preparation boundary: require stopped Compose writers, skip Docker provisioning and stack startup, provision/probe writer Redis only. External writers still require coordinated maintenance. See `docs/production-preparation.md`; migration and activation are separate pending steps.
+
+- Production writer preparation now has `scripts/prepare-production-writer.py`, a separate pinned amd64 operator image and guarded manual launcher in `operator/README.md`. Private material is outside Git; Vault encryption and isolated runtime rehearsal are complete; production installation and coordinated migration remain pending.
+
 - WR-04: The MacBook now uses private launchd API/GraphDB/writer-Redis services via `scripts/native-services.py`; native Redis rejects missing/corrupt AOF and uses separate ACL identities. Production remains the reviewed opt-in Docker/SSH topology. See `docs/writer-recovery.md` and FasnachtsPage `docs/wr-04/README.md`.
 
 - WR-02 adds separately opt-in recovery API/operator ACL identities, API-only credential distribution, reviewed inventory digest and cross-member validation. `docs/writer-recovery.md` specifies the offline Docker/SSH proof and interrupted-controller procedure. Recovery remains disabled pending real target and native MacBook acceptance; no operator socket is mounted into applications.

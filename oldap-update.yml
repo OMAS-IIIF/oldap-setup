@@ -1,0 +1,98 @@
+---
+# Routine application releases on an already migrated production installation.
+# Keep installed secrets, writer configuration and infrastructure authoritative.
+- name: Update installed OLDAP applications
+  hosts: oldap
+  become: true
+  vars:
+    compose_dir: /opt/oldap/compose
+    release_tags:
+      OLDAP_API_TAG: "{{ oldap_api_tag }}"
+      OLDAP_APP_TAG: "{{ oldap_app_tag }}"
+      OLDAP_TOOLS_TAG: "{{ oldap_tools_tag }}"
+      OLDAP_HARVESTERS_TAG: "{{ oldap_harvesters_tag }}"
+      FASNACHTS_PAGE_TAG: "{{ fasnachts_page_tag }}"
+  tasks:
+    - name: Require explicit release versions
+      ansible.builtin.assert:
+        that: item.value is match('^v?[0-9]+[.][0-9]+[.][0-9]+$')
+      loop: "{{ release_tags | dict2items }}"
+
+    - name: Require the installed writer overlay
+      ansible.builtin.command:
+        argv: [grep, -qx, 'COMPOSE_FILE=docker-compose.yml:writer-compose.yml', .env]
+        chdir: "{{ compose_dir }}"
+      changed_when: false
+
+    - name: Validate installed Compose configuration with new versions
+      ansible.builtin.command:
+        cmd: docker compose config --quiet
+        chdir: "{{ compose_dir }}"
+      environment: "{{ release_tags }}"
+      changed_when: false
+      no_log: true
+
+    - name: Download releases before changing installed version selection
+      ansible.builtin.command:
+        cmd: docker compose pull oldap-api oldap-app fasnachts-page oldap-tools oldap-harvesters
+        chdir: "{{ compose_dir }}"
+      environment: "{{ release_tags }}"
+      changed_when: true
+
+    - name: Verify writer compatibility using the installed policy and store
+      ansible.builtin.command:
+        argv: [docker, compose, run, --rm, --no-deps, --entrypoint, python, "{{ item }}", /run/oldap-writer-client/check-writer-store.py]
+        chdir: "{{ compose_dir }}"
+      environment: "{{ release_tags }}"
+      loop: [oldap-api, oldap-tools, oldap-harvesters]
+      changed_when: false
+      no_log: true
+
+    - name: Save the previous installed configuration for operator rollback
+      ansible.builtin.copy:
+        src: "{{ compose_dir }}/.env"
+        dest: "{{ compose_dir }}/.env.before-update-{{ ansible_date_time.iso8601_basic_short }}"
+        remote_src: true
+        mode: '0600'
+      no_log: true
+
+    - name: Persist only release tags while retaining installed configuration
+      ansible.builtin.lineinfile:
+        path: "{{ compose_dir }}/.env"
+        regexp: "^{{ item.key }}="
+        line: "{{ item.key }}={{ item.value }}"
+        mode: '0600'
+      loop: "{{ release_tags | dict2items }}"
+      no_log: true
+
+    - name: Update applications without infrastructure or dependency startup
+      community.docker.docker_compose_v2:
+        project_src: "{{ compose_dir }}"
+        services: [oldap-api, oldap-app, fasnachts-page]
+        dependencies: false
+        remove_orphans: false
+        state: present
+        pull: missing
+        timeout: 120
+        wait: true
+        wait_timeout: 180
+
+    - name: Check API readiness from inside the updated container
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - exec
+          - -T
+          - oldap-api
+          - python
+          - -c
+          - "import json, urllib.request; r=json.load(urllib.request.urlopen('http://localhost:8000/health', timeout=10)); assert r['status']=='ok', r; print(json.dumps(r))"
+        chdir: "{{ compose_dir }}"
+      changed_when: false
+
+    - name: Show application versions and status
+      ansible.builtin.command:
+        cmd: docker compose ps oldap-api oldap-app fasnachts-page
+        chdir: "{{ compose_dir }}"
+      changed_when: false

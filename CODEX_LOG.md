@@ -1,5 +1,131 @@
 # CODEX_LOG
 
+### Update 2026-09-11 23:30
+- Decisions: Separate routine application releases from infrastructure provisioning. Preserve authoritative installed secrets/Writer settings instead of re-rendering them from potentially stale local files.
+- Implementation: deploy-vm now invokes oldap-update.yml; explicit image validation/pull, installed-overlay check, API/tools/harvester store preflights before tag writes, private configuration backup, application-only no-dependency update and API readiness. Added Make comments and routine update guide. Five update/preparation tests pass (including mocked Make dispatch and real Ansible guard test); Ansible syntax and git diff checks pass.
+- Open: First real routine update has not been executed. User commits the deployment changes; review make show-versions, especially retained production oldap-app v0.2.4 versus local tags.
+- Risks/Assumptions: Existing migrated production installation required. Finish active work before update; running tools/harvester jobs are not replaced. No automatic rollback after partial failure. Default system Python lacked test dependencies; tests passed in the existing API Poetry environment. No server mutation, deployment, secret rotation, ontology or frontend changes.
+
+### Update 2026-09-11 02:29
+- Decisions: Accept media service deployment/basic endpoint checks; keep end-to-end acceptance and backup resumption outstanding.
+- Implementation: User deployment recap ok=41 changed=8 failed=0. Helper/ingest/export use v0.2.11 and both worker-running assertions pass; image server remains v0.2.1. Mobile worker is created but not running. Independent public curl checks with certificate verification: API v0.2.23 /health 200, mediahelper 0.2.11 /health 200, unauthenticated IIIF probe 401.
+- Open: Ordinary-user archive UI, image delivery and small ZIP export acceptance; resume oldap-backup.timer after acceptance. No native CaptureApp changes or SALSAH-2 deployment.
+- Risks/Assumptions: Media container state evidenced by deployment output (Docker requires sudo); public endpoints independently checked. Local Python default trust store failed, system curl verified TLS successfully without bypass. Basic health is not full workflow acceptance.
+
+### Update 2026-09-11 02:23
+- Decisions: Accept first API-VM activation after successful deployment and live checks; keep media rollout and backup resumption separate.
+- Implementation: User activate-vm recap ok=67 changed=1 failed=0; installed-operator/storage checks, API health and export-service authentication passed. Fresh SSH confirms API v0.2.23 healthy, FasnachtsPage v0.1.37 running, writer healthy, oldap-app v0.2.4 retained and GraphDB uptime unchanged. Public API /health returns ok/v0.2.23; backup timer remains inactive.
+- Open: Deploy mediahelper/ingest/export workers v0.2.11, verify cross-service and ordinary-user archive workflows, resume backup timer after acceptance. SALSAH-2 remains excluded from deployment.
+- Risks/Assumptions: HTTP availability and service login are not complete archive/export/browser acceptance. Media services remain stopped per prior confirmation.
+
+### Update 2026-09-11 02:19
+- Decisions: Provide an explicit first-activation Make target that retains private writer/Vault inputs and avoids full-stack/dependency startup.
+- Implementation: Added activate-vm sharing preparation inputs; activate phase requires coordination/recovery and bootstrap=false, skips Docker provisioning, checks stopped writers and installed operator, then starts only API/oldap-app/FasnachtsPage with dependencies=false and no orphan removal. Reuses API health/export authentication checks. Fourteen tests, Ansible syntax and Make dry-run pass; actual activation preconditions passed read-only on production (changed=0).
+- Open: User executes activate-vm with reviewed pins; inspect health/auth, deploy mediahelper/workers, perform acceptance and resume backup timer.
+- Risks/Assumptions: No applications started in this turn. Activation is maintenance-only and rejects a retry with running writers; diagnose partial startup first. Production-specific operator check uses the verified VM config image ID and installed root-only configuration.
+
+### Update 2026-09-11 02:16
+- Decisions: Accept production recovery operator installation after successful read-only target checks.
+- Implementation: User installer output verifies inventory, operator TLS/durable storage, Docker access, stopped writers, running GraphDB and no gate/recovery barrier; recoveryExecuted=false. Removed exactly the seven expected temporary user-owned install files and empty staging directory on VM. Protected root installation and local private master material retained.
+- Open: Coordinated application/media activation with current writer settings and pinned releases; public/API/ordinary-user acceptance, then backup timer resumption.
+- Risks/Assumptions: Root verification evidenced by user-supplied installer output. No production recovery drill, database restart or service activation performed. Reinstallation requires restaging the protected bundle.
+
+### Update 2026-09-11 02:14
+- Decisions: Install the tested standalone operator without initiating recovery or restarting GraphDB.
+- Implementation: Transferred reviewed image to production. Resolved Desktop manifest-ID versus classic-store config-ID difference using export manifest and exact Config/RootFS/OS/architecture comparison; production immutable config ID 7319daf2…16dac. Docker CLI/daemon handshake 29.8.0/29.6.2 passed. Added guarded installer and read-only checker, four checker tests plus two recovery deployment tests pass; shell syntax checked. Private checksummed 0700/0600 bundle staged in VM user home with only operator credential config/public CA, no CA/server keys.
+- Open: User sudo installation and target read-only verification; remove staging credential copies after success; coordinated application/media activation and acceptance.
+- Risks/Assumptions: Image loaded but operator not invoked; root configuration not yet installed. No gate mutation, database restart or service activation. Installation may leave installed files if final checks fail; differing existing credentials are never overwritten.
+
+### Update 2026-09-11 02:10
+- Decisions: Accept production archive migration after independent explicit SELECT verification.
+- Implementation: User-run migration reports all checks true, 363 resources/478 changes and two Shared additions. Independent live queries match exact final ACL plan, resource scope, existing roles/memberships/admin grants; verify both archive roles for four reviewed users and recovery role only for rosenth, including hasDefaultDataPermission annotations. Both new properties optional; defaultArchiveUnit maxCount=1, references unbounded. Private verification report saved in BACKUP. Fresh Docker/timer check: writer healthy, API stopped, timer/service inactive, migration container removed.
+- Open: Install and verify production recovery operator, coordinated application/media activation and acceptance, then resume backup timer.
+- Risks/Assumptions: No additional writes during verification. Initial verification query used resource permission predicate for user membership; corrected to hasDefaultDataPermission, final checks pass. Media metadata/protected graph preservation is evidenced by migration transaction checks; no whole-host rollback or public UI acceptance claimed.
+
+### Update 2026-09-11 02:05
+- Decisions: Use a reviewed one-off production migration with exact-plan/release checks, resumable model/role phases and atomic resource ACL update under the durable gate.
+- Implementation: Added migration/check/runner modules and operator documentation in FasnachtsPage docs/production-rollout; isolated restore/migrate/retry harness in oldap-setup tests. Final production-backup rehearsal passes all 478 changes/363 resources, two Shared additions, memberships, preserved media metadata and protected model/list graphs; exact second run adds no properties. Four review-drift tests and four planner tests pass; Python/shell syntax checked. Fixture cleanup verified. Credential-free checksummed bundle staged in API VM user home; normal API-image user can read/import it with networking disabled.
+- Open: User executes sudo migration runner using existing protected Compose credentials; then live-state verification, recovery operator installation and coordinated activation. Production graph data unchanged in this turn; outage remains active.
+- Risks/Assumptions: Initial isolated trials exposed container import/QName/project-IRI comparison issues, corrected before successful full retry. Role/model phases commit separately; uncertain failure requires inspection/recovery, never automatic gate reset. Private evidence in BACKUP/production-migration-rehearsal.json. No media/CaptureApp/frontend runtime changes or Git commits.
+
+### Update 2026-09-11 01:49
+- Decisions: Accept successful production preparation and revoke first-bootstrap permission in private deployment inputs.
+- Implementation: User play recap: ok=61 changed=15 failed=0. All three writer image storage probes passed, stack startup skipped, final stopped-writer guard passed. Fresh SSH confirms archive-writer healthy, API Exited (0), GraphDB continuously running and backup timer/service inactive. Set external oldap_writer_bootstrap=false; existing owner/AOF guards retained.
+- Open: Minimal model/role/ACL migration, separate operator installation, coordinated application/media activation and acceptance. No normal deploy yet.
+- Risks/Assumptions: Production maintenance remains active. Prepared configuration is installed but old frontends still running; archive API is not released. Redis provisioning is complete, not application migration.
+
+### Update 2026-09-11 01:46
+- Decisions: Fix actual Ansible template escaping before retrying preparation; prior plain-Jinja regression coverage was insufficient.
+- Implementation: Replaced escaped nested string with unescaped Docker template assembled in a YAML block scalar. Added real Ansible subprocess regression with fake Docker argv validation, accepting idle infrastructure and rejecting active API. Read-only production include-task run passed (changed=0); ten deployment tests and playbook syntax pass.
+- Open: Retry make prepare-vm with reviewed version pins, inspect successful provisioning, disable bootstrap, migrate model/roles/ACLs and activate.
+- Risks/Assumptions: User's failed deployment stopped in the first read-only guard (changed=0). Production services remain in maintenance; no provisioning performed by this fix.
+
+### Update 2026-09-11 01:44
+- Decisions: Enable reviewed private production writer inputs for first provisioning during active maintenance; preserve oldap-app v0.2.4.
+- Implementation: Verified TLS hostname/chain, encrypted Vault marker, private file permissions and operator inventory digest. Locally enabled coordination, compatible-release, recovery and first-bootstrap flags in external deployment-vars.yml. Nine deployment tests and Ansible syntax check pass. Prepared make prepare-vm invocation with explicit release pins.
+- Open: User executes Ansible with Vault/become passwords; verify resulting writer health and stopped clients, then disable bootstrap permission. Model/role/ACL migration and operator installation remain pending.
+- Risks/Assumptions: No server provisioning executed in this step. Recovery configuration may be installed before its role exists, but API remains stopped. Bootstrap is restricted by the existing provisioning-marker/AOF guards.
+
+### Update 2026-09-11 01:43
+- Decisions: Capture final pre-migration database snapshot after coordinated application shutdown.
+- Implementation: User stopped API and backup timer; fresh read confirms backup timer/service inactive and only frontends/Caddy/cache/GraphDB running on API VM. User output confirms no per-user cron files. Final full backup with system data stored privately as BACKUP/oldap-production-pre-migration-2026-09-11_01-42-41.tar; archive readable, success marker/system components verified, SHA-256/report retained.
+- Open: Writer configuration preparation, minimal model/role/permission migration, coordinated activation and acceptance. Resume media helper/workers, API and oldap-backup.timer only at the coordinated step.
+- Risks/Assumptions: Production outage active; no model/data edits yet. Manual/external GraphDB clients are not fenced. Earlier snapshot restore tested; final snapshot archive-validated only. Media services remain stopped per user report.
+
+### Update 2026-09-11 01:41
+- Decisions: Preserve retained import evidence and export files after media services stopped.
+- Implementation: Downloaded oldap-media-records-6aDCbSM8.tar.gz into private local BACKUP; 10 entries/6 regular files, 23,066 bytes; fully readable, both required directories present, server/local SHA-256 match. Checksum and report retained alongside archive.
+- Open: API/timer maintenance and remaining writer checks, final GraphDB backup, migration/activation.
+- Risks/Assumptions: Media writers remain stopped per prior user confirmation; API still live. This filesystem backup does not replace the final GraphDB job-state snapshot.
+
+### Update 2026-09-11 01:40
+- Decisions: Begin coordinated media-writer maintenance after backup preparation.
+- Implementation: User stopped oldap-ingest-worker, oldap-export-worker and oldap-mediahelper on media VM; all report Exited (0). Caddy/imageserver remain running. Pre-stop GraphDB sample showed two IMPORTED jobs and three DELETED exports. Use Docker --timeout instead of deprecated --time in subsequent commands.
+- Open: Back up retained import records/export directory, pause API backup timer and remaining writers, final quiescent GraphDB backup, migration/activation. API still running; global maintenance is not yet established.
+- Risks/Assumptions: Media service stop verified from user-supplied output, not a fresh privileged query. No forced kill reported. Keep stopped services down until coordinated restart.
+
+### Update 2026-09-11 01:37
+- Decisions: Preserve media VM configuration before coordinated maintenance.
+- Implementation: Downloaded user-created oldap-media-config-8jRnAiR8.tar.gz to local BACKUP with mode 0600. All 30 archive entries readable; required Compose/Caddy and four service env files present; Caddy configuration/state included. Server/local SHA-256 match; report and checksum stored privately beside archive. User confirms separate media copy on university computer.
+- Open: Maintenance/drain of writers, retained import records/job-state coverage, migration and coordinated activation. Media copy freshness/restore not verified; root cron on API VM still unchecked.
+- Risks/Assumptions: No service changes. Configuration archive excludes media and import records; no sensitive values printed. Server copy retained.
+
+### Update 2026-09-11 01:30
+- Decisions: Inspect media backup coverage and schedulers before pausing writers.
+- Implementation: Read-only inspection of both VMs: API/app data directories currently contain no regular files; archived directory structure locally with checksum. Media root is 18 GiB; latest visible manual archive is 2026-08-11. No rosenth crontab on either VM; visible system timers include API oldap-backup at 03:15, no media backup timer. Existing media runbook documents external daily university backup; requested actual scope/success/restore evidence from user.
+- Open: External backup confirmation, privileged cron/container/job inspection on media VM, protected media configuration backup, maintenance/migration/start.
+- Risks/Assumptions: No service changes. Absence of a VM timer does not disprove hypervisor-level backup. Root/other-user schedules not yet inspected. API data copy was online and empty at inspection, not a fenced snapshot.
+
+### Update 2026-09-11 01:28
+- Decisions: Preserve production configuration before maintenance; user performed sudo archive creation.
+- Implementation: Downloaded oldap-config-eIiJInLI.tar.gz into private local BACKUP files (0600); read all archive members, verified required Compose/env/Caddy/backup files and GraphDB/Caddy/harvester directories. Local/server SHA-256 match; 66 entries, 240,908 bytes. Checksums and verification report saved alongside archive.
+- Open: Media/upload backup coverage, complete scheduler/external-writer inventory and controlled maintenance/migration/start.
+- Risks/Assumptions: No service changes. Configuration archive is not a full host/media backup; server copy retained, sensitive contents never printed.
+
+### Update 2026-09-11 01:24
+- Decisions: Validate actual backup restoration before production maintenance.
+- Implementation: Restored full 01:22 production backup with system data into network-isolated GraphDB 11.3.0, no host ports; queried 14 named graphs/40,782 explicit triples, matched read-only production sample, restarted and rechecked. Disposable container/volume removed; private evidence saved beside backup.
+- Open: Protected deployment configuration/media backup, scheduler/writer maintenance, migration and activation acceptance.
+- Risks/Assumptions: Production unchanged. Counts verify structural completeness, not bytewise RDF equivalence, user login or application/media behaviour. Restore used local test license.
+
+### Update 2026-09-11 01:17
+- Decisions: Separate existing-host configuration preparation from application startup during production migration.
+- Implementation: Added guarded prepare phase/Make target loading both private input sets; Docker provisioning and normal startup/HTTP checks skipped; service display now read-only. Compose-label checks before/after preparation reject active writers. Added sequence/limits documentation and two regression tests; nine deployment tests and Ansible syntax check pass.
+- Open: Production backup/restore verification, maintenance, private flag review, migration execution, operator installation and coordinated activation/acceptance.
+- Risks/Assumptions: No production changes. Checks require external schedulers/writers and manual restarts to remain quiescent; preparation is not an atomic fence. Failed preparation can leave changed configuration. oldap-app retained at v0.2.4 in documented command.
+
+### Update 2026-09-11 01:10
+- Decisions: Verify encrypted private input and rehearse actual Docker operator fencing before production installation.
+- Implementation: Vault header/mode verified without decryption. Added isolated GraphDB/TLS Redis probe and container client; real open transaction rolls back, committed marker survives, writer removed, barrier enforced, evidence/finish retry and subsequent acquisition pass. 24 recovery tests plus six subtests pass; Black/diff checks pass. All owned fixture resources removed.
+- Open: Controlled Ansible preparation/migration/start boundary, production installation and target backup/restore/acceptance. Evidence/limits in operator/rehearsal-2026-09-11.json.
+- Risks/Assumptions: Initial unlicensed fixture was rejected and cleaned; successful run mounted existing local test license read-only. No production state/credentials used, no VM reboot or public HTTP/UI acceptance claimed.
+
+### Update 2026-09-11 01:01
+- Decisions: Prepare private production TLS/ACL inputs outside Git and a separate socket-authorized operator container; leave actual deployment disabled.
+- Implementation: Added no-overwrite private generator, pinned operator Dockerfile and hostname/image/config-guarded launcher. Generated private material locally, validated chain/SAN, permissions, distinct credentials and library inventory digest. Built amd64 operator; CLI/help/Docker handshake, shell syntax and seven writer deployment/recovery tests pass.
+- Open: User Vault encryption, full isolated operator fencing rehearsal, phased deployment, production installation and migration. Operator image ID and limits recorded in operator/README.md.
+- Risks/Assumptions: No production changes or secrets in Git. Socket authority is exclusive to manual operator. One-year leaf certificate requires renewal; private CA stays off server. No publication or commit.
+
 ### Update 2026-09-10 12:10
 - Decisions: Complete WR-04 local operational acceptance; enable only the explicitly authorized rosenth operator. Production remains a separate target-specific rollout.
 - Implementation: Added native service entry points, startup refusal tests and real isolated GraphDB/native writer fault/restore probe. Production inventory and templates remain unchanged in WR-04. Acceptance: 50 recovery/native, 19 deployment, 49 authentication/Capture transport and 8 frontend tests pass; 10 native and 15 pinned Redis checks pass. Both live/fixture UI flows and builds pass; FP typecheck baseline remains 23 errors/37 warnings, SALSAH is clean.

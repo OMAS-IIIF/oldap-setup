@@ -1,0 +1,23 @@
+---
+# Read Docker labels, including one-off/profile containers. Do not rely on the
+# newly rendered Compose file to discover processes from the previous release.
+# This is a prerequisite check, not a fence against external/manual writers.
+- name: Inspect running services in the existing Compose project
+  ansible.builtin.command:
+    argv:
+      - docker
+      - ps
+      - --filter
+      - "label=com.docker.compose.project={{ compose_dir | basename }}"
+      - --format
+      - >-
+        {{ '{{' }}.Label "com.docker.compose.service"{{ '}}' }}
+  register: preparation_running_services
+  changed_when: false
+
+- name: Refuse preparation with active or unidentified application services
+  ansible.builtin.assert:
+    that:
+      - "(preparation_running_services.stdout_lines | difference(['graphdb', 'redis', 'caddy', 'oldap-app', 'fasnachts-page', 'archive-writer']) | length) == 0"
+      - "'graphdb' in preparation_running_services.stdout_lines"
+    fail_msg: "Stop API, tools, harvesters and init jobs first; keep GraphDB running. Separately stop external writers and schedulers. Preparation does not stop them for you."

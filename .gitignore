@@ -3,3 +3,4 @@
 /docker-compose-old.yml
 /graphdb.license
 /auth-secrets.yml
+*.pyc

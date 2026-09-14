@@ -1,5 +1,23 @@
 # CODEX_LOG
 
+### Update 2026-09-15 00:45
+- Decisions: Harvester creates private drafts before controlled publication.
+- Implementation: TOML template now grants ArchiveMediaEditor DATA_UPDATE; removed generic Editor write and Unknown public grants. Matching harvester release uses generic publication inside the creation transaction.
+- Open: Existing VM TOML must be updated separately; routine deployment preserves configuration.
+- Risks/Assumptions: Configured account needs publisher membership; no live server changes.
+
+### Update 2026-09-15 00:30
+- Decisions: Provide the harvester with the installed access-token signing configuration required by direct oldaplib login.
+- Implementation: Compose harvester environment now forwards the access secret, issuer and audience; no additional token secrets exposed.
+- Open: Apply the same service configuration to the existing VM; routine version deployment does not copy Compose files.
+- Risks/Assumptions: Secret values remain in installed configuration; no secrets printed, no server action or import executed.
+
+### Update 2026-09-15 00:25
+- Decisions: Match the harvester configuration to its all-pages CLI contract.
+- Implementation: Removed unsupported default_max_pages from the provisioning template; retained page size and query filters.
+- Open: Existing VM configuration needs the same one-line removal; routine deploy-vm intentionally preserves installed configuration.
+- Risks/Assumptions: New harvester retrieves every result page. No live server changes or harvesting executed here.
+
 ### Update 2026-09-11 23:30
 - Decisions: Separate routine application releases from infrastructure provisioning. Preserve authoritative installed secrets/Writer settings instead of re-rendering them from potentially stale local files.
 - Implementation: deploy-vm now invokes oldap-update.yml; explicit image validation/pull, installed-overlay check, API/tools/harvester store preflights before tag writes, private configuration backup, application-only no-dependency update and API readiness. Added Make comments and routine update guide. Five update/preparation tests pass (including mocked Make dispatch and real Ansible guard test); Ansible syntax and git diff checks pass.

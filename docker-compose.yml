@@ -162,6 +162,10 @@ services:
       - graphdb
       - redis
     environment:
+      # Direct oldaplib login issues an access token and requires its signing configuration.
+      OLDAP_ACCESS_JWT_SECRET: ${OLDAP_ACCESS_JWT_SECRET:?OLDAP_ACCESS_JWT_SECRET is required}
+      OLDAP_JWT_ISSUER: ${OLDAP_JWT_ISSUER:-https://oldap.org}
+      OLDAP_JWT_AUDIENCE: ${OLDAP_JWT_AUDIENCE:-oldap-api}
       OLDAP_REDIS_URL: redis://redis:6379
     command: ["--config", "/app/harvesters.toml", "--write-oldap"]
     volumes:

@@ -1,5 +1,17 @@
 # CODEX_LOG
 
+### Update 2026-09-15 01:13
+- Decisions: Preserve accepted production publication configuration in the authoritative local deployment input.
+- Implementation: Backed up private writer-production/archive-policy.json, added the reviewed publication definition, validated with oldaplib 0.7.20 and verified all other fields unchanged. Confirmed deployment-vars.yml references this file. Updated activation evidence and master context.
+- Open: User Git commit for tracked documentation; retain private configuration backup. No further deployment needed for this synchronization.
+- Risks/Assumptions: Remote activation/285 visible records evidenced by user output and acceptance; remote full policy not byte-compared. No production writes or secrets committed.
+
+### Update 2026-09-15 00:55
+- Decisions: Verify running services and actual host policy mount before production publication activation.
+- Implementation: Recorded supplied version/capability evidence and source references in docs/publication-activation-status.md.
+- Open: Host mount, running-image checks, coordinated activation and acceptance.
+- Risks/Assumptions: One-off image checks do not establish the running API image or identical host policy mounts; no server changes.
+
 ### Update 2026-09-15 00:45
 - Decisions: Harvester creates private drafts before controlled publication.
 - Implementation: TOML template now grants ArchiveMediaEditor DATA_UPDATE; removed generic Editor write and Unknown public grants. Matching harvester release uses generic publication inside the creation transaction.

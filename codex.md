@@ -1,5 +1,7 @@
 # OLDAP Setup Context
 
+- Production publication accepted 2026-09-15: 285 Europeana records imported and confirmed visible. Private `auth/writer-production/archive-policy.json` now includes the reviewed publication block and remains the source referenced by deployment-vars.yml. Routine updates preserve it; full provisioning distributes it. See docs/publication-activation-status.md. Bootstrap generation is not a replacement for this established policy.
+
 - Routine production application updates now use `make deploy-vm` / `oldap-update.yml`: retain installed server secrets/Writer configuration, pull explicit images, preflight all writer images, persist only version tags, update API/frontends without dependencies. No Docker provisioning, data migration, infrastructure restart or timer changes. Local Vault inputs are only needed for configuration/provisioning workflows. See `docs/routine-production-updates.md`.
 
 - `make activate-vm` is the explicit first-start boundary after migration/operator acceptance. It loads the same private inputs as prepare-vm, requires stopped writers and bootstrap=false, and starts only API plus frontends without dependency/init/harvester startup. Public/media acceptance and backup timer resumption remain separate.

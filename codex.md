@@ -1,5 +1,7 @@
 # OLDAP Setup Context
 
+- Added optional SALSAH Compose overlay, explicit first-install targets, shared frontend-only update tasks and conditional combined updates. Existing hosts remain opt-in. See docs/salsah-deployment.md.
+
 - Production publication accepted 2026-09-15: 285 Europeana records imported and confirmed visible. Private `auth/writer-production/archive-policy.json` now includes the reviewed publication block and remains the source referenced by deployment-vars.yml. Routine updates preserve it; full provisioning distributes it. See docs/publication-activation-status.md. Bootstrap generation is not a replacement for this established policy.
 
 - Routine production application updates now use `make deploy-vm` / `oldap-update.yml`: retain installed server secrets/Writer configuration, pull explicit images, preflight all writer images, persist only version tags, update API/frontends without dependencies. No Docker provisioning, data migration, infrastructure restart or timer changes. Local Vault inputs are only needed for configuration/provisioning workflows. See `docs/routine-production-updates.md`.
@@ -17,6 +19,11 @@
 - WR-02 adds separately opt-in recovery API/operator ACL identities, API-only credential distribution, reviewed inventory digest and cross-member validation. `docs/writer-recovery.md` specifies the offline Docker/SSH proof and interrupted-controller procedure. Recovery remains disabled pending real target and native MacBook acceptance; no operator socket is mounted into applications.
 
 - WR-01 (2026-09-10): dedicated writer deployment implemented and locally verified; see `docs/writer-deployment.md`. Existing inventories remain disabled; all participating writers use one owner/TLS endpoint. Missing operational storage requires recovery, not automatic initialization. Next: WR-02 safe recovery and operational authorization; target VM acceptance remains separate.
+
+## Docker API workers
+- Worker/thread counts are explicit host/group Ansible variables (`oldap_api_workers` 1–8, `oldap_api_threads` 1–16); defaults preserve 4/2. Full provisioning validates/renders them, routine image updates retain installed values. `oldap-api-workers.yml` is the explicit stopped-writer maintenance path for compatible installed Compose files, preserving secrets and starting only API without pulls/dependencies.
+- Source-verified isolated Docker recovery with real API 2/4-worker crashes and automatic replacement passed on 2026-09-30. Existing container-level fencing already handles worker processes; no library recovery rewrite was needed. Fresh workers stay blocked until reconciliation/finish, then a real transaction commits. Test-only injection routes never ship. See `docs/api-workers.md` and its JSON evidence.
+- Native laptop remains one foreground API process. Next: build/rehearse the actual release image, then benchmark 2/4 workers with fixed thread counts on the eight-vCPU Docker VM. No VM deployment was performed; do not infer production capacity from local tests.
 
 ## Purpose
 This repository deploys the OLDAP stack with Ansible and Docker Compose. It prepares host directories, installs Docker, copies GraphDB initialization data, renders Caddy, harvester, and Compose environment files, and starts the OLDAP API, app, tools, harvesters, Fasnacht page, GraphDB, Redis, and Caddy services.

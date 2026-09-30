@@ -1,0 +1,131 @@
+---
+# Explicit first installation on an existing, running host. No secrets are rendered.
+- name: Install SALSAH and trusted mail routing on an existing OLDAP deployment
+  hosts: oldap
+  become: true
+  vars:
+    compose_dir: /opt/oldap/compose
+    salsah_enabled: true
+  tasks:
+    - name: Require the compatible API code before configuration activation
+      ansible.builtin.command:
+        cmd: docker compose exec -T oldap-api python -c 'from oldap_api.frontend_links import registry'
+        chdir: "{{ compose_dir }}"
+      changed_when: false
+    - name: Read the installed environment without exposing secrets
+      ansible.builtin.slurp:
+        src: "{{ compose_dir }}/.env"
+      register: installed_env
+      no_log: true
+    - name: Extract installed Compose selector and browser origins
+      ansible.builtin.set_fact:
+        installed_selector: "{{ (installed_env.content | b64decode).splitlines() | select('match', '^COMPOSE_FILE=') | first }}"
+        installed_origins_line: "{{ (installed_env.content | b64decode).splitlines() | select('match', '^OLDAP_AUTH_ALLOWED_ORIGINS=') | first }}"
+      no_log: true
+    - name: Require a known existing Compose topology
+      ansible.builtin.assert:
+        that:
+          - installed_selector is match('^COMPOSE_FILE=docker-compose.yml(:writer-compose.yml)?(:salsah-compose.yml)?$')
+          - salsah_tag is match('^v[0-9]+[.][0-9]+[.][0-9]+$')
+    - name: Back up configuration before installation
+      ansible.builtin.copy:
+        src: "{{ compose_dir }}/{{ item }}"
+        dest: "{{ compose_dir }}/{{ item }}.before-salsah-{{ ansible_date_time.iso8601_basic_short }}"
+        remote_src: true
+        mode: '0600'
+      loop: [.env, Caddyfile]
+      no_log: true
+    - name: Install additive SALSAH overlay
+      ansible.builtin.copy:
+        src: salsah-compose.yml
+        dest: "{{ compose_dir }}/salsah-compose.yml"
+        mode: '0644'
+    - name: Render trusted frontend registry
+      ansible.builtin.template:
+        src: templates/frontends.json.j2
+        dest: "{{ compose_dir }}/frontends.json"
+        mode: '0644'
+    - name: Validate registry using the installed API image
+      ansible.builtin.command:
+        cmd: docker compose run --rm --no-deps -v {{ compose_dir }}/frontends.json:/run/frontends-check.json:ro -e OLDAP_FRONTENDS_FILE=/run/frontends-check.json --entrypoint python oldap-api -c 'from oldap_api.frontend_links import registry; registry()'
+        chdir: "{{ compose_dir }}"
+      changed_when: false
+      no_log: true
+    - name: Pull SALSAH before activating its configuration
+      ansible.builtin.command:
+        argv: [docker, pull, "lrosenth/salsah-2:{{ salsah_tag }}"]
+      changed_when: true
+    - name: Validate candidate Compose configuration before persisting selection
+      ansible.builtin.command:
+        cmd: docker compose config --quiet
+        chdir: "{{ compose_dir }}"
+      environment:
+        COMPOSE_FILE: "{{ installed_selector.split('=', 1)[1] | regex_replace(':salsah-compose.yml$', '') }}:salsah-compose.yml"
+        SALSAH_TAG: "{{ salsah_tag }}"
+        SALSAH_ORIGIN: "{{ salsah_origin }}"
+        SALSAH_API_URL: "{{ salsah_api_url }}"
+        SALSAH_MEDIA_URL: "{{ salsah_media_url }}"
+      changed_when: false
+      no_log: true
+    - name: Validate candidate Caddy configuration without changing the running proxy
+      ansible.builtin.command:
+        cmd: docker compose exec -T caddy caddy validate --config - --adapter caddyfile
+        chdir: "{{ compose_dir }}"
+        stdin: "{{ lookup('template', 'templates/Caddyfile.j2') }}"
+      changed_when: false
+    - name: Persist only additive SALSAH configuration
+      ansible.builtin.lineinfile:
+        path: "{{ compose_dir }}/.env"
+        regexp: "^{{ item.key }}="
+        line: "{{ item.key }}={{ item.value }}"
+        mode: '0600'
+      loop:
+        - {key: COMPOSE_FILE, value: "{{ installed_selector.split('=', 1)[1] | regex_replace(':salsah-compose.yml$', '') }}:salsah-compose.yml"}
+        - {key: SALSAH_TAG, value: "{{ salsah_tag }}"}
+        - {key: SALSAH_ORIGIN, value: "{{ salsah_origin }}"}
+        - {key: SALSAH_API_URL, value: "{{ salsah_api_url }}"}
+        - {key: SALSAH_MEDIA_URL, value: "{{ salsah_media_url }}"}
+        - {key: OLDAP_AUTH_ALLOWED_ORIGINS, value: "{{ ((installed_origins_line.split('=', 1)[1] | trim('\"')).split(',') + [salsah_origin]) | unique | join(',') | to_json }}"}
+      no_log: true
+    - name: Validate installed Compose model
+      ansible.builtin.command:
+        cmd: docker compose config --quiet
+        chdir: "{{ compose_dir }}"
+      changed_when: false
+      no_log: true
+    - name: Render Caddy domains including SALSAH
+      ansible.builtin.template:
+        src: templates/Caddyfile.j2
+        dest: "{{ compose_dir }}/Caddyfile"
+        mode: '0644'
+    - name: Start SALSAH and apply API mail configuration without dependencies
+      community.docker.docker_compose_v2:
+        project_src: "{{ compose_dir }}"
+        services: [oldap-api, salsah-2]
+        # Remount atomically replaced registry files even on repeated configuration runs.
+        recreate: always
+        dependencies: false
+        remove_orphans: false
+        state: present
+        wait: true
+        wait_timeout: 180
+    - name: Verify API readiness before exposing the new frontend
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - exec
+          - -T
+          - oldap-api
+          - python
+          - -c
+          - "import json, urllib.request; result=json.load(urllib.request.urlopen('http://localhost:8000/health', timeout=10)); assert result['status']=='ok'"
+        chdir: "{{ compose_dir }}"
+      changed_when: false
+
+    - name: Reload Caddy with validated configuration through stdin
+      ansible.builtin.command:
+        cmd: docker compose exec -T caddy caddy reload --config - --adapter caddyfile
+        chdir: "{{ compose_dir }}"
+        stdin: "{{ lookup('template', 'templates/Caddyfile.j2') }}"
+      changed_when: true

@@ -1,3 +1,29 @@
+### Update 2026-09-30 01:15
+- Decisions: Keep native laptop single-process; expose Docker worker tuning without silently changing existing 4-worker/2-thread defaults. Reuse and validate existing container-level recovery rather than redesigning it.
+- Implementation: Added bounded Ansible worker/thread variables, rendered Compose settings, shared preflight and explicit installed-config maintenance playbook. Extended isolated Docker probe with current real API/library sources, worker SIGKILL/replacement, all-worker gate checks, fresh-container recovery and post-finish commit. Documented maintenance, cache lifecycle, limits and acceptance evidence.
+- Validation: 34 setup tests and both playbook syntax checks pass. Final source-verified 2/4-worker Docker probes pass all recovery/rollback/preservation/commit checks; no core recovery library changes. Preliminary fixture issues (legitimate contention and bundled-source precedence) corrected before acceptance.
+- Open: Build and rehearse the actual release image; perform controlled 2/4-worker measurements on the eight-vCPU VM. Configuration changes require the existing stopped-writer maintenance boundary.
+- Risks/Assumptions: No deployment or production credentials used. Tests own isolated GraphDB 11.3.0/TLS Redis/cache and synthetic marker transactions; not full business-operation or distributed-failure coverage. Existing unrelated SALSAH changes remain intact. Runtime source assertions prevent accidentally testing the dependency image's older API.
+
+### Update 2026-09-27 23:43
+- Decisions: Preserve the deployed mobile-media feature selection during the SALSAH CORS rollout; do not infer activation from the host default.
+- Implementation: Corrected the guide to explain the production mobile=true inventory override, the previously documented false rollout override, safe JWT-preflight troubleshooting and the conditional deployment command.
+- Open: Confirm current production mobile-worker state and which Vault validation fails; read-only SSH Docker inspection required interactive sudo and could not complete.
+- Risks/Assumptions: No secrets read or changed; no deployment performed. The 2026-09-11 rollout log is historical evidence, not confirmation of current runtime state.
+
+### Update 2026-09-27 23:21
+- Decisions: Make SALSAH deployment instructions explicit about repository, machine and workflow scope.
+- Implementation: Expanded the guide with repository/path and environment tables, ordered release/install commands, registry examples, update boundaries, acceptance checks and rollback limitations; checked targets against current Makefiles/playbooks.
+- Open: Release publication and production acceptance remain separate operational steps.
+- Risks/Assumptions: Documentation only; no code, deployment configuration or server state changed. Example release tags must be replaced with reviewed published versions.
+
+### Update 2026-09-27 23:08
+- Decisions: Preserve existing deployments; add trusted server-owned mail destinations and opt-in SALSAH installation.
+- Implementation: Added optional SALSAH Compose overlay, explicit first-install targets, shared frontend-only update tasks and conditional combined updates. Existing hosts remain opt-in. See docs/salsah-deployment.md.
+- Open: Publish immutable compatible releases; perform coordinated initial installation and real DNS/TLS/browser/SMTP acceptance.
+- Risks/Assumptions: No server deployment or image publication performed. Initial configuration requires an API restart; frontend-only updates do not.
+- Validation: 31 deployment regression tests and Ansible syntax checks passed. Synthetic Compose merge validated; no SSH, provisioning or production execution performed.
+
 # CODEX_LOG
 
 ### Update 2026-09-15 01:13

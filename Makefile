@@ -5,6 +5,7 @@ APP_VERSION = $(shell cd ../oldap-app; git describe --tags --abbrev=0)
 TOOLS_VERSION = $(shell cd ../oldap-tools; git describe --tags --abbrev=0)
 HARVESTERS_VERSION = $(shell cd ../oldap-harvesters; poetry version -s)
 FASNACHTS_VERSION = v$(shell cd ../FasnachtsPage; node -p "require('./package.json').version")
+SALSAH_VERSION ?= v$(shell cd ../salsah-2; node -p "require('./package.json').version")
 AUTH_SECRETS_FILE ?= $(HOME)/ProgDev/OLDAP/auth/auth.vault.yml
 ANSIBLE_VAULT_ARGS ?= --ask-vault-pass
 
@@ -24,11 +25,12 @@ define latest_tag
 endef
 
 show-versions:
-	echo "API-VERSION=$(API_VERSION)"
-	echo "APP-VERSION=$(APP_VERSION)"
-	echo "TOOLS-VERSION=$(TOOLS_VERSION)"
-	echo "HARVESTERS-VERSION=$(HARVESTERS_VERSION)"
-	echo "FASNACHTS-VERSION=$(FASNACHTS_VERSION)"
+	@echo "API-VERSION=$(API_VERSION)"
+	@echo "APP-VERSION=$(APP_VERSION)"
+	@echo "TOOLS-VERSION=$(TOOLS_VERSION)"
+	@echo "HARVESTERS-VERSION=$(HARVESTERS_VERSION)"
+	@echo "FASNACHTS-VERSION=$(FASNACHTS_VERSION)"
+	@echo "SALSAH-VERSION=$(SALSAH_VERSION)"
 
 latest-api:
 	$(call latest_tag,$(IMAGE_API))
@@ -62,6 +64,7 @@ deploy-home: check-auth-secrets
 		$(if $(TOOLS_VERSION),-e oldap_tools_tag=$(TOOLS_VERSION),) \
 		$(if $(HARVESTERS_VERSION),-e oldap_harvesters_tag=$(HARVESTERS_VERSION),) \
 		$(if $(FASNACHTS_VERSION),-e fasnachts_page_tag=$(FASNACHTS_VERSION),) \
+		-e salsah_tag=$(SALSAH_VERSION) \
 		-l oldap_home \
 		--ask-become-pass
 
@@ -84,6 +87,7 @@ deploy-vm:
 		$(if $(TOOLS_VERSION),-e oldap_tools_tag=$(TOOLS_VERSION),) \
 		$(if $(HARVESTERS_VERSION),-e oldap_harvesters_tag=$(HARVESTERS_VERSION),) \
 		$(if $(FASNACHTS_VERSION),-e fasnachts_page_tag=$(FASNACHTS_VERSION),) \
+		-e salsah_tag=$(SALSAH_VERSION) \
 		-l oldap_prod \
 		--ask-become-pass
 
@@ -116,5 +120,17 @@ prepare-vm activate-vm: check-auth-secrets
 		-e oldap_deploy_phase=$(if $(filter activate-vm,$@),activate,prepare) \
 		-e oldap_api_tag=$(API_VERSION) -e oldap_app_tag=$(APP_VERSION) \
 		-e oldap_tools_tag=$(TOOLS_VERSION) -e oldap_harvesters_tag=$(HARVESTERS_VERSION) \
-		-e fasnachts_page_tag=$(FASNACHTS_VERSION) \
+		-e fasnachts_page_tag=$(FASNACHTS_VERSION) -e salsah_tag=$(SALSAH_VERSION) \
 		-l oldap_prod --ask-become-pass
+
+.PHONY: deploy-salsah-vm deploy-salsah-home install-salsah-vm install-salsah-home
+deploy-salsah-vm deploy-salsah-home:
+	ansible-playbook -i inventory.ini oldap-salsah-update.yml \
+		-e salsah_tag=$(SALSAH_VERSION) \
+		-l $(if $(filter deploy-salsah-vm,$@),oldap_prod,oldap_home) --ask-become-pass
+
+# Explicit first-install boundary; does not provision or initialize infrastructure.
+install-salsah-vm install-salsah-home:
+	ansible-playbook -i inventory.ini oldap-salsah-install.yml \
+		-e salsah_tag=$(SALSAH_VERSION) \
+		-l $(if $(filter install-salsah-vm,$@),oldap_prod,oldap_home) --ask-become-pass

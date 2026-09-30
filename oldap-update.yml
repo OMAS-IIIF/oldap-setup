@@ -20,7 +20,7 @@
 
     - name: Require the installed writer overlay
       ansible.builtin.command:
-        argv: [grep, -qx, 'COMPOSE_FILE=docker-compose.yml:writer-compose.yml', .env]
+        argv: [grep, -Eq, '^COMPOSE_FILE=docker-compose.yml:writer-compose.yml(:salsah-compose.yml)?$', .env]
         chdir: "{{ compose_dir }}"
       changed_when: false
 
@@ -96,3 +96,13 @@
         cmd: docker compose ps oldap-api oldap-app fasnachts-page
         chdir: "{{ compose_dir }}"
       changed_when: false
+
+    - name: Detect an installed SALSAH frontend
+      ansible.builtin.command:
+        cmd: docker compose config --services
+        chdir: "{{ compose_dir }}"
+      register: installed_services
+      changed_when: false
+    - name: Include SALSAH in a combined update when installed
+      ansible.builtin.include_tasks: tasks/update-salsah.yml
+      when: "'salsah-2' in installed_services.stdout_lines"

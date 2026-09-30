@@ -1,0 +1,8 @@
+---
+# Bounds are an operational guard, not an automatic CPU sizing formula.
+- name: Require bounded positive integer API process and thread counts
+  ansible.builtin.assert:
+    that:
+      - (oldap_api_workers | string) is match('^[1-8]$')
+      - (oldap_api_threads | string) is match('^([1-9]|1[0-6])$')
+    fail_msg: "Set oldap_api_workers to 1..8 and oldap_api_threads to 1..16 (integers)."

@@ -256,3 +256,20 @@ WR-01 deployment and recovery prerequisites are documented in
 [docs/writer-deployment.md](docs/writer-deployment.md). The feature is explicitly
 disabled in existing inventory until coordinated rollout. Owner and consumer VMs
 share one TLS-protected persistent Redis store; the ordinary cache is unchanged.
+
+## SALSAH frontend
+
+SALSAH has a separate immutable Docker image and an opt-in Compose overlay. See
+[the SALSAH deployment guide](docs/salsah-deployment.md) for initial installation,
+trusted multi-frontend email configuration, rollout order and rollback.
+`make deploy-salsah-vm` / `make deploy-salsah-home` update only SALSAH;
+combined deployments include it after installation. Existing deployments without
+SALSAH retain their current services and legacy email destinations.
+
+## Docker API worker configuration
+
+Worker/thread counts are now explicit Ansible settings, with defaults preserving
+the existing 4-worker/2-thread runtime. The dedicated `oldap-api-workers.yml`
+maintenance playbook changes only those settings on compatible installations.
+See [API workers, cache maintenance and isolated crash recovery](docs/api-workers.md)
+for prerequisites, rollback and two/four-worker rehearsal commands.

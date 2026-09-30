@@ -4,6 +4,10 @@ oldap_app_tag: "latest"
 oldap_tools_tag: "latest"
 oldap_harvesters_tag: "latest"
 
+# Preserve the image's established defaults; tune explicitly per inventory host.
+oldap_api_workers: 4
+oldap_api_threads: 2
+
 # Authentication defaults. Signing keys and service credentials are required
 # separately and must be supplied through an ignored file or Ansible Vault.
 oldap_access_token_ttl_seconds: 900
@@ -52,3 +56,28 @@ oldap_writer_ts_password: ""
 oldap_writer_recovery_enabled: false
 oldap_writer_recovery_role_iri: ""
 oldap_writer_recovery_inventory_sha256: ""
+
+# Enable only after publishing the compatible API and SALSAH releases.
+salsah_enabled: false
+salsah_tag: v0.0.1
+salsah_origin: "{{ 'https://salsah.org' if caddy_mode == 'prod' else 'https://salsah.home.org' }}"
+salsah_api_url: "{{ 'https://api.salsah.org' if caddy_mode == 'prod' else 'https://api.home.org' }}"
+salsah_media_url: "{{ public_mediaserver_url }}"
+# This registry is shared by password-reset, import and export notifications.
+# IDs are durable: retain entries while jobs may still send/retry email.
+oldap_frontends:
+  fasnacht:
+    origin: "{{ oldap_public_app_url }}"
+    origins: "{{ oldap_auth_allowed_origins.split(',') }}"
+    display_name: Fasnacht digital
+    routes:
+      password_reset: /password-reset
+      import_status: /imports/{import_id}
+      export_status: /exports/{export_id}
+  salsah:
+    origin: "{{ salsah_origin }}"
+    display_name: SALSAH
+    routes:
+      password_reset: /password-reset
+      import_status: /imports/{import_id}
+      export_status: /exports/{export_id}

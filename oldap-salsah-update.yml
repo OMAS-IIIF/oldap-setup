@@ -1,0 +1,9 @@
+---
+- name: Update only the installed SALSAH frontend
+  hosts: oldap
+  become: true
+  vars:
+    compose_dir: /opt/oldap/compose
+  tasks:
+    - name: Update SALSAH
+      ansible.builtin.import_tasks: tasks/update-salsah.yml

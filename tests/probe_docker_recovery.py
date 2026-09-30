@@ -25,12 +25,18 @@ def command(*args, **kwargs):
     return result.stdout
 
 
-def run(license_file: Path):
+def run(license_file: Path, workers: int = 0):
     """Create isolated services, invoke the operator protocol and clean owned assets."""
     if not license_file.is_file():
         raise ValueError("Local test license required")
     ident = "wr-docker-" + uuid4().hex[:12]
-    names = [ident + "-db", ident + "-redis", ident + "-writer", ident + "-operator"]
+    names = [
+        ident + "-db",
+        ident + "-redis",
+        ident + "-writer",
+        ident + "-operator",
+        ident + "-cache",
+    ]
     volumes = [ident + "-db-data", ident + "-redis-data"]
     with tempfile.TemporaryDirectory(prefix=ident) as tmp:
         path = Path(tmp)
@@ -78,6 +84,24 @@ def run(license_file: Path):
         shutil.copyfile(ROOT / "scripts/writer-store.sh", cfg / "writer-store.sh")
         for f in cfg.iterdir():
             f.chmod(0o644)
+        values.update(
+            api_workers=workers, fixture_host_path=str(path), operator_image=OPERATOR
+        )
+        if workers:
+            for name, source in (
+                ("api/oldap_api", ROOT.parent / "oldap-api/oldap_api"),
+                ("lib/oldaplib", ROOT.parent / "oldaplib/oldaplib"),
+            ):
+                shutil.copytree(
+                    source,
+                    path / name,
+                    ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+                )
+            shutil.copyfile(
+                ROOT / "tests/recovery_worker_app.py", path / "recovery_worker_app.py"
+            )
+            for filename in ("oldap.trig", "shared.trig", "admin.trig"):
+                shutil.copyfile(ROOT / "files" / filename, path / filename)
         (path / "values.json").write_text(json.dumps(values))
         (path / "values.json").chmod(0o600)
         shutil.copyfile(ROOT / "files/oldap-config.ttl", path / "repository.ttl")
@@ -103,7 +127,7 @@ def run(license_file: Path):
                 "/bin/sh",
                 values["oldap_writer_image"],
                 "/run/oldap-writer/writer-store.sh",
-                "bootstrap"
+                "bootstrap",
             )
             command(
                 "docker",
@@ -116,7 +140,7 @@ def run(license_file: Path):
                 "/bin/sh",
                 values["oldap_writer_image"],
                 "-c",
-                "chown -R 999:999 /data"
+                "chown -R 999:999 /data",
             )
             command(
                 "docker",
@@ -135,7 +159,7 @@ def run(license_file: Path):
                 "/bin/sh",
                 values["oldap_writer_image"],
                 "/run/oldap-writer/writer-store.sh",
-                "run"
+                "run",
             )
             labels = ["--label", "com.docker.compose.project=" + ident]
             command(
@@ -158,25 +182,39 @@ def run(license_file: Path):
                 "-v",
                 str(license_file.resolve())
                 + ":/opt/graphdb/home/conf/graphdb.license:ro",
-                "ontotext/graphdb:11.3.0"
+                "ontotext/graphdb:11.3.0",
             )
-            command(
-                "docker",
-                "run",
-                "-d",
-                "--name",
-                names[2],
-                "--network",
-                ident,
-                *labels,
-                "--label",
-                "com.docker.compose.service=oldap-api",
-                "--entrypoint",
-                "sh",
-                values["oldap_writer_image"],
-                "-c",
-                "sleep 600"
-            )
+            if workers:
+                command(
+                    "docker",
+                    "run",
+                    "-d",
+                    "--name",
+                    names[4],
+                    "--network",
+                    ident,
+                    "--network-alias",
+                    "cache",
+                    values["oldap_writer_image"],
+                )
+            else:
+                command(
+                    "docker",
+                    "run",
+                    "-d",
+                    "--name",
+                    names[2],
+                    "--network",
+                    ident,
+                    *labels,
+                    "--label",
+                    "com.docker.compose.service=oldap-api",
+                    "--entrypoint",
+                    "sh",
+                    values["oldap_writer_image"],
+                    "-c",
+                    "sleep 600",
+                )
             result = command(
                 "docker",
                 "run",
@@ -193,10 +231,11 @@ def run(license_file: Path):
                 str(path) + ":/fixture",
                 "--entrypoint",
                 "python",
+                *(["-e", "PYTHONPATH=/fixture/lib"] if workers else []),
                 OPERATOR,
                 "/fixture/client.py",
                 ident,
-                timeout=420,
+                timeout=600,
             )
             print(result)
         finally:
@@ -210,5 +249,12 @@ def run(license_file: Path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--license", type=Path, required=True)
+    parser.add_argument(
+        "--workers",
+        type=int,
+        choices=[0, 1, 2, 4],
+        default=0,
+        help="0 keeps the legacy probe; 1/2/4 run actual API worker crash recovery",
+    )
     args = parser.parse_args()
-    run(args.license)
+    run(args.license, args.workers)

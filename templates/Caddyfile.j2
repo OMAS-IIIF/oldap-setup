@@ -90,3 +90,23 @@ fasnacht.digital, fasnacht.oldap.org {
     reverse_proxy fasnachts-page:3100
 }
 {% endif %}
+
+{% if salsah_enabled | default(false) %}
+{% if caddy_mode == "prod" %}
+salsah.org {
+    encode gzip zstd
+    reverse_proxy salsah-2:3200
+}
+www.salsah.org {
+    redir https://salsah.org{uri} permanent
+}
+api.salsah.org {
+    reverse_proxy oldap-api:8000
+}
+{% else %}
+https://salsah.home.org {
+    tls internal
+    reverse_proxy salsah-2:3200
+}
+{% endif %}
+{% endif %}

@@ -1,0 +1,15 @@
+# Optional overlay: installed only after the SALSAH image and API release are ready.
+services:
+  salsah-2:
+    image: lrosenth/salsah-2:${SALSAH_TAG:?SALSAH_TAG is required}
+    expose: ["3200"]
+    environment:
+      ORIGIN: ${SALSAH_ORIGIN:?SALSAH_ORIGIN is required}
+      PUBLIC_API_URL: ${SALSAH_API_URL:?SALSAH_API_URL is required}
+      PUBLIC_MEDIA_URL: ${SALSAH_MEDIA_URL:?SALSAH_MEDIA_URL is required}
+    restart: unless-stopped
+  oldap-api:
+    environment:
+      OLDAP_FRONTENDS_FILE: /run/oldap-frontends.json
+    volumes:
+      - ./frontends.json:/run/oldap-frontends.json:ro

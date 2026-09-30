@@ -26,6 +26,27 @@
     app_env: "Prod"
 
   pre_tasks:
+    - name: Validate API worker configuration
+      ansible.builtin.import_tasks: tasks/api-worker-preflight.yml
+
+    - name: Detect an existing SALSAH installation
+      ansible.builtin.stat:
+        path: "{{ compose_dir }}/.env"
+      register: existing_compose_env
+    - name: Read installed feature selection
+      ansible.builtin.slurp:
+        src: "{{ compose_dir }}/.env"
+      register: existing_feature_selection
+      when: existing_compose_env.stat.exists
+      no_log: true
+    - name: Preserve an installed SALSAH frontend during full provisioning
+      ansible.builtin.set_fact:
+        salsah_enabled: true
+      when:
+        - existing_compose_env.stat.exists
+        - "':salsah-compose.yml' in (existing_feature_selection.content | b64decode)"
+      no_log: true
+
     - name: Validate deployment phase
       ansible.builtin.assert:
         that:
@@ -349,6 +370,20 @@
         dest: "{{ compose_dir }}/docker-compose.yml"
         mode: "0644"
 
+    - name: Install optional SALSAH configuration
+      when: salsah_enabled | bool
+      block:
+        - name: Copy SALSAH overlay
+          ansible.builtin.copy:
+            src: salsah-compose.yml
+            dest: "{{ compose_dir }}/salsah-compose.yml"
+            mode: '0644'
+        - name: Render trusted frontend registry
+          ansible.builtin.template:
+            src: templates/frontends.json.j2
+            dest: "{{ compose_dir }}/frontends.json"
+            mode: '0644'
+
     # 12. Render Caddyfile (if you need it)
     - name: Render Caddyfile
       ansible.builtin.template:
@@ -521,7 +556,7 @@
     - name: Start prepared applications after verified migration
       community.docker.docker_compose_v2:
         project_src: "{{ compose_dir }}"
-        services: [oldap-api, oldap-app, fasnachts-page]
+        services: "{{ ['oldap-api', 'oldap-app', 'fasnachts-page'] + (['salsah-2'] if salsah_enabled | bool else []) }}"
         dependencies: false
         state: present
         pull: missing

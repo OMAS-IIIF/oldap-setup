@@ -1,4 +1,8 @@
-# WR-02 operator recovery (not yet activated)
+# WR-02 operator recovery
+
+Activation is environment-specific; the historical opt-in instructions below
+do not establish the current state of any host. See [Docker API workers](api-workers.md)
+for the multi-worker fault rehearsal and container-level recovery contract.
 
 The shared library now understands a persistent recovery barrier. Upgrade **all**
 writers and the writer ACL together before enabling recovery; old processes do not

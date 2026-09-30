@@ -1,0 +1,66 @@
+---
+# Explicit maintenance operation; no Vault input, image upgrade or infrastructure restart.
+- name: Configure worker counts on an existing worker-aware OLDAP installation
+  hosts: oldap
+  become: true
+  vars:
+    compose_dir: /opt/oldap/compose
+    worker_settings:
+      OLDAP_API_WORKERS: "{{ oldap_api_workers }}"
+      OLDAP_API_THREADS: "{{ oldap_api_threads }}"
+  tasks:
+    - name: Validate requested settings
+      ansible.builtin.import_tasks: tasks/api-worker-preflight.yml
+
+    - name: Require quiescent application writers
+      ansible.builtin.include_tasks: tasks/require-stopped-writers.yml
+
+    - name: Resolve installed Compose with requested settings before changing files
+      ansible.builtin.command:
+        cmd: docker compose config --format json
+        chdir: "{{ compose_dir }}"
+      environment: "{{ worker_settings }}"
+      register: worker_compose
+      changed_when: false
+      no_log: true
+
+    - name: Require the installed Compose file to support worker configuration
+      ansible.builtin.assert:
+        that:
+          - "(worker_compose.stdout | from_json).services['oldap-api'].environment.GUNICORN_CMD_ARGS | default('') == '--workers=' + (oldap_api_workers | string) + ' --threads=' + (oldap_api_threads | string) + ' --bind=0.0.0.0:8000 --timeout=60 --access-logfile=- --error-logfile=-'"
+        fail_msg: "Install the reviewed worker-aware Compose configuration first; no settings were changed."
+      no_log: true
+
+    - name: Save installed settings for rollback
+      ansible.builtin.copy:
+        src: "{{ compose_dir }}/.env"
+        dest: "{{ compose_dir }}/.env.before-workers-{{ ansible_date_time.iso8601_basic_short }}"
+        remote_src: true
+        mode: '0600'
+      no_log: true
+
+    - name: Persist only explicit worker settings
+      ansible.builtin.lineinfile:
+        path: "{{ compose_dir }}/.env"
+        regexp: "^{{ item.key }}="
+        line: "{{ item.key }}={{ item.value }}"
+        mode: '0600'
+      loop: "{{ worker_settings | dict2items }}"
+      no_log: true
+
+    - name: Start only the API using installed images and dependencies
+      community.docker.docker_compose_v2:
+        project_src: "{{ compose_dir }}"
+        services: [oldap-api]
+        dependencies: false
+        remove_orphans: false
+        state: present
+        pull: never
+        wait: true
+        wait_timeout: 180
+
+    - name: Verify API readiness
+      ansible.builtin.command:
+        argv: [docker, compose, exec, -T, oldap-api, python, -c, "import json,urllib.request; assert json.load(urllib.request.urlopen('http://localhost:8000/health',timeout=10))['status']=='ok'"]
+        chdir: "{{ compose_dir }}"
+      changed_when: false

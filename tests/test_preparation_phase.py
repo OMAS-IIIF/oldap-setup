@@ -124,9 +124,12 @@ class PreparationPhaseTests(unittest.TestCase):
             self.assertIn("oldap_deploy_phase == 'deploy'", tasks[name]["when"])
         activation = tasks["Start prepared applications after verified migration"]
         options = activation["community.docker.docker_compose_v2"]
-        self.assertEqual(
-            options["services"], ["oldap-api", "oldap-app", "fasnachts-page"]
-        )
+        from jinja2.nativetypes import NativeEnvironment
+        environment = NativeEnvironment()
+        environment.filters["bool"] = bool
+        for enabled in (False, True):
+            services = environment.from_string(options["services"]).render(salsah_enabled=enabled)
+            self.assertEqual(services, ["oldap-api", "oldap-app", "fasnachts-page"] + (["salsah-2"] if enabled else []))
         self.assertFalse(options["dependencies"])
         self.assertFalse(options["remove_orphans"])
         self.assertEqual(activation["when"], "oldap_deploy_phase == 'activate'")
@@ -139,7 +142,7 @@ class PreparationPhaseTests(unittest.TestCase):
             )
         self.assertIn("ansible.builtin.command", tasks["Show running containers"])
         self.assertEqual(
-            play["pre_tasks"][1]["ansible.builtin.include_tasks"],
+            next(t["ansible.builtin.include_tasks"] for t in play["pre_tasks"] if "ansible.builtin.include_tasks" in t),
             "tasks/require-stopped-writers.yml",
         )
         self.assertEqual(

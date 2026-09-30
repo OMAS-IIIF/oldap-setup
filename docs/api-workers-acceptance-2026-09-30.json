@@ -1,0 +1,60 @@
+{
+  "date": "2026-09-30",
+  "scope": "Isolated Docker source-level recovery acceptance; no VM deployment",
+  "runs": [
+    {
+      "apiWorkers": 2,
+      "realAPICommitAfterRecovery": true,
+      "realAPIWorkerCrashAndReplacement": true,
+      "allWorkersBlockedUntilFinish": true,
+      "freshAPIContainerBeforeFinish": true,
+      "realGraphDBRestart": true,
+      "writerContainerRemoved": true,
+      "barrierEnforced": true,
+      "committedDataPreserved": true,
+      "uncommittedTransactionRolledBack": true,
+      "operatorCLI": true,
+      "exactEvidenceAndFinishRetry": true,
+      "newWriterAllowedAfterFinish": true
+    },
+    {
+      "apiWorkers": 4,
+      "realAPICommitAfterRecovery": true,
+      "realAPIWorkerCrashAndReplacement": true,
+      "allWorkersBlockedUntilFinish": true,
+      "freshAPIContainerBeforeFinish": true,
+      "realGraphDBRestart": true,
+      "writerContainerRemoved": true,
+      "barrierEnforced": true,
+      "committedDataPreserved": true,
+      "uncommittedTransactionRolledBack": true,
+      "operatorCLI": true,
+      "exactEvidenceAndFinishRetry": true,
+      "newWriterAllowedAfterFinish": true
+    }
+  ],
+  "setup_tests_passed": 34,
+  "ansible_syntax_checks": [
+    "oldap-deploy.yml",
+    "oldap-api-workers.yml"
+  ],
+  "api_source_enforced": "/fixture/api/oldap_api",
+  "library_source_enforced": "/fixture/lib/oldaplib",
+  "graphdb_fixture_image": "ontotext/graphdb:11.3.0",
+  "dependency_image": "oldap-writer-operator:0.7.18-amd64",
+  "gunicorn_version": "26.0.0",
+  "source_sha256": {
+    "tests/probe_docker_recovery.py": "b8cfdcfc55582c266ba97e3bba3d0d4f9a1eebf1a02ad59e3c919a286af9704c",
+    "tests/recovery_fixture_client.py": "dbccd8b6b985c5ae8eea61d2ef7f997997657c1c3cf17f4025e82dbc45842e97",
+    "tests/recovery_worker_app.py": "e3801500c142eeefbcd71425be2808363370d6e5a80ee5d43f6e0b6f44761005",
+    "docker-compose.yml": "bfe13284384fa52f95478a75f5c2f7405b93b64e70030ae4084152be4687b3d0",
+    "tasks/api-worker-preflight.yml": "8a3c00c7126ab77fdd316815f62e6a23936ae4e9dea27fcf3aa8c1678d94ba18",
+    "oldap-api-workers.yml": "2cf14978a14c41aab3a5ea11aa9e5c44c3de53a0757651dc6078a2d953883199"
+  },
+  "limitations": [
+    "Synthetic fixture transaction through real API authentication and library gate/Connection; not every business mutation",
+    "Current sources mounted into existing dependency image; release image acceptance remains pending",
+    "No eight-vCPU VM performance measurements",
+    "Native macOS recovery remains single-process"
+  ]
+}

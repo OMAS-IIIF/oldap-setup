@@ -1,3 +1,24 @@
+### Update 2026-10-01 11:50
+- Decisions: Accept user-deployed project-identity optimization on the VM; retain four workers/two threads.
+- Implementation: Recorded deployed API 0.2.31 / oldaplib 0.7.25 source verification and read-only before/after evidence; updated context and relevant performance/worker documentation. No application code or deployment configuration changed.
+- Validation: 1,152 timed reads pass; all 17 baseline contents and public HTTPS checks match. Resource medians improve 10–13%, summaries 4–10%. At 16 readers: median/p95 167/591→143/559 ms, API CPU 1.78→1.57 cores. Existing 50,396-binding RDF fingerprint, containers and service PIDs unchanged; temporary VM files removed.
+- Open: Larger representative data and sustained mixed-user sizing remain separate; no worker maintenance indicated by this workload.
+- Risks/Assumptions: One sequential short warm anonymous comparison, not maximum capacity. Search/fresh-model gains not demonstrated; recovery p95 varies upward. Separate final verifier excludes the completed load-client process; within-run service-process guard passed. Existing local changes preserved.
+
+### Update 2026-10-01 00:27
+- Decisions: Retain four workers/two threads after successful measurement of the user-deployed serializer optimization.
+- Implementation: Documented API 0.2.30 / oldaplib 0.7.24 runtime/source verification and linked accepted VM before/after evidence; preserved existing local documentation edits.
+- Validation: Complete rerun passes 1,132 timed reads and public HTTPS checks; all 17 references and the 50,396-binding RDF fingerprint match. Median/p95 at 16 readers: 232/649→167/591 ms, API CPU 2.13→1.78 cores. Containers/PIDs unchanged; temporary VM files removed.
+- Open: Local Project/model-copy profiling; no worker maintenance needed for current findings.
+- Risks/Assumptions: First attempt excluded after transient helper processes triggered the old sampler guard; corrected sampler has 19 passing offline checks and a successful complete rerun. Short warm anonymous workload, not capacity/HMB sizing. No infrastructure/configuration change or data write during measurement.
+
+### Update 2026-09-30 23:30
+- Decisions: Record read acceptance of the user-deployed API without changing workers, configuration or existing data.
+- Implementation: Updated Docker worker documentation/context with VM baseline and linked the API repository's reproducible Linux/Docker read tooling and reports.
+- Validation: 2,409 successful timed reads across exact-reference/full-batch runs; full batches at 16 readers reach 16.13 requests/s and 649 ms p95. Unchanged 50,396-binding RDF fingerprint, container identities and service PIDs; public HTTPS read checks pass; temporary VM directory removed.
+- Open: API/library per-request CPU profiling; controlled worker-count comparison and isolated release-image write/recovery rehearsal remain separate.
+- Risks/Assumptions: Short closed-loop warm anonymous reads on current data; no pre-deployment VM baseline, HMB sizing or Enterprise/async conclusion. No deployment, restart, cache flush or RDF update performed during these measurements.
+
 ### Update 2026-09-30 01:15
 - Decisions: Keep native laptop single-process; expose Docker worker tuning without silently changing existing 4-worker/2-thread defaults. Reuse and validate existing container-level recovery rather than redesigning it.
 - Implementation: Added bounded Ansible worker/thread variables, rendered Compose settings, shared preflight and explicit installed-config maintenance playbook. Extended isolated Docker probe with current real API/library sources, worker SIGKILL/replacement, all-worker gate checks, fresh-container recovery and post-finish commit. Documented maintenance, cache lifecycle, limits and acceptance evidence.

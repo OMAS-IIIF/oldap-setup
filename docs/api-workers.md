@@ -173,3 +173,67 @@ No VM was contacted or deployed. The laptop's native API/GraphDB and existing
 media containers were left running; the probe cleans up only its generated
 containers, network and data volumes. Repeat acceptance against the built release
 image before rollout, then measure two/four workers on the actual VM.
+
+
+## Deployed VM read acceptance — 2026-09-30
+
+After the user's deployment, the running API was verified as v0.2.29 with
+oldaplib 0.7.23 and the existing four-worker/two-thread Gunicorn settings on the
+eight-vCPU VM. No maintenance playbook, worker change, restart, cache flush or
+recovery fault test was executed. The benchmark ran from a private temporary
+host directory, which was removed after retrieving its results.
+
+The exact reference-catalog replay and a supplemental catalog with complete
+25/100-resource metadata batches produce 2,409 successful timed reads with
+stable normalized content. In the complete-batch workload, 16 active anonymous
+readers achieve 16.13 requests/s, 232 ms median and 649 ms p95. API CPU averages
+2.13 cores versus 0.33 for GraphDB. Explicit named-graph fingerprints remain
+identical at 50,396 bindings; all API/GraphDB/cache containers and service PIDs
+remain unchanged. Public HTTPS health and representative read routes also pass.
+
+See sibling `oldap-api/doc/performance/2026-09-30-vm.md` for the report, aggregate
+JSON/CSV, private artifact location, reproduction instructions and limitations.
+The laptop catalog yields only 15/60 visible summary resources on the VM, so its
+metrics are kept separate from verified full 25/100 batches. This is a new VM
+baseline, not proof of a deployment speedup or a worker-count A/B result. Warm,
+short, anonymous read acceptance does not replace an isolated release-image
+write/recovery rehearsal or representative HMB-scale testing.
+
+
+## Released optimization verified — 2026-10-01
+
+API 0.2.30 / oldaplib 0.7.24 is verified on the existing four-worker/two-thread
+VM by its actual serializer source hash. Replaying the previous full-batch
+catalog completes 1,132 timed reads; all 17 reference contents and the explicit
+50,396-binding RDF fingerprint match. At 16 active readers, median latency
+improves 232→167 ms, p95 649→591 ms, throughput 16.13→17.03 requests/s and API
+CPU 2.13→1.78 cores. The measurement does not require changing workers.
+
+The initial attempt was excluded after a process-list guard failure: transient
+container helpers were counted alongside service processes. The benchmark now
+filters Gunicorn/Java/Redis commands and retains actual PID-change protection;
+19 offline read-tool checks and the complete rerun pass. No application fault,
+worker restart or data change was observed. Container/service PIDs remain stable,
+public HTTPS reads pass and temporary measurement files on the VM are removed.
+
+See sibling `oldap-api/doc/performance/2026-10-01-vm-serializer.md` and its JSON/CSV
+for exact results, the incomplete first attempt and limitations. Keep 4/2;
+follow up with Project/model-copy profiling rather than a worker maintenance
+change based on this bounded workload alone.
+
+
+## Project identity release accepted — 2026-10-01
+
+The user-deployed API 0.2.31 / oldaplib 0.7.25 matches the locally tested Project
+and PropertyClass source hashes. The existing four-worker/two-thread deployment
+passes 1,152 timed reads, all 17 baseline contents and public HTTPS read checks.
+Resources improve 10–13%, summaries 4–10%; at 16 readers, median/p95 changes
+167/591→143/559 ms and API CPU 1.78→1.57 cores. Throughput changes only slightly,
+17.03→17.40 requests/s. Search/fresh-model gains are not demonstrated.
+
+RDF fingerprints (50,396 bindings), container identities and service PIDs remain
+unchanged. No deployment, restart, worker change, cache clear, recovery fault or
+data write was performed by the measurement. Temporary VM files were removed.
+Keep 4/2; this is bounded warm-read acceptance, not sustained capacity or HMB
+sizing. See sibling `oldap-api/doc/performance/2026-10-01-vm-project-identity.md`
+and its JSON/CSV for evidence and limitations.

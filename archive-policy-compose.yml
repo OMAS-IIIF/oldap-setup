@@ -1,0 +1,17 @@
+# Explicit project-policy opt-in. Does not assign user roles or enable Writer.
+services:
+  oldap-api:
+    environment: &archive-policy-environment
+      OLDAP_ARCHIVE_POLICY_FILE: /run/oldap-policy/archive-policy.json
+    volumes: &archive-policy-volumes
+      - type: bind
+        source: ${OLDAP_ARCHIVE_POLICY_SOURCE:?Select the reviewed server-owned policy}
+        target: /run/oldap-policy/archive-policy.json
+        read_only: true
+        bind: {create_host_path: false}
+  oldap-tools:
+    environment: *archive-policy-environment
+    volumes: *archive-policy-volumes
+  oldap-harvesters:
+    environment: *archive-policy-environment
+    volumes: *archive-policy-volumes

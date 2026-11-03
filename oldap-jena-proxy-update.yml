@@ -1,0 +1,34 @@
+---
+# Home repair: retain service-authenticated import/export routes while blocking
+# the loopback-only Jena identity namespace. No application or data restart.
+- name: Correct the private Jena proxy boundary on home
+  hosts: oldap_home
+  become: true
+  vars:
+    ansible_become_exe: /usr/bin/sudo.ws
+  tasks:
+    - name: Require authorized home host
+      ansible.builtin.assert:
+        that: ansible_host == 'api.home.org'
+    - name: Retain installed proxy configuration
+      ansible.builtin.copy:
+        remote_src: true
+        src: /opt/oldap/compose/Caddyfile
+        dest: /opt/oldap/compose/Caddyfile.before-jena-scope
+        force: false
+        mode: '0600'
+    - name: Narrow only the existing private path matcher
+      ansible.builtin.replace:
+        path: /opt/oldap/compose/Caddyfile
+        regexp: '@private path /internal/\*'
+        replace: '@private path /internal/jena /internal/jena/*'
+    - name: Validate Caddy configuration
+      ansible.builtin.command: docker compose run --rm --no-deps caddy caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+      args: {chdir: /opt/oldap/compose}
+      changed_when: false
+      no_log: true
+    - name: Recreate only Caddy to refresh the atomically replaced bind-mounted file
+      ansible.builtin.command: docker compose up -d --force-recreate --no-deps caddy
+      args: {chdir: /opt/oldap/compose}
+      changed_when: true
+      no_log: true

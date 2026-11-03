@@ -1,5 +1,42 @@
 # OLDAP Setup Context
 
+## OLDAP 1.0 merge preparation
+
+Setup acceptance and limitations are recorded in `docs/jena-merge-readiness.md`.
+First cutover requires a GraphDB source and no prior target-opening marker;
+rollback now refuses source restart if target enumeration/stop/removal fails.
+The actual rescue commands pass local fake-Docker failure injection. No remote
+services were accessed during this review. Production restore, writer/media and
+final 1.0 artifact acceptance remain separate from the local checkpoint.
+
+See `docs/jena-1.0-merge-plan.md` and `docs/jena-merge-inventory.json` for fetched
+refs, dirty source inventory, PR drafts, dependency gates and publication boundaries.
+Library/API/Tools have local checkpoints; setup is now reviewed/checkpointed too.
+The subsequent library HTTP-pooling fix and API evidence still need their final
+local checkpoint before packaging. Initial inventory counts are historical. Library main is 0.4.27 and the GraphDB baseline is refactor/ontology
+0.7.29. Proposed core release is 1.0.0; independent media/frontend components keep
+their versions. No merge, version bump, tag, push or deployment performed.
+
+- Home RC4 (2026-11-03): API uses library BEGIN-only admission retry (five attempts, 750 ms total backoff, fresh journaled IDs); uncertain admission and UPDATE/COMMIT never replay. Installed-image contention checks pass on both architectures and isolated native home, including replacement. Public checks and existing import states preserved; see sibling setup docs/jena-begin-retry-rc4-home-results.json. Worker leases and public signatures unchanged.
+
+- Jena worker routes (2026-11-03): Caddy blocks only the private Jena namespace; established export/import/mobile internal routes retain their service JWT guards. Bounded home proxy/client update playbooks preserve data, namespace owner and policy overlays. Network acceptance uses the independent identity sidecar, including coordinated replacement and bridge isolation; see README.md.
+
+- Home archive structure enabled (2026-11-03): user-authorized Fasnacht structure-only policy is mounted read-only through setup archive-policy-compose.yml; established editor roles/grant-on-creation rules retained, publication remains disabled. Live model validation and admin/anonymous capabilities pass; no data/role changes. Setup oldap-jena-archive-enable.yml retains the original environment and preserves the Jena namespace. Real structure editing remains manual acceptance; production unchanged.
+
+- Home media access-key repair (2026-11-03): initial API access-key rotation had left mediahelper's verifier stale, causing upload HTTP 401. Setup now synchronizes only existing media access-verification consumers from the active API and recreates changed containers. Home repair and non-mutating valid/invalid upload-auth checks pass; real image-upload workflow remains user acceptance. Keep API, private identity verifier and mediahelper aligned for future key rotations/full provisioning. See setup docs/jena-media-access-results.json.
+
+- Home concurrency repair (2026-11-03): public archive bursts exposed callback worker starvation, not a Jena crash. The private identity verifier now runs independently on loopback port 8001, reusing the pinned API blueprint/codec through setup scripts/jena_identity.py. API/tools data contracts and images are unchanged. Namespace lifecycle includes the identity consumer. Home browser archive and stories pass; 48 requests at concurrency 16 all return 200 with equivalent complete RDF results. See setup docs/jena-concurrency-semantic-results.json and the coordinated identity-install playbook. Sequential cutover checks alone were insufficient; parallel/browser acceptance is required.
+
+- Home activation (2026-11-03): home.org now serves the pinned Jena API with the persistent 8 GiB-heap backend. GraphDB is stopped; source storage and two-host backups are retained. All 30 story responses match the frozen GraphDB baseline; existing login, fulltext AND search and signed IIIF/image delivery pass. Approved account correction retains DATA_PERMISSIONS; four orphan membership annotations remain inactive. Target has 65,376 application quads and 16 users. See the central cutover guide and setup docs/jena-home-results.json. Production is unchanged. Next: production-specific writer/harvester/media release acceptance, off-host backup/restore and coordinated routine-update automation. Earlier dated entries below describe historical stages, not the current home deployment.
+
+- Jena image release (2026-11-02): API `jena-0.2.37-rc1-c1cb0919375a` and tools `jena-0.3.22-rc1-c1cb0919375a` published for AMD64/ARM64 with exact source-matched library wheel; stable/latest untouched. Legacy migration-checkout publication targets are disabled. Deployment requires reviewed digests. Installed-image transport passes locally and published API passes on native home.org; full app/source migration and activation remain open. See docs/jena-images-results.json and the setup README. Source snapshots capture uncommitted changes; no Git/PyPI publication.
+
+- Jena migration (2026-11-02): this is the dedicated `migration/jena` checkout; inherited local main working changes are retained, original setup unchanged. `jena-compose.yml` shares the backend network namespace with direct clients, retains API DNS and writer coordination, and publishes no backend port. Both local ARM and home.org x86_64 transport/recreation acceptance pass. `oldap-jena-prepare.yml` stages a fresh candidate only; legacy provision/reset refuse selected Jena. See README.md for the production migration path and docs/jena-network-results.json for bounded evidence. Next: matched release images, full source/identity migration and coordinated activation/update workflow; no running application switched.
+
+- Optional VM-only weekly harvesting: `make install-harvest-schedule-vm` installs a Sunday 05:00 Europe/Zurich systemd timer, sequential Europeana/Swisscovery runs and per-source mail via the existing host mail transport. A shared in-container/host flock serializes both with the unchanged manual backup script via a systemd drop-in. Routine deploy maintains installed scheduling without re-enabling paused timers; only controls/templates/logging change, not harvester images or data. See `docs/harvest-schedule.md`. Activation requires the operator sudo installation.
+
+- Swisscovery CPU OCR uses an explicit `swisscovery-compose.yml` override of the installed harvester service, launched by `scripts/run-swisscovery.sh` (not the normal COMPOSE_FILE). `make install-swisscovery-vm` copies approved remote config/model inputs and preflights the version-matched `-ocr` image; routine `make deploy-vm` maintains/checks it thereafter. Shared persistent Linux flock serializes complete runs (exit 75 on overlap), with 2 CPU / 5 GiB limits. Swisscovery installation alone creates no scheduler; weekly scheduling is a separate opt-in workflow above. See `docs/swisscovery.md`; deployed standard/OCR 0.1.13 images and Swisscovery launcher were observed on the VM on 2026-10-26.
+
 - Added optional SALSAH Compose overlay, explicit first-install targets, shared frontend-only update tasks and conditional combined updates. Existing hosts remain opt-in. See docs/salsah-deployment.md.
 
 - Production publication accepted 2026-09-15: 285 Europeana records imported and confirmed visible. Private `auth/writer-production/archive-policy.json` now includes the reviewed publication block and remains the source referenced by deployment-vars.yml. Routine updates preserve it; full provisioning distributes it. See docs/publication-activation-status.md. Bootstrap generation is not a replacement for this established policy.

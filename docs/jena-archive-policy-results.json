@@ -1,0 +1,20 @@
+{
+  "admin": {
+    "canCreateUnits": true,
+    "canManageStructure": true,
+    "enabled": true,
+    "maxMutations": 500,
+    "maxRequestBytes": 2000000,
+    "maxSourceFolders": 5000
+  },
+  "anonymous": {
+    "canCreateUnits": false,
+    "canManageStructure": false,
+    "enabled": true,
+    "maxMutations": 500,
+    "maxRequestBytes": 2000000,
+    "maxSourceFolders": 5000
+  },
+  "user_has_structure_role": true,
+  "policy_mount_read_only": true
+}

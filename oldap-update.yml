@@ -48,6 +48,28 @@
       changed_when: false
       no_log: true
 
+    - name: Detect the installed Swisscovery batch workflow
+      ansible.builtin.stat:
+        path: "{{ compose_dir }}/swisscovery-compose.yml"
+      register: swisscovery_overlay
+
+    - name: Refresh the installed Swisscovery batch overlay and launcher
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ compose_dir }}/{{ item.dest }}"
+        mode: "{{ item.mode }}"
+      loop:
+        - {src: swisscovery-compose.yml, dest: swisscovery-compose.yml, mode: '0644'}
+        - {src: scripts/run-swisscovery.sh, dest: run-swisscovery.sh, mode: '0755'}
+      when: swisscovery_overlay.stat.exists
+
+    - name: Check the matching OCR release before selecting new versions
+      ansible.builtin.include_tasks:
+        file: tasks/check-swisscovery.yml
+        apply:
+          environment: "{{ release_tags | combine({'COMPOSE_FILE': 'docker-compose.yml:writer-compose.yml:swisscovery-compose.yml'}) }}"
+      when: swisscovery_overlay.stat.exists
+
     - name: Save the previous installed configuration for operator rollback
       ansible.builtin.copy:
         src: "{{ compose_dir }}/.env"
@@ -106,3 +128,12 @@
     - name: Include SALSAH in a combined update when installed
       ansible.builtin.include_tasks: tasks/update-salsah.yml
       when: "'salsah-2' in installed_services.stdout_lines"
+
+    - name: Detect installed harvesting schedule
+      ansible.builtin.stat:
+        path: /etc/systemd/system/oldap-harvest.timer
+      register: harvest_schedule
+
+    - name: Maintain installed harvesting schedule without enabling a paused timer
+      ansible.builtin.include_tasks: tasks/harvest-schedule.yml
+      when: harvest_schedule.stat.exists

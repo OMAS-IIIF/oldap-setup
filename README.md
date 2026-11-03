@@ -1,5 +1,359 @@
 # Deployment of the OLDAP framework
 
+## Publishing Jena candidate images
+
+The migration checkout disables the old API/tools Makefile publication targets.
+They previously pushed normal tags (API also `latest`) or published tools on
+PyPI. Use `scripts/jena-images.py` from this setup checkout instead. The original
+GraphDB checkouts are unchanged.
+
+```sh
+# Use a NEW bundle directory outside Git. This Python environment has poetry-core.
+../oldap-api/.venv/bin/python scripts/jena-images.py prepare --rc 1 --bundle /absolute/new-bundle
+../oldap-api/.venv/bin/python scripts/jena-images.py build --bundle /absolute/new-bundle
+../oldap-api/.venv/bin/python scripts/jena-images.py accept --bundle /absolute/new-bundle \
+  --service-release /absolute/built-jena-service
+../oldap-api/.venv/bin/python scripts/jena-images.py publish --bundle /absolute/new-bundle
+```
+
+Preparation copies only package source/resources and packaging metadata, excluding
+repository-root configuration, credentials, tests and virtual environments. It
+builds local API/tools/library wheels; nothing is uploaded to PyPI. Staged package
+versions receive `+jena.rcN.FINGERPRINT`, and both clients require that exact
+library version. Working-tree versions remain unchanged. Git HEAD, dirty state,
+per-file source hashes and wheel/context hashes are retained because the current
+migration includes uncommitted work; HEAD alone does not identify the release.
+
+Tags have the form `lrosenth/oldap-api:jena-0.2.37-rc1-FINGERPRINT`, plus
+`-amd64`/`-arm64` architecture tags. Only these repositories/tag shapes are allowed.
+The content fingerprint supplements the RC number. Use a new RC for a changed
+release; never reuse an existing published tag. Base Python is pinned by digest;
+resolved dependency versions are retained inside `/opt/oldap-release/dependencies.txt`.
+Dependency resolution occurs at build time: rebuilding is not a substitute for
+promoting an already tested image digest.
+
+Build loads both architectures locally, checks installed package versions,
+`pip check`, and tools CLI startup. Acceptance tests each installed API image
+against real Jena, using the real identity blueprint/codec, without source mounts.
+It verifies transactions, persisted data after container recreation and bridge
+isolation. This is not full API/account/migration or harvester acceptance.
+Tools' existing direct commands remain GraphDB-specific; use the implemented
+API transport for Jena operations rather than assuming an environment variable
+converts every legacy CLI command. Harvester images are a separate release gate.
+
+Publish requires acceptance matching the built image IDs. It verifies bundle
+hashes, refuses existing tags and registry errors, pushes exactly the tested
+architecture images and creates the multiarch index from their digests. It does
+not rebuild or write any stable/latest tag. Before/after digest snapshots check
+`latest` and the current normal version tags. Registry tags are mutable and this
+check is not an atomic registry lock: use one publisher per bundle. If publishing
+partially fails, retain the manifest and inspect uploaded digests; do not blindly
+retry/overwrite tags. Retire that RC and prepare a new one if necessary.
+
+`published.json` records the selected multiarch digest and architecture digests.
+Candidate preparation requires those exact digests and renders
+`OLDAP_JENA_API_IMAGE`/`OLDAP_JENA_TOOLS_IMAGE`; the overlay refuses missing image
+selections instead of falling back to `latest` or normal release tags. No image publication activates a deployment. Authentication uses
+the existing Docker credential helper; no registry secrets enter build contexts.
+
+### Published candidate — 2026-11-02
+
+- API: `lrosenth/oldap-api:jena-0.2.37-rc1-c1cb0919375a`
+- Tools: `lrosenth/oldap-tools:jena-0.3.22-rc1-c1cb0919375a`
+- API deployment: `lrosenth/oldap-api@sha256:e452566c33ed12f98a0e49f7af09e12afd1490c1174f727f4b5116fe74a01628`
+- Tools deployment: `lrosenth/oldap-tools@sha256:da6a7ccc60eebe4b38090d56dcf0dce2830297e1c4644c220022c18fb4474a33`
+
+Both indexes contain Linux AMD64 and ARM64 images. Normal version tags and
+`latest` retain their previous digests (including absence where no latest exists).
+Packaged transport acceptance passes locally for both architectures and on
+native x86_64 home.org by the published digest. Home activation is now complete;
+see the acceptance evidence and workflow below.
+API UID/GID 100/101 and tools root behavior are retained for existing bind mounts.
+Keep the release bundle/source snapshots outside Git for provenance and recovery;
+no source commit/push was performed in this step. See
+[release evidence](docs/jena-images-results.json) for checks, provenance and limits.
+Full application initialization, real identities/data and coordinated activation
+remain subsequent gates; these are migration release candidates.
+
+## Jena migration branch: private container deployment
+
+The `migration/jena` checkout under `OLDAP-Jena/oldap-setup` is based on the
+existing local main checkout, including its uncommitted harvesting changes.
+Those inherited changes remain uncommitted here; the original checkout is
+untouched. Ignored credentials were not copied. Do not deploy ordinary GraphDB
+release images as if they already contained the migration code.
+
+### Network and lifecycle
+
+`jena-compose.yml` is an explicit LAST overlay after the normal Compose file
+and, where installed, `writer-compose.yml` and frontend overlays. It is not
+selected by default. Compose must support `!reset`; validate with the target
+Docker Compose before activation.
+
+Jena owns the network namespace. API, tools and harvesters join it via
+`network_mode: service:oldap-jena`. Jena still binds only loopback on port 3031;
+its identity callback uses `http://127.0.0.1:8001/internal/jena/identity`.
+The independent `oldap-jena-identity` container runs only the installed identity
+blueprint, using `scripts/jena_identity.py` as its WSGI entry point. It has its
+own worker pool and only access-token/callback secrets, no database credentials.
+Using the public API pool for callbacks creates a capacity cycle: public requests
+wait for Jena while Jena waits for a free API worker. The archive page's parallel
+initial load exposed this; simply increasing worker counts does not remove it.
+Start the verifier before public API readiness and recreate it with every Jena
+namespace replacement. Rotate its access signing key together with the API's.
+The owner has the network alias `oldap-api`, so existing Caddy/frontend URLs
+continue to work. No Jena port is published. The Caddy template refuses
+`/internal/jena/*` on both home and production API routes. Existing
+`/internal/export-claims`, `/internal/exports`, import and mobile-worker routes
+must still reach their purpose-specific service authentication; a broad
+`/internal/*` block breaks background processing. Other bridge containers
+can still reach API port 8000; the callback independently requires its secret.
+
+Only the GraphDB dependency is removed: writer Redis health dependencies,
+policy mounts and coordinator settings survive the merge. GraphDB/init are
+behind the explicit `graphdb-legacy` profile; existing source containers are
+not deleted by applying an overlay. Do not run `down` or remove source volumes
+on a combined source/target deployment. Media workers continue using the API;
+do not share the private backend namespace with the media VM.
+
+**A backend container replacement requires coordinated consumer replacement.**
+After fencing ALL writers (including external jobs/media workers and timers),
+stop and remove API/tools/harvester containers before stopping/removing Jena.
+Create Jena normally against the preserved dataset, then recreate API and
+verify identity, read, write, permissions and receipt recovery before reopening
+writers. Recreate any additional installed direct backend consumers as well.
+An API-only restart does not require replacing Jena. Never use `--init` on
+normal restart; never delete transaction reservations/receipts as cache.
+
+The existing GraphDB full-provision/reset workflows now refuse an installed
+`:jena-compose.yml` selection. The routine GraphDB updater already rejects
+unknown overlay selections. The coordinated Jena activation/update playbook
+is still a separate readiness gate; do not bypass these guards.
+
+### Candidate preparation (no activation)
+
+`oldap-jena-prepare.yml` stages a NEW candidate directory, built release, private
+service configuration and candidate environment. It verifies the copied Jena
+jar/dependency/recovery-tool hashes against the reviewed build metadata. It
+does not start containers, initialize data, install a runtime on the host,
+replace the installed `.env`, or change the public API. It refuses an existing
+candidate root; inspect an interrupted attempt rather than blindly retrying.
+Prepared files target UID/GID 1000; verify that ownership for another host.
+
+The operator input file (outside Git, preferably Vault encrypted) supplies
+`oldap_jena_release_source` (local output of oldaplib's service builder),
+`oldap_jena_api_image` and `oldap_jena_tools_image` (the tested `repository@sha256:...`
+references from `published.json`), and four
+distinct URL-safe random keys of 43–128 characters:
+`oldap_jena_service_key`, `oldap_jena_bootstrap_key`,
+`oldap_jena_fulltext_key`, `oldap_jena_identity_key`.
+Optional `oldap_jena_root` must match `/srv/storage/oldap-jena-NAME`.
+The runtime is a digest-pinned multi-architecture Java 25 image; the default
+heap is 8192 MiB. These are deployment inputs, not production sizing evidence.
+
+```sh
+ansible-playbook -i inventory.ini oldap-jena-prepare.yml \
+  -e @/absolute/private/jena-candidate.yml --ask-vault-pass \
+  -l oldap_home --ask-become-pass
+```
+
+The candidate `config/jena.env` contains ONLY Jena settings. It must never
+replace the complete application `.env`. Activation must merge reviewed
+settings while preserving existing authentication, media and writer policy,
+using a matched migration API/tools/harvester release set. No such merge or
+remote preparation has been performed by the network acceptance test.
+
+### Reproducible connection acceptance
+
+```sh
+python3 scripts/check-jena-network.py --release /absolute/built-jena-release
+../oldap-api/.venv/bin/python -m unittest tests.test_jena_deployment -v
+```
+
+The first command uses the actual overlay with a fresh Docker project and
+temporary dataset, the real API identity blueprint and OLDAP token codec.
+Sibling migration source packages are mounted read-only into the existing
+API runtime image; this is a test fixture, not a releasable API image. It
+checks transactions, invalid credentials, API DNS, backend bridge isolation
+and coordinated namespace replacement. It publishes no host ports and removes
+its own containers afterward. On Linux run as UID 1000 with Docker access.
+Run on both the development machine and the x86_64 target VM. The second command
+checks the base/writer overlay merge and parses both actual Caddy configurations.
+These tests do not certify full API startup, accounts, worker recovery or load.
+
+### Whole-source home rehearsal and activation
+
+**Accepted 2026-11-03:** home.org now runs the pinned Jena API and persistent
+backend; GraphDB is stopped with its data retained. See
+[home acceptance evidence](docs/jena-home-results.json) and the
+[central cutover record](../oldaplib/docs/migration/graphdb-to-jena-cutover.md).
+All 30 story responses match the frozen source; existing login, fulltext AND
+search and signed IIIF/JPEG delivery pass. Users must log in again following
+access/refresh key rotation. Production is unchanged.
+
+Final backups are `/srv/storage/oldap-jena-backup-20261103` on api.home.org and
+`/data/oldap-jena-backup-20261103` on media.home.org. Earlier 20261102 copies
+remain. These are same-host copies; off-host recovery acceptance is still needed
+for production. Rehearsal containers/network have been removed; do not rerun
+initial activation against the active dataset.
+
+The current home-only sequence retains the production-like source, migrates a
+complete RDF snapshot and switches only after private API acceptance:
+
+```bash
+ansible-playbook -i inventory.ini oldap-jena-prepare.yml -l oldap_home -e @/private/jena-vars.json --ask-become-pass
+ansible-playbook -i inventory.ini oldap-jena-rehearse.yml -l oldap_home -e @/private/jena-vars.json --ask-become-pass
+# Run scripts/check-jena-account-parity.py on the API host; review every difference.
+# Apply reviewed domain/account corrections and configure managed fulltext.
+ansible-playbook -i inventory.ini oldap-jena-freeze.yml -l oldap_home -e @/private/jena-vars.json --ask-become-pass
+ansible-playbook -i inventory.ini oldap-jena-activate.yml -l oldap_home -e @/private/jena-vars.json --ask-become-pass
+```
+
+Private inputs extend preparation variables with `oldap_jena_snapshot` (local
+converted TriG), `oldap_jena_snapshot_sha256`, and
+`oldap_jena_expected_source_sha256` (original whole GraphDB export). Set
+`oldap_jena_accept_candidate: true` only after reviewing target acceptance.
+Paths must be new; a failed import is retained unmarked, never blindly retried.
+
+First-cutover guards are deliberately conservative: freeze requires the active
+source API to select GraphDB, and activation refuses an existing `target-opened.txt`
+marker. Never delete that marker to rerun activation; target writes may exist.
+Before reopening traffic, automatic rollback inventories existing target containers
+and stops/removes them in client-before-backend order. Missing containers are
+harmless, but an inventory, stop or removal error halts rollback before restarting
+GraphDB. Resolve the failed shutdown explicitly; do not run both writable backends.
+
+The source export must use `application/x-trigstar`, `infer=false`, all graphs.
+Run the native `ConvertLegacyRdfStar.java` first, retain its report and original
+bytes, and resolve account/ontology differences separately. The packaged
+`JenaInitialImport input.trig SHA256 /new/absolute/dataset` creates the service
+marker only after verifying persisted RDF. It accepts at most 64 MiB converted
+input; the legacy converter's existing 16 MiB input bound is unchanged.
+
+Rehearsal uses an isolated Compose project `oldap-jena-review`, private Redis,
+separate files and localhost:18000. The API has real source accounts, so use SSH
+access and never publish this rehearsal port. No background media workers run
+against that copied dataset. It uses the exact reviewed base Compose file;
+rehearsal-only overrides must not hide missing application environment settings.
+Deployment tests cover namespace, private callback routing and storage separation.
+
+Freeze targets only the inventoried home hosts. It stops API ingress and media
+writers, requires empty source coordination DB 1, compares the final RDF export
+with the reviewed source, and archives GraphDB/API/Redis/config and media files
+on their respective VMs. A failed freeze restarts the original services. These
+are same-host recovery copies; independent off-host backup remains a production
+requirement. Source import jobs were terminal and source media operation folders
+empty at the current inventory; repeat that audit before future cutovers.
+
+Activation keeps source GraphDB stopped and its storage intact. It merges only
+Jena inputs, selects separate Redis storage, rotates access/refresh signing keys
+(users log in again), and installs the private callback proxy block. Candidate
+API is stopped before its namespace owner. Failed private startup restores the
+original environment/proxy/base Compose and services. This rollback ran successfully
+on the first attempt when the legacy base lacked an explicit staging Redis URL.
+The corrected base sets that URL for API/tools/harvesters; a new full freeze and
+backup preceded successful activation. Once ingress/media workers reopen, rollback
+requires reconciling target writes; the playbook does not claim automatic rollback
+of accepted application work. The source backup manifest records this boundary.
+
+The overlay sets Redis AOF `appendfsync=always` and `noeviction`, satisfying the
+library's durable mutation coordination guard when DB 1 is shared with the cache
+server. Existing deployments using a dedicated writer service retain that service
+and require their own reviewed activation inventory; the current home playbooks
+must not be applied unchanged to those or to production.
+
+### Repairing an already activated home callback topology
+
+`oldap-jena-identity-install.yml` installs the independent verifier into the
+existing Jena deployment without data migration, key rotation or image changes.
+Run with the accepted private candidate variables and sudo access. It retains
+pre-repair configuration, starts/verifies the callback first, stops media writers
+and ingress, drains API clients, then recreates the namespace owner and both
+consumers. Ingress reopens only after health checks pass. A failure after draining
+requires operator diagnosis/resume; never rerun first import or restore GraphDB
+to repair this topology. Existing Jena writes remain authoritative.
+
+Run `scripts/check-jena-concurrency.py` on the API host after activation/update:
+it compares complete sequential responses with 48 requests at concurrency 16,
+covering archive metadata, selector lists, taxonomy, user and story reads. Also
+run `scripts/check-jena-home.py` and verify the actual archive page in a browser.
+Sequential endpoint probes alone did not detect the worker capacity cycle.
+
+### Media access verification after key rotation
+
+The API, private identity verifier and mediahelper must use the same access
+signing key, issuer and audience. Image delivery uses a separate media key, so
+working IIIF delivery does not prove upload access-token compatibility.
+
+`tasks/jena-home-media-access.yml` reads only active API verification settings,
+identifies existing key-bearing environment files in the inventoried home media
+stack and updates them with private backups. It never adds access-key privileges
+to worker files that lacked them. First activation runs it before reopening, then
+uses `docker compose up` to recreate changed consumers: `docker start/restart`
+alone retains the old environment. The standalone `oldap-jena-media-access.yml`
+repairs an already activated home deployment without rotating API credentials.
+Do not use this home-specific inventory unchanged in production. Keep protected
+provisioning inputs coherent with the active keys before future full provisioning.
+
+The 2026-11-03 repair updated only `mediahelper-access.env`; runtime values now
+match the API. [Acceptance evidence](docs/jena-media-access-results.json) includes
+a fresh API token reaching upload form validation (no project/file, hence no
+write) and missing/invalid-token rejection. A real upload/conversion/storage test
+remains distinct from this non-mutating authentication check.
+
+### Optional archive structure policy on home
+
+Enabled at the user's request on 2026-11-03. The previous disabled message was
+correct: no `OLDAP_ARCHIVE_POLICY_FILE` was installed on home. The reviewed
+`files/jena-home-archive-policy.json` enables Fasnacht's existing structure and
+media editor roles and grant-on-creation rules, without the separate publication
+block. It does not assign roles to users or bypass resource permissions.
+
+`oldap-jena-archive-enable.yml` validates the policy against live Jena roles,
+models and properties before activation, retains `.env.before-archive-policy`,
+and installs `archive-policy-compose.yml`. The overlay mounts the server-owned
+policy read-only into API/tools/harvester configuration; only the API is recreated.
+The selected stack is now `docker-compose.yml:jena-compose.yml:archive-policy-compose.yml`.
+Retain this selection and policy on subsequent deployment/backup. Existing
+GraphDB rollback is not part of this workflow. Production needs its own review.
+
+[Capability evidence](docs/jena-archive-policy-results.json) verifies enabled
+structure/create access for administrators and denial for anonymous users,
+plus the requesting user's existing structure-editor role. This is model and
+authorization acceptance, not an actual archive-data mutation test.
+
+### Path from home.org rehearsal to production
+
+1. Retain the synchronized GraphDB baseline and inventory (versions, data,
+   accounts/roles, media, operations, writer Redis, policies and timers).
+2. Rehearse a coordinated source backup/restore and retain unchanged GraphDB
+   exports/checksums. The native Jena backup tool cannot back up GraphDB storage.
+3. Build/pin migration releases for API/lib, tools and all direct writers;
+   verify mediahelper's reviewed authorization fixes. Prepare the candidate.
+4. Initialize ONLY a new Jena dataset; migrate source RDF-star to RDF 1.2 and
+   canonical relationships using the retained migration reports. Migrate real
+   identities/roles and configuration; rebuild the managed fulltext index.
+5. Use isolated object caches and explicitly reconcile writer generation/state.
+   Preserve receipts and operations; never reuse source coordination blindly.
+6. Complete full API/media/permission/read/write/recovery comparisons on home.org.
+   Automate coordinated activation and routine update in this repository, using
+   the existing inventory/Vault/writer workflow. Do not activate production first.
+7. For production repeat the accepted process with final writer freeze, consistent
+   export, verified backups, reviewed settings and endpoint switch. Reopen writers
+   only after acceptance. Before target writes, rollback can restore the unchanged
+   source and matched application configuration. After target writes, rollback
+   requires explicit data reconciliation; switching the URL alone loses changes.
+
+The detailed migration source of truth remains
+`../oldaplib/docs/migration/graphdb-to-jena-cutover.md`. Record every deployment
+acceptance and exact release there. Preparation, migration, activation and
+routine updates are distinct steps. Home source migration/activation is accepted;
+production-specific gates and coordinated routine updates remain open. The home
+mobile worker needed forced shutdown after 90 seconds with empty operation
+folders; graceful shutdown needs correction before production. Existing
+mediahelper delivery passes, but its reviewed authorization fixes still require
+a matched release and broader acceptance.
+
 This repository deploys the OLDAP stack with Ansible and Docker Compose. The
 main playbook installs Docker, prepares persistent host directories, copies
 GraphDB initialization data, renders Caddy and Compose configuration, and brings
@@ -273,3 +627,30 @@ the existing 4-worker/2-thread runtime. The dedicated `oldap-api-workers.yml`
 maintenance playbook changes only those settings on compatible installations.
 See [API workers, cache maintenance and isolated crash recovery](docs/api-workers.md)
 for prerequisites, rollback and two/four-worker rehearsal commands.
+
+### Updating active home clients after a service-authentication fix
+
+`oldap-jena-proxy-update.yml` repairs the existing home Caddy matcher and recreates
+only Caddy after validating its new bind-mounted file. Atomic file replacement
+requires recreation: reloading inside the old container reads its old inode.
+Only `/internal/jena` and `/internal/jena/*` are proxy-blocked. Export, import and
+mobile worker routes must reach their existing purpose-specific JWT guards.
+
+`oldap-jena-client-update.yml` accepts explicit immutable API/tools digests for
+an already active home Jena installation. It preserves the installed environment
+and policy overlays, pulls images, then recreates identity verification and API
+without restarting the Jena namespace owner, Redis or media workers. It neither
+imports data nor starts tools. Use the normal prepare/build/accept/publish release
+workflow before this update; never reuse a stable or existing RC tag.
+
+API-owned worker service connections must issue internal access tokens with Jena;
+GraphDB retains tokenless service connections. Worker signing credentials and
+public API signatures do not change. Acceptance must include a real queued export
+reaching READY with a valid ZIP, beyond unauthenticated route and public read checks.
+The disposable network acceptance now uses the separate identity process on 8001,
+checks its bridge isolation, and removes both consumers before replacing Jena.
+
+## Preparing the OLDAP 1.0 merge
+
+See [the coordinated merge and release plan](docs/jena-1.0-merge-plan.md) for
+branch evidence, version/dependency work, PR drafts and remaining release gates.

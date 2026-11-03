@@ -1,0 +1,10 @@
+---
+- name: Install VM-only weekly harvesting and coordinated backup locking
+  hosts: oldap_prod
+  become: true
+  vars:
+    compose_dir: /opt/oldap/compose
+    install_harvest_schedule: true
+  tasks:
+    - name: Install scheduling without starting an import explicitly
+      ansible.builtin.import_tasks: tasks/harvest-schedule.yml

@@ -1,0 +1,47 @@
+---
+# Uses the caller's candidate release/Compose environment. Does not harvest.
+- name: Pull the matching Swisscovery OCR image
+  ansible.builtin.command:
+    cmd: docker compose pull oldap-harvesters
+    chdir: "{{ compose_dir }}"
+  changed_when: true
+
+- name: Verify Swisscovery writer compatibility with the installed store
+  ansible.builtin.command:
+    argv: [docker, compose, run, --rm, --no-deps, --entrypoint, python, oldap-harvesters, /run/oldap-writer-client/check-writer-store.py]
+    chdir: "{{ compose_dir }}"
+  changed_when: false
+  no_log: true
+
+- name: Verify the isolated OCR runtime and installed model
+  ansible.builtin.command:
+    argv:
+      - docker
+      - compose
+      - run
+      - --rm
+      - --no-deps
+      - --entrypoint
+      - /opt/ocr-python
+      - oldap-harvesters
+      - -c
+      - "import shutil, torch, pypdf, pypdfium2; from kraken.lib.models import load_any; assert shutil.which('flock'); assert not torch.cuda.is_available(); load_any('/run/swisscovery/german_print.mlmodel')"
+    chdir: "{{ compose_dir }}"
+  changed_when: false
+
+- name: Validate the mounted Swisscovery configuration without connecting or writing
+  ansible.builtin.command:
+    argv:
+      - docker
+      - compose
+      - run
+      - --rm
+      - --no-deps
+      - --entrypoint
+      - python
+      - oldap-harvesters
+      - -c
+      - "from oldap_harvesters.config import load_config; c = load_config('/run/swisscovery/config.toml'); assert c.oldap and c.fasnacht.permissions and c.swisscovery.external_source; assert any(q.source == 'swisscovery' for q in c.queries)"
+    chdir: "{{ compose_dir }}"
+  changed_when: false
+  no_log: true

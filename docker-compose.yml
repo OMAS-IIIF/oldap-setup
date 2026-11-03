@@ -130,6 +130,7 @@ services:
       OLDAP_TS_SERVER: http://graphdb:7200
       OLDAP_TS_REPO: oldap
       OLDAP_REDIS_URL: redis://redis:6379
+      OLDAP_STAGING_LOCK_REDIS_URL: ${OLDAP_STAGING_LOCK_REDIS_URL:-redis://redis:6379/1}
       OLDAP_API_PORT: 8000
       APP_ENV: ${APP_ENV:-Dev}
       UPLOAD_FOLDER: /data/upload
@@ -149,6 +150,7 @@ services:
       - redis
     environment:
       OLDAP_REDIS_URL: redis://redis:6379
+      OLDAP_STAGING_LOCK_REDIS_URL: ${OLDAP_STAGING_LOCK_REDIS_URL:-redis://redis:6379/1}
       GRAPHDB_USER: ${GRAPHDB_USER:-}
       GRAPHDB_PASSWORD: ${GRAPHDB_PASSWORD:-}
     volumes:
@@ -168,6 +170,7 @@ services:
       OLDAP_JWT_ISSUER: ${OLDAP_JWT_ISSUER:-https://oldap.org}
       OLDAP_JWT_AUDIENCE: ${OLDAP_JWT_AUDIENCE:-oldap-api}
       OLDAP_REDIS_URL: redis://redis:6379
+      OLDAP_STAGING_LOCK_REDIS_URL: ${OLDAP_STAGING_LOCK_REDIS_URL:-redis://redis:6379/1}
     command: ["--config", "/app/harvesters.toml", "--write-oldap"]
     volumes:
       - ${OLDAP_HARVESTERS_CONFIG:-./oldap-harvesters/harvesters.toml}:/app/harvesters.toml:ro

@@ -1,0 +1,18 @@
+{
+  "projects": {
+    "fasnacht": {
+      "enabled": true,
+      "structureEditorRoleIris": [
+        "http://fasnacht.digital/ns/ArchiveStructureEditor"
+      ],
+      "archiveEditorRoleIris": [
+        "http://fasnacht.digital/ns/ArchiveMediaEditor"
+      ],
+      "cataloguedMediaClassIris": [
+        "http://fasnacht.digital/ns/ArchiveMediaObject"
+      ],
+      "preparationNotePropertyIri": "https://schema.org/comment",
+      "grantEditorRolesOnCreation": true
+    }
+  }
+}

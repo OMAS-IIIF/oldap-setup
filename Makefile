@@ -1,5 +1,18 @@
 .PHONY: deploy-home soft-reset-home deploy-vm show-versions latest-api latest-app latest-fasnacht latest-harvesters check-auth-secrets test-deployment-config
 
+# Jena staging only. These inputs contain private keys and stay outside Git.
+# No dependency on missing frontend sibling checkouts in OLDAP-Jena.
+JENA_VARS ?= $(HOME)/ProgDev/OLDAP/auth/jena-candidate.yml
+.PHONY: prepare-jena-home prepare-jena-vm test-jena-deployment
+prepare-jena-home prepare-jena-vm:
+	@test -f "$(JENA_VARS)"
+	ansible-playbook -i inventory.ini oldap-jena-prepare.yml \
+		-e "@$(JENA_VARS)" $(ANSIBLE_VAULT_ARGS) \
+		-l $(if $(filter prepare-jena-home,$@),oldap_home,oldap_prod) --ask-become-pass
+
+test-jena-deployment:
+	../oldap-api/.venv/bin/python -m unittest tests.test_jena_deployment tests.test_jena_activation tests.test_jena_images tests.test_jena_home_acceptance -v
+
 API_VERSION = $(shell cd ../oldap-api; git describe --tags --abbrev=0)
 APP_VERSION = $(shell cd ../oldap-app; git describe --tags --abbrev=0)
 TOOLS_VERSION = $(shell cd ../oldap-tools; git describe --tags --abbrev=0)
@@ -134,3 +147,20 @@ install-salsah-vm install-salsah-home:
 	ansible-playbook -i inventory.ini oldap-salsah-install.yml \
 		-e salsah_tag=$(SALSAH_VERSION) \
 		-l $(if $(filter install-salsah-vm,$@),oldap_prod,oldap_home) --ask-become-pass
+
+# Inputs contain existing remote config/model paths and the audited model checksum.
+SWISSCOVERY_VARS ?= $(HOME)/ProgDev/OLDAP/auth/swisscovery-production.yml
+.PHONY: install-swisscovery-vm
+install-swisscovery-vm:
+	@test -f "$(SWISSCOVERY_VARS)" || { \
+		printf 'Missing Swisscovery installation inputs: %s\nSee docs/swisscovery.md or set SWISSCOVERY_VARS=/path/to/file.yml\n' "$(SWISSCOVERY_VARS)" >&2; \
+		exit 1; \
+	}
+	ansible-playbook -i inventory.ini oldap-swisscovery-install.yml \
+		-e "@$(SWISSCOVERY_VARS)" -e oldap_harvesters_tag=$(HARVESTERS_VERSION) \
+		-l oldap_prod --ask-become-pass
+
+# Opt-in weekly VM schedule; reuses installed images, secrets and backup mail transport.
+.PHONY: install-harvest-schedule-vm
+install-harvest-schedule-vm:
+	ansible-playbook -i inventory.ini oldap-harvest-schedule-install.yml -l oldap_prod --ask-become-pass

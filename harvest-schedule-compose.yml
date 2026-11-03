@@ -1,0 +1,13 @@
+# Optional shared lock binding; the launcher selects the source-specific entrypoint.
+services:
+  oldap-harvesters:
+    volumes:
+      - type: bind
+        source: /srv/storage/oldap-data/job-locks
+        target: /run/oldap-batch/locks
+        bind: {create_host_path: false}
+      - type: bind
+        source: /opt/oldap/compose/run-locked.py
+        target: /run/oldap-batch/run-locked.py
+        read_only: true
+        bind: {create_host_path: false}

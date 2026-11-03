@@ -1,0 +1,49 @@
+# Explicit Swisscovery override for the existing harvester service.
+# Use run-swisscovery.sh; do not add this overlay to the normal COMPOSE_FILE.
+services:
+  oldap-harvesters:
+    image: lrosenth/oldap-harvesters:${OLDAP_HARVESTERS_TAG:?Set the release version}-ocr
+    container_name: oldap-swisscovery
+    profiles: [swisscovery]
+    cpus: 2
+    mem_limit: 5g
+    environment:
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+    # The kernel holds the lock for the entire container lifetime, including OCR.
+    # All launches must use the same host directory; never delete the lock file.
+    entrypoint: [flock, --nonblock, --conflict-exit-code, '75', --no-fork, /var/lib/swisscovery/locks/harvest.lock, oldap-harvest-swisscovery]
+    command:
+      - --config
+      - /run/swisscovery/config.toml
+      - --write-oldap
+      - --select-basel-fasnacht
+      - --selection-report
+      - /var/lib/swisscovery/reports/selection.jsonl
+      - --enrich-media
+      - --media-report
+      - /var/lib/swisscovery/reports/media.jsonl
+      - --text-worker-python
+      - /opt/ocr-python
+      - --text-model
+      - /run/swisscovery/german_print.mlmodel
+      - --text-layout
+    volumes:
+      - type: bind
+        source: /srv/storage/oldap-data/oldap-harvesters/swisscovery/config.toml
+        target: /run/swisscovery/config.toml
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /srv/storage/oldap-data/oldap-harvesters/swisscovery/german_print.mlmodel
+        target: /run/swisscovery/german_print.mlmodel
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /srv/storage/oldap-data/oldap-harvesters/swisscovery/reports
+        target: /var/lib/swisscovery/reports
+        bind: {create_host_path: false}
+      - type: bind
+        source: /srv/storage/oldap-data/oldap-harvesters/swisscovery/locks
+        target: /var/lib/swisscovery/locks
+        bind: {create_host_path: false}

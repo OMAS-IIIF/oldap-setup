@@ -20,6 +20,16 @@ class ReleaseTests(unittest.TestCase):
         self.assertTrue(release.valid_reference('lrosenth/oldap-api:jena-0.2.37-rc1-abcdef123456'))
         self.assertFalse(release.valid_reference('someone/oldap-api:jena-0.2.37-rc1-abcdef123456'))
 
+    def test_package_rc_versions_keep_isolated_tags_and_cannot_mislabel_rc(self):
+        fingerprint = 'a' * 64
+        for version in ('1.0.0', '1.0.0rc1'):
+            tag = release.candidate_tag(version, 1, fingerprint)
+            self.assertEqual(tag, 'jena-1.0.0-rc1-' + 'a' * 12)
+            self.assertTrue(release.valid_reference('lrosenth/oldap-api:' + tag))
+        for version in ('1.0.0rc2', '1.0.0.dev1', 'latest'):
+            with self.assertRaises(ValueError):
+                release.candidate_tag(version, 1, fingerprint)
+
     def test_old_make_publication_targets_are_disabled(self):
         for project, targets in [('oldap-api', ('docker-build', 'docker-push')),
                                  ('oldap-tools', ('docker-build', 'ensure-pypi-release'))]:

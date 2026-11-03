@@ -1,5 +1,7 @@
 # OLDAP Setup Context
 
+- Coordinated 1.0 candidate (2026-11-03): core packages and OLDAP service wrapper now use 1.0.0rc1. API/tools depend on >=1.0.0rc1,<2.0.0 instead of a sibling path/0.x constraint. Poetry-generated portable locks use the exact candidate library wheel hash; library lock is now tracked. Existing development venvs were not reinstalled. Clean installed-wheel tests and rebuilt Java service pass. See ../oldap-setup/docs/jena-1.0rc1-preparation.md and results JSON. No publication, tag, merge or deployment; older dated version statements below describe historical checkpoints.
+
 ## OLDAP 1.0 merge preparation
 
 Setup acceptance and limitations are recorded in `docs/jena-merge-readiness.md`.

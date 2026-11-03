@@ -66,6 +66,20 @@ def valid_reference(reference):
     return bool(re.fullmatch(r'lrosenth/oldap-(?:api|tools):jena-\d+\.\d+\.\d+-rc[1-9]\d*-[a-f0-9]{12}(?:-(?:amd64|arm64))?', reference))
 
 
+def candidate_tag(version, rc, fingerprint):
+    """Map stable or rcN package metadata to the existing isolated image scheme.
+
+    A prerelease's RC number must match the selected build, so an rc1 wheel
+    cannot accidentally be advertised as an rc2 candidate.
+    """
+    match = re.fullmatch(r'(\d+\.\d+\.\d+)(?:rc([1-9]\d*))?', version)
+    if not match or (match[2] is not None and int(match[2]) != rc):
+        raise ValueError('Package version and selected candidate number differ')
+    if rc < 1 or not re.fullmatch(r'[a-f0-9]{64}', fingerprint):
+        raise ValueError('Invalid candidate number or source fingerprint')
+    return f'jena-{match[1]}-rc{rc}-{fingerprint[:12]}'
+
+
 def prepare(output, rc):
     """Create a new wheel bundle; original version files and Git stay unchanged."""
     if rc < 1:
@@ -100,6 +114,8 @@ def prepare(output, rc):
                             'version': version, 'files': hashes}
     recipe_hash = digest(ROOT / 'release/Dockerfile.jena')
     fingerprint = hashlib.sha256(json.dumps({'sources': records, 'recipe': recipe_hash, 'builder': digest(Path(__file__)), 'python_image': PYTHON_IMAGE}, sort_keys=True).encode()).hexdigest()
+    for record in records.values():
+        candidate_tag(record['version'], rc, fingerprint)
     lib_version = records['oldaplib']['version'] + f'+jena.rc{rc}.{fingerprint[:12]}'
     versions = {}
     for project in PACKAGES:
@@ -122,7 +138,7 @@ def prepare(output, rc):
     manifest = {'fingerprint': fingerprint, 'rc': rc, 'sources': records, 'versions': versions,
                 'python_image': PYTHON_IMAGE, 'recipe_sha256': recipe_hash, 'components': {}}
     for project in ('oldap-api', 'oldap-tools'):
-        tag = f'jena-{records[project]["version"]}-rc{rc}-{fingerprint[:12]}'
+        tag = candidate_tag(records[project]['version'], rc, fingerprint)
         reference = f'lrosenth/{project}:{tag}'
         assert valid_reference(reference)
         context = output / project

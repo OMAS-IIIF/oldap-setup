@@ -8,20 +8,16 @@ See [the exact refs and working-file hashes](jena-merge-inventory.json) and
 
 ## Checkpoint progress after the initial inventory
 
-Library `827bc56`, API `82d8a50` and Tools `125dd61` are local migration
-checkpoints. The subsequent library HTTP-pooling correction and matching API
-acceptance documentation are still working-tree changes and must be committed
-before final packaging. Tools boundary fixes are included in its checkpoint.
-Setup review now includes fail-closed first-cutover/rollback guards, 60 tests plus
-34 subtests and nine Jena playbook syntax checks; see
-[jena-merge-readiness.md](jena-merge-readiness.md). The table below remains the
-historical pre-checkpoint inventory, not a current dirty-file count.
+Library `827bc56`, API `82d8a50`, Tools `125dd61` and Setup `0b3fd56` are local
+migration checkpoints. HTTP pooling is committed as library `e62651a`; API
+acceptance evidence is `44cecf7`. Core package/wrapper metadata and portable locks
+are now prepared as **1.0.0rc1**; see
+[jena-1.0rc1-preparation.md](jena-1.0rc1-preparation.md).
+The table below is the historical pre-checkpoint inventory, not a current count.
 
-No checkpoint is a final release approval. Next: finish local source checkpoints,
-coordinate 1.0 versions/dependencies and verify clean installed artifacts. Setup
-still pins OLDAP's service wrapper 0.1.0 and needs its coordinated version update.
-Production-specific writer inventory, off-host restore, harvester/media acceptance
-and routine Jena updates remain explicit gates.
+No checkpoint is final release approval. Next: clean candidate images and complete
+home/consumer acceptance. Production writer inventory, off-host restore,
+harvester/media acceptance and routine Jena updates remain explicit gates.
 
 ## What the Git audit establishes
 
@@ -58,11 +54,11 @@ Proposed coordinated release: **OLDAP 1.0.0**, with oldaplib, oldap-api and
 oldap-tools each at 1.0.0, and an oldap-setup `v1.0.0` tag identifying the release
 recipe. Use `1.0.0rc1` for Python prerelease packages and `v1.0.0-rc1` for candidate
 Git/image labels; only the accepted release gets the final version.
-No version files or tags were changed during this preparation.
+Version files are now prepared as 1.0.0rc1; no tags have been created.
 
-The private OLDAP Jena service has its own `VERSION = '0.1.0'` in
+The private OLDAP Jena service now has `VERSION = '1.0.0rc1'` in
 `oldaplib/services/jena/build.py`. Include it as an explicitly versioned artifact
-in the release manifest; propose 1.0.0 for that OLDAP wrapper as well. Apache
+in the release manifest; use final 1.0.0 for that OLDAP wrapper only after acceptance. Apache
 Jena/Fuseki keeps its upstream version (currently pinned to 6.2.0).
 
 Keep independent components on their own version sequences: mediahelper,

@@ -53,7 +53,7 @@
     - name: Require the reviewed service and dependency generation
       ansible.builtin.assert:
         that:
-          - jena_build.version == '0.1.0'
+          - jena_build.version == '1.0.0rc1'
           - jena_build.fuseki_version == '6.2.0'
           - jena_build.fuseki_sha256 == '2c92c598e65ab69d99820052e05f4277ed1d77980a8845f87545ad35b71a76ee'
 
@@ -95,7 +95,7 @@
         path: "{{ oldap_jena_root }}/release/{{ item.path }}"
         checksum_algorithm: sha256
       loop:
-        - {path: 'lib/oldap-jena-service-0.1.0.jar', expected: '{{ jena_build.service_sha256 }}'}
+        - {path: 'lib/oldap-jena-service-1.0.0rc1.jar', expected: '{{ jena_build.service_sha256 }}'}
         - {path: 'lib/fuseki-server.jar', expected: '{{ jena_build.fuseki_sha256 }}'}
         - {path: 'backup.py', expected: '{{ jena_build.backup_tool_sha256 }}'}
       register: jena_artifacts

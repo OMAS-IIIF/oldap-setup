@@ -1,0 +1,98 @@
+---
+# Offline, two-host snapshot of the current HOME Jena deployment, not GraphDB.
+# Run with one operator and no external writers. Copies stay private on each host.
+# Always reconnect namespace consumers after stopping/restarting the Jena owner.
+- name: Back up the active home Jena system before client updates
+  hosts: oldap_home
+  become: true
+  vars:
+    ansible_become_exe: /usr/bin/sudo.ws
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_user: rosenth
+    media_host: media.home.org
+    api_backup: '/srv/storage/oldap-jena-snapshot-{{ snapshot_id }}'
+    media_backup: '/data/oldap-jena-snapshot-{{ snapshot_id }}'
+    media_writers: [oldap-mediahelper, oldap-ingest-worker, oldap-export-worker, oldap-mobile-media-worker]
+    mobile_stop_signal: SIGTERM
+  tasks:
+    - name: Require explicit home snapshot identifier
+      ansible.builtin.assert:
+        that:
+          - ansible_host == 'api.home.org'
+          - snapshot_id is match('^[a-zA-Z0-9_-]+$')
+          - mobile_stop_signal in ['SIGTERM', 'SIGINT']
+    - name: Require the current API to select Jena
+      ansible.builtin.command:
+        argv: [docker, exec, oldap-api, python, -c, 'import os; assert os.environ["OLDAP_BACKEND"] == "jena"']
+      changed_when: false
+    - name: Inventory running API-host containers
+      ansible.builtin.command: docker ps --format '{{ "{{.Names}}" }}'
+      register: api_running
+      changed_when: false
+    - name: Inventory running media-host containers
+      ansible.builtin.command: docker ps --format '{{ "{{.Names}}" }}'
+      delegate_to: '{{ media_host }}'
+      register: media_running
+      changed_when: false
+    - name: Refuse unexpected writers or an already stopped stack
+      ansible.builtin.assert:
+        that:
+          - api_running.stdout_lines | difference(['compose-salsah-2-1', 'compose-jena-console-1']) | sort == ['oldap-api', 'compose-oldap-jena-1', 'compose-oldap-jena-identity-1', 'redis', 'caddy', 'fasnachts-page', 'oldap-app'] | sort
+          - media_running.stdout_lines | sort == (media_writers + ['oldap-imageserver', 'oldap-media-caddy']) | sort
+    - name: Inspect API backup destination
+      ansible.builtin.stat: {path: '{{ api_backup }}'}
+      register: api_destination
+    - name: Inspect media backup destination
+      ansible.builtin.stat: {path: '{{ media_backup }}'}
+      delegate_to: '{{ media_host }}'
+      register: media_destination
+    - name: Refuse overwrite of either snapshot
+      ansible.builtin.assert:
+        that: not api_destination.stat.exists and not media_destination.stat.exists
+    - name: Create private API snapshot directory
+      ansible.builtin.file: {path: '{{ api_backup }}', state: directory, mode: '0700'}
+    - name: Create private media snapshot directory
+      ansible.builtin.file: {path: '{{ media_backup }}', state: directory, mode: '0700'}
+      delegate_to: '{{ media_host }}'
+    - name: Quiesce both hosts and copy offline state
+      block:
+        - name: Drain the home stack
+          ansible.builtin.include_tasks: tasks/jena-home-stop.yml
+        - name: Archive stopped dataset, release, API state, Redis and configuration
+          ansible.builtin.command:
+            argv: [tar, --acls, --xattrs, -cpf, '{{ api_backup }}/api.tar', -C, /,
+                   srv/storage/oldap-jena-home-20261102, srv/storage/oldap-data/oldap-api,
+                   srv/storage/caddy, opt/oldap/compose]
+        - name: Archive media, operation state and configuration
+          ansible.builtin.command:
+            argv: [tar, --acls, --xattrs, -cpf, '{{ media_backup }}/media.tar', -C, /,
+                   data/media, data/oldap-import-records, data/oldap-ingest,
+                   data/oldap-mobile-uploads, data/oldap-exports, opt/oldap-mediaserver/compose]
+          delegate_to: '{{ media_host }}'
+        - name: Restrict API archive permissions
+          ansible.builtin.file: {path: '{{ api_backup }}/api.tar', mode: '0600'}
+        - name: Restrict media archive permissions
+          ansible.builtin.file: {path: '{{ media_backup }}/media.tar', mode: '0600'}
+          delegate_to: '{{ media_host }}'
+        - name: Compare API archive with still-stopped source files
+          ansible.builtin.command: 'tar --compare --acls --xattrs -f {{ api_backup }}/api.tar -C /'
+          changed_when: false
+        - name: Compare media archive with still-stopped source files
+          ansible.builtin.command: 'tar --compare --acls --xattrs -f {{ media_backup }}/media.tar -C /'
+          delegate_to: '{{ media_host }}'
+          changed_when: false
+        - name: Hash API snapshot
+          ansible.builtin.stat: {path: '{{ api_backup }}/api.tar', checksum_algorithm: sha256}
+          register: api_archive
+        - name: Hash media snapshot
+          ansible.builtin.stat: {path: '{{ media_backup }}/media.tar', checksum_algorithm: sha256}
+          delegate_to: '{{ media_host }}'
+          register: media_archive
+        - name: Record completed snapshot manifest
+          ansible.builtin.copy:
+            dest: '{{ api_backup }}/manifest.json'
+            mode: '0600'
+            content: '{{ {"snapshot_id": snapshot_id, "status": "offline-compared", "api": {"path": api_backup ~ "/api.tar", "sha256": api_archive.stat.checksum, "bytes": api_archive.stat.size}, "media": {"host": media_host, "path": media_backup ~ "/media.tar", "sha256": media_archive.stat.checksum, "bytes": media_archive.stat.size}} | to_nice_json }}'
+      always:
+        - name: Recover the home stack in namespace order
+          ansible.builtin.include_tasks: tasks/jena-home-start.yml

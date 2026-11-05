@@ -1,0 +1,56 @@
+---
+# Shared home maintenance drain: ingress, media writers, API consumers, storage.
+- name: Close media ingress
+  ansible.builtin.command: docker stop --timeout 90 oldap-media-caddy
+  delegate_to: '{{ media_host }}'
+- name: Stop media writers while API is still available to finish work
+  ansible.builtin.command:
+    argv: '{{ ["docker", "stop", "--timeout", "90"] + (media_writers | reject("equalto", "oldap-mobile-media-worker") | list) }}'
+  delegate_to: '{{ media_host }}'
+- name: Close API ingress after media workers have finished
+  ansible.builtin.command: docker stop --timeout 90 caddy
+# Legacy mobile PID 1 ignores SIGTERM. SIGINT is only admissible for a
+# completely unused registry after ingress/helper stop; never interrupt
+# an active upload, publication, cleanup or recorded lifecycle event.
+- name: Require unused mobile registry for legacy interrupt shutdown
+  ansible.builtin.command:
+    argv:
+      - docker
+      - exec
+      - oldap-mobile-media-worker
+      - python
+      - -c
+      - >-
+        import sqlite3;
+        c=sqlite3.connect('file:/data/mobile-uploads/registry.sqlite3?mode=ro',uri=True);
+        tables=[r[0] for r in c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'mobile_%'")];
+        assert 'mobile_uploads' in tables;
+        assert all(c.execute('SELECT COUNT(*) FROM "'+t.replace('"','""')+'"').fetchone()[0] == 0 for t in tables), 'Legacy interrupt requires an unused mobile registry'
+  when: mobile_stop_signal == 'SIGINT'
+  delegate_to: '{{ media_host }}'
+  changed_when: false
+- name: Stop mobile worker with the explicitly selected signal
+  ansible.builtin.command:
+    argv: [docker, stop, --signal, '{{ mobile_stop_signal }}', --timeout, '90', oldap-mobile-media-worker]
+  delegate_to: '{{ media_host }}'
+- name: Stop the optional console before its namespace owner
+  ansible.builtin.command: docker stop --timeout 90 compose-jena-console-1
+  when: "'compose-jena-console-1' in api_running.stdout_lines"
+- name: Verify clean optional console shutdown
+  ansible.builtin.command:
+    argv: [python3, -c, 'import json,subprocess; c=json.loads(subprocess.check_output(["docker","inspect","compose-jena-console-1"]))[0]; assert not c["State"]["Running"] and c["State"]["ExitCode"] != 137']
+  when: "'compose-jena-console-1' in api_running.stdout_lines"
+  changed_when: false
+- name: Stop API and callback consumers before their namespace owner
+  ansible.builtin.command: docker stop --timeout 90 oldap-api compose-oldap-jena-identity-1
+- name: Stop Jena and persist Redis coordination state
+  ansible.builtin.command: docker stop --timeout 90 compose-oldap-jena-1 redis
+- name: Require cleanly stopped API state
+  ansible.builtin.command:
+    argv: [python3, -c, 'import json,subprocess; names=["oldap-api","compose-oldap-jena-identity-1","compose-oldap-jena-1","redis"]; states=json.loads(subprocess.check_output(["docker","inspect",*names])); assert all(not c["State"]["Running"] and c["State"]["ExitCode"] != 137 for c in states), "Unclean stop; inspect before trusting snapshot"']
+  changed_when: false
+- name: Require cleanly stopped media writers
+  ansible.builtin.command:
+    argv: [python3, -c, 'import json,subprocess; names=["oldap-mediahelper","oldap-ingest-worker","oldap-export-worker","oldap-mobile-media-worker"]; states=json.loads(subprocess.check_output(["docker","inspect",*names])); assert all(not c["State"]["Running"] and c["State"]["ExitCode"] != 137 for c in states), "Unclean media stop"']
+  delegate_to: '{{ media_host }}'
+  changed_when: false

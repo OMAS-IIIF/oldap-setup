@@ -13,13 +13,15 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class JenaDeploymentTests(unittest.TestCase):
-    def model(self, writer=False, rehearsal=False, archive=False):
+    def model(self, writer=False, rehearsal=False, archive=False, harvester=None):
         """Resolve candidate configuration with synthetic, non-secret inputs."""
-        text = ''.join((ROOT / name).read_text() for name in ('docker-compose.yml', 'jena-compose.yml', 'archive-policy-compose.yml'))
+        text = ''.join((ROOT / name).read_text() for name in ('docker-compose.yml', 'jena-compose.yml', 'archive-policy-compose.yml', 'swisscovery-compose.yml', 'jena-harvesters-compose.yml', 'jena-swisscovery-compose.yml'))
         env = {**os.environ, **{name: '/tmp/jena-fixture' for name in re.findall(r'\$\{([A-Z_]+)', text)}}
         env.update(OLDAP_JENA_RUNTIME_IMAGE='eclipse-temurin:25-jre', OLDAP_JENA_HEAP_MB='512',
                    OLDAP_JENA_API_IMAGE='lrosenth/oldap-api@sha256:' + 'a' * 64,
-                   OLDAP_JENA_TOOLS_IMAGE='lrosenth/oldap-tools@sha256:' + 'b' * 64)
+                   OLDAP_JENA_TOOLS_IMAGE='lrosenth/oldap-tools@sha256:' + 'b' * 64,
+                   OLDAP_JENA_HARVESTERS_IMAGE='lrosenth/oldap-harvesters@sha256:' + 'c' * 64,
+                   OLDAP_JENA_HARVESTERS_OCR_IMAGE='lrosenth/oldap-harvesters@sha256:' + 'd' * 64)
         with tempfile.TemporaryDirectory() as folder:
             command = ['docker', 'compose', '--env-file', '/dev/null', '--profile', '*',
                        '-f', str(ROOT / 'docker-compose.yml')]
@@ -32,10 +34,14 @@ class JenaDeploymentTests(unittest.TestCase):
                 command += ['-f', str(ROOT / 'jena-rehearsal-compose.yml')]
             if archive:
                 command += ['-f', str(ROOT / 'archive-policy-compose.yml')]
+            if harvester == 'swisscovery':
+                command += ['-f', str(ROOT / 'swisscovery-compose.yml'), '-f', str(ROOT / 'jena-swisscovery-compose.yml')]
+            elif harvester:
+                command += ['-f', str(ROOT / 'jena-harvesters-compose.yml')]
             command += ['config', '--format', 'json']
             return json.loads(subprocess.check_output(command, env=env, text=True))['services']
 
-    def test_archive_policy_is_shared_read_only_and_structure_only(self):
+    def test_archive_policy_is_shared_read_only_with_explicit_publication(self):
         services = self.model(archive=True)
         for name in ('oldap-api', 'oldap-tools', 'oldap-harvesters'):
             client = services[name]
@@ -46,7 +52,26 @@ class JenaDeploymentTests(unittest.TestCase):
         policy = json.loads((ROOT / 'files/jena-home-archive-policy.json').read_text())
         self.assertEqual(set(policy['projects']), {'fasnacht'})
         self.assertTrue(policy['projects']['fasnacht']['enabled'])
-        self.assertNotIn('publication', policy['projects']['fasnacht'])
+        publication = policy['projects']['fasnacht']['publication']
+        self.assertEqual(publication['publisherRoleIris'],
+                         ['http://fasnacht.digital/ns/ArchiveMediaEditor'])
+        self.assertEqual(publication['publicRoleIri'], 'http://oldap.org/base#Unknown')
+        self.assertEqual(set(publication['rootClassIris']),
+                         {'http://fasnacht.digital/ns/ArchiveObject',
+                          'http://fasnacht.digital/ns/CarnivalEvent'})
+        self.assertEqual(publication['maxResources'], 100)
+
+    def test_harvesters_select_exact_images_and_retain_jena_policy_and_ocr_limits(self):
+        for source, digest in [('europeana', 'c'), ('swisscovery', 'd')]:
+            with self.subTest(source=source):
+                service = self.model(archive=True, harvester=source)['oldap-harvesters']
+                self.assertEqual(service['image'], 'lrosenth/oldap-harvesters@sha256:' + digest * 64)
+                self.assertEqual(service['network_mode'], 'service:oldap-jena')
+                self.assertEqual(service['environment']['OLDAP_BACKEND'], 'jena')
+                self.assertIn('OLDAP_ARCHIVE_POLICY_FILE', service['environment'])
+                if source == 'swisscovery':
+                    self.assertEqual(service['entrypoint'][0], 'flock')
+                    self.assertEqual(service['mem_limit'], str(5 * 1024**3))
 
     def test_rehearsal_uses_private_listener_and_separate_storage(self):
         services = self.model(rehearsal=True)

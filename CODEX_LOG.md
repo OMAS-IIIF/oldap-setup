@@ -1,3 +1,105 @@
+### Update 2026-11-05 12:09
+- Decisions: Secure reviewed migration sources as local per-repository commits before further production readiness work; do not push, merge, publish or deploy in this step.
+- Implementation: Added coordinated revision/verification inventory in docs/jena-git-checkpoint.md. Setup suite: 81 cases, four skipped; all executed tests pass. Reviewed deployment evidence and candidate changes; whitespace and Python syntax checks pass. Read-only home browser checks render archive records and stories.
+- Open: Total Jena memory bounds, coordinated namespace recovery, mobile draining, authenticated acceptance and off-host restore before production; then coordinated release/merge.
+- Risks/Assumptions: Existing skipped tests and earlier runtime checks retain their documented scope. No production or home configuration/data changed.
+
+### Update 2026-11-05 00:52
+- Decisions: Accept the official, unmodified Apache Fuseki UI on home with native administrative writes; keep dataset lifecycle in deployment and production unchanged.
+- Implementation: Activated the single-JVM native listener (service SHA 42901bf6b98d8a92df2fce65b3799ee5dd45abb6e843ef7016a5a6d6da038694). Browser index matches the pinned Apache JAR; query editor, file upload, SPARQL updates and cleanup pass. 20 administration, 22 existing service, 13 setup and 26 public API/media checks pass. Updated configuration example, runbook and acceptance evidence.
+- Open: Production-specific activation and existing production readiness gates. No public Python signatures or application images changed.
+- Risks/Assumptions: Direct admin writes intentionally bypass OLDAP validation/permissions; protected receipts and managed text remain enforced. Initial Compose CLI failure was recovered, corrected and guarded by dry-run before successful activation. Offline snapshot: /srv/storage/oldap-fuseki-before-20261105T004721/api.tar. GraphDB credentials unchanged; test graph removed.
+
+### Update 2026-11-05 00:45
+- Decisions: Replace the custom query reader with official Fuseki, retaining independent console passwords and unchanged GraphDB credentials.
+- Implementation: Added native administration overlay and coordinated home installer with preflight, offline API-host snapshot and rollback. Shared home stop/start tasks with the snapshot workflow. Removed custom reader source; official UI stays in the pinned Apache JAR. Home activation and browser verification in progress.
+- Open: Finish home activation and live browser/API verification; production remains unchanged.
+- Risks/Assumptions: Direct administrator writes bypass OLDAP validation/resource permissions by design. Native transactions share the single TDB owner and managed text index. No dataset creation/deletion/compaction through UI.
+
+### Update 2026-11-05 00:28
+- Decisions: Use independent home console credentials from the operator's private file; preserve GraphDB credentials exactly. Production remains undeployed.
+- Implementation: Added independent Caddy/console credential variables and rollback of proxy environment; deployed fingerprinted console. Fixed RDF 1.2 nested term rendering and WSGI bytearray response; disabled unused Gunicorn control socket. Added live browser acceptance and raw WSGI regression assertion. Documented deployment, rollback and acceptance.
+- Open: Existing production migration/recovery gates remain; console is read-only SELECT/ASK, not full Fuseki management.
+- Risks/Assumptions: Administrator has dataset-wide read access. All 16 regressions and live browser checks pass, including 23 graphs and authentication/query barriers. Original GraphDB credential lines unchanged. Seven existing API/Jena/Redis/frontend containers retained IDs/start times; only Caddy recreated for credentials. Evidence: docs/jena-console-home-results.json.
+
+### Update 2026-11-05 00:16
+- Decisions: Add a Basic-authenticated administrative SELECT/ASK console to the existing Jena reader; do not open TDB in a second JVM or expose transaction routes. Reuse existing GraphDB administrator credentials; no normal OLDAP role semantics implied.
+- Implementation: Added isolated console source/Compose overlay, fingerprinted deployment with rollback, optional home/production Caddy host, same-origin query gate, bounded results/time/concurrency and text-only rendering. Preserved SALSAH overlay compatibility and optional console namespace recovery during snapshots. Eight focused tests plus SALSAH/recovery regressions pass; deployment syntax checked.
+- Open: Activate on home, verify real read queries and browser authentication using the operator's private credential file. Production hostname is prepared but not deployed.
+- Risks/Assumptions: Admin reader can inspect application/admin graphs; receipt graph remains hidden by the existing protected dataset. Only SELECT/ASK with bounded SELECT limits; SERVICE/FROM and Unicode escapes disabled. Existing Jena 60-second query timeout remains authoritative. Original GraphDB and production images/configurations remain unchanged.
+
+### Update 2026-11-04 23:56
+- Decisions: Accept the four isolated app candidates on home after live verification; retain stable tags, production, data and existing roles.
+- Implementation: Published/deployed digest-pinned oldap-app, SALSAH, Fasnacht and mediahelper/three workers. 28 live API/media checks pass; real browser views pass. Packaged HE-AAC ZIP/conversion succeeds on a two-second copy of the 1946 film, retaining original hash and audio profile. Six infrastructure container IDs/start times unchanged; seven protected registry tags unchanged. Exact references/backups: oldap-setup/docs/jena-apps-home-results.json and jena-apps-home.md.
+- Open: Interactive authenticated writes/uploads and audible cross-browser HE-AAC acceptance; existing production migration/recovery/drain gates. No commits/merges made.
+- Risks/Assumptions: SALSAH DNS now correct. API recreated only for registry/CORS. Media preflight profile omission was corrected before stopping services; successful run used guarded legacy mobile SIGINT with empty registry and no forced kill. SIPI-2 stays on 0.1.0.
+
+### Update 2026-11-04 23:54
+- Decisions: Include all Compose profiles in the staged media-image preflight.
+- Implementation: Installed workers are profile-gated; default Compose config omits them. Added explicit --profile '*' to candidate validation and a real Compose regression resolving all four services. Four focused deployment tests pass.
+- Open: Retry guarded media activation and complete live acceptance.
+- Risks/Assumptions: Initial preflight stopped before any service shutdown or installed configuration change. The published runtime image is unchanged.
+
+### Update 2026-11-04 23:39
+- Decisions: Publish isolated, source-fingerprinted AMD64 candidates for home without moving stable or latest tags.
+- Implementation: Added secret-free source snapshot preparation, digest-only frontend update/rollback and additive SALSAH candidate support with configuration backups. Sixteen deployment tests and playbook syntax checks pass.
+- Open: Complete image/runtime verification, publication and home activation; SALSAH DNS requires correction.
+- Risks/Assumptions: Working-tree fixes are included in the fingerprinted source bundle; no commit/merge or production deployment.
+
+### Update 2026-11-04 23:02
+- Decisions: Support SALSAH as an additive frontend on existing Jena installations without changing backend selection or exposing private identity callbacks.
+- Implementation: Extended the known Compose topology guard for Jena/archive-policy overlays; added the internal-Jena path block to api.salsah.org. Regression coverage resolves the actual four-overlay stack and checks both public API domains. 13 SALSAH/Jena deployment tests and Ansible syntax validation pass.
+- Open: SALSAH home hostname/DNS/TLS, API/media origin and trusted mail configuration, followed by explicit installation and browser acceptance.
+- Risks/Assumptions: Existing GraphDB topology remains accepted. No playbook deployment, API restart, role or resource changes. Sibling SALSAH migration checkout records frontend/API compatibility results.
+
+### Update 2026-11-04 22:53
+- Decisions: Accept digest-pinned harvester RC2 on home after bounded real-source and native OCR checks; preserve normal GraphDB tags and production state.
+- Implementation: Published/tested all three RC2 images (136 tests each), installed standard/OCR on home, completed one new Europeana publication and existing Swisscovery/PDF replay. Repeated CLI runs leave API snapshots identical; three public reads pass and preexisting resources are unchanged. Native OCR: 24.07 seconds, 34 lines, exact reference hash. Added reusable publication/home/OCR probes, first-install inputs and credential preflight. Evidence: harvester docs/jena-home-results.json and setup docs/jena-harvesters.md.
+- Open: Production cutover, broader harvesting and optional scheduling remain separate. Source changes are not committed/pushed by this operation.
+- Risks/Assumptions: RC1 was superseded after pre-write endpoint/configuration failures; published candidate tags were not overwritten. Existing PDF text was reused; fresh OCR was verified separately on a retained page. One new real Europeana record remains on home. No role changes or active API/backend restarts.
+
+### Update 2026-11-04 22:43
+- Decisions: Publish immutable Jena candidates and validate bounded real home harvesting; retain GraphDB tags and production state.
+- Implementation: Extended home installer with optional retained first-install Swisscovery config/model, approved checksum validation and mounted config validation. Installed rc1 candidates and inputs on home; legacy endpoint rejection occurred before writes. Subsequent rc2 installation and bounded acceptance are in progress.
+- Open: Complete native OCR, import/replay acceptance and record final published digests.
+- Risks/Assumptions: Real home writes are authorized; no production imports or role changes. Source/model identities are retained from the synchronized production baseline.
+
+### Update 2026-11-04 22:29
+- Decisions: Keep harvester candidate tags separate and preserve installed Jena networking, policy and batch locks; retain independent harvester versioning.
+- Implementation: Added standard/OCR batch image overlays, home-only digest installation playbook and backend-aware launchers. Candidate lock helper accepts the harvester version independently while enforcing coordinated core versions. 17 deployment/scheduling tests and three offline lock tests pass; playbook syntax passes.
+- Open: Publish accepted images and execute home installation plus bounded real-source acceptance before production.
+- Risks/Assumptions: Existing source configuration, Swisscovery mounts/model and publisher permissions are prerequisites. No batch, schedule or live service was started or changed. BMG-Archivist membership remains unchanged by user decision.
+
+### Update 2026-11-04 22:05
+- Decisions: Restore reviewed publication configuration on home; keep publisher role membership separate from private workspace roles and preserve resource-level authorization.
+- Implementation: Added Fasnacht publication block from the established frontend policy example. Deployment now stages/validates references before replacing live policy, retains previous file and force-recreates only API for bind-mount refresh. Seven deployment tests and syntax validation pass; live publisher capability and two-resource DATA_RESTRICTED preview pass without apply. Account BMG-Archivist currently lacks ArchiveMediaEditor; assignment question remains pending.
+- Open: User decision on that account's extra editorial role; then verify its capability. Actual publication remains user acceptance.
+- Risks/Assumptions: No membership/resource changes, no public grants, no image rebuild, no production deployment. Configuring publication also enforces the existing publication-command safeguards and configured root creation grants. System/bootstrap admin status alone does not bypass publisher membership.
+
+### Update 2026-11-04 12:22
+- Decisions: Activate the exact published 1.0 RC API/Tools digests on home after a verified two-host offline snapshot; preserve test data and existing Java service bytes.
+- Implementation: Snapshot 20261104-rc1-b completed: API 7,884,646,400 bytes, media 21,166,551,040 bytes; tar comparison with stopped sources and SHA-256 manifest pass. Recreated old namespace consumers during recovery, then updated API/identity and Tools selection through existing playbook. All 27 public checks pass, including exact equality of all 30 pre-update stories; 48 requests at concurrency 16 return 200 with complete response equality. Native Tools help and 21 setup tests pass. Recorded full sanitized evidence in docs/jena-1.0rc1-home-results.json.
+- Open: Manual write/upload acceptance; total Java memory bounds, automatic namespace recovery, mobile SIGTERM draining, off-host restore and remaining production gates.
+- Risks/Assumptions: Kernel journal proves global OOM killed Java at 08:32:27 CET with 14,790,676 kB anonymous RSS, despite post-restart Docker OOMKilled=false. Post-acceptance Jena memory about 2.2 GiB is not a long-run memory guarantee. First failed snapshot has no completion manifest; second legacy SIGINT stop required all eight mobile tables empty. Production and media image versions unchanged; no data migration. Credentials stayed in private local storage.
+
+### Update 2026-11-04 12:02
+- Decisions: Use supplied private Ansible credentials without displaying contents; retain current home test data and take an offline two-host snapshot before updating clients.
+- Implementation: Added home-only snapshot playbook with fresh-path/container admission, writer shutdown, stopped-state checks, tar comparison/SHA manifest and ordered recovery. Recovery recreates namespace consumers after owner restart and refuses ingress after failures. Added fake-Docker success/failure tests and Make integration. First run rejected legacy mobile SIGTERM timeout/exit 137 and restored old services; second run uses explicitly guarded SIGINT only after verifying all mobile registry tables empty.
+- Open: Snapshot verification, candidate client activation and public/concurrent acceptance are in progress. Proper mobile worker draining and automatic namespace-consumer recovery remain production gates.
+- Risks/Assumptions: Single operator/no external writers; snapshots remain on their source hosts. Two recovery tests (including four injected failure subcases) and Ansible syntax/readiness checks pass. No mobile work was registered. Never accept the first incomplete snapshot as a backup; no source data or media image changes.
+
+### Update 2026-11-04 11:46
+- Decisions: Publish accepted 1.0 RC image IDs and prepare home update without resynchronizing production/test data.
+- Implementation: Published API/Tools AMD64/ARM64 and multiarch indexes; verified protected tags unchanged. Pulled exact digests on home; native isolated transport passes nine checks. Recovered preexisting HTTP 502: Jena had restarted but API/identity retained a stale network namespace. Stopped/restarted existing clients in order; 26 public checks pass, 30 stories. Recorded publication/digests/current baseline; prepared deployment vars and checked playbook syntax.
+- Open: Administrator access requested for coordinated backup on both hosts and client image update; no backup/image replacement yet. Investigate backend restart trigger and implement durable coordinated recovery before production.
+- Risks/Assumptions: Current service source and jar hashes equal locally accepted wrapper despite older version label. API/identity use old images until explicit pending update. Docker reported OOMKilled=false; that does not establish restart cause. Current recovery changed only old client process state; data preserved. No production changes.
+
+### Update 2026-11-04 00:20
+- Decisions: Build isolated 1.0.0rc1 Jena API/Tools candidates locally from clean committed sources; preserve exact accepted IDs for later explicit publication.
+- Implementation: Prepared durable release bundle, rebuilt matching Java service, built AMD64/ARM64 images with fingerprint 4d3c5ef8e1e1. All package/pip/UID checks and Tools CLI checks pass; both API architectures pass real packaged transport, authentication, contention, isolation and namespace replacement (18 PASS records). Recorded source commits, image IDs and dependency inventories in docs/jena-1.0rc1-images-results.json. Owned containers cleaned up.
+- Open: Explicit publication and native home full-workflow/concurrency/recovery acceptance; media/harvester compatibility and production gates remain.
+- Risks/Assumptions: AMD64 runs under Docker Desktop emulation; dependency resolution follows constraints rather than exact Poetry locks. Images reside in local Docker; bundle retains wheels/service/logs but no image archive. No push, registry manifest, deployment or stable/latest tag change. Docker emits a harmless missing-default build-argument lint warning; pinned base digest is explicitly supplied.
+
 ### Update 2026-11-03 23:54
 - Decisions: Prepare 1.0.0rc1 for library/API/tools and the OLDAP Jena wrapper; final 1.0.0 waits for acceptance. Keep independent media/harvester versions and running environments unchanged.
 - Implementation: Checkpointed HTTP pooling (e62651a) and API evidence (44cecf7). Aligned runtime/package/bump/OpenAPI/wrapper metadata; API/tools use portable 1.x requirements. Poetry solver regenerated locks offline from existing packages plus the exact new library wheel, with no path/source entry; library lock now tracked. Setup pins candidate wrapper and supports existing isolated image tags with prerelease metadata. Fixed tools bump command typo; documented local wheel/editable workflows and artifact hashes.

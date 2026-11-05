@@ -106,6 +106,9 @@ www.salsah.org {
     redir https://salsah.org{uri} permanent
 }
 api.salsah.org {
+    # Keep the alternate API origin behind the same private callback boundary.
+    @private path /internal/jena /internal/jena/*
+    respond @private 404
     reverse_proxy oldap-api:8000
 }
 {% else %}
@@ -114,4 +117,8 @@ https://salsah.home.org {
     reverse_proxy salsah-2:3200
 }
 {% endif %}
+{% endif %}
+
+{% if oldap_jena_console_enabled | default(false) %}
+{% include 'jena-console.Caddyfile.j2' %}
 {% endif %}

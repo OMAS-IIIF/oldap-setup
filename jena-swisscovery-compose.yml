@@ -1,0 +1,5 @@
+# Apply after swisscovery-compose.yml and the installed Jena/policy overlays.
+# Keep the OCR runtime, locks and resource limits; replace only its image.
+services:
+  oldap-harvesters:
+    image: ${OLDAP_JENA_HARVESTERS_OCR_IMAGE:?Select the accepted AMD64 Jena OCR digest}

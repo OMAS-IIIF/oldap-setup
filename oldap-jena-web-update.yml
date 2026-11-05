@@ -1,0 +1,81 @@
+---
+# Frontend-only replacement. Keep the installed backend, data and secrets authoritative.
+- name: Update reviewed Jena web candidates on an existing installation
+  hosts: oldap
+  become: true
+  vars:
+    compose_dir: /opt/oldap/compose
+    frontend_tags:
+      OLDAP_APP_TAG: '{{ jena_app_tag }}'
+      FASNACHTS_PAGE_TAG: '{{ jena_fasnacht_tag }}'
+  tasks:
+    - name: Require isolated digest-pinned candidates
+      ansible.builtin.assert:
+        that: item.value is match('^jena-[0-9]+[.][0-9]+[.][0-9]+-rc[0-9]+-[a-f0-9]{12}-amd64@sha256:[a-f0-9]{64}$')
+      loop: '{{ frontend_tags | dict2items }}'
+    - name: Require an installed Jena deployment
+      ansible.builtin.command:
+        argv: [grep, -Eq, '^COMPOSE_FILE=.*:jena-compose.yml(:|$)', .env]
+        chdir: '{{ compose_dir }}'
+      changed_when: false
+    - name: Validate candidate configuration
+      ansible.builtin.command:
+        cmd: docker compose config --quiet
+        chdir: '{{ compose_dir }}'
+      environment: '{{ frontend_tags }}'
+      changed_when: false
+      no_log: true
+    - name: Pull candidates before changing configuration
+      ansible.builtin.command:
+        cmd: docker compose pull oldap-app fasnachts-page
+        chdir: '{{ compose_dir }}'
+      environment: '{{ frontend_tags }}'
+      changed_when: true
+    - name: Save installed selection for rollback
+      ansible.builtin.copy:
+        src: '{{ compose_dir }}/.env'
+        dest: '{{ compose_dir }}/.env.before-jena-web-{{ ansible_date_time.iso8601_basic_short }}'
+        remote_src: true
+        mode: '0600'
+      no_log: true
+    - name: Activate frontend candidates with automatic selection rollback
+      block:
+        - name: Persist only the two frontend versions
+          ansible.builtin.lineinfile:
+            path: '{{ compose_dir }}/.env'
+            regexp: '^{{ item.key }}='
+            line: '{{ item.key }}={{ item.value }}'
+            mode: '0600'
+          loop: '{{ frontend_tags | dict2items }}'
+          no_log: true
+        - name: Recreate only the two web services
+          ansible.builtin.command:
+            cmd: docker compose up -d --no-deps --wait oldap-app fasnachts-page
+            chdir: '{{ compose_dir }}'
+          changed_when: true
+        - name: Check HTTP readiness inside each new frontend
+          ansible.builtin.command:
+            argv: [docker, exec, '{{ item.container }}', node, -e, "fetch('http://127.0.0.1:{{ item.port }}/').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+          loop:
+            - {container: oldap-app, port: 3000}
+            - {container: fasnachts-page, port: 3100}
+          changed_when: false
+          register: frontend_ready
+          retries: 12
+          delay: 5
+          until: frontend_ready.rc == 0
+      rescue:
+        - name: Restore previous environment selection
+          ansible.builtin.copy:
+            src: '{{ compose_dir }}/.env.before-jena-web-{{ ansible_date_time.iso8601_basic_short }}'
+            dest: '{{ compose_dir }}/.env'
+            remote_src: true
+            mode: '0600'
+          no_log: true
+        - name: Restore previous web containers without dependencies
+          ansible.builtin.command:
+            cmd: docker compose up -d --no-deps --wait oldap-app fasnachts-page
+            chdir: '{{ compose_dir }}'
+        - name: Report failed candidate activation
+          ansible.builtin.fail:
+            msg: Candidate activation failed; previous frontend selection was restored.

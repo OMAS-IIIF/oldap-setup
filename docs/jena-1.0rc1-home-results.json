@@ -1,0 +1,480 @@
+{
+  "recorded_at": "2026-11-04T12:22:17.072628+01:00",
+  "status": "home_updated_acceptance_passed",
+  "release": {
+    "oldap-api": {
+      "digest": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "platform_manifests": [
+        "lrosenth/oldap-api@sha256:436d45886119c4dba42b8ae446252819731a6fc4c7423947a6145df369812466",
+        "lrosenth/oldap-api@sha256:c035891b9b013f9b80701d0a6f5c3e2abe326e325a434605b32611e380ffbedd"
+      ],
+      "reference": "lrosenth/oldap-api:jena-1.0.0-rc1-4d3c5ef8e1e1"
+    },
+    "oldap-tools": {
+      "digest": "sha256:a553bee166a4928d50bfe1406284b925fd9dddba78c53a2291f9bb0f9c819baf",
+      "platform_manifests": [
+        "lrosenth/oldap-tools@sha256:9911519d2e95ba69dcad08c345ccb18fc00a487b309e8fa55b0e9ee2f8a8db2c",
+        "lrosenth/oldap-tools@sha256:703032b0ea5dd6f60c10b6eb29cf362a9f117cd0b237a2774be7f7c95f2f5468"
+      ],
+      "reference": "lrosenth/oldap-tools:jena-1.0.0-rc1-4d3c5ef8e1e1"
+    }
+  },
+  "backup": {
+    "api": {
+      "bytes": 7884646400,
+      "path": "/srv/storage/oldap-jena-snapshot-20261104-rc1-b/api.tar",
+      "sha256": "83d971df836574f8220c98f10d1364903cac4cfb81149d4078443132d54b59bc"
+    },
+    "media": {
+      "bytes": 21166551040,
+      "host": "media.home.org",
+      "path": "/data/oldap-jena-snapshot-20261104-rc1-b/media.tar",
+      "sha256": "e549ed6593aed841c9d0ec843c53c21e1fe79a56744280a97959168f9a2a2075"
+    },
+    "snapshot_id": "20261104-rc1-b",
+    "status": "offline-compared"
+  },
+  "public_acceptance": {
+    "checks": [
+      "API selects Jena",
+      "GraphDB is stopped",
+      "Private Jena backend has no published ports",
+      "oldap-api running",
+      "compose-oldap-jena-1 running",
+      "compose-oldap-jena-identity-1 running",
+      "redis running",
+      "caddy running",
+      "API /status HTTP 200",
+      "Existing administrator can log in",
+      "Media upload accepts a fresh API token before form validation",
+      "Media upload rejects missing or invalid access token",
+      "Media upload rejects missing or invalid access token",
+      "API /admin/auth/unknown HTTP 200",
+      "Proxy blocks private identity callback",
+      "Proxy blocks private identity callback",
+      "Export worker route reaches service authentication without proxy shadowing",
+      "API /data/search/fasnacht/class/fasnacht:Story HTTP 200",
+      "All story response content equals frozen source baseline",
+      "API /data/search/fasnacht HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "Nonempty fulltext AND search is independent of word order",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 HTTP 200",
+      "Signed IIIF metadata delivered by home media service",
+      "Signed image delivered as JPEG",
+      "fasnacht.home.org page available",
+      "app.home.org page available"
+    ],
+    "images": {
+      "oldap-api": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "compose-oldap-jena-1": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+      "compose-oldap-jena-identity-1": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "graphdb": "ontotext/graphdb:11.3.0",
+      "redis": "redis:7-alpine",
+      "caddy": "caddy:2.8"
+    },
+    "stories": 30,
+    "stories_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "fulltext_matches": 10,
+    "image_bytes": 9898,
+    "status": "passed"
+  },
+  "story_baseline": "Current home data immediately before backup/update; all 30 story responses equal. Not a fresh production GraphDB baseline.",
+  "concurrency": {
+    "status": "passed",
+    "concurrency": 16,
+    "comparison": "array ordering and reviewed list QName/full-IRI equivalence; all values retained",
+    "sequential_baselines": [
+      {
+        "case": "ArchiveMediaObject",
+        "status": 200,
+        "sha256": "db6c3b9488f2c9a48aababf65958cca506940f8618eb771db2765a7aa38aabb6",
+        "seconds": 0.484
+      },
+      {
+        "case": "ArchiveObject",
+        "status": 200,
+        "sha256": "30b52383d3a0730e0f32a710ce3999b71b62f7496afb24dafb5a1718b7f7a5a4",
+        "seconds": 0.257
+      },
+      {
+        "case": "CarnivalEvent",
+        "status": 200,
+        "sha256": "e7926bfe95a263aa7b41972ceefa54f1c612343abd45d2e18597a3e9258e954c",
+        "seconds": 0.293
+      },
+      {
+        "case": "Agent",
+        "status": 200,
+        "sha256": "775a28bba9f470d21fb434d42d6a66f7bf81f7c37cdfe90e0e5ca84e65009c70",
+        "seconds": 0.273
+      },
+      {
+        "case": "Person",
+        "status": 200,
+        "sha256": "96835f67cb1c00a9132134297dee3e09aaa39ca402180956c24264dbd4df23e6",
+        "seconds": 0.233
+      },
+      {
+        "case": "Organisation",
+        "status": 200,
+        "sha256": "ba32ebbbe13630fef432176115915be8e70e4b717317c62b2dad5d9b398cde0c",
+        "seconds": 0.212
+      },
+      {
+        "case": "ExternalSource",
+        "status": 200,
+        "sha256": "d92c462be326e8445a78dadffc7699f3e524a2313b7f373699ae24589b5fa807",
+        "seconds": 0.192
+      },
+      {
+        "case": "Story",
+        "status": 200,
+        "sha256": "903a13df09f5c0e9d1e226ab549fd110d0d498eb0f9d4842f616229e9beec743",
+        "seconds": 0.2
+      },
+      {
+        "case": "ObjectTaxonomy",
+        "status": 200,
+        "sha256": "a5a501d1b7f49a9f0cb58d06fc3a5c39c69e4712b0dca89b55c79d0a379f2318",
+        "seconds": 0.026
+      },
+      {
+        "case": "CarnivalEventTaxonomy",
+        "status": 200,
+        "sha256": "2c9a3717fd5319507f27f87311aa4b3d5a56e1710c42dde03e2cd34228c8a0f9",
+        "seconds": 0.021
+      },
+      {
+        "case": "OrganisationTaxonomy",
+        "status": 200,
+        "sha256": "4fda8cf4799f3f9323345156444db1565c5d52082e164cebd21a031151982200",
+        "seconds": 0.022
+      },
+      {
+        "case": "anonymous-profile",
+        "status": 200,
+        "sha256": "8efcb0e9c5533914245a9ef3e7186a03aee77f2a45e18bef6e2377ba3913a83e",
+        "seconds": 0.187
+      }
+    ],
+    "parallel_requests": 48,
+    "http_status_counts": {
+      "200": 48
+    },
+    "complete_responses_match": true,
+    "results": [
+      {
+        "case": "ArchiveMediaObject",
+        "status": 200,
+        "sha256": "db6c3b9488f2c9a48aababf65958cca506940f8618eb771db2765a7aa38aabb6",
+        "seconds": 0.641
+      },
+      {
+        "case": "ArchiveObject",
+        "status": 200,
+        "sha256": "30b52383d3a0730e0f32a710ce3999b71b62f7496afb24dafb5a1718b7f7a5a4",
+        "seconds": 1.558
+      },
+      {
+        "case": "CarnivalEvent",
+        "status": 200,
+        "sha256": "e7926bfe95a263aa7b41972ceefa54f1c612343abd45d2e18597a3e9258e954c",
+        "seconds": 1.255
+      },
+      {
+        "case": "Agent",
+        "status": 200,
+        "sha256": "775a28bba9f470d21fb434d42d6a66f7bf81f7c37cdfe90e0e5ca84e65009c70",
+        "seconds": 0.733
+      },
+      {
+        "case": "Person",
+        "status": 200,
+        "sha256": "96835f67cb1c00a9132134297dee3e09aaa39ca402180956c24264dbd4df23e6",
+        "seconds": 2.506
+      },
+      {
+        "case": "Organisation",
+        "status": 200,
+        "sha256": "ba32ebbbe13630fef432176115915be8e70e4b717317c62b2dad5d9b398cde0c",
+        "seconds": 1.182
+      },
+      {
+        "case": "ExternalSource",
+        "status": 200,
+        "sha256": "d92c462be326e8445a78dadffc7699f3e524a2313b7f373699ae24589b5fa807",
+        "seconds": 0.639
+      },
+      {
+        "case": "Story",
+        "status": 200,
+        "sha256": "903a13df09f5c0e9d1e226ab549fd110d0d498eb0f9d4842f616229e9beec743",
+        "seconds": 0.576
+      },
+      {
+        "case": "ObjectTaxonomy",
+        "status": 200,
+        "sha256": "a5a501d1b7f49a9f0cb58d06fc3a5c39c69e4712b0dca89b55c79d0a379f2318",
+        "seconds": 0.666
+      },
+      {
+        "case": "CarnivalEventTaxonomy",
+        "status": 200,
+        "sha256": "2c9a3717fd5319507f27f87311aa4b3d5a56e1710c42dde03e2cd34228c8a0f9",
+        "seconds": 1.568
+      },
+      {
+        "case": "OrganisationTaxonomy",
+        "status": 200,
+        "sha256": "4fda8cf4799f3f9323345156444db1565c5d52082e164cebd21a031151982200",
+        "seconds": 2.069
+      },
+      {
+        "case": "anonymous-profile",
+        "status": 200,
+        "sha256": "8efcb0e9c5533914245a9ef3e7186a03aee77f2a45e18bef6e2377ba3913a83e",
+        "seconds": 1.459
+      },
+      {
+        "case": "ArchiveMediaObject",
+        "status": 200,
+        "sha256": "db6c3b9488f2c9a48aababf65958cca506940f8618eb771db2765a7aa38aabb6",
+        "seconds": 2.005
+      },
+      {
+        "case": "ArchiveObject",
+        "status": 200,
+        "sha256": "30b52383d3a0730e0f32a710ce3999b71b62f7496afb24dafb5a1718b7f7a5a4",
+        "seconds": 2.136
+      },
+      {
+        "case": "CarnivalEvent",
+        "status": 200,
+        "sha256": "e7926bfe95a263aa7b41972ceefa54f1c612343abd45d2e18597a3e9258e954c",
+        "seconds": 0.644
+      },
+      {
+        "case": "Agent",
+        "status": 200,
+        "sha256": "775a28bba9f470d21fb434d42d6a66f7bf81f7c37cdfe90e0e5ca84e65009c70",
+        "seconds": 0.686
+      },
+      {
+        "case": "Person",
+        "status": 200,
+        "sha256": "96835f67cb1c00a9132134297dee3e09aaa39ca402180956c24264dbd4df23e6",
+        "seconds": 0.425
+      },
+      {
+        "case": "Organisation",
+        "status": 200,
+        "sha256": "ba32ebbbe13630fef432176115915be8e70e4b717317c62b2dad5d9b398cde0c",
+        "seconds": 0.518
+      },
+      {
+        "case": "ExternalSource",
+        "status": 200,
+        "sha256": "d92c462be326e8445a78dadffc7699f3e524a2313b7f373699ae24589b5fa807",
+        "seconds": 1.812
+      },
+      {
+        "case": "Story",
+        "status": 200,
+        "sha256": "903a13df09f5c0e9d1e226ab549fd110d0d498eb0f9d4842f616229e9beec743",
+        "seconds": 2.054
+      },
+      {
+        "case": "ObjectTaxonomy",
+        "status": 200,
+        "sha256": "a5a501d1b7f49a9f0cb58d06fc3a5c39c69e4712b0dca89b55c79d0a379f2318",
+        "seconds": 1.875
+      },
+      {
+        "case": "CarnivalEventTaxonomy",
+        "status": 200,
+        "sha256": "2c9a3717fd5319507f27f87311aa4b3d5a56e1710c42dde03e2cd34228c8a0f9",
+        "seconds": 0.037
+      },
+      {
+        "case": "OrganisationTaxonomy",
+        "status": 200,
+        "sha256": "4fda8cf4799f3f9323345156444db1565c5d52082e164cebd21a031151982200",
+        "seconds": 0.054
+      },
+      {
+        "case": "anonymous-profile",
+        "status": 200,
+        "sha256": "8efcb0e9c5533914245a9ef3e7186a03aee77f2a45e18bef6e2377ba3913a83e",
+        "seconds": 0.218
+      },
+      {
+        "case": "ArchiveMediaObject",
+        "status": 200,
+        "sha256": "db6c3b9488f2c9a48aababf65958cca506940f8618eb771db2765a7aa38aabb6",
+        "seconds": 0.777
+      },
+      {
+        "case": "ArchiveObject",
+        "status": 200,
+        "sha256": "30b52383d3a0730e0f32a710ce3999b71b62f7496afb24dafb5a1718b7f7a5a4",
+        "seconds": 0.395
+      },
+      {
+        "case": "CarnivalEvent",
+        "status": 200,
+        "sha256": "e7926bfe95a263aa7b41972ceefa54f1c612343abd45d2e18597a3e9258e954c",
+        "seconds": 0.552
+      },
+      {
+        "case": "Agent",
+        "status": 200,
+        "sha256": "775a28bba9f470d21fb434d42d6a66f7bf81f7c37cdfe90e0e5ca84e65009c70",
+        "seconds": 0.529
+      },
+      {
+        "case": "Person",
+        "status": 200,
+        "sha256": "96835f67cb1c00a9132134297dee3e09aaa39ca402180956c24264dbd4df23e6",
+        "seconds": 1.572
+      },
+      {
+        "case": "Organisation",
+        "status": 200,
+        "sha256": "ba32ebbbe13630fef432176115915be8e70e4b717317c62b2dad5d9b398cde0c",
+        "seconds": 1.669
+      },
+      {
+        "case": "ExternalSource",
+        "status": 200,
+        "sha256": "d92c462be326e8445a78dadffc7699f3e524a2313b7f373699ae24589b5fa807",
+        "seconds": 0.4
+      },
+      {
+        "case": "Story",
+        "status": 200,
+        "sha256": "903a13df09f5c0e9d1e226ab549fd110d0d498eb0f9d4842f616229e9beec743",
+        "seconds": 1.511
+      },
+      {
+        "case": "ObjectTaxonomy",
+        "status": 200,
+        "sha256": "a5a501d1b7f49a9f0cb58d06fc3a5c39c69e4712b0dca89b55c79d0a379f2318",
+        "seconds": 0.129
+      },
+      {
+        "case": "CarnivalEventTaxonomy",
+        "status": 200,
+        "sha256": "2c9a3717fd5319507f27f87311aa4b3d5a56e1710c42dde03e2cd34228c8a0f9",
+        "seconds": 1.387
+      },
+      {
+        "case": "OrganisationTaxonomy",
+        "status": 200,
+        "sha256": "4fda8cf4799f3f9323345156444db1565c5d52082e164cebd21a031151982200",
+        "seconds": 0.119
+      },
+      {
+        "case": "anonymous-profile",
+        "status": 200,
+        "sha256": "8efcb0e9c5533914245a9ef3e7186a03aee77f2a45e18bef6e2377ba3913a83e",
+        "seconds": 1.563
+      },
+      {
+        "case": "ArchiveMediaObject",
+        "status": 200,
+        "sha256": "db6c3b9488f2c9a48aababf65958cca506940f8618eb771db2765a7aa38aabb6",
+        "seconds": 0.707
+      },
+      {
+        "case": "ArchiveObject",
+        "status": 200,
+        "sha256": "30b52383d3a0730e0f32a710ce3999b71b62f7496afb24dafb5a1718b7f7a5a4",
+        "seconds": 0.527
+      },
+      {
+        "case": "CarnivalEvent",
+        "status": 200,
+        "sha256": "e7926bfe95a263aa7b41972ceefa54f1c612343abd45d2e18597a3e9258e954c",
+        "seconds": 0.427
+      },
+      {
+        "case": "Agent",
+        "status": 200,
+        "sha256": "775a28bba9f470d21fb434d42d6a66f7bf81f7c37cdfe90e0e5ca84e65009c70",
+        "seconds": 0.635
+      },
+      {
+        "case": "Person",
+        "status": 200,
+        "sha256": "96835f67cb1c00a9132134297dee3e09aaa39ca402180956c24264dbd4df23e6",
+        "seconds": 1.147
+      },
+      {
+        "case": "Organisation",
+        "status": 200,
+        "sha256": "ba32ebbbe13630fef432176115915be8e70e4b717317c62b2dad5d9b398cde0c",
+        "seconds": 1.281
+      },
+      {
+        "case": "ExternalSource",
+        "status": 200,
+        "sha256": "d92c462be326e8445a78dadffc7699f3e524a2313b7f373699ae24589b5fa807",
+        "seconds": 0.418
+      },
+      {
+        "case": "Story",
+        "status": 200,
+        "sha256": "903a13df09f5c0e9d1e226ab549fd110d0d498eb0f9d4842f616229e9beec743",
+        "seconds": 1.238
+      },
+      {
+        "case": "ObjectTaxonomy",
+        "status": 200,
+        "sha256": "a5a501d1b7f49a9f0cb58d06fc3a5c39c69e4712b0dca89b55c79d0a379f2318",
+        "seconds": 0.041
+      },
+      {
+        "case": "CarnivalEventTaxonomy",
+        "status": 200,
+        "sha256": "2c9a3717fd5319507f27f87311aa4b3d5a56e1710c42dde03e2cd34228c8a0f9",
+        "seconds": 0.043
+      },
+      {
+        "case": "OrganisationTaxonomy",
+        "status": 200,
+        "sha256": "4fda8cf4799f3f9323345156444db1565c5d52082e164cebd21a031151982200",
+        "seconds": 0.069
+      },
+      {
+        "case": "anonymous-profile",
+        "status": 200,
+        "sha256": "8efcb0e9c5533914245a9ef3e7186a03aee77f2a45e18bef6e2377ba3913a83e",
+        "seconds": 0.205
+      }
+    ]
+  },
+  "installed_api_and_library": "1.0.0rc1+jena.rc1.4d3c5ef8e1e1",
+  "tools": "Digest configured and pulled; native --help passed, no data-changing tools job started.",
+  "namespace": "API, identity and Jena all net:[4026532481] after update",
+  "service": "Existing Java service retained; source and service jar hashes match accepted RC bytes, version metadata remains 0.1.0.",
+  "setup_tests": {
+    "tests": 21,
+    "status": "passed",
+    "recovery_failures": [
+      "storage start",
+      "backend readiness",
+      "identity recreation",
+      "API recreation"
+    ]
+  },
+  "initial_snapshot_attempt": "20261104-rc1 rejected before tar creation because legacy mobile PID 1 ignored SIGTERM and exited 137; old services restored. No valid manifest exists there.",
+  "legacy_mobile_shutdown": "Second attempt 20261104-rc1-b explicitly used SIGINT after checking all eight mobile registry tables were empty; exit 130, no active work interrupted.",
+  "remaining": [
+    "Kernel confirmed global OOM killed Java at 2026-11-04 08:32:27 CET, anon RSS 14790676 kB. Investigate/bound total memory before production.",
+    "Coordinate automatic namespace-owner restarts with API/identity recovery.",
+    "Implement proper SIGTERM draining in mobile worker before general production backups.",
+    "Same-host archives verified against stopped source; off-host restore rehearsal remains separate.",
+    "Manual write/upload workflows on the new candidate remain user acceptance."
+  ],
+  "production_changed": false
+}

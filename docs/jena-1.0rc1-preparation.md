@@ -79,7 +79,10 @@ Final artifacts must be retained in the release bundle before publication.
 The existing RC publisher maps package `1.0.0rc1` to isolated image labels such as
 `jena-1.0.0-rc1-<fingerprint>`. It rejects a mismatch between the package RC number
 and the selected RC. Stable/latest and existing-tag protections remain intact.
-The local bundle preparation was exercised; no container build/push occurred.
+The clean-source container build and local packaged transport acceptance now pass
+for API and Tools on AMD64 and ARM64; no push occurred. See
+[jena-1.0rc1-images-results.json](jena-1.0rc1-images-results.json) for exact IDs,
+source commits and installed dependency inventories.
 This workflow adds local fingerprint versions to staged packages and does not
 replace a final release publisher or final artifact acceptance.
 
@@ -89,7 +92,21 @@ Preparation accepts the matching jar/version; existing installed home services
 are untouched. Python wheel acceptance passes 297 tests plus 26 subtests, and
 three real loopback pool/lifecycle tests. OpenAPI validation and pip check pass.
 
-Next: retain clean source commits, build the exact candidate images, accept them
-on home with the complete workflows/concurrency/recovery checks, and complete
+The durable local bundle (wheels, source snapshots, manifests, matching service
+and logs) is under `~/Library/Application Support/OLDAP-Jena/releases/20261104-1.0.0rc1`.
+Images are loaded into local Docker under
+`lrosenth/{oldap-api,oldap-tools}:jena-1.0.0-rc1-4d3c5ef8e1e1-{amd64,arm64}`.
+They have not been exported as image archives. On 2026-11-04 the exact accepted
+images were published under those isolated tags and multiarch indexes; protected
+tags are unchanged. See [publication evidence](jena-1.0rc1-publication-results.json).
+Native isolated home transport acceptance also passes. Home API and identity now use the published RC digest; Tools selects its matching
+digest. Offline two-host backup, public checks and 48 reads at concurrency 16
+pass. All 30 story responses equal the immediate pre-update baseline. See
+[home acceptance](jena-1.0rc1-home-results.json).
+The accepted image IDs must be retained for publication without rebuilding.
+
+Next: complete manual write workflows, bound Jena total memory after the confirmed
+host OOM, coordinate automatic namespace recovery, implement mobile worker draining,
+and complete
 media/harvester and production cutover gates. Final 1.0.0 publication/deployment
 remains a separate step.

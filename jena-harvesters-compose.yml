@@ -1,0 +1,4 @@
+# Apply last for an explicitly selected Jena Europeana batch only.
+services:
+  oldap-harvesters:
+    image: ${OLDAP_JENA_HARVESTERS_IMAGE:?Select the accepted Jena harvester digest}

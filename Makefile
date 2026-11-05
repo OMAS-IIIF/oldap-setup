@@ -11,7 +11,7 @@ prepare-jena-home prepare-jena-vm:
 		-l $(if $(filter prepare-jena-home,$@),oldap_home,oldap_prod) --ask-become-pass
 
 test-jena-deployment:
-	../oldap-api/.venv/bin/python -m unittest tests.test_jena_deployment tests.test_jena_activation tests.test_jena_images tests.test_jena_home_acceptance -v
+	../oldap-api/.venv/bin/python -m unittest tests.test_jena_deployment tests.test_jena_activation tests.test_jena_images tests.test_jena_home_acceptance tests.test_jena_home_backup -v
 
 API_VERSION = $(shell cd ../oldap-api; git describe --tags --abbrev=0)
 APP_VERSION = $(shell cd ../oldap-app; git describe --tags --abbrev=0)

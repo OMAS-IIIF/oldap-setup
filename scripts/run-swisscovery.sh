@@ -5,7 +5,8 @@
 set -eu
 compose_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 # Once scheduling is installed, manual launches also respect the backup lock.
-if [ -f "$compose_dir/harvest-schedule-compose.yml" ]; then
+if [ -f "$compose_dir/harvest-schedule-compose.yml" ] ||
+    sed -n 's/^COMPOSE_FILE=//p' "$compose_dir/.env" | grep -q jena-compose.yml; then
     exec "$compose_dir/run-harvester.sh" swisscovery "$@"
 fi
 exec docker compose --project-directory "$compose_dir" \

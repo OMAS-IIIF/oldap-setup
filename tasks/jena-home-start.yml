@@ -1,0 +1,42 @@
+---
+# Recovery failures must stop this sequence: never reopen ingress first.
+- name: Restart storage and namespace owner
+  ansible.builtin.command: docker start redis compose-oldap-jena-1
+- name: Wait for the existing dataset to become ready
+  ansible.builtin.command:
+    argv: [docker, exec, compose-oldap-jena-1, bash, -c, 'exec 3<>/dev/tcp/127.0.0.1/3031; printf "GET /health HTTP/1.0\r\n\r\n" >&3; cat <&3 | grep -q ready']
+  register: backend_ready
+  until: backend_ready.rc == 0
+  retries: 60
+  delay: 2
+  changed_when: false
+- name: Recreate identity in the restarted backend namespace
+  ansible.builtin.command: docker compose up -d --no-deps --force-recreate --wait oldap-jena-identity
+  args: {chdir: /opt/oldap/compose}
+  no_log: true
+- name: Recreate API in the restarted backend namespace
+  ansible.builtin.command: docker compose up -d --no-deps --force-recreate --wait oldap-api
+  args: {chdir: /opt/oldap/compose}
+  no_log: true
+- name: Recreate optional console in the restarted backend namespace
+  ansible.builtin.command: docker compose up -d --no-deps --force-recreate --wait jena-console
+  args: {chdir: /opt/oldap/compose}
+  when: >-
+    jena_restore_legacy_console | default('compose-jena-console-1' in (api_running | default({'stdout_lines': []})).stdout_lines)
+  no_log: true
+- name: Verify native administration before opening ingress
+  ansible.builtin.command:
+    argv: [docker, exec, -i, oldap-api, python, -c, 'import requests,sys; r=requests.get("http://127.0.0.1:8040/$/server",headers={"X-Oldap-Admin-Key":sys.stdin.read().strip()},timeout=10); r.raise_for_status(); assert r.json()["version"]=="6.2.0"']
+    stdin: '{{ jena_admin_ready_key }}'
+  when: jena_admin_ready_key is defined
+  no_log: true
+  changed_when: false
+- name: Reopen API ingress for media workers
+  ansible.builtin.command: docker start caddy
+- name: Resume existing media writers
+  ansible.builtin.command:
+    argv: '{{ ["docker", "start"] + media_writers }}'
+  delegate_to: '{{ media_host }}'
+- name: Reopen media ingress
+  ansible.builtin.command: docker start oldap-media-caddy
+  delegate_to: '{{ media_host }}'

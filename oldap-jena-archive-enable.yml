@@ -1,5 +1,5 @@
 ---
-- name: Enable reviewed Fasnacht archive structure policy on home
+- name: Enable reviewed Fasnacht archive structure and publication policy on home
   hosts: oldap_home
   become: true
   vars:
@@ -26,16 +26,16 @@
         force: false
         mode: '0600'
       no_log: true
-    - name: Install reviewed structure-only policy
+    - name: Stage reviewed policy without changing the active policy
       ansible.builtin.copy:
         src: files/jena-home-archive-policy.json
-        dest: '{{ oldap_jena_root }}/config/archive-policy.json'
+        dest: '{{ oldap_jena_root }}/config/archive-policy.candidate.json'
         owner: root
         group: root
         mode: '0644'
     - name: Copy policy into temporary container storage for read-only validation
       ansible.builtin.command:
-        argv: [docker, cp, '{{ oldap_jena_root }}/config/archive-policy.json', 'oldap-api:/tmp/oldap-archive-policy-preflight.json']
+        argv: [docker, cp, '{{ oldap_jena_root }}/config/archive-policy.candidate.json', 'oldap-api:/tmp/oldap-archive-policy-preflight.json']
       changed_when: true
     - name: Validate every role, class and property against the live Jena model
       ansible.builtin.command:
@@ -47,8 +47,17 @@
           - oldap-api
           - python
           - -c
-          - 'from oldap_api.backend import create_connection; from oldaplib.src.archive_policy import ArchivePolicy; p=ArchivePolicy.load(create_connection(), "fasnacht"); assert p.enabled and p.publication is None; print("Structure policy references validated")'
+          - 'from oldap_api.backend import create_connection; from oldaplib.src.archive_policy import ArchivePolicy; p=ArchivePolicy.load(create_connection(), "fasnacht"); assert p.enabled and p.publication and p.grant_editor_roles_on_creation; print("Structure and publication policy references validated")'
       changed_when: false
+    - name: Install validated policy and retain the previous configuration
+      ansible.builtin.copy:
+        remote_src: true
+        src: '{{ oldap_jena_root }}/config/archive-policy.candidate.json'
+        dest: '{{ oldap_jena_root }}/config/archive-policy.json'
+        backup: true
+        owner: root
+        group: root
+        mode: '0644'
     - name: Install optional read-only policy mount
       ansible.builtin.copy:
         src: archive-policy-compose.yml
@@ -65,7 +74,9 @@
         - {key: COMPOSE_FILE, value: 'docker-compose.yml:jena-compose.yml:archive-policy-compose.yml'}
       no_log: true
     - name: Recreate only the API with the reviewed policy
-      ansible.builtin.command: docker compose up -d --no-deps --wait oldap-api
+      # Atomic file replacement leaves an existing single-file bind mount on
+      # the old inode. Recreate even when Compose settings did not change.
+      ansible.builtin.command: docker compose up -d --no-deps --force-recreate --wait oldap-api
       args: {chdir: /opt/oldap/compose}
       changed_when: true
       no_log: true

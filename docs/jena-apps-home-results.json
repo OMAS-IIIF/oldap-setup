@@ -1,0 +1,265 @@
+{
+  "date": "2026-11-04",
+  "status": "passed",
+  "published": {
+    "oldap-app": {
+      "image": "lrosenth/oldap-app:jena-0.2.7-rc1-6e5e392b8e5a-amd64",
+      "digest": "sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7",
+      "local_id": "sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7"
+    },
+    "salsah-2": {
+      "image": "lrosenth/salsah-2:jena-0.0.2-rc1-47f138b8070c-amd64",
+      "digest": "sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3",
+      "local_id": "sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3"
+    },
+    "FasnachtsPage": {
+      "image": "lrosenth/fasnachts-page:jena-0.1.49-rc1-21d046f8dd07-amd64",
+      "digest": "sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9",
+      "local_id": "sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9"
+    },
+    "oldap-mediaserver": {
+      "image": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-04c2fd90eb1d-amd64",
+      "digest": "sha256:8078872fa5a366fabed13734994bfee04e4223a85e9ea008de8ef1df7e8e6957",
+      "local_id": "sha256:8078872fa5a366fabed13734994bfee04e4223a85e9ea008de8ef1df7e8e6957"
+    }
+  },
+  "source_fingerprints": {
+    "oldap-app": "6e5e392b8e5a7cf4ab3ad8e4472eb27862257995240ac5fab706de2786368904",
+    "salsah-2": "47f138b8070c34963e9d69d4add367b9d54647fc5178d1e818fad53f823e1ce9",
+    "FasnachtsPage": "21d046f8dd07972b465a8e7610e6c728d921410573e75a6affc6f503dd2d4fdd",
+    "oldap-mediaserver": "04c2fd90eb1d1e0ce198dc8b980f21850fb7cf12b4b2a7ce360ddd36d6abbd4c"
+  },
+  "source_bundle": "/Users/rosenth/Library/Application Support/OLDAP-Jena/releases/20261104-apps-rc1",
+  "protected_tags_unchanged": true,
+  "dns": {
+    "salsah.home.org": "192.168.1.230"
+  },
+  "containers": {
+    "api": [
+      {
+        "name": "/oldap-app",
+        "image": "lrosenth/oldap-app:jena-0.2.7-rc1-6e5e392b8e5a-amd64@sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7",
+        "id": "25abaabc2d9616af2d2e1b7f59dadca4c696535770db3bad749c5c61298010a0",
+        "started_at": "2026-11-04T22:43:42.424599738Z",
+        "status": "running"
+      },
+      {
+        "name": "/fasnachts-page",
+        "image": "lrosenth/fasnachts-page:jena-0.1.49-rc1-21d046f8dd07-amd64@sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9",
+        "id": "83c78aa7a8abaf10d232cb11c2d3b2dd70cb3404d963f9b5924aed651742e350",
+        "started_at": "2026-11-04T22:43:42.418142474Z",
+        "status": "running"
+      },
+      {
+        "name": "/compose-salsah-2-1",
+        "image": "lrosenth/salsah-2:jena-0.0.2-rc1-47f138b8070c-amd64@sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3",
+        "id": "693ebdd940ae54af9f8f5ffc12584dc1f20b50c4ff8c6943bcb2c10051ccb38c",
+        "started_at": "2026-11-04T22:39:40.632282998Z",
+        "status": "running"
+      },
+      {
+        "name": "/oldap-api",
+        "image": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+        "id": "2f96308525b79da99c17d4808d7e796a01caf6636bead6f7243045bf9d16ce44",
+        "started_at": "2026-11-04T22:39:40.627971778Z",
+        "status": "running"
+      },
+      {
+        "name": "/compose-oldap-jena-1",
+        "image": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+        "id": "0a27d6baad3b34dc8c5d17e486f65901743c9e9b1f6215dd49bb6d620459f675",
+        "started_at": "2026-11-04T11:19:42.436057035Z",
+        "status": "running"
+      },
+      {
+        "name": "/compose-oldap-jena-identity-1",
+        "image": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+        "id": "71535823e765af573a6675a0cd55dda78b6bf96722e9be4424338f009bf89c26",
+        "started_at": "2026-11-04T11:20:17.640867663Z",
+        "status": "running"
+      },
+      {
+        "name": "/redis",
+        "image": "redis:7-alpine",
+        "id": "5aedcc2a3de498d6edf583e5ac54eef0ab57eb4371735b63e576492d1c7ec561",
+        "started_at": "2026-11-04T11:19:42.330039899Z",
+        "status": "running"
+      },
+      {
+        "name": "/caddy",
+        "image": "caddy:2.8",
+        "id": "6b71e3815e2eaccc2966baff1bcaf3b14453a724fd81ae50b45361575580400c",
+        "started_at": "2026-11-04T11:19:58.550549752Z",
+        "status": "running"
+      }
+    ],
+    "media": [
+      {
+        "name": "/oldap-mediahelper",
+        "image": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-04c2fd90eb1d-amd64@sha256:8078872fa5a366fabed13734994bfee04e4223a85e9ea008de8ef1df7e8e6957",
+        "id": "d9484b3896887ef9d176a8aa360649e3230ef197e06ff79e6c27cf1bb154e1e3",
+        "started_at": "2026-11-04T22:54:35.660000732Z",
+        "status": "running"
+      },
+      {
+        "name": "/oldap-ingest-worker",
+        "image": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-04c2fd90eb1d-amd64@sha256:8078872fa5a366fabed13734994bfee04e4223a85e9ea008de8ef1df7e8e6957",
+        "id": "22fe8193521679d9a1c4d05ad976a5427b0e319ac561e9909ee4c4325208c72f",
+        "started_at": "2026-11-04T22:54:35.655712597Z",
+        "status": "running"
+      },
+      {
+        "name": "/oldap-export-worker",
+        "image": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-04c2fd90eb1d-amd64@sha256:8078872fa5a366fabed13734994bfee04e4223a85e9ea008de8ef1df7e8e6957",
+        "id": "4e3e4201b2bcbb25db40a9d87af2c9c459ba0d00442e1a7ad15076a5d688ad1c",
+        "started_at": "2026-11-04T22:54:35.664615852Z",
+        "status": "running"
+      },
+      {
+        "name": "/oldap-mobile-media-worker",
+        "image": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-04c2fd90eb1d-amd64@sha256:8078872fa5a366fabed13734994bfee04e4223a85e9ea008de8ef1df7e8e6957",
+        "id": "afbd7cc874778ba2daf6330403557aa36dd70262e31272d2328873f2952df533",
+        "started_at": "2026-11-04T22:54:35.66854376Z",
+        "status": "running"
+      },
+      {
+        "name": "/oldap-imageserver",
+        "image": "lrosenth/sipi-2:0.1.0",
+        "id": "14b8688fa8a338d2b9b1aa9bfc2a2a5a5830efd802f47eed418dc9506a255fe9",
+        "started_at": "2026-11-02T21:45:19.565598311Z",
+        "status": "running"
+      },
+      {
+        "name": "/oldap-media-caddy",
+        "image": "caddy:2.8",
+        "id": "955f35fb720da2c9d3d9d43be43ae351e7a2dc1f87ac44a2e0da1582869aaf7b",
+        "started_at": "2026-11-04T11:19:59.911272277Z",
+        "status": "running"
+      }
+    ]
+  },
+  "unchanged_container_ids": {
+    "/compose-oldap-jena-1": "0a27d6baad3b34dc8c5d17e486f65901743c9e9b1f6215dd49bb6d620459f675",
+    "/compose-oldap-jena-identity-1": "71535823e765af573a6675a0cd55dda78b6bf96722e9be4424338f009bf89c26",
+    "/redis": "5aedcc2a3de498d6edf583e5ac54eef0ab57eb4371735b63e576492d1c7ec561",
+    "/caddy": "6b71e3815e2eaccc2966baff1bcaf3b14453a724fd81ae50b45361575580400c",
+    "/oldap-imageserver": "14b8688fa8a338d2b9b1aa9bfc2a2a5a5830efd802f47eed418dc9506a255fe9",
+    "/oldap-media-caddy": "955f35fb720da2c9d3d9d43be43ae351e7a2dc1f87ac44a2e0da1582869aaf7b"
+  },
+  "media_source_hashes": {
+    "/app/app.py": "18eee44d04ca9ebac43e9a5ccdbf316865904b3e39308f9883aaf0dda0bd3a07",
+    "/app/config.py": "5be976fd289adbe545aae02800e1d8159ef1644d4f17eee539c439b0fc0950f8",
+    "/app/derivatives.py": "534ff829b472ad12fce879db3e2cd273caedb91e6b3fbfb438811fd571c1085d"
+  },
+  "public_acceptance": {
+    "checks": [
+      "API selects Jena",
+      "GraphDB is stopped",
+      "Private Jena backend has no published ports",
+      "oldap-api running",
+      "compose-oldap-jena-1 running",
+      "compose-oldap-jena-identity-1 running",
+      "redis running",
+      "caddy running",
+      "API /status HTTP 200",
+      "Existing administrator can log in",
+      "Media upload accepts a fresh API token before form validation",
+      "Media upload rejects missing or invalid access token",
+      "Media upload rejects missing or invalid access token",
+      "API /admin/auth/unknown HTTP 200",
+      "Proxy blocks private identity callback",
+      "Proxy blocks private identity callback",
+      "Export worker route reaches service authentication without proxy shadowing",
+      "API /data/search/fasnacht/class/fasnacht:Story HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "Nonempty fulltext AND search is independent of word order",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 HTTP 200",
+      "Signed IIIF metadata delivered by home media service",
+      "Signed image delivered as JPEG",
+      "fasnacht.home.org page available",
+      "app.home.org page available"
+    ],
+    "images": {
+      "oldap-api": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "compose-oldap-jena-1": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+      "compose-oldap-jena-identity-1": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "graphdb": "ontotext/graphdb:11.3.0",
+      "redis": "redis:7-alpine",
+      "caddy": "caddy:2.8"
+    },
+    "stories": 30,
+    "stories_sha256": "26975a21d9088bdb0a86dc185120881b8b6ac2c4e40579f223a1e3337b52f012",
+    "fulltext_matches": 10,
+    "image_bytes": 9898,
+    "status": "passed"
+  },
+  "asset_acceptance": {
+    "signed_original_head": 200,
+    "invalid_capability_head": 403
+  },
+  "web_browser": [
+    {
+      "url": "https://app.home.org",
+      "status": 200,
+      "title": "",
+      "errors": [],
+      "server_errors": []
+    },
+    {
+      "url": "https://fasnacht.home.org/geschichten",
+      "status": 200,
+      "title": "",
+      "errors": [],
+      "server_errors": []
+    },
+    {
+      "url": "https://fasnacht.home.org/archive",
+      "status": 200,
+      "title": "",
+      "errors": [],
+      "server_errors": []
+    }
+  ],
+  "salsah_browser": {
+    "url": "https://salsah.home.org/login?next=%2F",
+    "status": 200,
+    "title": "Anmelden \u00b7 SALSAH 2.0",
+    "normal_dns": true,
+    "javascript_errors": []
+  },
+  "salsah_network": [
+    {
+      "url": "https://api.home.org/admin/auth/login",
+      "salsah_cors": true
+    },
+    {
+      "url": "https://media.home.org/upload",
+      "salsah_cors": true
+    },
+    {
+      "api_path": "/health",
+      "status": 200
+    },
+    {
+      "api_path": "/internal/jena",
+      "status": 404
+    }
+  ],
+  "media_packaged_runtime": {
+    "original_unchanged": true,
+    "zip_accepted": true,
+    "web_audio": {
+      "codec_name": "aac",
+      "profile": "HE-AAC",
+      "channels": 2
+    },
+    "thumbnails": 2
+  },
+  "limitations": [
+    "Browser smoke is read-only; interactive authenticated writes/uploads remain user acceptance.",
+    "HE-AAC packaged conversion used a two-second copy of the real 1946 film; audible cross-browser playback is still manual.",
+    "Existing Jena memory/recovery and legacy mobile drain production gates remain open."
+  ],
+  "preflight_correction": "Default Compose config omitted profile-gated workers; enabled all profiles and added real Compose regression before any service shutdown."
+}

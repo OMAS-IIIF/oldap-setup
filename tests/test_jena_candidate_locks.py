@@ -65,6 +65,15 @@ content-hash = "fixture"
             locks.lock_candidates(wheel, projects)
             self.assertEqual(before, [(p / 'poetry.lock').read_bytes() for p in projects])
 
+    def test_harvester_keeps_independent_version_with_exact_library_lock(self):
+        with tempfile.TemporaryDirectory() as temporary, patch('socket.socket.connect', side_effect=AssertionError('Network forbidden')):
+            wheel, projects = self.fixture(Path(temporary))
+            source = projects[-1] / 'pyproject.toml'
+            source.write_text(source.read_text().replace('oldap-tools', 'oldap-harvesters').replace('version="1.0.0rc1"', 'version="0.1.14rc1"'))
+            locks.lock_candidates(wheel, projects)
+            data = tomllib.loads((projects[-1] / 'poetry.lock').read_text())
+            self.assertEqual(next(p['version'] for p in data['package'] if p['name'] == 'oldaplib'), '1.0.0rc1')
+
     def test_wrong_wheel_or_inconsistent_project_versions_leave_locks_unchanged(self):
         for invalid in ('wheel', 'version'):
             with self.subTest(invalid=invalid), tempfile.TemporaryDirectory() as temporary:

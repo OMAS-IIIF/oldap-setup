@@ -85,13 +85,17 @@ class HarvestScheduleTests(unittest.TestCase):
             docker = folder / 'docker'
             docker.write_text('#!' + sys.executable + '\nimport json,os,sys\nprint(json.dumps([os.environ["COMPOSE_FILE"],sys.argv[1:]]))\n')
             docker.chmod(0o755)
+            launcher = folder / 'run-harvester.sh'
+            launcher.write_text((ROOT / 'scripts/run-harvester.sh').read_text())
+            (folder / '.env').write_text('COMPOSE_FILE=docker-compose.yml:writer-compose.yml\n')
+            (folder / 'harvest-schedule-compose.yml').write_text('services: {}\n')
             for source in ('europeana', 'swisscovery'):
-                result = subprocess.run(['sh', str(ROOT / 'scripts/run-harvester.sh'), source, '--help'],
+                result = subprocess.run(['sh', str(launcher), source, '--help'],
                     cwd=folder, env={**os.environ, 'PATH': str(folder) + os.pathsep + os.environ['PATH']}, capture_output=True, text=True, check=True)
                 files, arguments = json.loads(result.stdout)
                 self.assertIn('harvest-schedule-compose.yml', files)
                 self.assertTrue(all(Path(path).is_absolute() for path in files.split(':')))
-                self.assertTrue(all(Path(path).parent == ROOT / 'scripts' for path in files.split(':')))
+                self.assertTrue(all(Path(path).parent == folder for path in files.split(':')))
                 self.assertEqual('swisscovery-compose.yml' in files, source == 'swisscovery')
                 self.assertEqual(arguments[-2:], ['oldap-harvesters', '--help'])
                 entrypoint = arguments[arguments.index('--entrypoint') + 1]
@@ -124,6 +128,27 @@ class HarvestScheduleTests(unittest.TestCase):
                 service = json.loads(result.stdout)['services']['oldap-harvesters']
                 self.assertEqual(service['environment']['harvest_schedule_compose_yml'], 'present')
                 self.assertEqual('swisscovery_compose_yml' in service['environment'], source == 'swisscovery')
+
+    def test_jena_launcher_preserves_installed_stack_without_scheduling(self):
+        with tempfile.TemporaryDirectory() as directory:
+            folder = Path(directory)
+            launcher = folder / 'run-harvester.sh'
+            launcher.write_text((ROOT / 'scripts/run-harvester.sh').read_text())
+            (folder / '.env').write_text('COMPOSE_FILE=docker-compose.yml:jena-compose.yml:archive-policy-compose.yml\n')
+            docker = folder / 'docker'
+            docker.write_text('#!' + sys.executable + '\nimport json,os,sys\nprint(json.dumps([os.environ["COMPOSE_FILE"],sys.argv[1:]]))\n')
+            docker.chmod(0o755)
+            for source, overlay in [('europeana', 'jena-harvesters-compose.yml'), ('swisscovery', 'jena-swisscovery-compose.yml')]:
+                result = subprocess.run(['sh', str(launcher), source, '--help'], cwd=folder,
+                    env={**os.environ, 'PATH': str(folder) + os.pathsep + os.environ['PATH']},
+                    capture_output=True, text=True, check=True)
+                files, args = json.loads(result.stdout)
+                self.assertIn(str(folder / 'jena-compose.yml'), files)
+                self.assertIn(str(folder / 'archive-policy-compose.yml'), files)
+                self.assertTrue(files.endswith(overlay))
+                self.assertNotIn('writer-compose.yml', files)
+                self.assertNotIn('harvest-schedule-compose.yml', files)
+                self.assertNotIn('run-locked.py', args[args.index('--entrypoint') + 1])
 
     def test_service_files_preserve_backup_and_choose_explicit_timezone(self):
         timer = (ROOT / 'templates/harvesting/oldap-harvest.timer').read_text()

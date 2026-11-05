@@ -1,0 +1,217 @@
+---
+# Home-only replacement of the custom reader with the official Apache interface.
+# Source is built/tested locally; storage is never opened by a second process.
+- name: Install official Fuseki administration on the active home service
+  hosts: oldap_home
+  become: true
+  vars:
+    ansible_become_exe: /usr/bin/sudo.ws
+    compose_dir: /opt/oldap/compose
+    oldap_jena_root: /srv/storage/oldap-jena-home-20261102
+    media_host: media.home.org
+    media_writers: [oldap-mediahelper, oldap-ingest-worker, oldap-export-worker, oldap-mobile-media-worker]
+    mobile_stop_signal: SIGINT
+    release_dir: '{{ oldap_jena_root }}/releases/fuseki-admin-{{ service_sha256 }}'
+    candidate_config: '{{ oldap_jena_root }}/config/fuseki-admin-{{ service_sha256 }}.properties'
+    snapshot_dir: '/srv/storage/oldap-fuseki-before-{{ ansible_date_time.iso8601_basic_short }}'
+  tasks:
+    - name: Require home and an explicit built artifact
+      ansible.builtin.assert:
+        that:
+          - ansible_host == 'api.home.org'
+          - service_sha256 is match('^[a-f0-9]{64}$')
+          - service_source is match('^/Users/rosenth/Library/Application Support/OLDAP-Jena/releases/')
+    - name: Inventory current containers
+      ansible.builtin.command: docker ps --format '{{ "{{.Names}}" }}'
+      register: api_running
+      changed_when: false
+    - name: Inventory media containers
+      ansible.builtin.command: docker ps --format '{{ "{{.Names}}" }}'
+      register: media_running
+      delegate_to: '{{ media_host }}'
+      changed_when: false
+    - name: Refuse unknown writers or incomplete home stack
+      ansible.builtin.assert:
+        that:
+          - api_running.stdout_lines | difference(['compose-salsah-2-1', 'compose-jena-console-1']) | sort == ['oldap-api', 'compose-oldap-jena-1', 'compose-oldap-jena-identity-1', 'redis', 'caddy', 'fasnachts-page', 'oldap-app'] | sort
+          - media_running.stdout_lines | sort == (media_writers + ['oldap-imageserver', 'oldap-media-caddy']) | sort
+    - name: Read current selection and original Caddy configuration privately
+      ansible.builtin.slurp:
+        src: '{{ compose_dir }}/{{ item }}'
+      loop: [.env, Caddyfile]
+      register: previous_files
+      no_log: true
+    - name: Extract current configuration path and retain exact rollback text
+      ansible.builtin.set_fact:
+        previous_env: '{{ previous_files.results[0].content | b64decode }}'
+        previous_caddy: '{{ previous_files.results[1].content | b64decode }}'
+      no_log: true
+    - name: Read installed backend configuration privately
+      ansible.builtin.slurp:
+        src: '{{ (previous_env.splitlines() | select("match", "^OLDAP_JENA_CONFIG=") | first).split("=", 1)[1] }}'
+      register: previous_config
+      no_log: true
+    - name: Require the active Jena installation and independent console credentials
+      ansible.builtin.assert:
+        that:
+          - "':jena-compose.yml' in previous_env"
+          - "'OLDAP_JENA_CONSOLE_PASSWORD_HASH=' in previous_env"
+          - "'OLDAP_JENA_CONSOLE_USER=' in previous_env"
+      no_log: true
+    - name: Stage immutable service files
+      ansible.builtin.copy:
+        src: '{{ service_source }}/'
+        dest: '{{ release_dir }}/'
+        owner: '1000'
+        group: '1000'
+        mode: preserve
+    - name: Verify packaged service and pinned Fuseki hashes
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - >-
+            import pathlib,json,hashlib,sys;
+            p=pathlib.Path(sys.argv[1]); m=json.loads((p/'build.json').read_text());
+            assert m['service_sha256']==sys.argv[2];
+            assert hashlib.sha256((p/'lib'/('oldap-jena-service-'+m['version']+'.jar')).read_bytes()).hexdigest()==sys.argv[2];
+            assert hashlib.sha256((p/'lib/fuseki-server.jar').read_bytes()).hexdigest()==m['fuseki_sha256']=='2c92c598e65ab69d99820052e05f4277ed1d77980a8845f87545ad35b71a76ee'
+          - '{{ release_dir }}'
+          - '{{ service_sha256 }}'
+      changed_when: false
+    - name: Generate private administrator transport key
+      ansible.builtin.set_fact:
+        native_admin_key: '{{ lookup("pipe", "python3 -c ''import secrets; print(secrets.token_urlsafe(48))''") }}'
+      no_log: true
+    - name: Stage private backend configuration with native listener
+      ansible.builtin.copy:
+        dest: '{{ candidate_config }}'
+        owner: '1000'
+        group: '1000'
+        mode: '0600'
+        content: |
+          {{ previous_config.content | b64decode | regex_replace('(?m)^admin(Port|Secret|Origin)=.*\n?', '') }}
+          adminPort=8040
+          adminSecret={{ native_admin_key }}
+          adminOrigin={{ oldap_jena_console_origin }}
+      no_log: true
+    - name: Install native administration overlay
+      ansible.builtin.copy:
+        src: fuseki-admin-compose.yml
+        dest: '{{ compose_dir }}/fuseki-admin-compose.yml'
+        mode: '0644'
+    - name: Prepare candidate selection without changing unrelated environment
+      ansible.builtin.set_fact:
+        candidate_env: |
+          {{ previous_env
+          | regex_replace('(?m)^OLDAP_JENA_RELEASE=.*$', 'OLDAP_JENA_RELEASE=' ~ release_dir)
+          | regex_replace('(?m)^OLDAP_JENA_CONFIG=.*$', 'OLDAP_JENA_CONFIG=' ~ candidate_config)
+          | regex_replace(':jena-console-compose.yml(?=:|\n|$)', '')
+          | regex_replace(':fuseki-admin-compose.yml(?=:|\n|$)', '')
+          | regex_replace('(?m)^(COMPOSE_FILE=.*)$', '\1:fuseki-admin-compose.yml')
+          | regex_replace('(?m)^OLDAP_JENA_ADMIN_KEY=.*\n?', '')
+          }}
+          OLDAP_JENA_ADMIN_KEY={{ native_admin_key }}
+      no_log: true
+    - name: Write candidate env for preflight
+      ansible.builtin.copy:
+        dest: '{{ compose_dir }}/.env.fuseki-candidate'
+        content: '{{ candidate_env }}'
+        mode: '0600'
+      no_log: true
+    - name: Resolve candidate Compose before stopping anything
+      ansible.builtin.command: docker compose --env-file .env.fuseki-candidate config --quiet
+      args: {chdir: '{{ compose_dir }}'}
+      no_log: true
+      changed_when: false
+    - name: Exercise container recreation commands in Compose dry run
+      ansible.builtin.command: docker compose --env-file .env.fuseki-candidate --dry-run up --no-start --no-deps oldap-jena caddy
+      args: {chdir: '{{ compose_dir }}'}
+      no_log: true
+      changed_when: false
+    - name: Stage current Caddy config
+      ansible.builtin.copy:
+        dest: '{{ compose_dir }}/Caddyfile.fuseki-candidate'
+        content: '{{ previous_caddy }}'
+        mode: '0600'
+      no_log: true
+    - name: Replace only the console host in staged Caddy config
+      ansible.builtin.blockinfile:
+        path: '{{ compose_dir }}/Caddyfile.fuseki-candidate'
+        marker: '# {mark} OLDAP JENA CONSOLE'
+        block: '{{ lookup("template", "templates/jena-console.Caddyfile.j2") | regex_replace("(?m)^# (BEGIN|END) OLDAP JENA CONSOLE\\n?", "") }}'
+    - name: Read candidate Caddy config privately
+      ansible.builtin.slurp:
+        src: '{{ compose_dir }}/Caddyfile.fuseki-candidate'
+      register: candidate_caddy
+      no_log: true
+    - name: Validate native console Caddy route before maintenance
+      ansible.builtin.command:
+        argv: [docker, compose, --env-file, .env.fuseki-candidate, run, --rm, --no-deps, -T, caddy, caddy, validate, --config, '-', --adapter, caddyfile]
+        stdin: '{{ candidate_caddy.content | b64decode }}'
+      args: {chdir: '{{ compose_dir }}'}
+      no_log: true
+      changed_when: false
+    - name: Create private pre-update snapshot directory
+      ansible.builtin.file: {path: '{{ snapshot_dir }}', state: directory, mode: '0700'}
+    - name: Activate with coordinated shutdown and rollback
+      block:
+        - name: Drain both hosts before replacing the namespace owner
+          ansible.builtin.include_tasks: tasks/jena-home-stop.yml
+        - name: Snapshot stopped API data, receipts, indexes, Redis and configuration
+          ansible.builtin.command:
+            argv: [tar, --acls, --xattrs, -cpf, '{{ snapshot_dir }}/api.tar', -C, /, srv/storage/oldap-jena-home-20261102, srv/storage/oldap-data/oldap-api, srv/storage/caddy, opt/oldap/compose]
+        - name: Restrict snapshot permissions
+          ansible.builtin.file: {path: '{{ snapshot_dir }}/api.tar', mode: '0600'}
+        - name: Verify snapshot against stopped source
+          ansible.builtin.command: 'tar --compare --acls --xattrs -f {{ snapshot_dir }}/api.tar -C /'
+          changed_when: false
+        - name: Select native administration service
+          ansible.builtin.copy:
+            dest: '{{ compose_dir }}/.env'
+            content: '{{ candidate_env }}'
+            mode: '0600'
+          no_log: true
+        - name: Install validated native console proxy route
+          ansible.builtin.copy:
+            dest: '{{ compose_dir }}/Caddyfile'
+            content: '{{ candidate_caddy.content | b64decode }}'
+            mode: '0644'
+          no_log: true
+        - name: Recreate namespace owner with native administration
+          ansible.builtin.command: docker compose up -d --no-deps --force-recreate oldap-jena
+          args: {chdir: '{{ compose_dir }}'}
+          no_log: true
+        - name: Recreate Caddy configuration without opening ingress yet
+          ansible.builtin.command: docker compose up --no-start --no-deps caddy
+          args: {chdir: '{{ compose_dir }}'}
+          no_log: true
+        - name: Recover API consumers before opening ingress
+          ansible.builtin.include_tasks: tasks/jena-home-start.yml
+          vars: {jena_restore_legacy_console: false, jena_admin_ready_key: "{{ native_admin_key }}"}
+      rescue:
+        - name: Close ingress and stop new namespace consumers before rollback
+          ansible.builtin.command: docker stop --timeout 90 caddy oldap-api compose-oldap-jena-identity-1 compose-oldap-jena-1
+        - name: Restore previous environment and proxy configuration
+          ansible.builtin.copy:
+            dest: '{{ compose_dir }}/{{ item.name }}'
+            content: '{{ item.content }}'
+            mode: '0600'
+          loop:
+            - {name: .env, content: '{{ previous_env }}'}
+            - {name: Caddyfile, content: '{{ previous_caddy }}'}
+          no_log: true
+        - name: Recreate the previous backend and proxy containers
+          ansible.builtin.command: docker compose up --no-start --no-deps oldap-jena caddy
+          args: {chdir: '{{ compose_dir }}'}
+          no_log: true
+        - name: Recover the original namespace and legacy console
+          ansible.builtin.include_tasks: tasks/jena-home-start.yml
+        - name: Report failed activation after restoring the previous service
+          ansible.builtin.fail:
+            msg: Native Fuseki activation failed; previous configuration restored. Inspect private Ansible log before retrying.
+    - name: Record installed source and snapshot path
+      ansible.builtin.copy:
+        dest: '{{ snapshot_dir }}/deployment.json'
+        mode: '0600'
+        content: '{{ {"service_sha256": service_sha256, "release": release_dir, "configuration": candidate_config, "snapshot": snapshot_dir ~ "/api.tar", "origin": oldap_jena_console_origin} | to_nice_json }}'

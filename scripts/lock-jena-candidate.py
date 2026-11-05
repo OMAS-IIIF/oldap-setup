@@ -1,5 +1,6 @@
-"""Resolve unpublished core candidates offline with Poetry's normal solver.
+"""Resolve unpublished OLDAP candidates offline with Poetry's normal solver.
 
+Core package versions stay coordinated; harvesters retain independent versions.
 Run with Python from a Poetry 2.x environment. Candidate wheel metadata and its
 SHA-256 replace only oldaplib in the union of existing project locks. No package
 index, editable source, local file dependency or private repository is added to
@@ -42,7 +43,9 @@ def lock_candidates(library_wheel: Path, projects: list[Path]) -> None:
         raise ValueError('Include the matching library project in the lock inputs')
     repository = Repository('locked-candidates')
     for poetry in poetry_projects:
-        if poetry.package.version != candidate.version:
+        # The harvester has its own release sequence; the core trio remains
+        # coordinated. Its declared library constraint is checked by the solver.
+        if poetry.package.name != 'oldap-harvesters' and poetry.package.version != candidate.version:
             raise ValueError('Core candidate versions must agree')
         for package in poetry.locker.locked_repository().packages:
             if package.name == 'oldaplib':

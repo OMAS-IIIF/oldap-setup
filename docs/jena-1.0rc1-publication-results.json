@@ -1,0 +1,88 @@
+{
+  "recorded_at": "2026-11-04T11:46:52.237757+01:00",
+  "status": "published_and_home_updated",
+  "release": {
+    "oldap-api": {
+      "digest": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "platform_manifests": [
+        "lrosenth/oldap-api@sha256:436d45886119c4dba42b8ae446252819731a6fc4c7423947a6145df369812466",
+        "lrosenth/oldap-api@sha256:c035891b9b013f9b80701d0a6f5c3e2abe326e325a434605b32611e380ffbedd"
+      ],
+      "reference": "lrosenth/oldap-api:jena-1.0.0-rc1-4d3c5ef8e1e1"
+    },
+    "oldap-tools": {
+      "digest": "sha256:a553bee166a4928d50bfe1406284b925fd9dddba78c53a2291f9bb0f9c819baf",
+      "platform_manifests": [
+        "lrosenth/oldap-tools@sha256:9911519d2e95ba69dcad08c345ccb18fc00a487b309e8fa55b0e9ee2f8a8db2c",
+        "lrosenth/oldap-tools@sha256:703032b0ea5dd6f60c10b6eb29cf362a9f117cd0b237a2774be7f7c95f2f5468"
+      ],
+      "reference": "lrosenth/oldap-tools:jena-1.0.0-rc1-4d3c5ef8e1e1"
+    }
+  },
+  "protected_before": {
+    "lrosenth/oldap-api:latest": "sha256:38b66073d531945dc32f3beaa0a5a1ead5ce9fc9adacb2a466feb82f35c0b305",
+    "lrosenth/oldap-api:v1.0.0rc1": null,
+    "lrosenth/oldap-tools:latest": null,
+    "lrosenth/oldap-tools:v1.0.0rc1": null
+  },
+  "protected_after": {
+    "lrosenth/oldap-api:latest": "sha256:38b66073d531945dc32f3beaa0a5a1ead5ce9fc9adacb2a466feb82f35c0b305",
+    "lrosenth/oldap-api:v1.0.0rc1": null,
+    "lrosenth/oldap-tools:latest": null,
+    "lrosenth/oldap-tools:v1.0.0rc1": null
+  },
+  "native_transport": "passed: 9 PASS records, isolated current home Java service bytes, no source mounts",
+  "home_before": {
+    "checks": [
+      "API selects Jena",
+      "GraphDB is stopped",
+      "Private Jena backend has no published ports",
+      "oldap-api running",
+      "compose-oldap-jena-1 running",
+      "compose-oldap-jena-identity-1 running",
+      "redis running",
+      "caddy running",
+      "API /status HTTP 200",
+      "Existing administrator can log in",
+      "Media upload accepts a fresh API token before form validation",
+      "Media upload rejects missing or invalid access token",
+      "Media upload rejects missing or invalid access token",
+      "API /admin/auth/unknown HTTP 200",
+      "Proxy blocks private identity callback",
+      "Proxy blocks private identity callback",
+      "Export worker route reaches service authentication without proxy shadowing",
+      "API /data/search/fasnacht/class/fasnacht:Story HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "Nonempty fulltext AND search is independent of word order",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 HTTP 200",
+      "Signed IIIF metadata delivered by home media service",
+      "Signed image delivered as JPEG",
+      "fasnacht.home.org page available",
+      "app.home.org page available"
+    ],
+    "images": {
+      "oldap-api": "lrosenth/oldap-api@sha256:8ea94bac6882c7ae07416678312ebc6edff0c5dfa65785909e45daae22711a8a",
+      "compose-oldap-jena-1": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+      "compose-oldap-jena-identity-1": "lrosenth/oldap-api@sha256:8ea94bac6882c7ae07416678312ebc6edff0c5dfa65785909e45daae22711a8a",
+      "graphdb": "ontotext/graphdb:11.3.0",
+      "redis": "redis:7-alpine",
+      "caddy": "caddy:2.8"
+    },
+    "stories": 30,
+    "stories_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "fulltext_matches": 10,
+    "image_bytes": 9898,
+    "status": "passed"
+  },
+  "preexisting_incident": {
+    "observed": "HTTP 502 before any image replacement",
+    "cause_evidence": "Jena restarted at 2026-11-04T07:32:28Z; API and identity still used old Linux network namespace. Local API /status returned 200 but public proxy returned 502.",
+    "recovery": "Stopped existing API/identity clients and started identity then API; namespaces match and all 26 public checks pass. No images changed.",
+    "restart_trigger": "Confirmed by api.home.org kernel journal: global OOM at 2026-11-04 08:32:27 CET killed Java PID 34170 with anon-rss 14790676 kB. Docker OOMKilled=false after restart did not expose this host-level event.",
+    "remaining": "Automatic owner restart can strand namespace consumers; durable coordinated recovery remains a release gate."
+  },
+  "backup_completed": true,
+  "deployed": true,
+  "home_acceptance": "jena-1.0rc1-home-results.json"
+}

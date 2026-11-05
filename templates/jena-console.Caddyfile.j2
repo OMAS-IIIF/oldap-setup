@@ -1,0 +1,13 @@
+# BEGIN OLDAP JENA CONSOLE
+{{ oldap_jena_console_origin }} {
+{% if caddy_mode == 'dev' %}
+    tls internal
+{% endif %}
+    basicauth {
+        {env.OLDAP_JENA_CONSOLE_USER} {env.OLDAP_JENA_CONSOLE_PASSWORD_HASH}
+    }
+    reverse_proxy oldap-api:8040 {
+        header_up X-Oldap-Admin-Key {env.OLDAP_JENA_ADMIN_KEY}
+    }
+}
+# END OLDAP JENA CONSOLE

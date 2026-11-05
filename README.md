@@ -1,5 +1,11 @@
 # Deployment of the OLDAP framework
 
+Home application candidate rollout and rollback: [runbook](docs/jena-apps-home.md).
+
+Jena harvester candidates and batch installation: [runbook](docs/jena-harvesters.md).
+
+Official Apache Fuseki administration: [deployment and access](docs/jena-console.md).
+
 ## Publishing Jena candidate images
 
 The migration checkout disables the old API/tools Makefile publication targets.
@@ -301,18 +307,23 @@ a fresh API token reaching upload form validation (no project/file, hence no
 write) and missing/invalid-token rejection. A real upload/conversion/storage test
 remains distinct from this non-mutating authentication check.
 
-### Optional archive structure policy on home
+### Archive structure and publication policy on home
 
 Enabled at the user's request on 2026-11-03. The previous disabled message was
 correct: no `OLDAP_ARCHIVE_POLICY_FILE` was installed on home. The reviewed
 `files/jena-home-archive-policy.json` enables Fasnacht's existing structure and
-media editor roles and grant-on-creation rules, without the separate publication
-block. It does not assign roles to users or bypass resource permissions.
+media editor roles and grant-on-creation rules. On 2026-11-04 it also gained the
+reviewed publication block from FasnachtsPage/docs/permissions/fasnacht-publication-policy.json:
+ArchiveMediaEditor publishers, ArchiveObject/CarnivalEvent roots and related
+ArchiveMediaObject media, explicit public read grants and a 100-resource limit.
+It does not assign roles to users or bypass per-resource UPDATE checks.
 
 `oldap-jena-archive-enable.yml` validates the policy against live Jena roles,
-models and properties before activation, retains `.env.before-archive-policy`,
+models and properties on a staged candidate before replacing the active file,
+retains the previous policy and `.env.before-archive-policy`,
 and installs `archive-policy-compose.yml`. The overlay mounts the server-owned
-policy read-only into API/tools/harvester configuration; only the API is recreated.
+policy read-only into API/tools/harvester configuration; only the API is force-recreated
+to refresh the single-file bind mount after atomic replacement.
 The selected stack is now `docker-compose.yml:jena-compose.yml:archive-policy-compose.yml`.
 Retain this selection and policy on subsequent deployment/backup. Existing
 GraphDB rollback is not part of this workflow. Production needs its own review.
@@ -654,3 +665,37 @@ checks its bridge isolation, and removes both consumers before replacing Jena.
 
 See [the coordinated merge and release plan](docs/jena-1.0-merge-plan.md) for
 branch evidence, version/dependency work, PR drafts and remaining release gates.
+
+
+### Offline home Jena snapshot before a client update
+
+`oldap-jena-home-backup.yml` snapshots the already active home Jena system;
+`oldap-jena-freeze.yml` remains the first-cutover GraphDB workflow. The snapshot
+playbook deliberately fixes the two home hosts, inventoried containers and paths.
+Run with one operator and no external/direct writers. It refuses unexpected
+running containers and existing snapshot directories. It stops media ingress and
+writers, API ingress/clients, then Jena and Redis; it preserves application files,
+media operation registries, configuration, dataset and coordination state in
+private per-host tar archives. Archive comparison occurs while sources remain
+stopped, followed by SHA-256 and a completion manifest on the API host. A partial
+snapshot without that manifest must not be used as a completed backup.
+
+```sh
+ansible-playbook -i inventory.ini oldap-jena-home-backup.yml \
+  -e snapshot_id=UNIQUE_IDENTIFIER \
+  -e @/absolute/private/home-become.json
+```
+
+The legacy home mobile worker ignores SIGTERM as PID 1. For that installed
+version only, `-e mobile_stop_signal=SIGINT` can stop an unused worker: admission
+requires every mobile registry table to be empty after helper/ingress shutdown.
+Do not use this for active mobile work. Deploy proper worker signal/drain handling
+before general production backups. Exit 137 aborts snapshot acceptance.
+
+The `always` recovery starts storage, waits for Jena, then force-recreates the
+identity/API consumers in its new network namespace before reopening ingress and
+workers. Recovery failure leaves ingress closed; inspect before manual recovery.
+Tests execute these actual recovery tasks with a fake Docker CLI and injected
+storage/readiness/identity/API failures. This is same-host recovery evidence,
+not an off-host restore rehearsal. Normal automatic Jena restarts still need
+coordinated consumer recovery; this snapshot workflow alone does not solve that.

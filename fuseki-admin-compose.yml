@@ -1,0 +1,7 @@
+# Official Fuseki runs inside the existing Jena JVM; no second TDB owner.
+services:
+  caddy:
+    environment:
+      OLDAP_JENA_CONSOLE_USER: ${OLDAP_JENA_CONSOLE_USER:?Administrator required}
+      OLDAP_JENA_CONSOLE_PASSWORD_HASH: ${OLDAP_JENA_CONSOLE_PASSWORD_HASH:?Password hash required}
+      OLDAP_JENA_ADMIN_KEY: ${OLDAP_JENA_ADMIN_KEY:?Private native administration key required}

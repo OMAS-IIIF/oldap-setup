@@ -48,3 +48,46 @@ class SalsahDeploymentTests(unittest.TestCase):
             for salsah in (False, True):
                 rendered = jinja2.Template(selector).render(oldap_writer_enabled=writer, salsah_enabled=salsah)
                 self.assertEqual(rendered, 'docker-compose.yml' + (':writer-compose.yml' if writer else '') + (':salsah-compose.yml' if salsah else ''))
+
+    def test_jena_install_preserves_backend_and_policy_selection(self):
+        tasks = yaml.safe_load((ROOT / 'oldap-salsah-install.yml').read_text())[0]['tasks']
+        guard = next(t['ansible.builtin.assert']['that'][0] for t in tasks
+                     if t.get('name') == 'Require a known existing Compose topology')
+        pattern = guard.split("match('", 1)[1].rsplit("')", 1)[0]
+        for selection in (
+            'docker-compose.yml:jena-compose.yml:archive-policy-compose.yml',
+            'docker-compose.yml:writer-compose.yml:jena-compose.yml:archive-policy-compose.yml:salsah-compose.yml',
+            'docker-compose.yml:writer-compose.yml',
+            'docker-compose.yml:jena-compose.yml:archive-policy-compose.yml:salsah-compose.yml:fuseki-admin-compose.yml',
+            'docker-compose.yml:jena-compose.yml:fuseki-admin-compose.yml:salsah-compose.yml',
+        ):
+            self.assertRegex('COMPOSE_FILE=' + selection, pattern)
+        self.assertIsNone(re.fullmatch(pattern, 'COMPOSE_FILE=docker-compose.yml:unknown.yml'))
+        # Resolve the actual four-overlay stack, not a reconstructed mock service.
+        names = ['docker-compose.yml', 'jena-compose.yml', 'archive-policy-compose.yml', 'salsah-compose.yml']
+        text = ''.join((ROOT / n).read_text() for n in names)
+        variables = {n: '/tmp/salsah-fixture' for n in re.findall(r'\$\{([A-Z_]+)', text)}
+        variables.update(OLDAP_JENA_HEAP_MB='512', SALSAH_TAG='v0.0.2',
+                         SALSAH_ORIGIN='https://salsah.home.org', SALSAH_API_URL='https://api.home.org',
+                         SALSAH_MEDIA_URL='https://media.home.org')
+        command = ['docker', 'compose', '--env-file', '/dev/null', '--profile', '*']
+        for name in names:
+            command.extend(['-f', str(ROOT / name)])
+        result = subprocess.check_output(command + ['config', '--format', 'json'],
+                                         env={**os.environ, **variables}, text=True)
+        services = json.loads(result)['services']
+        api = services['oldap-api']
+        self.assertEqual(api['network_mode'], 'service:oldap-jena')
+        self.assertEqual(api['environment']['OLDAP_BACKEND'], 'jena')
+        self.assertIn('OLDAP_ARCHIVE_POLICY_FILE', api['environment'])
+        self.assertIn('OLDAP_FRONTENDS_FILE', api['environment'])
+        self.assertNotIn('graphdb', api['depends_on'])
+
+    def test_alternate_api_origin_blocks_private_jena_callbacks(self):
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(ROOT / 'templates'))
+        text = env.get_template('Caddyfile.j2').render(caddy_mode='prod',
+                caddy_email='operator@example.org', salsah_enabled=True)
+        for host in ('api.oldap.org', 'api.salsah.org'):
+            block = text.split(host + ' {', 1)[1].split('reverse_proxy', 1)[0]
+            self.assertIn('@private path /internal/jena /internal/jena/*', block)
+            self.assertIn('respond @private 404', block)

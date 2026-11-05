@@ -9,7 +9,7 @@
     compose_dir: /opt/oldap/compose
     media_host: media.home.org
     media_writers: [oldap-mediahelper, oldap-ingest-worker, oldap-export-worker, oldap-mobile-media-worker]
-    mobile_stop_signal: SIGINT
+    mobile_stop_signal: SIGTERM
     oldap_jena_heap_mb: 6144
     oldap_jena_direct_mb: 512
     oldap_jena_memory_mb: 10240

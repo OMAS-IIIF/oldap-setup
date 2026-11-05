@@ -20,7 +20,7 @@ Sources: [Docker memory and swap limits](https://docs.docker.com/engine/containe
 
 ## Home rollout and rollback
 
-Run `oldap-jena-memory-update.yml` with the established inventory and protected become variables. It validates the host reserve, stages and resolves Compose, saves the original environment/Compose privately, and uses the existing coordinated stop/start tasks. These stop media writers before the backend, then reconnect identity/API consumers to the replacement namespace before reopening ingress. The existing legacy mobile SIGINT path requires an unused mobile registry.
+Run `oldap-jena-memory-update.yml` with the established inventory and protected become variables. It validates the host reserve, stages and resolves Compose, saves the original environment/Compose privately, and uses the existing coordinated stop/start tasks. These stop media writers before the backend, then reconnect identity/API consumers to the replacement namespace before reopening ingress. Drain-capable mobile workers use SIGTERM with an unbounded graceful maintenance wait. The explicitly selected legacy SIGINT path still requires an unused mobile registry.
 
 On activation failure the playbook restores the saved configuration and recreates the prior backend/consumers. No data format, service JAR, images or API signatures change. The rollback directory is reported at completion. This home-only playbook is not authorization to apply the same budget to production without checking that host's RAM and workload.
 

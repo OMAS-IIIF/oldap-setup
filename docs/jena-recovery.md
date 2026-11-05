@@ -81,8 +81,9 @@ Compose replacement operations concurrently without the maintenance pause.
 
 `oldap-jena-recovery-check.yml` is explicitly home-only and requires
 `allow_home_recovery_faults=true`. It inventories/refuses unknown writers,
-closes both ingresses, quiesces media workers and verifies the empty legacy
-mobile registry before its SIGINT stop. The API remains available for draining.
+closes media ingress and quiesces workers using SIGTERM; API ingress closes only
+after the mobile worker has finished. An explicit legacy SIGINT override still
+requires an unused mobile registry. The API remains available for draining.
 The probe then performs a graceful Jena restart followed by a host-side SIGKILL
 of the verified Jena PID. The first clean restart allows previous transactions
 to finish; no external writers are admitted during either fault.

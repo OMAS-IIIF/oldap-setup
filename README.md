@@ -703,3 +703,7 @@ coordinated consumer recovery; this snapshot workflow alone does not solve that.
 ### Jena memory budget
 
 The Jena container now has separate heap/direct-buffer budgets and a hard total memory limit. See [the memory runbook](docs/jena-memory.md) for sizing, the guarded home rollout, rollback and load evidence. Use `oldap-jena-memory-update.yml` for an existing home deployment; candidate preparation writes all three settings.
+
+### Automatic Jena namespace recovery
+
+Home can install `oldap-jena-recovery-install.yml` to reconnect API/identity clients after a backend crash. The host timer compares real namespace identities and cooperates with planned maintenance. See [the recovery runbook](docs/jena-recovery.md) for bounded retries, pause/resume, diagnostics, disabling the feature and the explicit home fault test.

@@ -1,0 +1,10 @@
+[Unit]
+Description=Reconnect OLDAP clients to the running Jena network namespace
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/local/lib/oldap/jena-recovery.py check
+TimeoutStartSec=180
+UMask=0077

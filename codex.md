@@ -1,5 +1,7 @@
 # OLDAP Setup Context
 
+- Automatic Jena recovery (2026-11-05): home has a systemd timer running `scripts/jena-recovery.py`, comparing actual Linux namespace identities and reconnecting identity before API after backend restart. Persistent maintenance locking prevents deployment races; partial repairs retain ownership, with bounded retries and journal diagnostics. Final restart/SIGKILL checks recover in about 12/19 seconds with unchanged API results. See `docs/jena-recovery.md` for pause/resume, scope, fallback and acceptance; mobile draining and production restore/capacity acceptance remain open.
+
 - Jena memory budget (2026-11-05): home runs a 10 GiB total cgroup limit, 6 GiB heap, 512 MiB direct buffers and no container swap. Candidate preparation uses the same defaults with host/native reserve checks. `oldap-jena-memory-update.yml` preserves configuration rollback and coordinated namespace restart; `scripts/check-jena-memory.py` samples cgroup counters. 375 read requests pass without slowdown or response changes; short sampling shows no OOM/restarts. See `docs/jena-memory.md` and evidence. Automatic crash recovery and write-heavy/long-term capacity acceptance remain open.
 
 - Git checkpoint (2026-11-05): reviewed source revisions, verification scope and remaining production gates are recorded in `docs/jena-git-checkpoint.md`. Checkpoint commits are local; publication, merges and deployment are separate.

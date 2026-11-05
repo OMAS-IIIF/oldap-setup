@@ -54,6 +54,12 @@
         src: jena-compose.yml
         dest: /opt/oldap/compose/jena-compose.yml
         mode: '0644'
+    - name: Detect installed recovery before legacy namespace maintenance
+      ansible.builtin.stat: {path: /usr/local/lib/oldap/jena-recovery.py}
+      register: recovery_program
+    - name: Pause installed recovery before namespace maintenance
+      ansible.builtin.command: /usr/bin/python3 /usr/local/lib/oldap/jena-recovery.py pause
+      when: recovery_program.stat.exists
     - name: Start and verify the independent callback before maintenance
       ansible.builtin.command: docker compose up -d --wait oldap-jena-identity
       args: {chdir: /opt/oldap/compose}
@@ -95,3 +101,6 @@
         argv: '{{ ["docker", "start"] + media_writers }}'
       delegate_to: media.home.org
       changed_when: true
+    - name: Resume installed recovery after successful maintenance
+      ansible.builtin.command: /usr/bin/python3 /usr/local/lib/oldap/jena-recovery.py resume
+      when: recovery_program.stat.exists

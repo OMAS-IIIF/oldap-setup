@@ -40,3 +40,9 @@
 - name: Reopen media ingress
   ansible.builtin.command: docker start oldap-media-caddy
   delegate_to: '{{ media_host }}'
+- name: Detect installed namespace recovery after successful coordinated start
+  ansible.builtin.stat: {path: /usr/local/lib/oldap/jena-recovery.py}
+  register: jena_recovery_program
+- name: Resume automatic recovery only after all services have recovered
+  ansible.builtin.command: /usr/bin/python3 /usr/local/lib/oldap/jena-recovery.py resume
+  when: jena_recovery_program.stat.exists

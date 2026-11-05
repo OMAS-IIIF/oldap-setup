@@ -699,3 +699,7 @@ Tests execute these actual recovery tasks with a fake Docker CLI and injected
 storage/readiness/identity/API failures. This is same-host recovery evidence,
 not an off-host restore rehearsal. Normal automatic Jena restarts still need
 coordinated consumer recovery; this snapshot workflow alone does not solve that.
+
+### Jena memory budget
+
+The Jena container now has separate heap/direct-buffer budgets and a hard total memory limit. See [the memory runbook](docs/jena-memory.md) for sizing, the guarded home rollout, rollback and load evidence. Use `oldap-jena-memory-update.yml` for an existing home deployment; candidate preparation writes all three settings.

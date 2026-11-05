@@ -67,7 +67,7 @@ class SalsahDeploymentTests(unittest.TestCase):
         names = ['docker-compose.yml', 'jena-compose.yml', 'archive-policy-compose.yml', 'salsah-compose.yml']
         text = ''.join((ROOT / n).read_text() for n in names)
         variables = {n: '/tmp/salsah-fixture' for n in re.findall(r'\$\{([A-Z_]+)', text)}
-        variables.update(OLDAP_JENA_HEAP_MB='512', SALSAH_TAG='v0.0.2',
+        variables.update(OLDAP_JENA_HEAP_MB='512', OLDAP_JENA_DIRECT_MB='512', OLDAP_JENA_MEMORY_MB='10240', SALSAH_TAG='v0.0.2',
                          SALSAH_ORIGIN='https://salsah.home.org', SALSAH_API_URL='https://api.home.org',
                          SALSAH_MEDIA_URL='https://media.home.org')
         command = ['docker', 'compose', '--env-file', '/dev/null', '--profile', '*']

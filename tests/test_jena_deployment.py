@@ -18,6 +18,7 @@ class JenaDeploymentTests(unittest.TestCase):
         text = ''.join((ROOT / name).read_text() for name in ('docker-compose.yml', 'jena-compose.yml', 'archive-policy-compose.yml', 'swisscovery-compose.yml', 'jena-harvesters-compose.yml', 'jena-swisscovery-compose.yml'))
         env = {**os.environ, **{name: '/tmp/jena-fixture' for name in re.findall(r'\$\{([A-Z_]+)', text)}}
         env.update(OLDAP_JENA_RUNTIME_IMAGE='eclipse-temurin:25-jre', OLDAP_JENA_HEAP_MB='512',
+                   OLDAP_JENA_DIRECT_MB='512', OLDAP_JENA_MEMORY_MB='10240',
                    OLDAP_JENA_API_IMAGE='lrosenth/oldap-api@sha256:' + 'a' * 64,
                    OLDAP_JENA_TOOLS_IMAGE='lrosenth/oldap-tools@sha256:' + 'b' * 64,
                    OLDAP_JENA_HARVESTERS_IMAGE='lrosenth/oldap-harvesters@sha256:' + 'c' * 64,
@@ -40,6 +41,14 @@ class JenaDeploymentTests(unittest.TestCase):
                 command += ['-f', str(ROOT / 'jena-harvesters-compose.yml')]
             command += ['config', '--format', 'json']
             return json.loads(subprocess.check_output(command, env=env, text=True))['services']
+
+    def test_total_memory_and_direct_buffers_are_bounded(self):
+        """Resolve actual Compose budgets, including the no-swap relationship."""
+        service = self.model()['oldap-jena']
+        self.assertEqual(int(service['mem_limit']), 10240 * 1024**2)
+        self.assertEqual(service['memswap_limit'], service['mem_limit'])
+        self.assertEqual(service['environment']['JAVA_TOOL_OPTIONS'],
+                         '-XX:MaxDirectMemorySize=512m')
 
     def test_archive_policy_is_shared_read_only_with_explicit_publication(self):
         services = self.model(archive=True)
@@ -138,7 +147,7 @@ class JenaDeploymentTests(unittest.TestCase):
                   for name in ('identity', 'service', 'bootstrap', 'fulltext')}
         values.update(oldap_jena_root='/srv/storage/oldap-jena-test',
                       oldap_jena_runtime_image='eclipse-temurin@sha256:' + 'a' * 64,
-                      oldap_jena_heap_mb=8192, oldap_jena_api_image='lrosenth/oldap-api@sha256:' + 'a' * 64,
+                      oldap_jena_heap_mb=6144, oldap_jena_direct_mb=512, oldap_jena_memory_mb=10240, oldap_jena_api_image='lrosenth/oldap-api@sha256:' + 'a' * 64,
                       oldap_jena_tools_image='lrosenth/oldap-tools@sha256:' + 'b' * 64)
         properties = dict(line.split('=', 1) for line in render('jena-service.properties.j2', values).splitlines()
                           if line and not line.startswith('#'))

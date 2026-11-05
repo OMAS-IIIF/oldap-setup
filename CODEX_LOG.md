@@ -1,3 +1,9 @@
+### Update 2026-11-05 14:03
+- Decisions: Bound total Jena memory on the 16-GB home VM to 10 GiB, with 6 GiB heap, 512 MiB direct buffers and no container swap. Preserve images, service binary, data and public APIs.
+- Implementation: Added Compose/candidate budgets, capacity preflight, guarded home rollout with configuration rollback, cgroup sampler and runbook/evidence. Deployed successfully on home with coordinated writer shutdown and namespace consumer recreation. 375 read requests pass, common responses match before/after, 90-second sample peaks at 2.52 GiB without OOM/swap/restarts. 82 setup cases: 78 passed, four skipped; syntax checks pass.
+- Open: Automatic namespace recovery, mobile SIGTERM draining, longer/write-heavy capacity acceptance and off-host restore before production. No production deployment, image publication, push or merge.
+- Risks/Assumptions: Cache residency/accounting changes across restart; do not claim measured resident-memory reduction as a lasting saving. The historical native OOM cause remains unidentified; the cgroup protects host capacity but can still terminate Jena under extreme demand. Rollback was not fault-injected on home. See docs/jena-memory.md and results JSON.
+
 ### Update 2026-11-05 12:09
 - Decisions: Secure reviewed migration sources as local per-repository commits before further production readiness work; do not push, merge, publish or deploy in this step.
 - Implementation: Added coordinated revision/verification inventory in docs/jena-git-checkpoint.md. Setup suite: 81 cases, four skipped; all executed tests pass. Reviewed deployment evidence and candidate changes; whitespace and Python syntax checks pass. Read-only home browser checks render archive records and stories.

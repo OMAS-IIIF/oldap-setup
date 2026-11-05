@@ -13,7 +13,14 @@ services:
     command: [/run/oldap-jena/service.properties]
     environment:
       JAVA_HOME: /opt/java/openjdk
-      JAVA_HEAP_MB: ${OLDAP_JENA_HEAP_MB:-8192}
+      JAVA_HEAP_MB: ${OLDAP_JENA_HEAP_MB:-6144}
+      # Direct buffers are outside the heap; mapped TDB/Lucene files remain
+      # reclaimable under the overall cgroup budget below.
+      JAVA_TOOL_OPTIONS: "-XX:MaxDirectMemorySize=${OLDAP_JENA_DIRECT_MB:-512}m"
+    # Budget heap + native allocations + resident file pages, not only -Xmx.
+    # Equal memory/swap limits prevent this service from using host swap.
+    mem_limit: ${OLDAP_JENA_MEMORY_MB:-10240}m
+    memswap_limit: ${OLDAP_JENA_MEMORY_MB:-10240}m
     volumes:
       - type: bind
         source: ${OLDAP_JENA_RELEASE:?Select an immutable built release directory}

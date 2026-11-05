@@ -6,7 +6,9 @@
   become: true
   vars:
     oldap_jena_root: /srv/storage/oldap-jena-candidate
-    oldap_jena_heap_mb: 8192
+    oldap_jena_heap_mb: 6144
+    oldap_jena_direct_mb: 512
+    oldap_jena_memory_mb: 10240
     oldap_jena_runtime_image: eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0
   tasks:
     - name: Require an explicit local release and a bounded candidate path
@@ -19,6 +21,9 @@
           - oldap_jena_runtime_image is match('^eclipse-temurin@sha256:[a-f0-9]{64}$')
           - oldap_jena_heap_mb | int >= 512
           - oldap_jena_heap_mb | int <= 8192
+          - oldap_jena_direct_mb | int >= 64
+          - oldap_jena_memory_mb | int >= (oldap_jena_heap_mb | int + oldap_jena_direct_mb | int + 2048)
+          - oldap_jena_memory_mb | int <= (ansible_memtotal_mb | int - 4096)
 
     - name: Require separate private URL-safe keys from protected operator inputs
       ansible.builtin.assert:

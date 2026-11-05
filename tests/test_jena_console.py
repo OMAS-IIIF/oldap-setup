@@ -33,7 +33,7 @@ class FusekiAdministrationDeploymentTests(unittest.TestCase):
         names=['docker-compose.yml','jena-compose.yml','fuseki-admin-compose.yml']
         source=''.join((ROOT/n).read_text() for n in names)
         variables={n:'/tmp/fuseki-fixture' for n in re.findall(r'\$\{([A-Z_]+)',source)}
-        variables.update(OLDAP_JENA_HEAP_MB='512',OLDAP_JENA_CONSOLE_USER='admin',
+        variables.update(OLDAP_JENA_HEAP_MB='512', OLDAP_JENA_DIRECT_MB='512', OLDAP_JENA_MEMORY_MB='10240',OLDAP_JENA_CONSOLE_USER='admin',
             OLDAP_JENA_CONSOLE_PASSWORD_HASH='console-password-hash',GRAPHDB_BASIC_HASH='original-password-hash')
         with tempfile.TemporaryDirectory() as directory:
             env=Path(directory)/'.env';env.write_text('')

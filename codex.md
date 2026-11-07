@@ -1,5 +1,9 @@
 # OLDAP Setup Context
 
+- Home maintenance clients (2026-11-07): API/identity and Tools now use published a30230d5b695; 27 home checks and exact old/new story comparison pass. Data disk/ext4 expanded online to 350 GiB with unchanged UUID; compaction capacity guard passes. Java remains on previous bundle, scheduled compaction not enabled. See docs/jena-maintenance-rollout-results.json. Story acceptance supports explicit keyword-IRI semantic comparison; raw hashes remain available.
+
+- Maintenance publication (2026-11-07): exact a30230d5b695 API/Tools candidates are published for AMD64/ARM64 with multiarch indexes; protected tags unchanged. See docs/jena-maintenance-rollout-results.json. Home remains on prior release; data-disk expansion and native rollout acceptance are next.
+
 - Maintenance candidate (2026-11-07): API/Tools a30230d5b695 built and packaged integration-tested on AMD64/ARM64; exact image archives/source/wheels/service retained locally and on Studio. See docs/jena-maintenance-candidate-results.json. Not published/deployed; home remains on accepted prior images. Gate 4 stays open for home rollout/capacity and production rollback/mail acceptance.
 
 - Release retention (2026-11-07): accepted home API/media, Tools and standard/OCR harvester image archives plus deployed Jena bundle are retained on Studio under OLDAP_BACKUP/releases/home-accepted-20261107. Hash checks and development-Docker load/ID checks pass. New maintenance candidate and production rollback set remain separate. User declines home email; retain/test production SUCCESS/FAILURE emails to lukas.rosenthaler@unibas.ch. See docs/jena-image-retention-results.json and release operations.

@@ -1,3 +1,21 @@
+### Update 2026-11-07 12:38
+- Decisions: Use the enlarged existing data disk without reformatting; activate accepted API/Tools clients while keeping the Java service unchanged.
+- Implementation: Saved partition table, grew sdb1/ext4 online from 250 to 350 GiB with unchanged UUID/mount; copy-space reserve passes. Client update succeeds; 27 public/auth/media/fulltext checks pass. Old/new packaged APIs return all 30 stories identically. Diagnosed raw hash instability as keyword QName/full-IRI serialization; added optional field-specific semantic comparison with three passing tests. A 45-second observation shows zero TDB logical/allocated growth.
+- Open: Real write-job acceptance and coordinated new Java service/night-maintenance rollout; production fresh-source rollback and existing email checks.
+- Risks/Assumptions: Short observation does not predict long-term growth. Raw hash mismatch was investigated, not suppressed globally. No data formatting, production modification, Java restart or live compaction.
+
+### Update 2026-11-07 12:31
+- Decisions: Resume publication after owner renewed Docker Hub login; preserve all existing stable tags and the accepted artifact bytes.
+- Implementation: Published exact API/Tools a30230d5b695 AMD64/ARM64 images and multiarch indexes. Protected tags match before/after. Recorded publication digests; home data disk still reports 250 GiB with ext4 on /dev/sdb1; growpart/resize2fs available.
+- Open: Owner enlarges the existing Proxmox data disk; verify identity and expand Ubuntu partition/filesystem afterward. Home native acceptance and rollout remain pending.
+- Risks/Assumptions: No reformatting, filesystem modification, application deployment or production change performed.
+
+### Update 2026-11-07 12:23
+- Decisions: Publish only the accepted a30230d5b695 artifacts; preserve prior images and snapshots. Request additional VM capacity rather than removing retained recovery data.
+- Implementation: Home baseline passes 26 public/auth/media/fulltext checks with 30 stories; sudo access verified. Client update now pulls both immutable candidates before touching the live environment, so registry failures cannot change selected images; Ansible syntax check passes.
+- Open: Docker Hub rejects first push with insufficient_scope; owner login requested. Data disk is still 250 GiB with about 64 GiB free; owner expansion requested. Resume exact candidate publication, native acceptance and rollout after these prerequisites.
+- Risks/Assumptions: No image deployment, backend restart, data removal or production mutation. Registry publication failed before first candidate manifest completed; revalidate tags before retry.
+
 ### Update 2026-11-07 01:24
 - Decisions: Retain exact tested maintenance candidate bytes separately from the accepted live home release; do not declare production freeze before outstanding gates pass.
 - Implementation: Built API/Tools a30230d5b695 for AMD64/ARM64; imports/pip checks, 10 packaged idle-poll cases each and both packaged Jena network/replacement acceptances pass. Exported all four image IDs and copied the complete source/wheel/service/image bundle to Studio; receiver archive SHA-256/size verified. Updated release evidence and source inventory.

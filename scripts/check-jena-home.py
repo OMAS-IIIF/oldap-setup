@@ -20,10 +20,29 @@ def normalized(value):
     if isinstance(value, list):
         return sorted((normalized(item) for item in value), key=lambda item: json.dumps(item, sort_keys=True))
     return value
-    return value
 
 
-def run(expected_stories):
+def normalized_stories(rows):
+    """Compare the known keyword IRI aliases without changing literal text.
+
+    Workers may compact this registered list namespace differently. Only the
+    IRI-valued storyKeywords property is expanded; titles and other values stay
+    exact. This is an acceptance comparison, not an API serialization change.
+    """
+    expanded = []
+    for row in rows:
+        item = dict(row)
+        if isinstance(item.get('fasnacht:storyKeywords'), list):
+            item['fasnacht:storyKeywords'] = [
+                'http://fasnacht.digital/ns/StoryKeywords#' + value[len('L-StoryKeywords:'):]
+                if isinstance(value, str) and value.startswith('L-StoryKeywords:') else value
+                for value in item['fasnacht:storyKeywords']
+            ]
+        expanded.append(item)
+    return normalized(expanded)
+
+
+def run(expected_stories, expected_semantic_stories=None):
     """Return sanitized checks; stop on failed readiness, isolation or delivery."""
     report = {'checks': []}
 
@@ -86,6 +105,10 @@ def run(expected_stories):
         'sortBy': ['fasnacht:storyDate|desc'], 'limit': 1000}, public)
     report['stories'] = len(stories)
     report['stories_sha256'] = hashlib.sha256(json.dumps(normalized(stories), sort_keys=True).encode()).hexdigest()
+    report['stories_semantic_sha256'] = hashlib.sha256(json.dumps(normalized_stories(stories), sort_keys=True).encode()).hexdigest()
+    if expected_semantic_stories:
+        check('Story content equals old-image baseline after keyword IRI expansion',
+              report['stories_semantic_sha256'] == expected_semantic_stories)
     if expected_stories:
         check('All story response content equals frozen source baseline', report['stories_sha256'] == expected_stories)
     matches = []
@@ -114,5 +137,6 @@ def run(expected_stories):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--expected-stories-sha256')
+    parser.add_argument('--expected-stories-semantic-sha256')
     args = parser.parse_args()
-    print(json.dumps(run(args.expected_stories_sha256), indent=2))
+    print(json.dumps(run(args.expected_stories_sha256, args.expected_stories_semantic_sha256), indent=2))

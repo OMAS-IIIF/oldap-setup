@@ -215,3 +215,25 @@ source hashes, image archive hash and remaining gates are recorded in
 `jena-maintenance-candidate-results.json`. The complete local bundle and a
 Studio copy retain wheels, sources, images and service. No registry publication
 or application deployment occurred. The prior home release remains active.
+
+## Home client rollout and disk expansion
+
+The existing data disk was expanded from 250 to 350 GiB, followed by online
+`growpart /dev/sdb 1` and `resize2fs /dev/sdb1`. Mount, filesystem UUID and
+services remain intact. The partition table was retained under root before
+changing it. Free capacity now passes the complete-generation plus 20% reserve
+check. Exact measurements and rollout identities are in
+`jena-maintenance-rollout-results.json`.
+
+API/identity and Tools now select the published a30230d5b695 candidates.
+All 27 home checks pass with the old-image semantic story baseline. Raw story
+hashes vary because `fasnacht:storyKeywords` IRIs can be serialized as the
+registered `L-StoryKeywords:` prefix or full URI. The optional semantic checker
+expands only that known IRI field; literal text and all other values remain
+exact. Three tests cover equivalence, unchanged input and real differences.
+Old/new packaged API reads on the same dataset returned 30 identical stories.
+
+During a 45-second post-update observation neither logical nor allocated TDB
+bytes grew. This is short-term evidence, not a sustainable-rate forecast.
+The Java service itself has not yet been replaced; scheduled compaction is not
+yet active. Native write-job checks and coordinated service rollout remain next.

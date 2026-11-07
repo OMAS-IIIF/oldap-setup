@@ -24,6 +24,7 @@ def render(name: str, values: dict) -> str:
         trim_blocks=True,
     )
     env.filters["to_json"] = json.dumps
+    env.filters["bool"] = lambda value: value is True or str(value).lower() in ("true", "yes", "on", "1")
     env.filters["hash"] = lambda value, algorithm: hashlib.new(
         algorithm, str(value).encode()
     ).hexdigest()

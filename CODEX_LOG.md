@@ -1,3 +1,171 @@
+### Update 2026-11-07 01:17
+- Decisions: Retain the accepted home artifacts independently of registry tags before preparing the maintenance candidate. Owner declines home mail; production keeps existing SUCCESS/FAILURE messages to the specified university address.
+- Implementation: Revalidated all 14 running image identities; streamed API/media plus Tools/standard/OCR images to private Studio archives, rehashed and loaded into development Docker with exact ID checks. Copied deployed Jena bundle and verified both JAR hashes. API/lib changes checkpointed as 776e70a/80bf0a6; new immutable candidate build started.
+- Open: Candidate image acceptance/home rollout; final release freeze, production rollback artifacts and early-failure mail verification remain open with gate 3.
+- Risks/Assumptions: Load test used the existing development daemon, not an empty daemon; no application restart, production mutation or notification. Existing accepted snapshots and images retained.
+
+### Update 2026-11-07 01:09
+- Decisions: Restrict growth-triggered compaction starts to a configurable night window; retain elapsed minimum interval and native completion semantics.
+- Implementation: Added zone/start/end configuration, midnight-aware and DST-aware admission with a final pre-maintenance recheck; template defaults 01:00–03:00 Europe/Zurich. Native acceptance covers daytime exclusion, boundaries, summer/autumn time and midnight; 13 setup tests and all 26 packaged administration checks pass.
+- Open: Coordinate the backup window, measure home duration and deploy updated artifacts; admission window is not a hard finish deadline.
+- Risks/Assumptions: Active native compaction must not be interrupted at window end. No home/production activation; previous bundle evidence remains historical until superseded by this build.
+
+### Update 2026-11-07 00:59
+- Decisions: Prepare opt-in deployment controls for tested native compaction; do not enable it on old bundles or bypass capacity/recovery checks.
+- Implementation: Added complete compaction policy template and prepare-time source/range checks. Twelve deployment/config tests and playbook syntax check pass. Recorded API/service acceptance and remaining rollout steps.
+- Open: Build/publish updated API and Jena artifacts, verify home capacity/backup, activate and measure idle growth; finish existing production gates.
+- Risks/Assumptions: Current home dataset may fail the conservative copy-space plus 20% reserve guard. No live activation, production change, image publication or backup pruning.
+
+### Update 2026-11-07 00:38
+- Decisions: Analyze before release operations; preserve replay metadata and defer application fixes/live compaction. Prefer read-only idle eligibility checks followed by transactional reselection for real work.
+- Implementation: Added isolated Java diagnostics and evidence/runbook. Exact deployed service JAR: 1,000 reads add zero; empty commits add 152 MiB/2,000 receipts; aborts add 56 MiB/1,000 reservations. Stopped clone counts 272,226 quads (205,955 receipts); fresh copy verifies every quad and equal totals, reducing allocated TDB from 31,999,064 to 116,208 KiB. Identified import, three export, and mobile lifecycle empty-poll write paths. Official Jena documentation confirms copy-on-write/compaction behavior.
+- Open: Implement/test read-only prechecks and concurrency reselection; measure idle and real-job behavior; rehearse complete compact/rebuild/recovery with fulltext; define capacity policy and finish release/fresh-source rollback gates.
+- Risks/Assumptions: Synthetic storage experiment excludes HTTP/fulltext and cannot predict daily growth. Snapshot copy is diagnostic, not deployable; originals/backups retained. No live dataset opened by another JVM, no service restart, no application API/signature changes. Temporary diagnostic containers removed on exit.
+
+### Update 2026-11-07 00:26
+- Decisions: Resume gate 4 on home after VPN removal; verify real snapshot bytes despite unknown legacy freshness. Preserve old transfer archives while moving them off the media system disk.
+- Implementation: All 14 running image IDs match the accepted snapshot; both deployed Jena JAR hashes match build metadata. Studio fully verifies API/media archive SHA-256; legacy timestamp warning remains. Health checker now continues independent integrity checks after timestamp failure and reports per-archive results; seven unit tests pass. Added sanitized live evidence and operational findings. Both old transfer archives relocated with verified source/target SHA-256; media root drops 93%→47%, archives retained. Fifteen health/receiver/image tests pass; eleven Jena source hashes match deployed build.
+- Open: Image retention/export-load proof, optional harvester identities, TDB growth attribution, operating alerts and fresh-source rollback. Source inspection identifies empty job polling as a durable receipt-write path; measure before changing behavior.
+- Risks/Assumptions: TDB occupies about 31 GiB physically; no proof yet of how much is due to idle polling. No application-code change, service restart, compaction, notification or schedule. Backup age cannot be inferred from legacy file mtimes.
+
+### Update 2026-11-07 00:18
+- Decisions: Prepare gate 4 without declaring a release freeze or bypassing unfinished fresh-source rollback. Preserve old manifests; do not infer freshness from filesystem timestamps.
+- Implementation: Added source revision inventory and release/operations runbook. Producer records UTC completion after recovery/hashing. New explicit receiver check reports age, size/type, optional SHA-256 and free capacity with nonzero failure status. Six alarm tests plus existing backup/receiver/restore/image tests pass (27 total); Ansible syntax and whitespace checks pass.
+- Open: Home API/media/Studio SSH timeouts prevent runtime revalidation and receiver execution. Pending source checkpoint review, final image/bundle retention, TDB growth analysis, producer-attempt monitoring, alert delivery and production key/schedule acceptance; gate 3 remains open.
+- Risks/Assumptions: Metadata-only checking cannot detect same-size corruption; a selected valid snapshot cannot prove the latest attempt succeeded. Legacy manifests lack completion time and fail freshness checking. No deployment, pruning, notification, merge/push or automatic schedule.
+
+### Update 2026-11-07 00:12
+- Decisions: Keep fresh-source rehearsal gate open; distinguish live RDF preflight from coordinated database/media snapshot. Production maintenance requires a concrete reviewed pause/recovery sequence.
+- Implementation: Verified separate production sudo on both VMs; inventoried deployed images/mounts and source coordinator coverage. Fresh native RDF-star conversion/round-trip and offline persisted import pass (23 graphs). Confirmed legacy mobile worker lacks stop support and all eight source mobile registry tables are empty. Recorded source-specific snapshot requirements and gate status.
+- Open: Coordinated source snapshot; writer/job drain checks; isolated migration/API acceptance and real rollback; capacity and release/operations gates.
+- Risks/Assumptions: Live registry emptiness can change; recheck after closing ingress/helper. Existing home freeze omits production writer credentials and cannot be reused blindly. Private temporary evidence is not a backup. No production service/configuration changes or schedule execution.
+
+### Update 2026-11-07 00:01
+- Decisions: Mark restored write/worker gate passed within bounded functional scope. Preserve parser isolation, normal leases and 20% disk reserve; no production or application-image changes.
+- Implementation: Add opt-in ZIP workers plus internal export-only Caddy to restore preparation using recorded image IDs; preserve allowlisted parser capabilities. Add checkpointed HTTP fixture, serialized probe phases, sanitized transport errors and bounded claim-triggered SIGTERM observer. Editor create/edit/upload/ZIP import/transform/publication/replay, reader/public denials, exact ZIP bytes/range/auth, and new signed IIIF delivery pass. Active import drains in under one second and exits 0; no duplicate resources. Nine clones stopped; eight live container identities/start times unchanged; 26 live checks and eight restore tests pass. Runbook, sanitized evidence and final gates updated.
+- Open: Fresh-source cutover/rollback rehearsal; explain TDB growth; freeze/pin release and finalize production backup monitoring/retention. Mobile worker and forced-crash-at-commit coverage remain outside this probe.
+- Risks/Assumptions: Removed only duplicate clone incoming/api.tar after matching Studio Borg-extracted archive hash; source/Studio/Borg/restored data retained. Fixtures and two test accounts remain only in stopped clone. Initial restore capability omission and missing Caddy download route corrected; viewer fixture corrected because hasRole annotations are defaults, not existing-ACL ceilings. No public ingress, mail delivery, scheduling, merge or deployment to production.
+
+### Update 2026-11-06 23:33
+- Decisions: Full staged backup/restore integrity passes, but performance regresses; retain home_media_precopy=false as standard and explicit staging only for experiments. Proceed to remaining production gates, with TDB growth as a capacity investigation.
+- Implementation: Producer 2682.55s; API/media outage 975.7/979.9s. Studio pull/Borg check/extract/hash pass; 53.98 GB inputs add 2.09 GB deduplicated data. Borg-extracted files restored into six isolated containers using recorded image IDs. All 18 restored checks match baseline; six services stopped cleanly and eight live identities/start times unchanged. Final 26 public plus 18 functional checks pass. Five restore tests, five recovery/mode methods, Linux fixture, both manifest renders and diff checks pass. Evidence/runbooks/gates updated.
+- Open: Explain TDB index/archive growth (API archives 23.38→28.70→32.82 GB); restored write/worker acceptance; fresh production migration/rollback; operating policies and image retention.
+- Risks/Assumptions: Observational performance comparison; no claim that pre-copy is faster. Earlier redundant API-server copies/old clone retired only after Studio re-verification; all Borg archives retained. Current clone/data retained stopped. No production changes, pruning, schedule, compaction or write-workflow rehearsal.
+
+### Update 2026-11-06 22:58
+- Decisions: Full-size staging regresses home outage (about 16m20s vs 11m25s); restore offline tar/compare as default and retain staging only behind explicit home_media_precopy=true. Finish integrity/application acceptance regardless of performance outcome.
+- Implementation: Added mode selection, restored offline media tasks and method-specific manifest metadata. Eleven phase failure scenarios cover both modes; five test methods and Linux staging fixture pass. Restore now selects recorded snapshot image IDs instead of mutable tags; image selection test passes. Online archive creation continues after successful recovery and matching functional results.
+- Open: Complete publication, Studio/Borg, isolated restoration and final evidence; no production migration or schedule.
+- Risks/Assumptions: Two full offline checksum scans dominate staged outage on this storage. Performance comparison is observational; do not advertise the new method as faster or weaken verification to force a win.
+
+### Update 2026-11-06 22:29
+- Decisions: Execute full staged backup test 20261106-studio-staged-03, including Borg file recovery and isolated application restoration; no production changes.
+- Implementation: Added explicit guarded project/root selection to restore helpers for repeatable isolated runs. Four restore boundary/comparison tests pass. Reverified both older Studio extractions against hashes and checked Borg archives; removed stopped old clone and redundant API-server working copies, retiring old ready markers. Live data unchanged; 170 GiB free. Baseline functional/public checks pass; online media pre-copy running.
+- Open: Finish measured backup, Studio/Borg round-trip, new isolated application restoration, final comparison/shutdown and evidence.
+- Risks/Assumptions: Prior snapshots remain accepted on Studio/in Borg; their API-server source tar copies are now retired. New staging requires additional media disk space. No timing claim until this run completes.
+
+### Update 2026-11-06 22:24
+- Decisions: Pre-copy independent media staging online, finalize with checksum/deletion handling and verify offline, then archive/compare frozen staging after recovery. Keep API snapshot behavior and fail-closed publication.
+- Implementation: One media_paths list drives rsync/tar; record snapshot method in manifest. Real Linux fixture tests detect same-size/same-mtime edits, deletions, mode/xattr/hardlink/state changes and exclude resumed writes. Fixed implied-parent timestamp interference with --no-implied-dirs. Expanded Ansible failure injection; documented current production gates.
+- Open: Full-size timed run and isolated restore using the new staged archive; restored write/worker acceptance; fresh-production migration/rollback rehearsal and final production operations setup.
+- Risks/Assumptions: Extra complete media staging copy consumes space. Offline checksum reads remain; no speedup claimed yet. Only private Linux fixture touched on home in this step; no service restart, production change or backup schedule. Single-operator/no-concurrent-writer contract remains.
+
+### Update 2026-11-06 13:16
+- Decisions: Accept measured home snapshot 20261106-studio-timed-02 after source comparison, recovery, receiver checks and a full Borg integrity/extract/hash round-trip; retain both snapshots without pruning/scheduling.
+- Implementation: Producer 887.10s; external API outage 682.44s, media 685.46s (sampling bounds documented). Hashing used 187.26s online. Studio pull 256.58s, Borg create 67.42s/check 51.93s/extract 46.71s/hash 21.02s. All final public/semantic functional checks pass. Fourteen image records preserved; 49.86 GB input adds 2.10 GB deduplicated Borg data. Evidence/runbook/context updated.
+- Open: Media copy/source comparison consume about 608s offline; evaluate staged pre-copy/final synchronization with deletion and operation-state consistency. Long-term image retention and production recovery policy remain separate.
+- Risks/Assumptions: Observational run, not controlled comparison with prior cache/storage state; API archive grew. HTTP health probes measure sampled reachability, not every workflow. Known QName/full-IRI serialization variation is normalized only for RDF keyword comparison. New files were restored from Borg, not opened in a second application clone. No production changes.
+
+### Update 2026-11-06 12:43
+- Decisions: Run the authorized full home-only backup rehearsal with external API/media availability sampling; retain older snapshots and do not introduce scheduling/pruning.
+- Implementation: Baseline public and functional acceptance passed; capacity checked on API/media/Studio. Snapshot 20261106-studio-timed-02 is running with post-recovery hashing and image provenance. Private timing/probe logs are in /tmp/oldap-backup-timed-20261106 on the development machine.
+- Open: Finish recovery/hash/publication, Studio pull/Borg/integrity/extract/hash checks, compare final API/media state and record measured durations.
+- Risks/Assumptions: Home interruption explicitly authorized; production untouched. Timing is an observational full run, not a controlled benchmark against the previous cache/storage state. Keep all sources until verification succeeds.
+
+### Update 2026-11-06 12:27
+- Decisions: Move only finished-archive hashing after successful recovery; preserve offline copying/source comparison and fail-closed publication. Record actual image provenance without Docker environment secrets.
+- Implementation: Updated home backup playbook, added snapshot-images.py and allowlisted images.api/media manifest metadata; receiver preserves the extra fields. Added image metadata tests and Ansible phase failure injection; real read-only inventory succeeds on eight home services. Updated backup runbook/context.
+- Open: Measure a new full-size snapshot's pause; pre-copy/final-sync remains a separate consistency-sensitive optimization. Define image retention/export for unavailable registry digests.
+- Risks/Assumptions: Single operator/no concurrent deployments still required. Online hashing consumes disk bandwidth. Digests identify images but do not ensure registry retention. No server restart, new snapshot, schedule or production change in this step.
+
+### Update 2026-11-06 12:17
+- Decisions: Accept isolated home recovery based on verified Borg source files, runtime isolation and matching API/media results; preserve raw story hashes plus a fixture-specific RDF identifier comparison.
+- Implementation: Six restored containers passed 18 functional checks and storage/network/job isolation checks; all stopped afterward without OOM/forced kill. Eight live container identities/start times/images unchanged. Added restore runbook/evidence and four passing boundary/comparison tests; updated project context.
+- Open: Shorten backup pause; include immutable image provenance with snapshots; investigate QName/full-IRI story keyword serialization; production encryption/recovery policy and broader write/worker recovery acceptance remain separate.
+- Risks/Assumptions: Rehearsal used available host infrastructure and locally resolved Redis/SIPI images, not a fresh-host rebuild. Private restored data/configurations retained; no schedule or production changes. No actual upload/write workflow replayed.
+
+### Update 2026-11-06 12:08
+- Decisions: Rehearse the Borg-restored snapshot in six isolated containers on the home API VM; no live mounts, public ports, workers, email delivery or production changes. Smaller memory caps keep the test separate from performance acceptance.
+- Implementation: Added guarded archive validation/extraction and Compose rebasing in scripts/prepare-home-restore.py, read-only functional comparison in scripts/check-home-restore.py, and three passing archive/mount boundary tests. Transferred Borg-extracted files from Studio; extraction in progress. Live reference functional checks pass.
+- Open: Complete extraction, verify isolated network/storage/runtime boundaries, start only explicit services, compare restored API/media behavior, stop the test stack and document evidence.
+- Risks/Assumptions: Redis/SIPI snapshot references are mutable tags; rehearsal resolves to locally available image IDs, with SIPI copied by the live digest. Full disaster recovery needs image provenance retained with each snapshot. Current test changes only additive home paths/images.
+
+### Update 2026-11-06 01:10
+- Decisions: Keep manual home-only unencrypted Borg operation and approved 7/4/3 retention; do not equate backup-file extraction with running application recovery.
+- Implementation: Archived accepted 44.5 GB snapshot (10.575 GB deduplicated data), passed full Borg data check, extracted both tar files and manifest into a new private Studio directory, verified exact sizes/hashes and manifest equality. Creation 123.30s, integrity 45.95s, extract 45.38s, restore verification 19.21s. Preview/applied retention kept sole archive. Installed runbook copy on Studio; sanitized evidence in docs/home-borg-results.json.
+- Open: Isolated Linux service/data restore and API/media comparison; shorten producer pause; production encryption and recovery information in Apple Passwords if selected. No automatic backup schedule.
+- Risks/Assumptions: Home at-rest encryption intentionally disabled. Retained source and extracted test files consume additional space; no copies deleted. Production and live home services untouched. Real acceptance used instead of artificial tests for documentation/operational work.
+
+### Update 2026-11-06 01:06
+- Decisions: User approved unencrypted Borg for home only, 7 daily/4 weekly/3 monthly retention, and Apple Passwords for future encrypted-production recovery information. No automatic schedule before isolated application restoration.
+- Implementation: Initialized private Studio repository and started archiving the previously verified snapshot; added docs/home-borg.md with archive, integrity, extraction and scoped retention commands. Source hashes rechecked successfully.
+- Open: Complete real Borg integrity/extraction/hash acceptance and record results; shorten producer downtime and rehearse isolated Linux application restore. Production encryption still undecided.
+- Risks/Assumptions: Home repository contains configuration/secrets without added at-rest encryption by explicit user choice. Retention applies only to home-* Borg archives; staging/source copies remain. No server or production changes.
+
+### Update 2026-11-06 00:49
+- Decisions: Accept home rehearsal only after source comparison, successful recovery and matching receiver hashes. Use whole-file retry for invalid partial archives; reuse only already verified complete files.
+- Implementation: Published snapshot 20261106-studio-rehearsal-01; 44,536,965,120 bytes accepted on Studio with matching SHA-256. Producer took 1232.4s; final pull 225.63s. Two real interruptions never published partial sets. Five receiver tests plus five recovery/mobile tests pass; all 26 before/after live checks pass with unchanged stories. Evidence in docs/home-snapshot-pull-results.json.
+- Open: Shorten offline window (full copy/compare/hash dominated); isolated application restore; Borg encryption/key recovery/retention; production capacity and concurrent-job exclusion. No schedule or production changes.
+- Risks/Assumptions: Compressed delta retry was CPU-bound, so removed; full-length partial files cannot be trusted without hashes. Producer timing includes preflight/recovery, not an independently measured exact outage. Archives contain secrets and remain private, without added at-rest encryption. No restore-readiness claim yet.
+
+### Update 2026-11-06 00:13
+- Decisions: Extend the existing home-only offline snapshot with opt-in publication after successful recovery and a manually invoked Studio pull; no automatic schedule or production changes.
+- Implementation: Added private receiver access and final ready.json marker; pull-home-snapshot.py validates fixed paths/identity, serializes pulls, verifies sizes/SHA-256 and atomically accepts complete sets. Four receiver failure/retry tests and five existing recovery/mobile tests pass; Ansible syntax and diff checks pass. Live rehearsal 20261106-studio-rehearsal-01 is in progress.
+- Open: Record external-copy and post-recovery acceptance; Borg encryption/key recovery, retention, incremental media design and isolated application restore.
+- Risks/Assumptions: Single operator/no external writers; full tar transfer contains secrets and stays private but is not additionally encrypted at rest. Archives immutable by convention; no production scheduling claim. Existing default Python lacked PyYAML; recovery tests passed under Ansible's Python environment.
+
+### Update 2026-11-06 00:04
+- Decisions: Use a separate unattended Studio identity/configuration; verify server keys through existing trusted development-machine connections.
+- Implementation: Created Studio Ed25519 key, appended restrict public-key entries to both home accounts, installed dedicated host-key/config files. Both BatchMode/strict SSH probes pass; rsync available on endpoints.
+- Open: Final snapshot publication paths, read-only transfer restriction, real repository encryption/key recovery and full pull/restore acceptance.
+- Risks/Assumptions: restrict disables forwarding/PTY, not arbitrary account commands. Existing account permissions still apply. No private key copied, production change, service restart or scheduled job.
+
+### Update 2026-11-06 00:02
+- Decisions: Use official Homebrew Borg 1.4.5; native macOS detection now works with installed Homebrew 7.0.12, without bypasses.
+- Implementation: Installed Borg and required dependencies on Studio. Synthetic create/zstd, full data integrity check and extraction pass; exact bytes, Unicode, empty file, symlink and file mode verified. Evidence path recorded in production-backup-inventory.md.
+- Open: Studio SSH trust/authentication; real repository encryption/key recovery; coordinated home snapshots, pull and full isolated restore rehearsal.
+- Risks/Assumptions: Homebrew updated dependency links including default Python 3 to 3.15 and OpenSSL to 4. Unencrypted synthetic repository is test-only. No real backup data or service/schedule changes.
+
+### Update 2026-11-06 00:00
+- Decisions: Keep home DNS configuration; user changed Private Relay setting for Studio networking.
+- Implementation: Verified correct system DNS resolution and SSH reachability for both home servers; recorded evidence in backup inventory.
+- Open: Verified SSH host-key trust and receiver authentication; Borg installation remains blocked by Homebrew macOS detection.
+- Risks/Assumptions: Connectivity is confirmed, not authenticated access. No remote files or services changed in this check.
+
+### Update 2026-11-05 23:56
+- Decisions: Keep the configured home DNS server; diagnose stale system resolution rather than replace DNS settings.
+- Implementation: Direct DNS answers verified for API/media; attempted authorized Borg installation and Homebrew metadata update. Documented results in backup inventory.
+- Open: Privileged macOS DNS cache reset; supported Borg installation on Studio macOS 27.
+- Risks/Assumptions: Borg installation failed on unsupported macOS detection; brew update reports current. No backup or repository initialized, no server changes.
+
+### Update 2026-11-05 23:48
+- Decisions: Prepare Studio as a separate home rehearsal receiver using Homebrew and Borg 1.4 compatibility; leave production backups unchanged.
+- Implementation: Verified SSH, ARM64 Homebrew, protected backup directories and power settings; documented receiver prerequisites in production-backup-inventory.md.
+- Open: Owner acceptance of Xcode license; correct Studio DNS for API/media; Borg installation and receiver SSH setup, then matched snapshot/restore rehearsal.
+- Risks/Assumptions: Homebrew inspection is blocked by the license; both home servers resolve to 240.254.254.254 on Studio and SSH times out. No package, schedule, repository or server changes made this turn.
+
+### Update 2026-11-05 18:25
+- Decisions: Preserve the existing office Mac rsync/Borg pull workflow when designing Jena backups; production inspection remains read-only.
+- Implementation: Documented LaunchAgent schedule, exact source/destination paths, Borg retention, latest successful run and server-to-office RDF SHA-256 parity in docs/production-backup-inventory.md.
+- Open: Coordinated database/media/operational-state snapshot publication; unattended LaunchAgent behavior; Borg key recovery and isolated restore acceptance.
+- Risks/Assumptions: Existing media copy reads live Fasnacht data 45 minutes after RDF export, omits other projects/operational state and has unreliable failure-mail control flow. No backup, restore, prune, integrity job or remote configuration change was executed.
+
+### Update 2026-11-05 18:15
+- Decisions: Inspect production backups read-only; preserve the user's office-computer intranet pull model for the Jena design. Home is only a backup/restore rehearsal target.
+- Implementation: Recorded installed 03:15 GraphDB/Fasnacht export job, effective harvest lock, retention and latest gzip integrity/hashes in docs/production-backup-inventory.md. Last production run succeeded in eight seconds. Inspected media-host schedules; office pull script remains unknown.
+- Open: Identify/read office pull job and existing restore procedure before designing complete matched Jena/media snapshot publication and external restore acceptance.
+- Risks/Assumptions: Current inspected script alone does not capture all operational/media state; external job may cover more. HTTP error handling, failure-mail control flow and separate latest pointers need attention in the successor. No production mutations, backup runs, exports copied locally or credentials read.
+
 ### Update 2026-11-05 17:49
 - Decisions: Use graceful SIGTERM mobile draining for home maintenance; keep API ingress reachable until mobile completion. Do not forcibly terminate a converter/commit after an arbitrary 90-second wait.
 - Implementation: Shared quiescence preflights drain support, uses Docker timeout -1, then closes API ingress. Console/memory/recovery workflows default to SIGTERM; legacy identity maintenance shares quiescence and reopens media ingress. Retained explicit empty-registry SIGINT compatibility. Real Ansible failure injection proves unsupported/failed drain never closes API ingress. 96 setup cases pass (92 passed, four skipped). Sibling media candidate a7b5d97ba17b is deployed; real SIGTERM exits zero in 0.159 seconds and 26 public API/media checks pass.

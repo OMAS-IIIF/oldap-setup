@@ -1,0 +1,58 @@
+{
+  "observed_at": "2026-11-07T00:16:24.998819+00:00",
+  "status": "local_inventory_not_release_freeze",
+  "repositories": {
+    "FasnachtsPage": {
+      "branch": "migration/jena",
+      "revision": "333b250d3910002b8bcb4338dba97f1720ca132d",
+      "clean": true
+    },
+    "oldap-api": {
+      "branch": "migration/jena",
+      "revision": "776e70a1f706e0015c60552cacf25fb6fb21b8b6",
+      "clean": true
+    },
+    "oldap-app": {
+      "branch": "migration/jena",
+      "revision": "6c01cc453566faa5ffe12a4d87b2ff73f3b6e5ec",
+      "clean": true
+    },
+    "oldap-harvesters": {
+      "branch": "migration/jena",
+      "revision": "4609323335409e765fd1ed1a7258e55e0ea33b94",
+      "clean": true
+    },
+    "oldap-mediaserver": {
+      "branch": "migration/jena",
+      "revision": "397de927dc8dbbdf4c68a37b2f2f943d36b0979b",
+      "clean": true
+    },
+    "oldap-setup": {
+      "branch": "migration/jena",
+      "revision": "f30909e97ed4ab74b60af8be1b8de0ed48d8aa45",
+      "clean": false
+    },
+    "oldap-tools": {
+      "branch": "migration/jena",
+      "revision": "a4be9592f3f66824d9365290c2f10d6a0e0cda69",
+      "clean": true
+    },
+    "oldaplib": {
+      "branch": "migration/jena",
+      "revision": "80bf0a641263a258587e7aff8b4026e38eff0722",
+      "clean": true
+    },
+    "salsah-2": {
+      "branch": "migration/jena",
+      "revision": "a0bb3ff3b70c5d6138deb63f10aaee5f5497ccac",
+      "clean": true
+    }
+  },
+  "runtime_reverification": "14 running image IDs match accepted snapshot; deployed Jena JAR hashes verified; see jena-live-release-check.json",
+  "remaining": [
+    "fresh-source coordinated snapshot and rollback",
+    "image retention/export verification",
+    "TDB growth investigation",
+    "production schedule, alert delivery and key recovery acceptance"
+  ]
+}

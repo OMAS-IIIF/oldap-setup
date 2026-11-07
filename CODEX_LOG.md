@@ -1,3 +1,9 @@
+### Update 2026-11-07 22:51
+- Decisions: Fix launcher defaults without duplicating provider configuration or weakening mail permissions; retain missing provider-specific rollback inputs as an immutable supplement.
+- Implementation: Resolve profiled Compose command lists privately before CLI entrypoint override. Seven existing tests plus 12 real GraphDB/Jena/provider/override combinations pass; production preimage checked, launcher atomically replaced with backup, both CLI help checks pass. OCR load/re-export and source configuration comparison pass; office receiver verifies six supplemental files / 3,946,196,607 bytes. Provider-selection regression plus four retention tests pass. Owner confirms all three diagnostic/synthetic notifications arrived.
+- Open: Home launcher deployment awaits VPN switch; observe next normal scheduled import. Historical nullmailer queue failure not reproducible; current end-to-end delivery accepted. Coordinated production data/media snapshot and rollback rehearsal remain separate.
+- Risks/Assumptions: No full import manually started and no service/timer restarted. Only launcher changed on production. Synthetic notification tests intercepted harvester subprocesses, not the real mail commands. Original rollback package plus supplement must be retained together.
+
 ### Update 2026-11-07 22:41
 - Decisions: Diagnose production harvesting read-only; do not rerun writes or send mail during inspection.
 - Implementation: November 1 logs show both CLIs reject missing --config. Real isolated Compose echo probe reproduces default-command loss with CLI --entrypoint; current Jena launcher shares the defect. Recorded independent unresolved nullmailer queue failure and current capacity/permission checks.

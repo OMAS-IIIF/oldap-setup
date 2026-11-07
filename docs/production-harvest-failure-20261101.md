@@ -61,3 +61,38 @@ the intended Sunday-night migration. Without a launcher correction the scheduled
 default invocation is expected to fail again. This investigation neither starts
 harvesting nor changes that schedule. Keep the defect separate from migration
 regressions: it already exists on the running GraphDB system.
+
+## Correction and acceptance — 2026-11-07 evening
+
+`run-harvester.sh` now resolves the selected Compose stack's `command` as a list
+when no manual arguments are supplied, then passes that list explicitly to
+`compose run`. Resolution enables all profiles because the harvester is profiled;
+otherwise it can disappear from `config` output. Expanded configuration stays in
+memory and is never logged. Explicit arguments still replace the whole default
+command. Both maintenance locks and the backend/policy overlay selection remain.
+
+Seven existing schedule tests and a real Docker runtime test pass. The latter
+covers 12 combinations: GraphDB/Jena, Europeana/Swisscovery, and default/help/
+explicit overrides, including argument whitespace and profiled services. The
+fixture has no network and cannot import application data. The original live
+launcher checksum was checked against the retained copy before atomic replacement
+with backup. Both actual provider `--help` invocations pass on production. New
+launcher SHA-256: `39db43969b5d10745f214a664e13eb69e59d3e937832d69c30753b03a6db0138`.
+No full harvest was manually started; the normal next timer is November 8 05:00 CET.
+
+Mail revalidation: a diagnostic message succeeds with the original 0077 umask.
+The installed weekly reporter then handled synthetic success and failure results;
+only its harvester subprocesses were replaced by fixtures. Both real notification
+commands returned zero. The owner confirmed receipt of all three clearly marked
+test messages. Do not claim umask caused the historical error: it was ruled out
+as a reproducible current cause. No mail permissions/configuration were loosened;
+the historical queue-injection cause remains unknown, while current end-to-end
+notification delivery is accepted.
+
+Retention now enumerates the actual Europeana and Swisscovery overlay selections,
+not only the base stack. It includes read-only provider configuration, secrets,
+OCR model and the separate `0.1.13-ocr` image. A regression test distinguishes base
+versus OCR selection and excludes writable live report directories. The immutable
+supplement `production-rollback-harvest-20261107` accompanies the earlier package;
+its source tar comparison, transfer hashes, image load/re-export and office
+receiver evidence are recorded in `jena-production-retention-results.json`.

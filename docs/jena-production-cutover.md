@@ -157,9 +157,10 @@ The live GraphDB source has now been retained without stopping services:
   Live Redis data is deliberately excluded. Media configuration includes its
   deployment inputs and Caddy state. Archives were compared to source files.
 - Eight running API images, three additional configured batch/helper images and
-  three distinct media images are retained. Follow-up inspection found a separate Swisscovery `0.1.13-ocr` image outside
-  the base Compose selection; it and external provider configuration/model
-  inputs still need retention. See `production-harvest-failure-20261101.md`.
+  three distinct media images are retained. The separate Swisscovery `0.1.13-ocr` image and external provider
+  configuration/model inputs are retained in the accompanying
+  `production-rollback-harvest-20261107` supplement. See
+  `production-harvest-failure-20261101.md` for corrected provider enumeration.
 
 The production Docker export contains complete Docker manifests but its API and
 batch OCI indexes list only one image. Docker Desktop also identifies images by
@@ -202,7 +203,9 @@ snapshot and the isolated production rollback rehearsal above.
 
 At retention, backup and harvest timers were enabled/active. The harvest service
 reported an existing failed November 1 05:00 run (exit 1 after five seconds).
-Investigate this before planning the production migration/harvest schedule; do
-not reset its state or attribute it to this read-only preparation. Receiver
+The missing-default-arguments defect is now corrected and deployed; both provider
+help checks pass. The normal next full job remains to be observed. Current
+SUCCESS/ERROR notifications were delivered and confirmed by the owner. Do not
+attribute the historical failure to migration or reset its state to hide it. Receiver
 verification used `/opt/homebrew/bin/python3`; system Python is blocked by an
 unaccepted Xcode license. No license or software installation was changed.

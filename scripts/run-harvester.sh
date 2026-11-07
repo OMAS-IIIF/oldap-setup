@@ -46,6 +46,28 @@ else
     entrypoint="$command"
 fi
 export COMPOSE_FILE="$files"
+# Compose run --entrypoint discards the service command. Resolve defaults from
+# the selected stack and pass them explicitly, preserving argument boundaries.
+# Expanded configuration contains secrets: keep it in memory and never log it.
+if [ "$#" -eq 0 ]; then
+    exec python3 - "$compose_dir" "$source" "$entrypoint" <<'PYTHON'
+import json
+import os
+import subprocess
+import sys
+
+folder, provider, entrypoint = sys.argv[1:]
+base = ['docker', 'compose', '--project-directory', folder, '--env-file', folder + '/.env']
+resolved = subprocess.run(base + ['--profile', '*', 'config', '--format', 'json'], capture_output=True, text=True)
+if resolved.returncode:
+    raise SystemExit('Cannot resolve harvester configuration; no job started')
+command = json.loads(resolved.stdout)['services']['oldap-harvesters'].get('command')
+if not isinstance(command, list) or not command or not all(isinstance(arg, str) for arg in command):
+    raise SystemExit('Harvester requires a nonempty Compose command list; no job started')
+os.execvp('docker', base + ['run', '--rm', '--no-deps', '-T', '--name', 'oldap-batch-' + provider,
+                          '--entrypoint', entrypoint, 'oldap-harvesters', *command])
+PYTHON
+fi
 exec docker compose --project-directory "$compose_dir" --env-file "$compose_dir/.env" \
     run --rm --no-deps -T --name "oldap-batch-$source" \
     --entrypoint "$entrypoint" oldap-harvesters "$@"

@@ -159,8 +159,71 @@
     "Load/re-export checks use the existing development Docker daemon, not a clean recovery host",
     "Original legacy archives retained alongside verified cross-engine import copies",
     "No production cutover, write pause, configuration replacement, timer change or email delivery test",
-    "Existing November 1 harvester failure needs investigation before migration scheduling",
-    "Follow-up provider-overlay inspection found omitted production 0.1.13-ocr image and external provider configuration/model inputs; complete these before certifying batch rollback coverage"
+    "Missing-argument defect corrected on production; next full scheduled import has not been observed. Historical mail queue failure is not reproducible; current notification delivery confirmed by owner."
   ],
-  "batch_coverage_complete": false
+  "batch_coverage_complete": true,
+  "harvester_launcher": {
+    "production_deployed": true,
+    "sha256": "39db43969b5d10745f214a664e13eb69e59d3e937832d69c30753b03a6db0138",
+    "provider_help_checks": [
+      "europeana",
+      "swisscovery"
+    ],
+    "real_runtime_combinations": 12,
+    "full_import_started": false
+  },
+  "notification_acceptance": {
+    "diagnostic_messages": 1,
+    "synthetic_success_messages": 1,
+    "synthetic_failure_messages": 1,
+    "local_mail_exit_codes": [
+      0,
+      0,
+      0
+    ],
+    "owner_confirmed_all_three_received": true,
+    "historical_queue_failure_cause": "not established; not currently reproducible",
+    "mail_permissions_changed": false
+  },
+  "harvest_supplement": {
+    "source": {
+      "scope": "Provider-specific rollback supplement",
+      "ocr_reference": "lrosenth/oldap-harvesters:0.1.13-ocr",
+      "ocr_image_id": "sha256:5e5a2610717bb599e44206481b55bd424ee2a8d3e86353e87650a3bccb16c0b9",
+      "input_paths": [
+        "/opt/oldap/.env/archive-writer-client",
+        "/opt/oldap/compose/run-locked.py",
+        "/srv/storage/oldap-data/oldap-harvesters/harvesters.toml",
+        "/srv/storage/oldap-data/oldap-harvesters/secrets",
+        "/srv/storage/oldap-data/oldap-harvesters/swisscovery/config.toml",
+        "/srv/storage/oldap-data/oldap-harvesters/swisscovery/german_print.mlmodel"
+      ],
+      "archives": {
+        "ocr-image.tar": {
+          "bytes": 1964864512,
+          "sha256": "0539f5fde9b0455a733e1bc142da412f57736dd892070d38a9c43271467364c2"
+        },
+        "provider-inputs.tar": {
+          "bytes": 16455680,
+          "sha256": "18921460c07fc33dbd5a85f8d5cd998cf8397155838c21d81c69991ba7181846"
+        }
+      }
+    },
+    "image_verification": {
+      "original": "ocr-image.tar",
+      "compatibility_archive": "ocr-compatible.tar",
+      "compatibility_sha256": "0a0d3ff1513cbf0c482317f7274f908c17e27d725388d93c70f3dbc7caeb7cdb",
+      "image_config_ids": [
+        "5e5a2610717bb599e44206481b55bd424ee2a8d3e86353e87650a3bccb16c0b9"
+      ],
+      "load_and_reexport_verified": true
+    },
+    "receiver": {
+      "status": "passed",
+      "files": 6,
+      "bytes": 3946196607,
+      "receiver": "/Users/rosenth/OLDAP_BACKUP/releases/production-rollback-harvest-20261107",
+      "sha256_and_permissions_verified": true
+    }
+  }
 }

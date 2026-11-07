@@ -28,6 +28,33 @@ def stable_inventory(containers):
                         'started': c['State']['StartedAt']} for c in containers}
 
 
+def configuration_inputs(role, compose):
+    """Resolve base and provider overlays privately, including read-only job inputs."""
+    selections = [None]
+    if role == 'api':
+        # Profiles alone do not select the provider-specific Swisscovery overlay.
+        selections += [
+            ['docker-compose.yml', 'writer-compose.yml', 'harvest-schedule-compose.yml'],
+            ['docker-compose.yml', 'writer-compose.yml', 'swisscovery-compose.yml', 'harvest-schedule-compose.yml'],
+        ]
+    refs = set()
+    provider_inputs = set()
+    for selection in selections:
+        environment = dict(os.environ)
+        if selection:
+            environment['COMPOSE_FILE'] = ':'.join(str(Path(compose)/name) for name in selection)
+        configuration = json.loads(output(['docker', 'compose', '--profile', '*', 'config', '--format', 'json'],
+                                          cwd=compose, env=environment))
+        for service in configuration['services'].values():
+            if service.get('image'):
+                refs.add(service['image'])
+        if selection:
+            for mount in configuration['services']['oldap-harvesters'].get('volumes', []):
+                if mount.get('type') == 'bind' and mount.get('read_only'):
+                    provider_inputs.add(mount['source'])
+    return sorted(refs), provider_inputs
+
+
 def retain(role, root):
     """Save a new role-specific preparation package, not live application data.
 
@@ -50,8 +77,7 @@ def retain(role, root):
     containers = json.loads(output(['docker', 'inspect', *names]))
     before = stable_inventory(containers)
     compose = '/opt/oldap/compose' if role == 'api' else '/opt/oldap-mediaserver/compose'
-    refs = sorted(set(output(['docker', 'compose', '--profile', '*', 'config', '--images'],
-                             cwd=compose, text=True).split()))
+    refs, provider_inputs = configuration_inputs(role, compose)
     images = json.loads(output(['docker', 'image', 'inspect', *refs]))
     running_ids = {c['Image'] for c in containers}
     ids = sorted({i['Id'] for i in images} | running_ids)
@@ -61,7 +87,11 @@ def retain(role, root):
     paths = ['/opt/oldap', '/srv/storage/caddy'] if role == 'api' else ['/opt/oldap-mediaserver']
     for pattern in ['/etc/systemd/system/oldap*', '/etc/oldap*', '/usr/local/bin/oldap*']:
         paths.extend(glob.glob(pattern))
-    paths = sorted(set(paths))
+    paths.extend(provider_inputs)
+    # A parent already retained covers nested configuration files and directories.
+    unique_paths = set(paths)
+    paths = sorted(path for path in unique_paths if not any(
+        str(parent) in unique_paths for parent in Path(path).parents))
     archive = root / 'configuration.tar'
     output(['tar', '--acls', '--xattrs', '--exclude=opt/oldap/compose/redis-data',
             '-cpf', str(archive), '-C', '/', *[p.lstrip('/') for p in paths]])

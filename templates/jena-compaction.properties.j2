@@ -1,0 +1,10 @@
+{% if oldap_jena_compaction_enabled | default(false) | bool %}
+# Growth-triggered maintenance: the service serializes this with transactions.
+compactionCheckSeconds={{ oldap_jena_compaction_check_seconds | default(900) }}
+compactionMinSeconds={{ oldap_jena_compaction_min_seconds | default(86400) }}
+compactionGrowthBytes={{ oldap_jena_compaction_growth_bytes | default(536870912) }}
+compactionGrowthRatio={{ oldap_jena_compaction_growth_ratio | default(2.0) }}
+compactionZone={{ oldap_jena_compaction_zone | default('Europe/Zurich') }}
+compactionWindowStart={{ oldap_jena_compaction_window_start | default('01:00') }}
+compactionWindowEnd={{ oldap_jena_compaction_window_end | default('03:00') }}
+{% endif %}

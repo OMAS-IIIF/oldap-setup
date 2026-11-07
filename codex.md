@@ -1,14 +1,10 @@
 # OLDAP Setup Context
 
-- Home maintenance clients (2026-11-07): API/identity and Tools now use published a30230d5b695; 27 home checks and exact old/new story comparison pass. Data disk/ext4 expanded online to 350 GiB with unchanged UUID; compaction capacity guard passes. Java remains on previous bundle, scheduled compaction not enabled. See docs/jena-maintenance-rollout-results.json. Story acceptance supports explicit keyword-IRI semantic comparison; raw hashes remain available.
-
-- Maintenance publication (2026-11-07): exact a30230d5b695 API/Tools candidates are published for AMD64/ARM64 with multiarch indexes; protected tags unchanged. See docs/jena-maintenance-rollout-results.json. Home remains on prior release; data-disk expansion and native rollout acceptance are next.
-
-- Maintenance candidate (2026-11-07): API/Tools a30230d5b695 built and packaged integration-tested on AMD64/ARM64; exact image archives/source/wheels/service retained locally and on Studio. See docs/jena-maintenance-candidate-results.json. Not published/deployed; home remains on accepted prior images. Gate 4 stays open for home rollout/capacity and production rollback/mail acceptance.
+- Home maintenance accepted (2026-11-07): published API/Tools a30230d5b695 and Java service b112fc4d are active. Isolated real writes/workers pass 31 checks; live checks pass 27. Data disk is 350 GiB, with about 122 GiB available after the verified stopped-source API snapshot. Growth-triggered native compaction may start only 01:00–03:00 Europe/Zurich; first real overnight duration/reclamation remains to be observed. Coordinated stop waits for active compaction; fallback to an old service is blocked by pending intent. See docs/jena-maintenance-service-results.json and release operations. Production rollback/mail gates remain open.
 
 - Release retention (2026-11-07): accepted home API/media, Tools and standard/OCR harvester image archives plus deployed Jena bundle are retained on Studio under OLDAP_BACKUP/releases/home-accepted-20261107. Hash checks and development-Docker load/ID checks pass. New maintenance candidate and production rollback set remain separate. User declines home email; retain/test production SUCCESS/FAILURE emails to lukas.rosenthaler@unibas.ch. See docs/jena-image-retention-results.json and release operations.
 
-- Night maintenance (2026-11-07): compaction admission now requires a configured local-time window (default 01:00–03:00 Europe/Zurich); all seven policy keys are required. An admitted run finishes safely even after window end. Coordinate backups and measure runtime before home activation; not deployed.
+- Night maintenance (2026-11-07): compaction admission now requires a configured local-time window (default 01:00–03:00 Europe/Zurich); all seven policy keys are required. An admitted run finishes safely even after window end. Enabled on home; coordinate backups and measure the first live nighttime runtime.
 
 - TDB growth maintenance (2026-11-07): Growth-triggered compaction configuration is optional and requires a bundle containing JenaCompaction. Candidate validation and template tests cover the four policy settings. Local API/service acceptance is recorded in docs/jena-compaction-acceptance.json; no live activation yet. See sibling oldaplib/docs/migration/jena-compaction.md for capacity, maintenance responses and recovery.
 

@@ -1,0 +1,128 @@
+{
+  "date": "2026-11-07",
+  "scope": "home only; production unchanged",
+  "service_sha256": "b112fc4db082b315f2297eb1d3527321ec85c2de8943beaa466284209b8a76ad",
+  "snapshot": {
+    "path": "/srv/storage/oldap-fuseki-before-20261107T125857/api.tar",
+    "verification": "tar --compare against stopped source passed",
+    "scope": "API dataset, receipts, text index, Redis and configuration; not a new media snapshot"
+  },
+  "live": {
+    "checks": [
+      "API selects Jena",
+      "GraphDB is stopped",
+      "Private Jena backend has no published ports",
+      "oldap-api running",
+      "compose-oldap-jena-1 running",
+      "compose-oldap-jena-identity-1 running",
+      "redis running",
+      "caddy running",
+      "API /status HTTP 200",
+      "Existing administrator can log in",
+      "Media upload accepts a fresh API token before form validation",
+      "Media upload rejects missing or invalid access token",
+      "Media upload rejects missing or invalid access token",
+      "API /admin/auth/unknown HTTP 200",
+      "Proxy blocks private identity callback",
+      "Proxy blocks private identity callback",
+      "Export worker route reaches service authentication without proxy shadowing",
+      "API /data/search/fasnacht/class/fasnacht:Story HTTP 200",
+      "Story content equals old-image baseline after keyword IRI expansion",
+      "API /data/search/fasnacht HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "Nonempty fulltext AND search is independent of word order",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 HTTP 200",
+      "Signed IIIF metadata delivered by home media service",
+      "Signed image delivered as JPEG",
+      "fasnacht.home.org page available",
+      "app.home.org page available"
+    ],
+    "images": {
+      "oldap-api": "lrosenth/oldap-api@sha256:5ba4f39f95976c1db88144a6268d7d2042820bc2067f9e1aa2fa0d0de42a49d9",
+      "compose-oldap-jena-1": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+      "compose-oldap-jena-identity-1": "lrosenth/oldap-api@sha256:5ba4f39f95976c1db88144a6268d7d2042820bc2067f9e1aa2fa0d0de42a49d9",
+      "graphdb": "ontotext/graphdb:11.3.0",
+      "redis": "redis:7-alpine",
+      "caddy": "caddy:2.8"
+    },
+    "stories": 30,
+    "stories_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "stories_semantic_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "fulltext_matches": 10,
+    "image_bytes": 9898,
+    "status": "passed"
+  },
+  "isolated_write_acceptance": {
+    "id": "74c10131d85f",
+    "folder": "urn:uuid:4c360b27-dcbb-4d97-a761-55a7906db37f",
+    "import_id": "fabe11d9-e4d3-42aa-ad1c-ce4a65071dda",
+    "export_id": "e75fced9-243f-498a-947e-fbd31cb19003",
+    "imported_iris": [
+      "urn:uuid:2ee613ef-9f4e-5e1b-8081-c060252ca259",
+      "urn:uuid:f321446d-9bea-5846-b4f7-413df284c448"
+    ],
+    "publication_operation": "5e175246-7ece-43a0-a32a-6ee319371356",
+    "publication_result": {
+      "operationId": "5e175246-7ece-43a0-a32a-6ee319371356",
+      "resourceIris": [
+        "urn:uuid:6888f89a-eb7c-4f79-9842-6ea142b1e699",
+        "urn:uuid:e9ca1223-190d-43f4-a835-7e80734f31ab"
+      ],
+      "state": "committed"
+    },
+    "export_entries": 7,
+    "status": "passed",
+    "checks": [
+      "Non-administrator editor can publish",
+      "Editor creates dedicated staging folder",
+      "Editor update persists",
+      "Public actor cannot edit private folder",
+      "Single image upload stores original checksum",
+      "Public actor cannot upload",
+      "ZIP stored through upload capability",
+      "ZIP worker reaches READY",
+      "ZIP confirmation accepted",
+      "ZIP worker reaches IMPORTED",
+      "Exactly two ZIP resources after worker restart",
+      "Completed import rejects another confirmation",
+      "Staging export queued",
+      "Export rejects absent capability and spoofed internal path",
+      "Export range download matches complete ZIP",
+      "Export ZIP CRC checks pass",
+      "Export contains uploaded image bytes",
+      "Export contains UTF-8 ZIP text bytes",
+      "Public actor cannot access private export",
+      "Editor transforms uploaded staging image into archive medium",
+      "Public actor cannot publish or read private draft",
+      "Publication review covers root and linked uploaded medium",
+      "Publication retry returns identical receipt",
+      "Published resource is readable with published status",
+      "Reader role can read the private test folder",
+      "Reader resource grant cannot update",
+      "Reader role cannot publish",
+      "Imported resource identities remain unchanged after further worker polls",
+      "Publication receipt remains unchanged after worker restart",
+      "Newly published upload is available through signed IIIF",
+      "Newly published image renders as JPEG"
+    ]
+  },
+  "policy": {
+    "compactionCheckSeconds": 900,
+    "compactionMinSeconds": 86400,
+    "compactionGrowthBytes": 536870912,
+    "compactionGrowthRatio": 2.0,
+    "compactionZone": "Europe/Zurich",
+    "compactionWindowStart": "01:00",
+    "compactionWindowEnd": "03:00"
+  },
+  "post_checks": {
+    "pending_marker": false,
+    "isolated_containers_stopped_without_oom": 9,
+    "recovery_timer": "active",
+    "filesystem_available_gib_rounded": 122
+  },
+  "open": [
+    "Observe first real nighttime compaction duration and reclaimed bytes",
+    "Production fresh-source rollback and existing SUCCESS/FAILURE email acceptance"
+  ]
+}

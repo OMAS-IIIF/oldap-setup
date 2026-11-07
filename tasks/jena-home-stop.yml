@@ -18,8 +18,10 @@
   changed_when: false
 - name: Stop API and callback consumers before their namespace owner
   ansible.builtin.command: docker stop --timeout 90 oldap-api compose-oldap-jena-identity-1
+# Native TDB compaction must finish before storage closes; never SIGKILL it
+# merely because an online backup/update began during the night window.
 - name: Stop Jena and persist Redis coordination state
-  ansible.builtin.command: docker stop --timeout 90 compose-oldap-jena-1 redis
+  ansible.builtin.command: docker stop --timeout -1 compose-oldap-jena-1 redis
 - name: Require cleanly stopped API state
   ansible.builtin.command:
     argv: [python3, -c, 'import json,subprocess; names=["oldap-api","compose-oldap-jena-identity-1","compose-oldap-jena-1","redis"]; states=json.loads(subprocess.check_output(["docker","inspect",*names])); assert all(not c["State"]["Running"] and c["State"]["ExitCode"] != 137 for c in states), "Unclean stop; inspect before trusting snapshot"']

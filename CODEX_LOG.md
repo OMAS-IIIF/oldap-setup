@@ -1,3 +1,9 @@
+### Update 2026-11-07 13:03
+- Decisions: Accept candidate writes in the isolated restore clone, then activate the exact tested service and night-only compaction on home.
+- Implementation: 31 real write/worker checks and 27 live checks pass. Verified stopped-source snapshot precedes service b112fc4d activation; recovery timer active, all nine clone containers stopped. Shared policy template, pre-interruption config/capacity checks, pending-intent rollback guard, and indefinite coordinated backend stop added. Nine targeted deployment/config tests pass.
+- Open: Observe first live nighttime compaction duration/reclamation; production fresh-source rollback and existing SUCCESS/FAILURE email acceptance.
+- Risks/Assumptions: No daytime live compaction or production changes. Local API snapshot is not a new paired external media backup. Manual Compose stop still has a finite grace period; use coordinated maintenance.
+
 ### Update 2026-11-07 12:38
 - Decisions: Use the enlarged existing data disk without reformatting; activate accepted API/Tools clients while keeping the Java service unchanged.
 - Implementation: Saved partition table, grew sdb1/ext4 online from 250 to 350 GiB with unchanged UUID/mount; copy-space reserve passes. Client update succeeds; 27 public/auth/media/fulltext checks pass. Old/new packaged APIs return all 30 stories identically. Diagnosed raw hash instability as keyword QName/full-IRI serialization; added optional field-specific semantic comparison with three passing tests. A 45-second observation shows zero TDB logical/allocated growth.

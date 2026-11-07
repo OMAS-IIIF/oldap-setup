@@ -235,5 +235,19 @@ Old/new packaged API reads on the same dataset returned 30 identical stories.
 
 During a 45-second post-update observation neither logical nor allocated TDB
 bytes grew. This is short-term evidence, not a sustainable-rate forecast.
-The Java service itself has not yet been replaced; scheduled compaction is not
-yet active. Native write-job checks and coordinated service rollout remain next.
+The subsequent native write-job acceptance passed all 31 checks in the isolated
+restore clone, including ZIP import/export, publication, permissions and graceful
+worker restart. The clone is stopped again. Service b112fc4d is now active after a
+verified stopped-source snapshot. All 27 live checks pass; recovery is active.
+See `jena-maintenance-service-results.json` for exact evidence.
+
+The seven-key policy now enables growth-triggered compaction starts only between
+01:00 and 03:00 Europe/Zurich. First live nighttime duration and reclaimed bytes
+remain unmeasured; no daytime compaction was forced. About 122 GiB remains free.
+The native upgrade play shares the policy template with initial provisioning,
+checks snapshot plus compaction reserve before interruption, and rejects rollback
+to an old service if a compaction intent remains. Coordinated maintenance stop
+waits indefinitely for native completion; do not substitute an ordinary Compose
+stop with its finite grace period during compaction. The pre-update API archive
+is a local database/configuration recovery point, not a newly paired external
+media backup. Previously verified Studio backups and release archives are retained.

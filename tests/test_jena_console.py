@@ -83,3 +83,39 @@ class FusekiAdministrationDeploymentTests(unittest.TestCase):
             self.assertIn('adminPort=8040',properties)
             self.assertIn('adminSecret=test-key',properties)
             self.assertIn('port=3031',properties)
+
+    def test_real_maintenance_configuration_replaces_old_policy_without_duplicate_keys(self):
+        """Exercise the actual Ansible/Jinja update with existing policy settings."""
+        import shutil
+        tasks = yaml.safe_load((ROOT / 'oldap-fuseki-admin-install.yml').read_text())[0]['tasks']
+        task = next(t for t in tasks if t['name'] == 'Stage private backend configuration with native listener')
+        task['ansible.builtin.copy'].pop('owner')
+        task['ansible.builtin.copy'].pop('group')
+        for enabled in (True, False):
+            with self.subTest(enabled=enabled), tempfile.TemporaryDirectory() as directory:
+                folder = Path(directory)
+                (folder / 'templates').mkdir()
+                shutil.copy(ROOT / 'templates/jena-compaction.properties.j2', folder / 'templates')
+                old = b'dataset=/owned\nport=3031\nadminPort=8030\ncompactionCheckSeconds=60\ncompactionZone=UTC\n'
+                variables = {'ansible_python_interpreter': sys.executable,
+                    'candidate_config': str(folder / 'service.properties'),
+                    'native_admin_key': 'fixture', 'oldap_jena_console_origin': 'https://fuseki.home.org',
+                    'previous_config': {'content': base64.b64encode(old).decode()},
+                    'oldap_jena_compaction_enabled': enabled}
+                play = folder / 'play.yml'
+                play.write_text(yaml.safe_dump([{'hosts': 'localhost', 'gather_facts': False,
+                    'vars': variables, 'tasks': [task]}]))
+                result = subprocess.run(['ansible-playbook', '-i', 'localhost,', '-c', 'local', str(play)], capture_output=True, text=True)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                lines = [line.split('=', 1) for line in (folder / 'service.properties').read_text().splitlines()
+                         if line.strip() and not line.lstrip().startswith('#')]
+                values = dict(lines)
+                self.assertEqual(len(lines), len(values))
+                self.assertEqual(values['adminPort'], '8040')
+                if enabled:
+                    self.assertEqual(values['compactionCheckSeconds'], '900')
+                    self.assertEqual(values['compactionZone'], 'Europe/Zurich')
+                    self.assertEqual(values['compactionWindowStart'], '01:00')
+                    self.assertEqual(values['compactionWindowEnd'], '03:00')
+                else:
+                    self.assertFalse(any(key.startswith('compaction') for key in values))

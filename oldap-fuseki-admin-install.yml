@@ -1,5 +1,5 @@
 ---
-# Home-only replacement of the custom reader with the official Apache interface.
+# Home-only installation/update of the official Apache interface and owned service.
 # Source is built/tested locally; storage is never opened by a second process.
 - name: Install official Fuseki administration on the active home service
   hosts: oldap_home
@@ -79,6 +79,11 @@
           - '{{ release_dir }}'
           - '{{ service_sha256 }}'
       changed_when: false
+    - name: Require a compaction-capable artifact when enabling maintenance
+      ansible.builtin.assert:
+        that:
+          - "'services/jena/src/JenaCompaction.java' in (lookup('file', service_source ~ '/build.json') | from_json).sources"
+      when: oldap_jena_compaction_enabled | default(false) | bool
     - name: Generate private administrator transport key
       ansible.builtin.set_fact:
         native_admin_key: '{{ lookup("pipe", "python3 -c ''import secrets; print(secrets.token_urlsafe(48))''") }}'
@@ -90,10 +95,46 @@
         group: '1000'
         mode: '0600'
         content: |
-          {{ previous_config.content | b64decode | regex_replace('(?m)^admin(Port|Secret|Origin)=.*\n?', '') }}
+          {% set base = previous_config.content | b64decode | regex_replace('(?m)^admin(Port|Secret|Origin)=.*\n?', '') %}
+          {% if oldap_jena_compaction_enabled is defined %}
+          {% set base = base | regex_replace('(?m)^compaction[A-Za-z]+=.*\n?', '') %}
+          {% endif %}
+          {{ base }}
+          {% if oldap_jena_compaction_enabled is defined %}
+          {{ lookup('template', 'templates/jena-compaction.properties.j2') }}
+          {% endif %}
           adminPort=8040
           adminSecret={{ native_admin_key }}
           adminOrigin={{ oldap_jena_console_origin }}
+      no_log: true
+    - name: Validate maintenance settings and copy-space reserve before interruption
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - |
+            import pathlib,sys,math,datetime,zoneinfo,shutil
+            rows=[line.strip().split('=',1) for line in pathlib.Path(sys.argv[1]).read_text().splitlines() if line.strip() and not line.lstrip().startswith('#')]
+            assert len(rows)==len({row[0] for row in rows}), 'Duplicate configuration keys'
+            p=dict(rows)
+            keys={'compactionCheckSeconds','compactionMinSeconds','compactionGrowthBytes','compactionGrowthRatio','compactionZone','compactionWindowStart','compactionWindowEnd'}
+            if keys.intersection(p):
+                assert keys.issubset(p), 'Incomplete maintenance policy'
+                assert int(p['compactionCheckSeconds'])>=60
+                assert int(p['compactionMinSeconds'])>=int(p['compactionCheckSeconds'])
+                assert int(p['compactionGrowthBytes'])>=1048576
+                ratio=float(p['compactionGrowthRatio']); assert math.isfinite(ratio) and ratio>=1.1
+                zoneinfo.ZoneInfo(p['compactionZone'])
+                start=datetime.time.fromisoformat(p['compactionWindowStart']); end=datetime.time.fromisoformat(p['compactionWindowEnd'])
+                assert start.tzinfo is None and end.tzinfo is None and start!=end
+            root=pathlib.Path('/srv/storage/oldap-jena-home-20261102')
+            size=lambda path:sum(f.stat().st_size for f in path.rglob('*') if f.is_file() and not f.is_symlink())
+            snapshot_bytes=sum(size(pathlib.Path(path)) for path in [str(root),'/srv/storage/oldap-data/oldap-api','/srv/storage/caddy','/opt/oldap/compose'])
+            dataset_bytes=size(root/'data/dataset') if keys.intersection(p) else 0
+            disk=shutil.disk_usage(root)
+            assert disk.free-snapshot_bytes-dataset_bytes>=disk.total//5, 'Insufficient snapshot/compaction reserve'
+          - '{{ candidate_config }}'
+      changed_when: false
       no_log: true
     - name: Install native administration overlay
       ansible.builtin.copy:
@@ -191,7 +232,11 @@
           vars: {jena_restore_legacy_console: false, jena_admin_ready_key: "{{ native_admin_key }}"}
       rescue:
         - name: Close ingress and stop new namespace consumers before rollback
-          ansible.builtin.command: docker stop --timeout 90 caddy oldap-api compose-oldap-jena-identity-1 compose-oldap-jena-1
+          ansible.builtin.command: docker stop --timeout -1 caddy oldap-api compose-oldap-jena-identity-1 compose-oldap-jena-1
+        - name: Refuse rollback over an uncertain compaction outcome
+          ansible.builtin.command:
+            argv: [python3, -c, 'from pathlib import Path; assert not Path("/srv/storage/oldap-jena-home-20261102/data/dataset/compaction.pending").exists(), "Compaction intent requires operator verification before rollback"']
+          changed_when: false
         - name: Restore previous environment and proxy configuration
           ansible.builtin.copy:
             dest: '{{ compose_dir }}/{{ item.name }}'

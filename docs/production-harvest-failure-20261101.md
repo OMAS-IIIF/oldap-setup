@@ -96,3 +96,8 @@ versus OCR selection and excludes writable live report directories. The immutabl
 supplement `production-rollback-harvest-20261107` accompanies the earlier package;
 its source tar comparison, transfer hashes, image load/re-export and office
 receiver evidence are recorded in `jena-production-retention-results.json`.
+
+After VPN was disabled, the identical launcher was deployed on home with its
+original checksum checked and a backup retained. Both real Jena provider help
+checks pass. No imports, application restarts, timer or compaction changes were
+performed. Both live environments now use the corrected launcher.

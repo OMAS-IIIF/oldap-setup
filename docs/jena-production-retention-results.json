@@ -170,7 +170,12 @@
       "swisscovery"
     ],
     "real_runtime_combinations": 12,
-    "full_import_started": false
+    "full_import_started": false,
+    "home_deployed": true,
+    "home_provider_help_checks": [
+      "europeana",
+      "swisscovery"
+    ]
   },
   "notification_acceptance": {
     "diagnostic_messages": 1,

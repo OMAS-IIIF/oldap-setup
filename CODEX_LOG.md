@@ -1,3 +1,9 @@
+### Update 2026-11-07 22:53
+- Decisions: Complete the same bounded launcher repair on home after owner disabled VPN.
+- Implementation: Verified previous script checksum, installed identical corrected launcher with backup, and passed both real Jena provider help checks. Production/home now use SHA-256 39db43969b5d10745f214a664e13eb69e59d3e937832d69c30753b03a6db0138.
+- Open: Observe next normal production harvest and first home nighttime compaction; coordinated production snapshot/rollback rehearsal remains separate.
+- Risks/Assumptions: No full imports, application restarts, timer changes or compaction invocation. Historical mail failure is unresolved causally, but all three current test messages were received.
+
 ### Update 2026-11-07 22:51
 - Decisions: Fix launcher defaults without duplicating provider configuration or weakening mail permissions; retain missing provider-specific rollback inputs as an immutable supplement.
 - Implementation: Resolve profiled Compose command lists privately before CLI entrypoint override. Seven existing tests plus 12 real GraphDB/Jena/provider/override combinations pass; production preimage checked, launcher atomically replaced with backup, both CLI help checks pass. OCR load/re-export and source configuration comparison pass; office receiver verifies six supplemental files / 3,946,196,607 bytes. Provider-selection regression plus four retention tests pass. Owner confirms all three diagnostic/synthetic notifications arrived.

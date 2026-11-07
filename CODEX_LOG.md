@@ -1,3 +1,9 @@
+### Update 2026-11-07 01:23
+- Decisions: Checkpoint the accumulated home backup/restore work on migration/jena; preserve it as home-only evidence rather than relabelling it production automation.
+- Implementation: Retained tested snapshot producer, receiver, health/image inventory and isolated restore/write probes with their runbooks/results. Setup suite: 120 passing cases across appropriate environments, five opt-in cases skipped; four initial missing-redis environment errors pass when rerun in API venv. No private-key/literal-JWT patterns in pending sources/evidence; whitespace checks pass.
+- Open: Final candidate integration/rollout and production gate 3; home compaction capacity shortfall is about 12.7 GiB. No final release freeze.
+- Risks/Assumptions: This is a local source checkpoint, not publication or activation. Prior runbooks retain their bounded acceptance scopes; no home email requested.
+
 ### Update 2026-11-07 01:17
 - Decisions: Retain the accepted home artifacts independently of registry tags before preparing the maintenance candidate. Owner declines home mail; production keeps existing SUCCESS/FAILURE messages to the specified university address.
 - Implementation: Revalidated all 14 running image identities; streamed API/media plus Tools/standard/OCR images to private Studio archives, rehashed and loaded into development Docker with exact ID checks. Copied deployed Jena bundle and verified both JAR hashes. API/lib changes checkpointed as 776e70a/80bf0a6; new immutable candidate build started.

@@ -198,3 +198,10 @@ and an early failing backup path send their result, and separately check stale
 backup/capacity monitoring. Existing inventory shows `set -e` can bypass the
 legacy final failure-mail branch; fix and test that path before declaring the
 production operating gate complete. No email was sent by this work.
+
+Measured maintenance capacity at this checkpoint: TDB logical bytes
+33,749,945,586; free bytes 72,719,212,544; required copy-space plus reserve
+86,366,742,974. Shortfall is 13,647,530,430 bytes (about 12.7 GiB).
+Do not activate compaction until capacity has been increased or separately
+verified retained artifacts have been relocated safely. Production has its own
+capacity calculation. The idle-poll fix does not depend on compaction admission.

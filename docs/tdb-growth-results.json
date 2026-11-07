@@ -1,0 +1,171 @@
+{
+  "date": "2026-11-07",
+  "status": "analysis_complete_no_application_change",
+  "service_sha256": "42901bf6b98d8a92df2fce65b3799ee5dd45abb6e843ef7016a5a6d6da038694",
+  "experiments": [
+    {
+      "mode": "read",
+      "elapsed_seconds": 1.08,
+      "samples": [
+        {
+          "mode": "read",
+          "rounds": 0,
+          "logical_bytes": 201714747,
+          "receipt_triples": 0,
+          "domain_triples": 10000
+        },
+        {
+          "mode": "read",
+          "rounds": 250,
+          "logical_bytes": 201714747,
+          "receipt_triples": 0,
+          "domain_triples": 10000
+        },
+        {
+          "mode": "read",
+          "rounds": 500,
+          "logical_bytes": 201714747,
+          "receipt_triples": 0,
+          "domain_triples": 10000
+        },
+        {
+          "mode": "read",
+          "rounds": 750,
+          "logical_bytes": 201714747,
+          "receipt_triples": 0,
+          "domain_triples": 10000
+        },
+        {
+          "mode": "read",
+          "rounds": 1000,
+          "logical_bytes": 201714747,
+          "receipt_triples": 0,
+          "domain_triples": 10000
+        }
+      ],
+      "closed_allocated_bytes": 201781248,
+      "closed_logical_bytes": 201714747
+    },
+    {
+      "mode": "commit",
+      "elapsed_seconds": 202.78,
+      "samples": [
+        {
+          "mode": "commit",
+          "rounds": 0,
+          "logical_bytes": 201714747,
+          "receipt_triples": 0,
+          "domain_triples": 10000
+        },
+        {
+          "mode": "commit",
+          "rounds": 250,
+          "logical_bytes": 201727362,
+          "receipt_triples": 500,
+          "domain_triples": 10000
+        },
+        {
+          "mode": "commit",
+          "rounds": 500,
+          "logical_bytes": 252071510,
+          "receipt_triples": 1000,
+          "domain_triples": 10000
+        },
+        {
+          "mode": "commit",
+          "rounds": 750,
+          "logical_bytes": 302415658,
+          "receipt_triples": 1500,
+          "domain_triples": 10000
+        },
+        {
+          "mode": "commit",
+          "rounds": 1000,
+          "logical_bytes": 361148414,
+          "receipt_triples": 2000,
+          "domain_triples": 10000
+        }
+      ],
+      "closed_allocated_bytes": 361230336,
+      "closed_logical_bytes": 361148414
+    },
+    {
+      "mode": "abort",
+      "elapsed_seconds": 147.36,
+      "samples": [
+        {
+          "mode": "abort",
+          "rounds": 0,
+          "logical_bytes": 201714747,
+          "receipt_triples": 0,
+          "domain_triples": 10000
+        },
+        {
+          "mode": "abort",
+          "rounds": 250,
+          "logical_bytes": 201727329,
+          "receipt_triples": 250,
+          "domain_triples": 10000
+        },
+        {
+          "mode": "abort",
+          "rounds": 500,
+          "logical_bytes": 201739829,
+          "receipt_triples": 500,
+          "domain_triples": 10000
+        },
+        {
+          "mode": "abort",
+          "rounds": 750,
+          "logical_bytes": 201752329,
+          "receipt_triples": 750,
+          "domain_triples": 10000
+        },
+        {
+          "mode": "abort",
+          "rounds": 1000,
+          "logical_bytes": 260485085,
+          "receipt_triples": 1000,
+          "domain_triples": 10000
+        }
+      ],
+      "closed_allocated_bytes": 260567040,
+      "closed_logical_bytes": 260485085
+    }
+  ],
+  "restored_snapshot": {
+    "project": "oldap-restore-staged-03",
+    "named_graph_counts": {
+      "urn:oldap:import-jobs": 42,
+      "urn:oldap:vocab:schema": 17253,
+      "urn:oldap:archive-operations": 811,
+      "https://mkb.ch/pc/ns/shacl": 1,
+      "http://oldap.org/base#admin": 716,
+      "urn:probe:http-commits": 205955,
+      "http://fasnacht.digital/ns/onto": 139,
+      "https://chama.salsah.org/ns/data": 920,
+      "https://mkb.ch/pc/ns/onto": 3,
+      "urn:oldap:vocab:skos": 252,
+      "http://tgb.unibas.ch/ns/lists": 40,
+      "http://oldap.org/base#shacl": 718,
+      "http://tgb.unibas.ch/ns/shacl": 11,
+      "http://oldap.org/shared#onto": 280,
+      "http://fasnacht.digital/ns/shacl": 1533,
+      "https://chama.salsah.org/ns/shacl": 836,
+      "urn:oldap:vocab:dcterms": 700,
+      "http://fasnacht.digital/ns/lists": 1321,
+      "http://oldap.org/base#onto": 45,
+      "http://oldap.org/shared#shacl": 654,
+      "http://fasnacht.digital/ns/data": 39885,
+      "http://tgb.unibas.ch/ns/onto": 5,
+      "urn:oldap:export-jobs": 22,
+      "https://chama.salsah.org/ns/onto": 84
+    },
+    "verified_copied_quads": 272226,
+    "source_tdb_allocated_kib": 31999064,
+    "rebuilt_tdb_allocated_kib": 116208,
+    "source_managed_text_kib": 1560,
+    "native_compaction": false,
+    "rebuild_deployed": false
+  }
+}

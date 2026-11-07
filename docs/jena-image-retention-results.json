@@ -219,5 +219,17 @@
     "Docker load verified on development Docker daemon, not an empty isolated daemon",
     "No production GraphDB rollback artifacts retained by this operation",
     "New maintenance candidate has not been deployed"
-  ]
+  ],
+  "maintenance_capacity": {
+    "logical_tdb_bytes": 33749945586,
+    "free_bytes": 72719212544,
+    "total_bytes": 263083986944,
+    "minimum_free_before_compaction": 86366742974,
+    "shortfall_bytes": 13647530430
+  },
+  "setup_test_results": {
+    "passed": 120,
+    "skipped": 5,
+    "note": "125 tests collected; four missing-redis environment errors rerun successfully in API venv. No SMTP delivery attempted."
+  }
 }

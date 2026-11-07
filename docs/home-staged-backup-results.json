@@ -1,0 +1,1141 @@
+{
+  "snapshot_id": "20261106-studio-staged-03",
+  "producer": {
+    "returncode": 0,
+    "elapsed_seconds": 2682.5507081248797,
+    "phases": [
+      {
+        "seconds": 3.4281794168055058,
+        "task": "Gathering Facts"
+      },
+      {
+        "seconds": 4.456258624792099,
+        "task": "Require explicit home snapshot identifier"
+      },
+      {
+        "seconds": 4.47321637487039,
+        "task": "Require the current API to select Jena"
+      },
+      {
+        "seconds": 4.99348529195413,
+        "task": "Inventory running API-host containers"
+      },
+      {
+        "seconds": 5.45480045885779,
+        "task": "Inventory running media-host containers"
+      },
+      {
+        "seconds": 6.306177374906838,
+        "task": "Refuse unexpected writers or an already stopped stack"
+      },
+      {
+        "seconds": 6.325481958920136,
+        "task": "Inspect API backup destination"
+      },
+      {
+        "seconds": 6.771792583866045,
+        "task": "Inspect media backup destination"
+      },
+      {
+        "seconds": 7.09743274981156,
+        "task": "Refuse overwrite of either snapshot"
+      },
+      {
+        "seconds": 7.109265583800152,
+        "task": "Create private API snapshot directory"
+      },
+      {
+        "seconds": 7.5507669588550925,
+        "task": "Create private media snapshot directory"
+      },
+      {
+        "seconds": 8.117756874999031,
+        "task": "Require rsync on the media host before any interruption"
+      },
+      {
+        "seconds": 8.572382374899462,
+        "task": "Create a private independent media staging tree"
+      },
+      {
+        "seconds": 8.929768541827798,
+        "task": "Pre-copy media and operational state while services are online"
+      },
+      {
+        "seconds": 482.7078493749723,
+        "task": "Drain the home stack"
+      },
+      {
+        "seconds": 482.7225656248629,
+        "task": "Detect installed namespace recovery"
+      },
+      {
+        "seconds": 483.6059069589246,
+        "task": "Pause automatic recovery and wait for any active repair before maintenance"
+      },
+      {
+        "seconds": 484.05759916687384,
+        "task": "Quiesce ingress and media writers"
+      },
+      {
+        "seconds": 484.070532083977,
+        "task": "Require a drain-capable mobile worker before selecting SIGTERM maintenance"
+      },
+      {
+        "seconds": 484.6503814589232,
+        "task": "Close media ingress"
+      },
+      {
+        "seconds": 485.2211809169967,
+        "task": "Stop media writers while API is still available to finish work"
+      },
+      {
+        "seconds": 486.3747097919695,
+        "task": "Require unused mobile registry for legacy interrupt shutdown"
+      },
+      {
+        "seconds": 486.3912049999926,
+        "task": "Stop mobile worker with the explicitly selected signal"
+      },
+      {
+        "seconds": 489.4458871248644,
+        "task": "Close API ingress after media workers have finished"
+      },
+      {
+        "seconds": 490.0454311668873,
+        "task": "Stop the optional console before its namespace owner"
+      },
+      {
+        "seconds": 490.0550749998074,
+        "task": "Verify clean optional console shutdown"
+      },
+      {
+        "seconds": 490.06464158394374,
+        "task": "Stop API and callback consumers before their namespace owner"
+      },
+      {
+        "seconds": 491.0449042918626,
+        "task": "Stop Jena and persist Redis coordination state"
+      },
+      {
+        "seconds": 492.06042433390394,
+        "task": "Require cleanly stopped API state"
+      },
+      {
+        "seconds": 492.52580699999817,
+        "task": "Require cleanly stopped media writers"
+      },
+      {
+        "seconds": 492.9941019169055,
+        "task": "Record API host image provenance"
+      },
+      {
+        "seconds": 493.41853112494573,
+        "task": "Record media host image provenance"
+      },
+      {
+        "seconds": 493.8477856249083,
+        "task": "Archive stopped dataset, release, API state, Redis and configuration"
+      },
+      {
+        "seconds": 522.7898242499214,
+        "task": "Finalize media staging from stopped sources"
+      },
+      {
+        "seconds": 978.3671621249523,
+        "task": "Verify finalized media staging against stopped sources"
+      },
+      {
+        "seconds": 1413.5661992498208,
+        "task": "Restrict API archive permissions"
+      },
+      {
+        "seconds": 1414.3738078339957,
+        "task": "Compare API archive with still-stopped source files"
+      },
+      {
+        "seconds": 1448.066830458818,
+        "task": "Recover the home stack in namespace order"
+      },
+      {
+        "seconds": 1448.087041999912,
+        "task": "Restart storage and namespace owner"
+      },
+      {
+        "seconds": 1448.6793799998704,
+        "task": "Wait for the existing dataset to become ready"
+      },
+      {
+        "seconds": 1451.7332340839785,
+        "task": "Recreate identity in the restarted backend namespace"
+      },
+      {
+        "seconds": 1457.8968230839819,
+        "task": "Recreate API in the restarted backend namespace"
+      },
+      {
+        "seconds": 1464.1461603748612,
+        "task": "Recreate optional console in the restarted backend namespace"
+      },
+      {
+        "seconds": 1464.165215624962,
+        "task": "Verify native administration before opening ingress"
+      },
+      {
+        "seconds": 1464.1780872920062,
+        "task": "Reopen API ingress for media workers"
+      },
+      {
+        "seconds": 1464.9269154169597,
+        "task": "Resume existing media writers"
+      },
+      {
+        "seconds": 1465.7376131250057,
+        "task": "Reopen media ingress"
+      },
+      {
+        "seconds": 1466.396378083853,
+        "task": "Detect installed namespace recovery after successful coordinated start"
+      },
+      {
+        "seconds": 1466.7708356250077,
+        "task": "Resume automatic recovery only after all services have recovered"
+      },
+      {
+        "seconds": 1467.2023760839365,
+        "task": "Archive frozen media staging while services are online"
+      },
+      {
+        "seconds": 1951.032755416818,
+        "task": "Restrict media archive permissions"
+      },
+      {
+        "seconds": 1951.4034124589525,
+        "task": "Compare media archive with frozen staging"
+      },
+      {
+        "seconds": 2430.4725160419475,
+        "task": "Hash API snapshot"
+      },
+      {
+        "seconds": 2481.968274916988,
+        "task": "Hash media snapshot"
+      },
+      {
+        "seconds": 2678.81438454194,
+        "task": "Record completed snapshot manifest"
+      },
+      {
+        "seconds": 2680.3611196668353,
+        "task": "Allow receiver account to traverse the API snapshot"
+      },
+      {
+        "seconds": 2680.7993178749457,
+        "task": "Allow receiver account to read the API archive"
+      },
+      {
+        "seconds": 2681.1995239169337,
+        "task": "Allow receiver account to traverse the media snapshot"
+      },
+      {
+        "seconds": 2681.5708297088277,
+        "task": "Allow receiver account to read the media archive"
+      },
+      {
+        "seconds": 2682.0129984999076,
+        "task": "Publish ready marker last after both archives are accessible"
+      }
+    ]
+  },
+  "availability": {
+    "api.home.org": {
+      "first_failed_probe_seconds": 490.5753852499183,
+      "first_recovered_probe_seconds": 1466.2780689999927,
+      "observed_seconds": 975.7026837500744,
+      "sampling_lower_bound_seconds": 973.5216687500942,
+      "sampling_upper_bound_seconds": 977.8952322080731,
+      "samples": 1287,
+      "failed_samples": 470,
+      "endpoint": "/status"
+    },
+    "media.home.org": {
+      "first_failed_probe_seconds": 486.38585841679014,
+      "first_recovered_probe_seconds": 1466.278142083902,
+      "observed_seconds": 979.8922836671118,
+      "sampling_lower_bound_seconds": 977.7197236667853,
+      "sampling_upper_bound_seconds": 982.0888791249599,
+      "samples": 1287,
+      "failed_samples": 472,
+      "endpoint": "/health"
+    }
+  },
+  "phase_seconds": {
+    "Gathering Facts": 1.0280792079865932,
+    "Require explicit home snapshot identifier": 0.0169577500782907,
+    "Require the current API to select Jena": 0.5202689170837402,
+    "Inventory running API-host containers": 0.4613151669036597,
+    "Inventory running media-host containers": 0.8513769160490483,
+    "Refuse unexpected writers or an already stopped stack": 0.019304584013298154,
+    "Inspect API backup destination": 0.4463106249459088,
+    "Inspect media backup destination": 0.32564016594551504,
+    "Refuse overwrite of either snapshot": 0.011832833988592029,
+    "Create private API snapshot directory": 0.4415013750549406,
+    "Create private media snapshot directory": 0.5669899161439389,
+    "Require rsync on the media host before any interruption": 0.45462549990043044,
+    "Create a private independent media staging tree": 0.357386166928336,
+    "Pre-copy media and operational state while services are online": 473.7780808331445,
+    "Drain the home stack": 0.014716249890625477,
+    "Detect installed namespace recovery": 0.8833413340616971,
+    "Pause automatic recovery and wait for any active repair before maintenance": 0.45169220794923604,
+    "Quiesce ingress and media writers": 0.012932917103171349,
+    "Require a drain-capable mobile worker before selecting SIGTERM maintenance": 0.5798493749462068,
+    "Close media ingress": 0.5707994580734521,
+    "Stop media writers while API is still available to finish work": 1.1535288749728352,
+    "Require unused mobile registry for legacy interrupt shutdown": 0.016495208023115993,
+    "Stop mobile worker with the explicitly selected signal": 3.0546821248717606,
+    "Close API ingress after media workers have finished": 0.5995440420228988,
+    "Stop the optional console before its namespace owner": 0.009643832920119166,
+    "Verify clean optional console shutdown": 0.009566584136337042,
+    "Stop API and callback consumers before their namespace owner": 0.9802627079188824,
+    "Stop Jena and persist Redis coordination state": 1.0155200420413166,
+    "Require cleanly stopped API state": 0.4653826660942286,
+    "Require cleanly stopped media writers": 0.4682949169073254,
+    "Record API host image provenance": 0.4244292080402374,
+    "Record media host image provenance": 0.4292544999625534,
+    "Archive stopped dataset, release, API state, Redis and configuration": 28.942038625013083,
+    "Finalize media staging from stopped sources": 455.57733787503093,
+    "Verify finalized media staging against stopped sources": 435.1990371248685,
+    "Restrict API archive permissions": 0.8076085841748863,
+    "Compare API archive with still-stopped source files": 33.69302262482233,
+    "Recover the home stack in namespace order": 0.0202115410938859,
+    "Restart storage and namespace owner": 0.592337999958545,
+    "Wait for the existing dataset to become ready": 3.053854084108025,
+    "Recreate identity in the restarted backend namespace": 6.163589000003412,
+    "Recreate API in the restarted backend namespace": 6.249337290879339,
+    "Recreate optional console in the restarted backend namespace": 0.019055250100791454,
+    "Verify native administration before opening ingress": 0.012871667044237256,
+    "Reopen API ingress for media workers": 0.7488281249534339,
+    "Resume existing media writers": 0.8106977080460638,
+    "Reopen media ingress": 0.6587649588473141,
+    "Detect installed namespace recovery after successful coordinated start": 0.37445754115469754,
+    "Resume automatic recovery only after all services have recovered": 0.43154045892879367,
+    "Archive frozen media staging while services are online": 483.8303793328814,
+    "Restrict media archive permissions": 0.3706570421345532,
+    "Compare media archive with frozen staging": 479.069103582995,
+    "Hash API snapshot": 51.49575887504034,
+    "Hash media snapshot": 196.84610962495208,
+    "Record completed snapshot manifest": 1.5467351248953491,
+    "Allow receiver account to traverse the API snapshot": 0.438198208110407,
+    "Allow receiver account to read the API archive": 0.4002060419879854,
+    "Allow receiver account to traverse the media snapshot": 0.37130579189397395,
+    "Allow receiver account to read the media archive": 0.4421687910798937
+  },
+  "completed_at": "2026-11-06T22:31:20.489172+00:00",
+  "status": "integrity_and_application_restore_passed_performance_regressed",
+  "default_media_precopy": false,
+  "executed_playbook_sha256": "978b68822ad0c731740f0011bb6ab14c12258fd6f319b43b41fe6307f2c96f5c",
+  "manifest": {
+    "api": {
+      "bytes": 32821770240,
+      "path": "/srv/storage/oldap-jena-snapshot-20261106-studio-staged-03/api.tar",
+      "sha256": "1aa1c04e78481cd7fc547ff81295758793794e677ca0eeac9d791321615d6729"
+    },
+    "images": {
+      "api": {
+        "caddy": {
+          "architecture": "amd64",
+          "configured_reference": "caddy:2.8",
+          "image_id": "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f",
+          "os": "linux",
+          "repo_digests": [
+            "caddy@sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f"
+          ],
+          "variant": ""
+        },
+        "compose-oldap-jena-1": {
+          "architecture": "amd64",
+          "configured_reference": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+          "image_id": "sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+          "os": "linux",
+          "repo_digests": [
+            "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0"
+          ],
+          "variant": ""
+        },
+        "compose-oldap-jena-identity-1": {
+          "architecture": "amd64",
+          "configured_reference": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+          "image_id": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+          "os": "linux",
+          "repo_digests": [
+            "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def"
+          ],
+          "variant": ""
+        },
+        "compose-salsah-2-1": {
+          "architecture": "amd64",
+          "configured_reference": "lrosenth/salsah-2:jena-0.0.2-rc1-47f138b8070c-amd64@sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3",
+          "image_id": "sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3",
+          "os": "linux",
+          "repo_digests": [
+            "lrosenth/salsah-2@sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3"
+          ],
+          "variant": ""
+        },
+        "fasnachts-page": {
+          "architecture": "amd64",
+          "configured_reference": "lrosenth/fasnachts-page:jena-0.1.49-rc1-21d046f8dd07-amd64@sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9",
+          "image_id": "sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9",
+          "os": "linux",
+          "repo_digests": [
+            "lrosenth/fasnachts-page@sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9"
+          ],
+          "variant": ""
+        },
+        "oldap-api": {
+          "architecture": "amd64",
+          "configured_reference": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+          "image_id": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+          "os": "linux",
+          "repo_digests": [
+            "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def"
+          ],
+          "variant": ""
+        },
+        "oldap-app": {
+          "architecture": "amd64",
+          "configured_reference": "lrosenth/oldap-app:jena-0.2.7-rc1-6e5e392b8e5a-amd64@sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7",
+          "image_id": "sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7",
+          "os": "linux",
+          "repo_digests": [
+            "lrosenth/oldap-app@sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7"
+          ],
+          "variant": ""
+        },
+        "redis": {
+          "architecture": "amd64",
+          "configured_reference": "redis:7-alpine",
+          "image_id": "sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99",
+          "os": "linux",
+          "repo_digests": [
+            "redis@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99"
+          ],
+          "variant": ""
+        }
+      },
+      "media": {
+        "oldap-export-worker": {
+          "architecture": "amd64",
+          "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+          "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+          "os": "linux",
+          "repo_digests": [
+            "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+          ],
+          "variant": ""
+        },
+        "oldap-imageserver": {
+          "architecture": "amd64",
+          "configured_reference": "lrosenth/sipi-2:0.1.0",
+          "image_id": "sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5",
+          "os": "linux",
+          "repo_digests": [
+            "lrosenth/sipi-2@sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5"
+          ],
+          "variant": ""
+        },
+        "oldap-ingest-worker": {
+          "architecture": "amd64",
+          "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+          "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+          "os": "linux",
+          "repo_digests": [
+            "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+          ],
+          "variant": ""
+        },
+        "oldap-media-caddy": {
+          "architecture": "amd64",
+          "configured_reference": "caddy:2.8",
+          "image_id": "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f",
+          "os": "linux",
+          "repo_digests": [
+            "caddy@sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f"
+          ],
+          "variant": ""
+        },
+        "oldap-mediahelper": {
+          "architecture": "amd64",
+          "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+          "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+          "os": "linux",
+          "repo_digests": [
+            "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+          ],
+          "variant": ""
+        },
+        "oldap-mobile-media-worker": {
+          "architecture": "amd64",
+          "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+          "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+          "os": "linux",
+          "repo_digests": [
+            "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+          ],
+          "variant": ""
+        }
+      }
+    },
+    "media": {
+      "bytes": 21153853440,
+      "host": "media.home.org",
+      "path": "/data/oldap-jena-snapshot-20261106-studio-staged-03/media.tar",
+      "sha256": "f343eddd036f78280315c5d0f333b977af63445cd3f6a722e7fa7b744ccfb07c"
+    },
+    "media_snapshot_method": "online-precopy-offline-checksum-sync",
+    "snapshot_id": "20261106-studio-staged-03",
+    "status": "offline-compared"
+  },
+  "studio": {
+    "snapshot_id": "20261106-studio-staged-03",
+    "status": "passed",
+    "steps": {
+      "pull": {
+        "seconds": 287.3502755829977,
+        "returncode": 0
+      },
+      "borg-create": {
+        "seconds": 71.49238620800315,
+        "returncode": 0
+      },
+      "borg-check": {
+        "seconds": 59.67545183299808,
+        "returncode": 0
+      },
+      "borg-extract": {
+        "seconds": 48.18217512499541,
+        "returncode": 0
+      },
+      "restored-hashes": {
+        "seconds": 22.283016707995557,
+        "status": "passed"
+      }
+    },
+    "manifest": {
+      "api": {
+        "bytes": 32821770240,
+        "path": "/srv/storage/oldap-jena-snapshot-20261106-studio-staged-03/api.tar",
+        "sha256": "1aa1c04e78481cd7fc547ff81295758793794e677ca0eeac9d791321615d6729"
+      },
+      "images": {
+        "api": {
+          "caddy": {
+            "architecture": "amd64",
+            "configured_reference": "caddy:2.8",
+            "image_id": "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f",
+            "os": "linux",
+            "repo_digests": [
+              "caddy@sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f"
+            ],
+            "variant": ""
+          },
+          "compose-oldap-jena-1": {
+            "architecture": "amd64",
+            "configured_reference": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+            "image_id": "sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+            "os": "linux",
+            "repo_digests": [
+              "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0"
+            ],
+            "variant": ""
+          },
+          "compose-oldap-jena-identity-1": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+            "image_id": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def"
+            ],
+            "variant": ""
+          },
+          "compose-salsah-2-1": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/salsah-2:jena-0.0.2-rc1-47f138b8070c-amd64@sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3",
+            "image_id": "sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/salsah-2@sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3"
+            ],
+            "variant": ""
+          },
+          "fasnachts-page": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/fasnachts-page:jena-0.1.49-rc1-21d046f8dd07-amd64@sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9",
+            "image_id": "sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/fasnachts-page@sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9"
+            ],
+            "variant": ""
+          },
+          "oldap-api": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+            "image_id": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def"
+            ],
+            "variant": ""
+          },
+          "oldap-app": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/oldap-app:jena-0.2.7-rc1-6e5e392b8e5a-amd64@sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7",
+            "image_id": "sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/oldap-app@sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7"
+            ],
+            "variant": ""
+          },
+          "redis": {
+            "architecture": "amd64",
+            "configured_reference": "redis:7-alpine",
+            "image_id": "sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99",
+            "os": "linux",
+            "repo_digests": [
+              "redis@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99"
+            ],
+            "variant": ""
+          }
+        },
+        "media": {
+          "oldap-export-worker": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+            "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+            ],
+            "variant": ""
+          },
+          "oldap-imageserver": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/sipi-2:0.1.0",
+            "image_id": "sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/sipi-2@sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5"
+            ],
+            "variant": ""
+          },
+          "oldap-ingest-worker": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+            "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+            ],
+            "variant": ""
+          },
+          "oldap-media-caddy": {
+            "architecture": "amd64",
+            "configured_reference": "caddy:2.8",
+            "image_id": "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f",
+            "os": "linux",
+            "repo_digests": [
+              "caddy@sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f"
+            ],
+            "variant": ""
+          },
+          "oldap-mediahelper": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+            "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+            ],
+            "variant": ""
+          },
+          "oldap-mobile-media-worker": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+            "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+            ],
+            "variant": ""
+          }
+        }
+      },
+      "media": {
+        "bytes": 21153853440,
+        "host": "media.home.org",
+        "path": "/data/oldap-jena-snapshot-20261106-studio-staged-03/media.tar",
+        "sha256": "f343eddd036f78280315c5d0f333b977af63445cd3f6a722e7fa7b744ccfb07c"
+      },
+      "media_snapshot_method": "online-precopy-offline-checksum-sync",
+      "snapshot_id": "20261106-studio-staged-03",
+      "status": "offline-compared"
+    }
+  },
+  "borg_stats": {
+    "compressed_size": 11146842541,
+    "deduplicated_size": 2088909120,
+    "nfiles": 3,
+    "original_size": 53975630946
+  },
+  "continuation": {
+    "studio-roundtrip": {
+      "returncode": 0,
+      "seconds": 489.33008437487297
+    },
+    "borg-to-linux": {
+      "returncode": 0,
+      "seconds": 271.449080334045
+    },
+    "protect-root": {
+      "returncode": 0,
+      "seconds": 1.7207068330608308
+    },
+    "extract": {
+      "returncode": 0,
+      "seconds": 117.45461841695942
+    },
+    "compose": {
+      "returncode": 0,
+      "seconds": 1.3668532921001315
+    }
+  },
+  "acceptance_steps": {
+    "pre-start-audit": {
+      "returncode": 0,
+      "seconds": 0.8203447500709444
+    },
+    "start-restored": {
+      "returncode": 0,
+      "seconds": 12.388646916951984
+    },
+    "isolation": {
+      "returncode": 0,
+      "seconds": 0.8450183749664575
+    },
+    "restored-functional": {
+      "returncode": 0,
+      "seconds": 3.7061818330548704
+    },
+    "stop-restored": {
+      "returncode": 0,
+      "seconds": 30.179206707980484
+    },
+    "post-stop-audit": {
+      "returncode": 0,
+      "seconds": 0.700565957929939
+    },
+    "final-public": {
+      "returncode": 0,
+      "seconds": 1.3162834998220205
+    },
+    "final-functional": {
+      "returncode": 0,
+      "seconds": 1.7047243330162019
+    }
+  },
+  "pre_start_audit": {
+    "live_containers_unchanged": 8,
+    "disk_free_bytes": 40787619840,
+    "memory_available_bytes": 13823512576,
+    "snapshot_images_match": true,
+    "images": {
+      "oldap-jena": {
+        "requested": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+        "selected": "sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+        "id": "sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0"
+      },
+      "oldap-jena-identity": {
+        "requested": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+        "selected": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+        "id": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def"
+      },
+      "oldap-api": {
+        "requested": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+        "selected": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+        "id": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def"
+      },
+      "redis": {
+        "requested": "redis:7-alpine",
+        "selected": "sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99",
+        "id": "sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99"
+      },
+      "oldap-mediahelper": {
+        "requested": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "selected": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+      },
+      "oldap-imageserver": {
+        "requested": "lrosenth/sipi-2:0.1.0",
+        "selected": "sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5",
+        "id": "sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5"
+      }
+    }
+  },
+  "isolation": {
+    "status": "passed",
+    "services": [
+      "oldap-api",
+      "oldap-imageserver",
+      "oldap-jena",
+      "oldap-jena-identity",
+      "oldap-mediahelper",
+      "redis"
+    ],
+    "no_published_ports": true,
+    "all_mounts_in_restore_root": true,
+    "isolated_bridge_has_no_host_address": true,
+    "workers_absent": true,
+    "mail_and_callback_jobs_disabled": true,
+    "connectivity": [
+      {
+        "host": "192.168.1.230",
+        "port": 80,
+        "reachable": false
+      },
+      {
+        "host": "192.168.1.223",
+        "port": 80,
+        "reachable": false
+      },
+      {
+        "host": "1.1.1.1",
+        "port": 443,
+        "reachable": false
+      }
+    ],
+    "memory_caps_bytes": {
+      "oldap-api": 536870912,
+      "oldap-jena-identity": 134217728,
+      "oldap-mediahelper": 536870912,
+      "redis": 268435456,
+      "oldap-jena": 2147483648,
+      "oldap-imageserver": 536870912
+    }
+  },
+  "before_public": {
+    "checks": [
+      "API selects Jena",
+      "GraphDB is stopped",
+      "Private Jena backend has no published ports",
+      "oldap-api running",
+      "compose-oldap-jena-1 running",
+      "compose-oldap-jena-identity-1 running",
+      "redis running",
+      "caddy running",
+      "API /status HTTP 200",
+      "Existing administrator can log in",
+      "Media upload accepts a fresh API token before form validation",
+      "Media upload rejects missing or invalid access token",
+      "Media upload rejects missing or invalid access token",
+      "API /admin/auth/unknown HTTP 200",
+      "Proxy blocks private identity callback",
+      "Proxy blocks private identity callback",
+      "Export worker route reaches service authentication without proxy shadowing",
+      "API /data/search/fasnacht/class/fasnacht:Story HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "Nonempty fulltext AND search is independent of word order",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 HTTP 200",
+      "Signed IIIF metadata delivered by home media service",
+      "Signed image delivered as JPEG",
+      "fasnacht.home.org page available",
+      "app.home.org page available"
+    ],
+    "images": {
+      "oldap-api": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "compose-oldap-jena-1": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+      "compose-oldap-jena-identity-1": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "graphdb": "ontotext/graphdb:11.3.0",
+      "redis": "redis:7-alpine",
+      "caddy": "caddy:2.8"
+    },
+    "stories": 30,
+    "stories_sha256": "26975a21d9088bdb0a86dc185120881b8b6ac2c4e40579f223a1e3337b52f012",
+    "fulltext_matches": 10,
+    "image_bytes": 9898,
+    "status": "passed"
+  },
+  "before_functional": {
+    "checks": [
+      "API /status returns 200",
+      "API /admin/auth/[account] returns 200",
+      "API /admin/auth/[account] returns 200",
+      "API /archive/fasnacht/publication/capabilities returns 200",
+      "API /archive/fasnacht/publication/capabilities returns 200",
+      "Publication capabilities distinguish administrator and public user",
+      "Upload rejects absent/invalid token",
+      "Upload rejects absent/invalid token",
+      "Fresh restored token accepted before form validation",
+      "API /data/search/fasnacht/class/fasnacht:Story returns 200",
+      "API /data/search/fasnacht/class/fasnacht:ArchiveObject returns 200",
+      "Archive overview has results",
+      "API /data/search/fasnacht returns 200",
+      "API /data/search/fasnacht returns 200",
+      "Fulltext AND results nonempty and word-order independent",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 returns 200",
+      "Restored signed IIIF metadata",
+      "Restored signed JPEG"
+    ],
+    "admin_capabilities_sha256": "43a8d76d263a5b9c1dcc56451e966922bbfd6bfd34d7f67ae73b8c2281afa100",
+    "public_capabilities_sha256": "088a70a7588f1db196e6ccdf10d58bbf6de2a8d54f65edc1ac3181751bfd71a2",
+    "stories": 30,
+    "stories_sha256": "26975a21d9088bdb0a86dc185120881b8b6ac2c4e40579f223a1e3337b52f012",
+    "stories_rdf_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "archive_objects": 100,
+    "archive_sha256": "aa649936245fed8d80fe3f3405f99dc72d001eaab857168f7d4b090b91cc6ef2",
+    "fulltext_matches": 10,
+    "fulltext_sha256": "de5f24b3a795b9e229bd543258f1ca8cbe43fb476588c9d30810e2d28946a48a",
+    "iiif_dimensions": {
+      "width": 1589,
+      "height": 2914
+    },
+    "image_bytes": 9898,
+    "image_sha256": "94c924b11db83f628511f9d1b948f2b916423214aa43fc06f85976daaa506799",
+    "status": "passed"
+  },
+  "restored_functional": {
+    "checks": [
+      "API /status returns 200",
+      "API /admin/auth/[account] returns 200",
+      "API /admin/auth/[account] returns 200",
+      "API /archive/fasnacht/publication/capabilities returns 200",
+      "API /archive/fasnacht/publication/capabilities returns 200",
+      "Publication capabilities distinguish administrator and public user",
+      "Upload rejects absent/invalid token",
+      "Upload rejects absent/invalid token",
+      "Fresh restored token accepted before form validation",
+      "API /data/search/fasnacht/class/fasnacht:Story returns 200",
+      "API /data/search/fasnacht/class/fasnacht:ArchiveObject returns 200",
+      "Archive overview has results",
+      "API /data/search/fasnacht returns 200",
+      "API /data/search/fasnacht returns 200",
+      "Fulltext AND results nonempty and word-order independent",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 returns 200",
+      "Restored signed IIIF metadata",
+      "Restored signed JPEG"
+    ],
+    "admin_capabilities_sha256": "43a8d76d263a5b9c1dcc56451e966922bbfd6bfd34d7f67ae73b8c2281afa100",
+    "public_capabilities_sha256": "088a70a7588f1db196e6ccdf10d58bbf6de2a8d54f65edc1ac3181751bfd71a2",
+    "stories": 30,
+    "stories_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "stories_rdf_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "archive_objects": 100,
+    "archive_sha256": "aa649936245fed8d80fe3f3405f99dc72d001eaab857168f7d4b090b91cc6ef2",
+    "fulltext_matches": 10,
+    "fulltext_sha256": "de5f24b3a795b9e229bd543258f1ca8cbe43fb476588c9d30810e2d28946a48a",
+    "iiif_dimensions": {
+      "width": 1589,
+      "height": 2914
+    },
+    "image_bytes": 9898,
+    "image_sha256": "94c924b11db83f628511f9d1b948f2b916423214aa43fc06f85976daaa506799",
+    "status": "passed"
+  },
+  "restored_comparison": {
+    "semantic_comparison_equal": true,
+    "raw_story_digest_equal": false
+  },
+  "post_stop_audit": {
+    "live_containers_unchanged": 8,
+    "disk_free_bytes": 40781516800,
+    "restored_containers_stopped": 6,
+    "exit_codes": {
+      "/oldap-restore-staged-03-oldap-api-1": 0,
+      "/oldap-restore-staged-03-oldap-jena-identity-1": 0,
+      "/oldap-restore-staged-03-oldap-mediahelper-1": 0,
+      "/oldap-restore-staged-03-redis-1": 0,
+      "/oldap-restore-staged-03-oldap-jena-1": 143,
+      "/oldap-restore-staged-03-oldap-imageserver-1": 0
+    }
+  },
+  "final_public": {
+    "checks": [
+      "API selects Jena",
+      "GraphDB is stopped",
+      "Private Jena backend has no published ports",
+      "oldap-api running",
+      "compose-oldap-jena-1 running",
+      "compose-oldap-jena-identity-1 running",
+      "redis running",
+      "caddy running",
+      "API /status HTTP 200",
+      "Existing administrator can log in",
+      "Media upload accepts a fresh API token before form validation",
+      "Media upload rejects missing or invalid access token",
+      "Media upload rejects missing or invalid access token",
+      "API /admin/auth/unknown HTTP 200",
+      "Proxy blocks private identity callback",
+      "Proxy blocks private identity callback",
+      "Export worker route reaches service authentication without proxy shadowing",
+      "API /data/search/fasnacht/class/fasnacht:Story HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "Nonempty fulltext AND search is independent of word order",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 HTTP 200",
+      "Signed IIIF metadata delivered by home media service",
+      "Signed image delivered as JPEG",
+      "fasnacht.home.org page available",
+      "app.home.org page available"
+    ],
+    "images": {
+      "oldap-api": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "compose-oldap-jena-1": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+      "compose-oldap-jena-identity-1": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "graphdb": "ontotext/graphdb:11.3.0",
+      "redis": "redis:7-alpine",
+      "caddy": "caddy:2.8"
+    },
+    "stories": 30,
+    "stories_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "fulltext_matches": 10,
+    "image_bytes": 9898,
+    "status": "passed"
+  },
+  "final_functional": {
+    "checks": [
+      "API /status returns 200",
+      "API /admin/auth/[account] returns 200",
+      "API /admin/auth/[account] returns 200",
+      "API /archive/fasnacht/publication/capabilities returns 200",
+      "API /archive/fasnacht/publication/capabilities returns 200",
+      "Publication capabilities distinguish administrator and public user",
+      "Upload rejects absent/invalid token",
+      "Upload rejects absent/invalid token",
+      "Fresh restored token accepted before form validation",
+      "API /data/search/fasnacht/class/fasnacht:Story returns 200",
+      "API /data/search/fasnacht/class/fasnacht:ArchiveObject returns 200",
+      "Archive overview has results",
+      "API /data/search/fasnacht returns 200",
+      "API /data/search/fasnacht returns 200",
+      "Fulltext AND results nonempty and word-order independent",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 returns 200",
+      "Restored signed IIIF metadata",
+      "Restored signed JPEG"
+    ],
+    "admin_capabilities_sha256": "43a8d76d263a5b9c1dcc56451e966922bbfd6bfd34d7f67ae73b8c2281afa100",
+    "public_capabilities_sha256": "088a70a7588f1db196e6ccdf10d58bbf6de2a8d54f65edc1ac3181751bfd71a2",
+    "stories": 30,
+    "stories_sha256": "26975a21d9088bdb0a86dc185120881b8b6ac2c4e40579f223a1e3337b52f012",
+    "stories_rdf_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "archive_objects": 100,
+    "archive_sha256": "aa649936245fed8d80fe3f3405f99dc72d001eaab857168f7d4b090b91cc6ef2",
+    "fulltext_matches": 10,
+    "fulltext_sha256": "de5f24b3a795b9e229bd543258f1ca8cbe43fb476588c9d30810e2d28946a48a",
+    "iiif_dimensions": {
+      "width": 1589,
+      "height": 2914
+    },
+    "image_bytes": 9898,
+    "image_sha256": "94c924b11db83f628511f9d1b948f2b916423214aa43fc06f85976daaa506799",
+    "status": "passed"
+  },
+  "index_growth_observation": {
+    "20261106-studio-rehearsal-01": {
+      "api_archive_bytes": 23383111680,
+      "tdb_file_bytes": {
+        "POSG.idn": 2399141888,
+        "SPOG.idn": 2399141888,
+        "POSG.dat": 1216348160
+      }
+    },
+    "20261106-studio-timed-02": {
+      "api_archive_bytes": 28702310400,
+      "tdb_file_bytes": {
+        "POSG.idn": 2944401408,
+        "SPOG.idn": 2944401408,
+        "POSG.dat": 1493172224
+      }
+    },
+    "20261106-studio-staged-03": {
+      "api_archive_bytes": 32821770240,
+      "tdb_file_bytes": {
+        "POSG.idn": 3372220416,
+        "SPOG.idn": 3363831808,
+        "POSG.dat": 1702887424
+      }
+    }
+  },
+  "availability_transition_evidence": {
+    "api.home.org": [
+      {
+        "host": "api.home.org",
+        "start_seconds": 488.4831652918365,
+        "end_seconds": 488.5736088338308,
+        "status": "200",
+        "ok": true
+      },
+      {
+        "host": "api.home.org",
+        "start_seconds": 490.5753852499183,
+        "end_seconds": 490.66456037480384,
+        "status": "000",
+        "ok": false
+      },
+      {
+        "host": "api.home.org",
+        "start_seconds": 1464.186229124898,
+        "end_seconds": 1464.272471333854,
+        "status": "000",
+        "ok": false
+      },
+      {
+        "host": "api.home.org",
+        "start_seconds": 1466.2780689999927,
+        "end_seconds": 1466.3783974999096,
+        "status": "200",
+        "ok": true
+      }
+    ],
+    "media.home.org": [
+      {
+        "host": "media.home.org",
+        "start_seconds": 484.2923019588925,
+        "end_seconds": 484.37988024996594,
+        "status": "200",
+        "ok": true
+      },
+      {
+        "host": "media.home.org",
+        "start_seconds": 486.38585841679014,
+        "end_seconds": 486.4677511670161,
+        "status": "000",
+        "ok": false
+      },
+      {
+        "host": "media.home.org",
+        "start_seconds": 1464.1874748338014,
+        "end_seconds": 1464.272338541923,
+        "status": "000",
+        "ok": false
+      },
+      {
+        "host": "media.home.org",
+        "start_seconds": 1466.278142083902,
+        "end_seconds": 1466.3811810838524,
+        "status": "200",
+        "ok": true
+      }
+    ]
+  },
+  "retired_working_copies": {
+    "old_restore_project": "oldap-restore-20261106",
+    "old_restore_data_removed": true,
+    "retired_api_server_archives": [
+      "20261106-studio-rehearsal-01",
+      "20261106-studio-timed-02"
+    ],
+    "old_studio_snapshots_and_borg_archives_retained_and_reverified": true
+  }
+}

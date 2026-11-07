@@ -1,0 +1,171 @@
+{
+  "date": "2026-11-06",
+  "snapshot_id": "20261106-studio-rehearsal-01",
+  "source": "Studio Borg extraction, transferred and SHA-256 verified on API VM",
+  "project": "oldap-restore-20261106",
+  "root": "/srv/storage/oldap-restore-rehearsal-20261106",
+  "status": "passed_and_stopped",
+  "isolation": {
+    "status": "passed",
+    "services": [
+      "oldap-api",
+      "oldap-imageserver",
+      "oldap-jena",
+      "oldap-jena-identity",
+      "oldap-mediahelper",
+      "redis"
+    ],
+    "no_published_ports": true,
+    "all_mounts_in_restore_root": true,
+    "isolated_bridge_has_no_host_address": true,
+    "workers_absent": true,
+    "mail_and_callback_jobs_disabled": true,
+    "connectivity": [
+      {
+        "host": "192.168.1.230",
+        "port": 80,
+        "reachable": false
+      },
+      {
+        "host": "192.168.1.223",
+        "port": 80,
+        "reachable": false
+      },
+      {
+        "host": "1.1.1.1",
+        "port": 443,
+        "reachable": false
+      }
+    ],
+    "memory_caps_bytes": {
+      "oldap-api": 536870912,
+      "oldap-jena-identity": 134217728,
+      "oldap-mediahelper": 536870912,
+      "redis": 268435456,
+      "oldap-jena": 2147483648,
+      "oldap-imageserver": 536870912
+    }
+  },
+  "restored": {
+    "checks": [
+      "API /status returns 200",
+      "API /admin/auth/[account] returns 200",
+      "API /admin/auth/[account] returns 200",
+      "API /archive/fasnacht/publication/capabilities returns 200",
+      "API /archive/fasnacht/publication/capabilities returns 200",
+      "Publication capabilities distinguish administrator and public user",
+      "Upload rejects absent/invalid token",
+      "Upload rejects absent/invalid token",
+      "Fresh restored token accepted before form validation",
+      "API /data/search/fasnacht/class/fasnacht:Story returns 200",
+      "API /data/search/fasnacht/class/fasnacht:ArchiveObject returns 200",
+      "Archive overview has results",
+      "API /data/search/fasnacht returns 200",
+      "API /data/search/fasnacht returns 200",
+      "Fulltext AND results nonempty and word-order independent",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 returns 200",
+      "Restored signed IIIF metadata",
+      "Restored signed JPEG"
+    ],
+    "admin_capabilities_sha256": "43a8d76d263a5b9c1dcc56451e966922bbfd6bfd34d7f67ae73b8c2281afa100",
+    "public_capabilities_sha256": "088a70a7588f1db196e6ccdf10d58bbf6de2a8d54f65edc1ac3181751bfd71a2",
+    "stories": 30,
+    "stories_sha256": "26975a21d9088bdb0a86dc185120881b8b6ac2c4e40579f223a1e3337b52f012",
+    "stories_rdf_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "archive_objects": 100,
+    "archive_sha256": "aa649936245fed8d80fe3f3405f99dc72d001eaab857168f7d4b090b91cc6ef2",
+    "fulltext_matches": 10,
+    "fulltext_sha256": "de5f24b3a795b9e229bd543258f1ca8cbe43fb476588c9d30810e2d28946a48a",
+    "iiif_dimensions": {
+      "width": 1589,
+      "height": 2914
+    },
+    "image_bytes": 9898,
+    "image_sha256": "94c924b11db83f628511f9d1b948f2b916423214aa43fc06f85976daaa506799",
+    "status": "passed"
+  },
+  "live_after_stop": {
+    "checks": [
+      "API /status returns 200",
+      "API /admin/auth/[account] returns 200",
+      "API /admin/auth/[account] returns 200",
+      "API /archive/fasnacht/publication/capabilities returns 200",
+      "API /archive/fasnacht/publication/capabilities returns 200",
+      "Publication capabilities distinguish administrator and public user",
+      "Upload rejects absent/invalid token",
+      "Upload rejects absent/invalid token",
+      "Fresh restored token accepted before form validation",
+      "API /data/search/fasnacht/class/fasnacht:Story returns 200",
+      "API /data/search/fasnacht/class/fasnacht:ArchiveObject returns 200",
+      "Archive overview has results",
+      "API /data/search/fasnacht returns 200",
+      "API /data/search/fasnacht returns 200",
+      "Fulltext AND results nonempty and word-order independent",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 returns 200",
+      "Restored signed IIIF metadata",
+      "Restored signed JPEG"
+    ],
+    "admin_capabilities_sha256": "43a8d76d263a5b9c1dcc56451e966922bbfd6bfd34d7f67ae73b8c2281afa100",
+    "public_capabilities_sha256": "088a70a7588f1db196e6ccdf10d58bbf6de2a8d54f65edc1ac3181751bfd71a2",
+    "stories": 30,
+    "stories_sha256": "26975a21d9088bdb0a86dc185120881b8b6ac2c4e40579f223a1e3337b52f012",
+    "stories_rdf_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "archive_objects": 100,
+    "archive_sha256": "aa649936245fed8d80fe3f3405f99dc72d001eaab857168f7d4b090b91cc6ef2",
+    "fulltext_matches": 10,
+    "fulltext_sha256": "de5f24b3a795b9e229bd543258f1ca8cbe43fb476588c9d30810e2d28946a48a",
+    "iiif_dimensions": {
+      "width": 1589,
+      "height": 2914
+    },
+    "image_bytes": 9898,
+    "image_sha256": "94c924b11db83f628511f9d1b948f2b916423214aa43fc06f85976daaa506799",
+    "status": "passed"
+  },
+  "semantic_comparison_equal": true,
+  "raw_story_serialization_variability_observed": true,
+  "shutdown_and_live_audit": {
+    "live_containers_unchanged": 8,
+    "restored_containers_stopped": 6,
+    "exit_codes": {
+      "/oldap-restore-20261106-oldap-api-1": 0,
+      "/oldap-restore-20261106-oldap-jena-identity-1": 0,
+      "/oldap-restore-20261106-oldap-mediahelper-1": 0,
+      "/oldap-restore-20261106-redis-1": 0,
+      "/oldap-restore-20261106-oldap-jena-1": 143,
+      "/oldap-restore-20261106-oldap-imageserver-1": 0
+    },
+    "images": {
+      "oldap-jena": {
+        "requested": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+        "id": "sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0"
+      },
+      "oldap-jena-identity": {
+        "requested": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+        "id": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def"
+      },
+      "oldap-api": {
+        "requested": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+        "id": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def"
+      },
+      "redis": {
+        "requested": "redis:7-alpine",
+        "id": "sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99"
+      },
+      "oldap-mediahelper": {
+        "requested": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+      },
+      "oldap-imageserver": {
+        "requested": "lrosenth/sipi-2:0.1.0",
+        "id": "sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5"
+      }
+    }
+  },
+  "limitations": [
+    "No fresh-host reconstruction or image-archive restore",
+    "Redis/SIPI snapshot tags were resolved from available images/live digest",
+    "No browser, real upload, write workflow or worker replay",
+    "No production changes or automatic schedule"
+  ]
+}

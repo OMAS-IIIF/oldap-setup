@@ -1,5 +1,7 @@
 # Deployment of the OLDAP framework
 
+Restored write/worker acceptance: [runbook and results](docs/home-restore-writes.md).
+
 Home application candidate rollout and rollback: [runbook](docs/jena-apps-home.md).
 
 Jena harvester candidates and batch installation: [runbook](docs/jena-harvesters.md).
@@ -669,6 +671,12 @@ branch evidence, version/dependency work, PR drafts and remaining release gates.
 
 ### Offline home Jena snapshot before a client update
 
+For opt-in publication and a verified external pull to Studio, see
+[the home snapshot pull runbook](docs/home-snapshot-pull.md). For local Borg
+versioning, retention and backup-file restoration on Studio, see
+[the home Borg runbook](docs/home-borg.md). The successful isolated application
+restore and its limits are documented in [the home restore runbook](docs/home-restore.md).
+
 `oldap-jena-home-backup.yml` snapshots the already active home Jena system;
 `oldap-jena-freeze.yml` remains the first-cutover GraphDB workflow. The snapshot
 playbook deliberately fixes the two home hosts, inventoried containers and paths.
@@ -707,3 +715,6 @@ The Jena container now has separate heap/direct-buffer budgets and a hard total 
 ### Automatic Jena namespace recovery
 
 Home can install `oldap-jena-recovery-install.yml` to reconnect API/identity clients after a backend crash. The host timer compares real namespace identities and cooperates with planned maintenance. See [the recovery runbook](docs/jena-recovery.md) for bounded retries, pause/resume, diagnostics, disabling the feature and the explicit home fault test.
+
+Current Jena release/operating gate: [release operations](docs/jena-release-operations.md),
+including explicit snapshot health checks and remaining production acceptance.

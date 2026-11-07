@@ -1,0 +1,111 @@
+{
+  "snapshot": {
+    "api": {
+      "bytes": 23383111680,
+      "path": "/srv/storage/oldap-jena-snapshot-20261106-studio-rehearsal-01/api.tar",
+      "sha256": "4c37b359faa6d4ec0ef3a0a5272a2dd7ffe2bca1007de45c01d06bdabe5cd89a"
+    },
+    "media": {
+      "bytes": 21153853440,
+      "host": "media.home.org",
+      "path": "/data/oldap-jena-snapshot-20261106-studio-rehearsal-01/media.tar",
+      "sha256": "720c703f46a067a577e6780bafa1a993829019899f23fdb100f742742f9570d1"
+    },
+    "snapshot_id": "20261106-studio-rehearsal-01",
+    "status": "offline-compared"
+  },
+  "producer_elapsed_seconds": 1232.4,
+  "before": {
+    "checks": [
+      "API selects Jena",
+      "GraphDB is stopped",
+      "Private Jena backend has no published ports",
+      "oldap-api running",
+      "compose-oldap-jena-1 running",
+      "compose-oldap-jena-identity-1 running",
+      "redis running",
+      "caddy running",
+      "API /status HTTP 200",
+      "Existing administrator can log in",
+      "Media upload accepts a fresh API token before form validation",
+      "Media upload rejects missing or invalid access token",
+      "Media upload rejects missing or invalid access token",
+      "API /admin/auth/unknown HTTP 200",
+      "Proxy blocks private identity callback",
+      "Proxy blocks private identity callback",
+      "Export worker route reaches service authentication without proxy shadowing",
+      "API /data/search/fasnacht/class/fasnacht:Story HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "Nonempty fulltext AND search is independent of word order",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 HTTP 200",
+      "Signed IIIF metadata delivered by home media service",
+      "Signed image delivered as JPEG",
+      "fasnacht.home.org page available",
+      "app.home.org page available"
+    ],
+    "images": {
+      "oldap-api": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "compose-oldap-jena-1": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+      "compose-oldap-jena-identity-1": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "graphdb": "ontotext/graphdb:11.3.0",
+      "redis": "redis:7-alpine",
+      "caddy": "caddy:2.8"
+    },
+    "stories": 30,
+    "stories_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "fulltext_matches": 10,
+    "image_bytes": 9898,
+    "status": "passed"
+  },
+  "after": {
+    "checks": [
+      "API selects Jena",
+      "GraphDB is stopped",
+      "Private Jena backend has no published ports",
+      "oldap-api running",
+      "compose-oldap-jena-1 running",
+      "compose-oldap-jena-identity-1 running",
+      "redis running",
+      "caddy running",
+      "API /status HTTP 200",
+      "Existing administrator can log in",
+      "Media upload accepts a fresh API token before form validation",
+      "Media upload rejects missing or invalid access token",
+      "Media upload rejects missing or invalid access token",
+      "API /admin/auth/unknown HTTP 200",
+      "Proxy blocks private identity callback",
+      "Proxy blocks private identity callback",
+      "Export worker route reaches service authentication without proxy shadowing",
+      "API /data/search/fasnacht/class/fasnacht:Story HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "Nonempty fulltext AND search is independent of word order",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 HTTP 200",
+      "Signed IIIF metadata delivered by home media service",
+      "Signed image delivered as JPEG",
+      "fasnacht.home.org page available",
+      "app.home.org page available"
+    ],
+    "images": {
+      "oldap-api": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "compose-oldap-jena-1": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+      "compose-oldap-jena-identity-1": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "graphdb": "ontotext/graphdb:11.3.0",
+      "redis": "redis:7-alpine",
+      "caddy": "caddy:2.8"
+    },
+    "stories": 30,
+    "stories_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "fulltext_matches": 10,
+    "image_bytes": 9898,
+    "status": "passed"
+  },
+  "stories_unchanged": true,
+  "pull_status": "passed",
+  "interruption_rehearsal": "Two deliberate rsync SIGINT interruptions left only incoming data. Final retry replaced an invalid partial archive, verified both SHA-256 hashes and atomically published the complete pair.",
+  "final_pull_elapsed_seconds": 225.63,
+  "receiver_directory": "/Users/rosenth/OLDAP_BACKUP/snapshots/20261106-studio-rehearsal-01",
+  "api_ingress_events": [],
+  "transport": "Whole-file rsync without compression; reuse only SHA-256-verified complete local archives."
+}

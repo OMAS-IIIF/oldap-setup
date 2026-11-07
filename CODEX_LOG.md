@@ -1,3 +1,9 @@
+### Update 2026-11-07 01:24
+- Decisions: Retain exact tested maintenance candidate bytes separately from the accepted live home release; do not declare production freeze before outstanding gates pass.
+- Implementation: Built API/Tools a30230d5b695 for AMD64/ARM64; imports/pip checks, 10 packaged idle-poll cases each and both packaged Jena network/replacement acceptances pass. Exported all four image IDs and copied the complete source/wheel/service/image bundle to Studio; receiver archive SHA-256/size verified. Updated release evidence and source inventory.
+- Open: Publish/deploy candidate and observe home jobs/growth; resolve 12.7 GiB copy-space shortfall, rehearse production rollback and preserve/test existing production SUCCESS/FAILURE mail. Home mail intentionally excluded.
+- Risks/Assumptions: New builds resolve declared dependency ranges and retain installed dependency lists; use these exact artifacts instead of rebuilding at deployment. No registry push, merge, live application restart or production change.
+
 ### Update 2026-11-07 01:23
 - Decisions: Checkpoint the accumulated home backup/restore work on migration/jena; preserve it as home-only evidence rather than relabelling it production automation.
 - Implementation: Retained tested snapshot producer, receiver, health/image inventory and isolated restore/write probes with their runbooks/results. Setup suite: 120 passing cases across appropriate environments, five opt-in cases skipped; four initial missing-redis environment errors pass when rerun in API venv. No private-key/literal-JWT patterns in pending sources/evidence; whitespace checks pass.

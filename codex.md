@@ -1,5 +1,7 @@
 # OLDAP Setup Context
 
+- Maintenance candidate (2026-11-07): API/Tools a30230d5b695 built and packaged integration-tested on AMD64/ARM64; exact image archives/source/wheels/service retained locally and on Studio. See docs/jena-maintenance-candidate-results.json. Not published/deployed; home remains on accepted prior images. Gate 4 stays open for home rollout/capacity and production rollback/mail acceptance.
+
 - Release retention (2026-11-07): accepted home API/media, Tools and standard/OCR harvester image archives plus deployed Jena bundle are retained on Studio under OLDAP_BACKUP/releases/home-accepted-20261107. Hash checks and development-Docker load/ID checks pass. New maintenance candidate and production rollback set remain separate. User declines home email; retain/test production SUCCESS/FAILURE emails to lukas.rosenthaler@unibas.ch. See docs/jena-image-retention-results.json and release operations.
 
 - Night maintenance (2026-11-07): compaction admission now requires a configured local-time window (default 01:00–03:00 Europe/Zurich); all seven policy keys are required. An admitted run finishes safely even after window end. Coordinate backups and measure runtime before home activation; not deployed.

@@ -1,0 +1,78 @@
+{
+  "recorded_at": "2026-11-07T00:24:06.596779+00:00",
+  "status": "local_packaged_acceptance_passed_not_published_or_deployed",
+  "bundle": "/Users/rosenth/Library/Application Support/OLDAP-Jena/releases/20261107-night-maintenance",
+  "studio_copy": "/Users/rosenth/OLDAP_BACKUP/releases/20261107-night-maintenance",
+  "fingerprint": "a30230d5b695000d410dc63aea72e3af4f5cdef263a888c8cdd483275da57cdf",
+  "images": {
+    "oldap-api": {
+      "amd64": {
+        "id": "sha256:a5383202b9cc50b15a71d4ccae40d725b882de6dde38e1afacc8c95766591da7",
+        "reference": "lrosenth/oldap-api:jena-1.0.0-rc1-a30230d5b695-amd64"
+      },
+      "arm64": {
+        "id": "sha256:514e5f15120dec120382060fff52659e7d127ef4880931468ce8691369285531",
+        "reference": "lrosenth/oldap-api:jena-1.0.0-rc1-a30230d5b695-arm64"
+      }
+    },
+    "oldap-tools": {
+      "amd64": {
+        "id": "sha256:8aa1dd906f59630390020181e46b59a568a54d3ae76341217ab3cbbbaab20180",
+        "reference": "lrosenth/oldap-tools:jena-1.0.0-rc1-a30230d5b695-amd64"
+      },
+      "arm64": {
+        "id": "sha256:0717f3faade264a2f9b76b9524320630ee760d750756e000948e6391ddab2302",
+        "reference": "lrosenth/oldap-tools:jena-1.0.0-rc1-a30230d5b695-arm64"
+      }
+    }
+  },
+  "service": {
+    "version": "1.0.0rc1",
+    "backup_tool_sha256": "ed116b48c4ef6fe3597464414089dc3d76ee6fb87cb773412b412ba53e3b6ce1",
+    "fuseki_version": "6.2.0",
+    "fuseki_sha256": "2c92c598e65ab69d99820052e05f4277ed1d77980a8845f87545ad35b71a76ee",
+    "javac": "javac 25.0.2",
+    "sources": {
+      "tools/migration/JenaSessionEngine.java": "4e2e472f5e159970719686722aa2d3abda68c83eaca7ba79b167ecfeddc3342e",
+      "tools/migration/JenaSessionServlet.java": "d696abfab2cfa14cc8bc77e49647b2753e14a61726357926c43831eeab84fb4e",
+      "tools/migration/ProtectedApplicationDataset.java": "5c37b71d462572726ea27850408dec0e24d03db40399eb91f27cc44228e879a7",
+      "tools/migration/JenaManagedText.java": "faf0d462d06a3e6310e4aade9266ade2c7a4cc5b8e520dc2b4b50d8faede138d",
+      "tools/migration/JenaProjectTransfer.java": "cd38c4a3af682406f5ff5c0dc08938499e593a98be2740801075662452ea282a",
+      "tools/migration/OldapTextAnalyzer.java": "ff082ed7e7ae2e1a1f6d6410f7218fbabab7e517e3cd45f8ced9a39350fe1c85",
+      "tools/migration/JenaTextFixture.java": "db9879b9c182e2910b6ae701bfa5080f8de5390d91f2c814dde0584ea0cad47a",
+      "services/jena/src/JenaService.java": "57b42a7380862ee9ce96595e2040d0aadbd6198215164019d94da64b91d0c6d4",
+      "services/jena/src/JenaAdministration.java": "97a0444833b86ac7f3a123e1f8b7a0a5128924f10afdcea6727aa5691a7660cf",
+      "services/jena/src/JenaCompaction.java": "afec974219e2b068de52d551610ecc13d450b5c6cf0233f351d4427b9b96ee99",
+      "services/jena/src/JenaInitialImport.java": "953664092e6192be41928b9c14208599bbbdbc3513a6f16bc725b4e6da90c601",
+      "tools/migration/ConvertLegacyRdfStar.java": "06f6d1ba245cdc2cb6aaba19f6bb3dcff566e0428c260409c952929c0796dde7"
+    },
+    "service_sha256": "b112fc4db082b315f2297eb1d3527321ec85c2de8943beaa466284209b8a76ad"
+  },
+  "archive": {
+    "sha256": "c7048821865e32ff6ff92d363a467cdbb501f20ff758f3be9066234331491f91",
+    "bytes": 300846592,
+    "image_ids": [
+      "sha256:0717f3faade264a2f9b76b9524320630ee760d750756e000948e6391ddab2302",
+      "sha256:514e5f15120dec120382060fff52659e7d127ef4880931468ce8691369285531",
+      "sha256:8aa1dd906f59630390020181e46b59a568a54d3ae76341217ab3cbbbaab20180",
+      "sha256:a5383202b9cc50b15a71d4ccae40d725b882de6dde38e1afacc8c95766591da7"
+    ]
+  },
+  "studio_archive_rehash_verified": true,
+  "tests": {
+    "packaged_network_acceptance": "passed on AMD64 and ARM64, including contention, callback authentication, namespace isolation and replacement",
+    "packaged_idle_poll_tests": {
+      "amd64": 10,
+      "arm64": 10
+    },
+    "setup_passed": 120,
+    "setup_skipped": 5
+  },
+  "pending": [
+    "registry publication",
+    "home rollout and real idle-growth/job checks",
+    "home copy-space reserve",
+    "production fresh-source cutover/rollback",
+    "production success/failure mail verification"
+  ]
+}

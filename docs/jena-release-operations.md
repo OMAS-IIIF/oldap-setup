@@ -205,3 +205,13 @@ Measured maintenance capacity at this checkpoint: TDB logical bytes
 Do not activate compaction until capacity has been increased or separately
 verified retained artifacts have been relocated safely. Production has its own
 capacity calculation. The idle-poll fix does not depend on compaction admission.
+
+## New maintenance candidate accepted locally
+
+API and Tools `jena-1.0.0-rc1-a30230d5b695` are built for AMD64 and ARM64.
+Package imports/dependencies, 10 packaged idle-poll cases per API architecture,
+and real Jena network/namespace replacement acceptance pass. Exact IDs, service
+source hashes, image archive hash and remaining gates are recorded in
+`jena-maintenance-candidate-results.json`. The complete local bundle and a
+Studio copy retain wheels, sources, images and service. No registry publication
+or application deployment occurred. The prior home release remains active.

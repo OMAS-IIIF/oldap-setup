@@ -1,5 +1,5 @@
 {
-  "observed_at": "2026-11-07T00:16:24.998819+00:00",
+  "observed_at": "2026-11-07T00:24:06.596779+00:00",
   "status": "local_inventory_not_release_freeze",
   "repositories": {
     "FasnachtsPage": {
@@ -29,7 +29,7 @@
     },
     "oldap-setup": {
       "branch": "migration/jena",
-      "revision": "f30909e97ed4ab74b60af8be1b8de0ed48d8aa45",
+      "revision": "745f2616f7e6e50b2b61186148524877813831ae",
       "clean": false
     },
     "oldap-tools": {

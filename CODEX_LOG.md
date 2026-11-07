@@ -1,3 +1,9 @@
+### Update 2026-11-07 14:34
+- Decisions: Prepare production cutover and rollback separately from historical home-only commands; distinguish online image/config retention from a coordinated data snapshot.
+- Implementation: Added ordered production runbook with source-specific worker/coordinator handling, abort criteria and first-write boundary. Added exact running-image export/load verification with inventory-drift rejection; two failure-path tests pass.
+- Open: Production SSH times out; requested VPN. Actual source image/configuration retention, batch image coverage, off-host verification and executable cutover/rollback rehearsal remain pending.
+- Risks/Assumptions: No production service/configuration changes, no source snapshot or completed rollback package claimed. Local Docker load verification will use the development daemon, not a clean daemon.
+
 ### Update 2026-11-07 13:03
 - Decisions: Accept candidate writes in the isolated restore clone, then activate the exact tested service and night-only compaction on home.
 - Implementation: 31 real write/worker checks and 27 live checks pass. Verified stopped-source snapshot precedes service b112fc4d activation; recovery timer active, all nine clone containers stopped. Shared policy template, pre-interruption config/capacity checks, pending-intent rollback guard, and indefinite coordinated backend stop added. Nine targeted deployment/config tests pass.

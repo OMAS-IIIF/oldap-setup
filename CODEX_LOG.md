@@ -1,3 +1,9 @@
+### Update 2026-11-07 22:41
+- Decisions: Diagnose production harvesting read-only; do not rerun writes or send mail during inspection.
+- Implementation: November 1 logs show both CLIs reject missing --config. Real isolated Compose echo probe reproduces default-command loss with CLI --entrypoint; current Jena launcher shares the defect. Recorded independent unresolved nullmailer queue failure and current capacity/permission checks.
+- Open: Fix/test scheduled and explicit argument handling across both backends; diagnose/test notifications. Supplement rollback archive with provider-overlay OCR image and external config/model inputs omitted by base-only enumeration.
+- Risks/Assumptions: Existing verified package contents remain valid but batch coverage is incomplete; corrected prior claim. No production modification or rerun. Current mail health does not explain historical failure.
+
 ### Update 2026-11-07 14:45
 - Decisions: Retain exact online production configuration and images now; reserve coordinated data/media snapshot and cutover for the planned maintenance workflow.
 - Implementation: Eight API, three configured batch/helper and three media images saved; verified compatibility copies load/re-export with matching config hashes and rootfs layer identities. Private configuration tar comparisons pass, including separate writer credentials and office backup job. Office receiver verifies 14 files / 7,657,004,670 bytes and 0700/0600 protection. All 14 source containers retain identity/start time. Four retention failure-path tests and Ansible syntax check pass.

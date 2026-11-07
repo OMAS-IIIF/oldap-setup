@@ -157,8 +157,9 @@ The live GraphDB source has now been retained without stopping services:
   Live Redis data is deliberately excluded. Media configuration includes its
   deployment inputs and Caddy state. Archives were compared to source files.
 - Eight running API images, three additional configured batch/helper images and
-  three distinct media images are retained. Production uses one configured
-  harvester image (`0.1.13`), not the two separate Jena candidate variants.
+  three distinct media images are retained. Follow-up inspection found a separate Swisscovery `0.1.13-ocr` image outside
+  the base Compose selection; it and external provider configuration/model
+  inputs still need retention. See `production-harvest-failure-20261101.md`.
 
 The production Docker export contains complete Docker manifests but its API and
 batch OCI indexes list only one image. Docker Desktop also identifies images by

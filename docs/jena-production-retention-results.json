@@ -159,6 +159,8 @@
     "Load/re-export checks use the existing development Docker daemon, not a clean recovery host",
     "Original legacy archives retained alongside verified cross-engine import copies",
     "No production cutover, write pause, configuration replacement, timer change or email delivery test",
-    "Existing November 1 harvester failure needs investigation before migration scheduling"
-  ]
+    "Existing November 1 harvester failure needs investigation before migration scheduling",
+    "Follow-up provider-overlay inspection found omitted production 0.1.13-ocr image and external provider configuration/model inputs; complete these before certifying batch rollback coverage"
+  ],
+  "batch_coverage_complete": false
 }

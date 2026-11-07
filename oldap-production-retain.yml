@@ -1,0 +1,20 @@
+---
+# Online private configuration/image retention only. No stop, deploy or data snapshot.
+- name: Retain production rollback inputs
+  hosts: oldap_prod
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Require explicit fresh private retention path and fixed production source
+      ansible.builtin.assert:
+        that:
+          - ansible_host == 'dhlab-oldap.dhlab.unibas.ch'
+          - rollback_retention_root is match('^/var/tmp/oldap-rollback-[a-zA-Z0-9_-]+$')
+    - name: Retain verified configuration and configured image bytes
+      ansible.builtin.script: 'scripts/retain-production-configuration.py {{ item.role }} {{ rollback_retention_root }}'
+      args: {executable: python3}
+      delegate_to: '{{ item.host }}'
+      loop:
+        - {role: api, host: dhlab-oldap.dhlab.unibas.ch}
+        - {role: media, host: dhlab-iii.dhlab.unibas.ch}
+      no_log: true

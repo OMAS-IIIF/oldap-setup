@@ -142,3 +142,66 @@ images alone is not a rollback and would risk lost work.
   rollback test; existing home test data must be retained separately.
 - First home nighttime compaction observation and final release freeze.
 - Production backup completion/age/failure checks and real SUCCESS/FAILURE mail.
+
+## Retained preparation package — 2026-11-07
+
+The live GraphDB source has now been retained without stopping services:
+
+- Development machine: `/Users/rosenth/Library/Application Support/OLDAP-Jena/releases/production-rollback-20261107`.
+- Office receiver: `/Users/rosenth/OLDAP_BACKUP/releases/production-rollback-20261107`
+  on `131.152.51.209` (receiver verification is recorded in the results JSON).
+- Source-side staging: `/var/tmp/oldap-rollback-20261107` on both Linux hosts;
+  this is not a durable off-host copy and must not be the sole recovery source.
+- API configuration includes the separate `/opt/oldap/.env` writer inputs,
+  proxy state, backup/harvest environments, scripts and systemd definitions.
+  Live Redis data is deliberately excluded. Media configuration includes its
+  deployment inputs and Caddy state. Archives were compared to source files.
+- Eight running API images, three additional configured batch/helper images and
+  three distinct media images are retained. Production uses one configured
+  harvester image (`0.1.13`), not the two separate Jena candidate variants.
+
+The production Docker export contains complete Docker manifests but its API and
+batch OCI indexes list only one image. Docker Desktop also identifies images by
+manifest digest rather than the legacy config digest. Do not conclude that an
+image is missing merely from that different displayed ID. Original archives are
+preserved. `scripts/verify-rollback-image-archive.py` creates a separate
+Docker-format import copy with private `oldap-rollback/...` tags; loading and
+re-exporting verifies each original config hash and all filesystem layer IDs.
+No application container is run by this test. Both formats remain in the package.
+
+Reproducible preparation entry points (new directories required):
+
+```sh
+python3 scripts/retain-production-images.py /absolute/private/new-package --roles api
+ansible-playbook -i inventory.ini oldap-production-retain.yml \
+  -e @/Users/rosenth/.config/oldap/production-become.json \
+  -e rollback_retention_root=/var/tmp/oldap-rollback-NEW_ID
+```
+
+Transfer the private source manifests/configuration/additional image archives to
+the new package and compare every hash. The Ansible path handles the media host's
+required sudo access. Run the archive verifier for API batch and media archives;
+then transfer the package to the office receiver and rehash there. Keep new
+completion evidence separate from partial files if any operation fails.
+
+For isolated rollback preparation, load the verified compatibility archives:
+
+```sh
+docker image load -i api-compatible.tar
+docker image load -i batch-compatible.tar
+docker image load -i media-compatible.tar
+```
+
+Map each original image config ID to `oldap-rollback/api:<hex>`,
+`oldap-rollback/batch:<hex>` or `oldap-rollback/media:<hex>` using the retained
+verification reports. Select these exact local tags in a private restore Compose
+override with pulling disabled; never start the restored configuration against
+live mounts. Actual activation still requires the matching coordinated data
+snapshot and the isolated production rollback rehearsal above.
+
+At retention, backup and harvest timers were enabled/active. The harvest service
+reported an existing failed November 1 05:00 run (exit 1 after five seconds).
+Investigate this before planning the production migration/harvest schedule; do
+not reset its state or attribute it to this read-only preparation. Receiver
+verification used `/opt/homebrew/bin/python3`; system Python is blocked by an
+unaccepted Xcode license. No license or software installation was changed.

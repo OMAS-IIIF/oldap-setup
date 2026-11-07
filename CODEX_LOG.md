@@ -1,3 +1,9 @@
+### Update 2026-11-07 14:45
+- Decisions: Retain exact online production configuration and images now; reserve coordinated data/media snapshot and cutover for the planned maintenance workflow.
+- Implementation: Eight API, three configured batch/helper and three media images saved; verified compatibility copies load/re-export with matching config hashes and rootfs layer identities. Private configuration tar comparisons pass, including separate writer credentials and office backup job. Office receiver verifies 14 files / 7,657,004,670 bytes and 0700/0600 protection. All 14 source containers retain identity/start time. Four retention failure-path tests and Ansible syntax check pass.
+- Open: Fresh coordinated data/media snapshot, executable cutover adaptation and isolated rollback; first nighttime compaction and production mail acceptance. Existing production harvester failure from November 1 (exit 1) needs investigation.
+- Risks/Assumptions: Legacy Docker exports have incomplete OCI indexes; original archives retained alongside verified import copies. Development-engine tests are not a clean-host application restore. No production restart, timer change, data mutation or notification sent. Office verification uses existing Homebrew Python because system Python is blocked by Xcode license acceptance.
+
 ### Update 2026-11-07 14:34
 - Decisions: Prepare production cutover and rollback separately from historical home-only commands; distinguish online image/config retention from a coordinated data snapshot.
 - Implementation: Added ordered production runbook with source-specific worker/coordinator handling, abort criteria and first-write boundary. Added exact running-image export/load verification with inventory-drift rejection; two failure-path tests pass.

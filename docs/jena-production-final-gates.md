@@ -27,8 +27,8 @@ Before the first production cutover, close these bounded gates:
    matrix; mobile resumable workers and harvesting are excluded from this probe.
 3. **Fresh-source cutover and rollback rehearsal — preflight in progress.**
    The source-specific plan and abort/rollback boundaries are recorded in
-   `jena-production-cutover.md`; executable production adaptation and artifact
-   retention are not yet complete.
+   `jena-production-cutover.md`; executable production adaptation remains open. Image/configuration retention
+   is recorded separately in `jena-production-retention-results.json`.
    Fresh native RDF-star conversion and offline persisted import pass; source
    writer/configuration and legacy mobile shutdown differences are recorded in
    `production-backup-inventory.md` (2026-11-07). No coordinated snapshot or
@@ -47,8 +47,9 @@ Before the first production cutover, close these bounded gates:
    see `jena-image-retention-results.json`. Growth mitigation and night-window
    compaction pass local acceptance and are checkpointed. Their new candidate
    passed home rollout and 31 isolated write/27 live checks; first live nighttime
-   compaction observation remains open. Production rollback image retention and
-   final source/release freeze remain open.
+   compaction observation remains open. Production rollback images/configuration have now been retained and verified
+   (see `jena-production-retention-results.json`); coordinated source data/media
+   rollback and final source/release freeze remain open.
    Growth mechanism is now reproduced: empty worker transactions persist receipts
    and amplify TDB index storage; see `tdb-growth-analysis.md`.
    Review/checkpoint pending Git

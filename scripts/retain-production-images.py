@@ -12,6 +12,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 from datetime import datetime, timezone
 
 HOSTS = {'api': 'dhlab-oldap.dhlab.unibas.ch', 'media': 'dhlab-iii.dhlab.unibas.ch'}
@@ -35,7 +36,7 @@ def ssh(host, command, **kwargs):
                            'rosenth@'+host, command], check=True, **kwargs)
 
 
-def retain(destination):
+def retain(destination, roles=None):
     """Save and verify both source image sets; fail closed on inventory drift."""
     destination = destination.resolve()
     if any((p/'.git').exists() for p in [destination, *destination.parents]):
@@ -43,8 +44,10 @@ def retain(destination):
     os.umask(0o077)
     destination.mkdir(mode=0o700, parents=False, exist_ok=False)
     report = {'created_at': datetime.now(timezone.utc).isoformat(),
-              'scope': 'running production images only; no data snapshot', 'hosts': {}}
-    for role, host in HOSTS.items():
+              'scope': 'selected running production images only; no data snapshot',
+              'roles': roles or list(HOSTS), 'hosts': {}}
+    for role in (roles or list(HOSTS)):
+        host = HOSTS[role]
         before = json.loads(ssh(host, 'python3 -', input=PROBE, capture_output=True, text=True).stdout)
         if set(before) != EXPECTED[role]:
             raise RuntimeError('Review changed running container inventory: '+role)
@@ -57,12 +60,9 @@ def retain(destination):
             ssh(host, 'docker image save '+' '.join(ids), stdout=out, stderr=subprocess.PIPE)
         with archive.open('rb') as stream:
             digest = hashlib.file_digest(stream, 'sha256').hexdigest()
-        subprocess.run(['docker', 'image', 'load', '-i', str(archive)], check=True,
-                       capture_output=True)
-        for identity in ids:
-            found = subprocess.check_output(['docker', 'image', 'inspect', '--format', '{{.Id}}', identity], text=True).strip()
-            if found != identity:
-                raise RuntimeError('Loaded image mismatch')
+        # Verify config and layer identities across legacy and containerd engines.
+        subprocess.run([sys.executable, str(Path(__file__).with_name('verify-rollback-image-archive.py')),
+                        str(archive), str(destination/(role+'-compatible.tar')), role], check=True)
         after = json.loads(ssh(host, 'python3 -', input=PROBE, capture_output=True, text=True).stdout)
         if before != after:
             raise RuntimeError('Source changed during retention: '+role)
@@ -77,5 +77,6 @@ def retain(destination):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('destination', type=Path)
+    parser.add_argument('--roles', nargs='+', choices=list(HOSTS), default=list(HOSTS))
     args = parser.parse_args()
-    retain(args.destination)
+    retain(args.destination, args.roles)

@@ -54,8 +54,10 @@ original source storage throughout the migration; do not overwrite it with Jena.
 
 ## Ordered maintenance procedure
 
-The production-specific drain/snapshot/activation command runner still needs a
-review and isolated rehearsal. The commands in `oldap-jena-freeze.yml` and
+Production-specific preparation entry points are documented in
+[the execution runner](production-cutover-runner.md). Local guard/recovery tests
+pass; real two-host execution and post-replacement rollback still require an
+isolated rehearsal. The commands in `oldap-jena-freeze.yml` and
 `oldap-jena-activate.yml` are historical home-only workflows, not production
 entry points. Do not execute them against production by changing their guards.
 

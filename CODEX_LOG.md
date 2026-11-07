@@ -1,3 +1,9 @@
+### Update 2026-11-07 23:13
+- Decisions: Prepare production-specific execution locally; retain home-only guards and require an isolated post-replacement rollback rehearsal before candidate activation. Separate unchanged-source resume from full rollback.
+- Implementation: Added coordinated source drain/export/snapshot with exclusive maintenance ownership and failure recovery; guarded private target installation and durable pre-opening write marker. Added pinned-image/archive/path gates, explicit identity-before-API startup and installation-intent fencing. Documented commands, private inputs, boundaries and remaining rehearsal work. 31 production tests pass, including real Ansible tasks with fake Docker/systemctl and lock contention; all four new playbooks pass syntax checks.
+- Open: Fresh paired source capture/off-host verification, final reviewed candidate bundles, executable post-replacement rollback and isolated end-to-end rehearsal; private/public application acceptance and Jena backup schedule integration.
+- Risks/Assumptions: No server access or changes in this preparation. Local tests do not prove real two-host drain/restore. RDF export transport checks do not replace syntax/domain validation. Single operator must exclude external writers/recovery automation. Opening leaves old timers paused and cutover lock held until new operational wiring is accepted; after opening intent simple GraphDB rollback is forbidden.
+
 ### Update 2026-11-07 22:53
 - Decisions: Complete the same bounded launcher repair on home after owner disabled VPN.
 - Implementation: Verified previous script checksum, installed identical corrected launcher with backup, and passed both real Jena provider help checks. Production/home now use SHA-256 39db43969b5d10745f214a664e13eb69e59d3e937832d69c30753b03a6db0138.

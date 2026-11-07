@@ -1,0 +1,46 @@
+---
+# Abort a held checkpoint BEFORE replacing source containers/configuration.
+- name: Resume an unchanged held production GraphDB source
+  hosts: oldap_prod
+  become: true
+  gather_facts: false
+  vars:
+    media_host: dhlab-iii.dhlab.unibas.ch
+    checkpoint: '/srv/storage/oldap-cutover-{{ snapshot_id }}'
+  tasks:
+    - ansible.builtin.assert:
+        that:
+          - ansible_host == 'dhlab-oldap.dhlab.unibas.ch'
+          - snapshot_id is match('^[a-zA-Z0-9_-]+$')
+    - name: Refuse source reopening after any possible target write
+      ansible.builtin.script: 'scripts/cutover-write-boundary.py {{ checkpoint }} check-rollback'
+      args: {executable: python3}
+      changed_when: false
+    - name: Reject source resume after configuration replacement began
+      ansible.builtin.stat: {path: '{{ checkpoint }}/target-installing.json', follow: false}
+      register: target_installing
+    - ansible.builtin.assert:
+        that: not target_installing.stat.exists
+        fail_msg: Source configuration may have changed; use the separately rehearsed rollback procedure.
+    - ansible.builtin.slurp: {src: '{{ checkpoint }}/source-state.json'}
+      register: saved_state
+      no_log: true
+    - ansible.builtin.set_fact:
+        original: '{{ saved_state.content | b64decode | from_json }}'
+      no_log: true
+    - ansible.builtin.set_fact:
+        source_api: {stdout: '{{ original.api | to_json }}'}
+        source_media: {stdout: '{{ original.media | to_json }}'}
+        source_timers:
+          results:
+            - {item: oldap-backup.timer, stdout: '{{ original.timers[0] }}'}
+            - {item: oldap-harvest.timer, stdout: '{{ original.timers[1] }}'}
+    - name: Require the source is still frozen and no target is running
+      ansible.builtin.script: 'scripts/check-cutover-containers.py {{ item.role }} frozen'
+      args: {executable: python3}
+      loop:
+        - {role: api, host: dhlab-oldap.dhlab.unibas.ch}
+        - {role: media, host: '{{ media_host }}'}
+      delegate_to: '{{ item.host }}'
+      changed_when: false
+    - ansible.builtin.include_tasks: tasks/production-source-resume.yml

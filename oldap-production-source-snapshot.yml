@@ -1,0 +1,173 @@
+---
+# Prepare/rehearse the GraphDB source checkpoint. This play NEVER activates Jena.
+# Not executed by preparation. Explicit acknowledgement is required at execution.
+- name: Capture a coordinated production source for isolated migration rehearsal
+  hosts: oldap_prod
+  become: true
+  gather_facts: false
+  vars:
+    media_host: dhlab-iii.dhlab.unibas.ch
+    api_snapshot: '/srv/storage/oldap-cutover-{{ snapshot_id }}'
+    media_snapshot: '/data/oldap-cutover-{{ snapshot_id }}'
+  tasks:
+    - name: Require fixed source and an explicit approved maintenance window
+      ansible.builtin.assert:
+        that:
+          - ansible_host == 'dhlab-oldap.dhlab.unibas.ch'
+          - snapshot_id is match('^[a-zA-Z0-9_-]+$')
+          - production_write_pause_approved | default(false) | bool
+          - external_writers_excluded | default(false) | bool
+          - office_pull_coordinated | default(false) | bool
+    - name: Inventory exact online source API containers
+      ansible.builtin.script: scripts/check-cutover-containers.py api online
+      args: {executable: python3}
+      register: source_api
+      changed_when: false
+    - name: Inventory exact online media containers
+      ansible.builtin.script: scripts/check-cutover-containers.py media online
+      args: {executable: python3}
+      delegate_to: '{{ media_host }}'
+      register: source_media
+      changed_when: false
+    - name: Require GraphDB before any interruption
+      ansible.builtin.command:
+        argv: [docker, exec, oldap-api, python, -c, 'import os; assert os.getenv("OLDAP_BACKEND","graphdb")=="graphdb"']
+      changed_when: false
+    - name: Require new snapshot paths
+      ansible.builtin.stat: {path: '{{ item.path }}'}
+      loop:
+        - {host: dhlab-oldap.dhlab.unibas.ch, path: '{{ api_snapshot }}'}
+        - {host: '{{ media_host }}', path: '{{ media_snapshot }}'}
+      delegate_to: '{{ item.host }}'
+      register: destinations
+    - ansible.builtin.assert:
+        that: not item.stat.exists
+      loop: '{{ destinations.results }}'
+    - name: Remember active timers without changing enablement
+      ansible.builtin.command: 'systemctl is-active {{ item }}'
+      loop: [oldap-backup.timer, oldap-harvest.timer]
+      register: source_timers
+      failed_when: source_timers.rc not in [0, 3]
+      changed_when: false
+    - name: Refuse an existing cutover lock owner
+      ansible.builtin.command: systemctl is-active oldap-cutover-lock.service
+      register: existing_lock
+      failed_when: existing_lock.stdout | trim in ['active', 'activating', 'deactivating']
+      changed_when: false
+    - name: Check capacity before interrupting the source
+      ansible.builtin.script: 'scripts/check-production-snapshot-space.py {{ item.role }}'
+      args: {executable: python3}
+      loop:
+        - {role: api, host: dhlab-oldap.dhlab.unibas.ch}
+        - {role: media, host: '{{ media_host }}'}
+      delegate_to: '{{ item.host }}'
+      changed_when: false
+    - name: Create private immutable checkpoint directories
+      ansible.builtin.file: {path: '{{ item.path }}', state: directory, mode: '0700'}
+      loop:
+        - {host: dhlab-oldap.dhlab.unibas.ch, path: '{{ api_snapshot }}'}
+        - {host: '{{ media_host }}', path: '{{ media_snapshot }}'}
+      delegate_to: '{{ item.host }}'
+    - name: Retain sanitized original lifecycle evidence
+      ansible.builtin.copy:
+        dest: '{{ api_snapshot }}/source-state.json'
+        mode: '0600'
+        content: '{{ {"api": source_api.stdout | from_json, "media": source_media.stdout | from_json, "timers": source_timers.results | map(attribute="stdout") | list} | to_nice_json }}'
+    - name: Install a private copy of the maintenance lock holder
+      ansible.builtin.copy:
+        src: scripts/hold-production-cutover-lock.py
+        dest: '{{ api_snapshot }}/hold-lock.py'
+        mode: '0600'
+    - name: Acquire maintenance ownership before stopping any services or timers
+      ansible.builtin.command:
+        argv: [systemd-run, --collect, --unit=oldap-cutover-lock, --property=Type=exec, /usr/bin/python3, '{{ api_snapshot }}/hold-lock.py', /srv/storage/oldap-data/job-locks/maintenance.lock, '{{ api_snapshot }}/lock-ready.json']
+    - name: Require proof of exclusive lock acquisition
+      ansible.builtin.wait_for:
+        path: '{{ api_snapshot }}/lock-ready.json'
+        timeout: 10
+    - name: Freeze and snapshot, then recover the unchanged source
+      block:
+        - name: Stop scheduled starts without disabling schedules
+          ansible.builtin.command: systemctl stop oldap-backup.timer oldap-harvest.timer
+        - name: Refuse active backup or harvesting before lock acquisition
+          ansible.builtin.command: 'systemctl is-active {{ item }}'
+          loop: [oldap-backup.service, oldap-harvest.service]
+          register: active_job
+          failed_when: active_job.stdout | trim not in ['inactive', 'failed']
+          changed_when: false
+        - name: Close media ingress
+          ansible.builtin.command: docker stop --timeout -1 oldap-media-caddy
+          delegate_to: '{{ media_host }}'
+        - name: Drain helper and normal workers while API remains reachable
+          ansible.builtin.command: docker stop --timeout -1 oldap-mediahelper oldap-ingest-worker oldap-export-worker
+          delegate_to: '{{ media_host }}'
+        - name: Require completely empty legacy mobile registry before SIGINT
+          ansible.builtin.command:
+            argv: [docker, exec, oldap-mobile-media-worker, python, -c, 'import sqlite3; c=sqlite3.connect("file:/data/mobile-uploads/registry.sqlite3?mode=ro",uri=True); tables=[r[0] for r in c.execute("SELECT name FROM sqlite_master WHERE type=\"table\" AND name LIKE \"mobile_%\"")]; assert "mobile_uploads" in tables; assert all(c.execute("SELECT COUNT(*) FROM "+chr(34)+t.replace(chr(34),chr(34)*2)+chr(34)).fetchone()[0]==0 for t in tables)']
+          delegate_to: '{{ media_host }}'
+          changed_when: false
+          no_log: true
+        - name: Stop unused legacy mobile worker and image server
+          ansible.builtin.command: docker stop --signal SIGINT --timeout -1 oldap-mobile-media-worker
+          delegate_to: '{{ media_host }}'
+        - ansible.builtin.command: docker stop --timeout -1 oldap-imageserver
+          delegate_to: '{{ media_host }}'
+        - name: Close API ingress and drain API requests
+          ansible.builtin.command: docker stop --timeout -1 caddy oldap-api oldap-app fasnachts-page compose-salsah-2-1
+        - name: Check coordinators and export asserted RDF through a read-only source client
+          ansible.builtin.script: 'scripts/export-production-source.py {{ api_snapshot }}'
+          args: {executable: python3}
+          no_log: true
+        - name: Stop source database and both coordinators cleanly
+          ansible.builtin.command: docker stop --timeout -1 graphdb redis compose-archive-writer-1
+        - name: Verify clean source lifecycle before copying files
+          ansible.builtin.script: 'scripts/check-cutover-containers.py {{ item.role }} frozen'
+          args: {executable: python3}
+          loop:
+            - {role: api, host: dhlab-oldap.dhlab.unibas.ch}
+            - {role: media, host: '{{ media_host }}'}
+          delegate_to: '{{ item.host }}'
+          changed_when: false
+        - name: Archive full stopped API state and private deployment inputs
+          ansible.builtin.command:
+            argv: [tar, --acls, --xattrs, -cpf, '{{ api_snapshot }}/api.tar', -C, /, srv/storage/graphdb, srv/storage/oldap-data, srv/storage/caddy, opt/oldap, etc/oldap, etc/oldap-backup.env, etc/oldap-harvest.env]
+        - name: Archive stopped media and all worker state
+          ansible.builtin.command:
+            argv: [tar, --acls, --xattrs, -cpf, '{{ media_snapshot }}/media.tar', -C, /, data/media, data/oldap-ingest, data/oldap-import-records, data/oldap-exports, data/oldap-mobile-uploads, opt/oldap-mediaserver]
+          delegate_to: '{{ media_host }}'
+        - name: Restrict private archive files
+          ansible.builtin.file: {path: '{{ item.path }}', mode: '0600'}
+          loop:
+            - {host: dhlab-oldap.dhlab.unibas.ch, path: '{{ api_snapshot }}/api.tar'}
+            - {host: '{{ media_host }}', path: '{{ media_snapshot }}/media.tar'}
+          delegate_to: '{{ item.host }}'
+        - name: Compare both archives before resuming writers
+          ansible.builtin.command:
+            argv: [tar, --compare, --acls, --xattrs, -f, '{{ item.path }}', -C, /]
+          loop:
+            - {host: dhlab-oldap.dhlab.unibas.ch, path: '{{ api_snapshot }}/api.tar'}
+            - {host: '{{ media_host }}', path: '{{ media_snapshot }}/media.tar'}
+          delegate_to: '{{ item.host }}'
+          changed_when: false
+      rescue:
+        - name: Resume original source after failed checkpoint
+          ansible.builtin.include_tasks: tasks/production-source-resume.yml
+        - ansible.builtin.fail:
+            msg: Checkpoint failed; source recovery completed. No completion manifest or target activation.
+    - name: Resume source after a rehearsal checkpoint
+      ansible.builtin.include_tasks: tasks/production-source-resume.yml
+      when: not (retain_source_stopped | default(false) | bool)
+    # This publication is unreachable after failed capture/comparison/recovery.
+    - name: Hash immutable checkpoint artifacts after successful recovery
+      ansible.builtin.stat: {path: '{{ item.path }}', checksum_algorithm: sha256}
+      loop:
+        - {host: dhlab-oldap.dhlab.unibas.ch, path: '{{ api_snapshot }}/api.tar'}
+        - {host: '{{ media_host }}', path: '{{ media_snapshot }}/media.tar'}
+        - {host: dhlab-oldap.dhlab.unibas.ch, path: '{{ api_snapshot }}/source.trig'}
+      delegate_to: '{{ item.host }}'
+      register: artifacts
+    - name: Publish complete matched source evidence
+      ansible.builtin.copy:
+        dest: '{{ api_snapshot }}/manifest.json'
+        mode: '0600'
+        content: '{{ {"snapshot_id": snapshot_id, "status": ("source-frozen" if retain_source_stopped | default(false) | bool else "source-recovered-checkpoint-complete"), "artifacts": artifacts.results | map(attribute="stat") | list} | to_nice_json }}'

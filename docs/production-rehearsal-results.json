@@ -129,8 +129,7 @@
     "source": "Native home service log; observed 2026-11-08"
   },
   "open": [
-    "Final model cleanup and fulltext configuration for all projects",
-    "Final immutable candidate bundle and nine private production acceptance checks",
+    "Final source drift/capacity/image preload and nine private production acceptance checks",
     "Production Jena backup/harvester wiring and receiver acceptance before schedule release"
   ],
   "restored_source": {
@@ -321,5 +320,9 @@
   "two_host_followup": {
     "status": "two_host_preopening_rollback_and_home_restoration_passed",
     "evidence": "home-production-rollback-results.json"
+  },
+  "model_package_followup": {
+    "status": "core_package_prepared_and_offline_validated",
+    "evidence": "production-model-package-results.json"
   }
 }

@@ -34,8 +34,10 @@ Before the first production cutover, close these bounded gates:
    Normal home was restored and compared; see
    `home-production-rollback-rehearsal.md`. The owner approved the documented
    single-word legacy versus multiword Jena AND search difference.
-   Final model cleanup/all-project fulltext, the immutable production candidate
-   bundles and all nine private production acceptance checks remain open.
+   Final model cleanup/all-project fulltext now pass, including cold-cache API
+   acceptance. The pinned core API/media/runtime package is prepared and validated
+   offline; see `production-model-package.md`. Final source drift/capacity/image
+   preload and all nine private production acceptance checks remain open.
    These rehearsals establish pre-opening recovery against untouched source
    state; after target opening, require reconciliation of new writes rather than
    a simple rollback to old snapshots.

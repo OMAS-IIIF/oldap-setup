@@ -67,6 +67,12 @@ blocks that shortcut even if the old container IDs have not changed yet.
 
 ## Private candidate contract
 
+The November 8 core package and model/fulltext acceptance are documented in
+[production model/package preparation](production-model-package.md). Use its
+locked archives and source-drift checks. Clear only derived library caches in
+the verified target Redis copy before API startup; never flush authentication
+or coordination state. Private production acceptance remains required.
+
 Prepare/import a fresh target root `/srv/storage/oldap-jena-production-ID` using
 reviewed release inputs and the documented RDF migration. Preserve the complete
 source state. Copy required API operational state into isolated target storage;

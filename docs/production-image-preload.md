@@ -64,3 +64,9 @@ Then take a new coordinated source checkpoint in the agreed write window, migrat
 that final RDF/state, and pass all nine private target checks. No source pause,
 source data change, target opening marker or Jena production activation occurred
 in this preload step.
+
+Controller follow-up: the autonomous production controller, dedicated peer
+authentication and tested status-mail path are now installed but inactive; see
+`production-backup-controller.md`. Historical prerequisite gaps above are resolved
+for the controller. Office receiver/Borg and first production snapshot/schedule
+acceptance remain separate.

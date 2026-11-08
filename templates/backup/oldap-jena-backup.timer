@@ -1,0 +1,10 @@
+[Unit]
+Description=Nightly coordinated OLDAP Jena snapshot
+
+[Timer]
+OnCalendar=*-*-* 03:15:00 Europe/Zurich
+Persistent=false
+Unit=oldap-jena-backup.service
+
+[Install]
+WantedBy=timers.target

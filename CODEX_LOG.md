@@ -1,3 +1,9 @@
+### Update 2026-11-08 23:56
+- Decisions: Execute production snapshots autonomously on the API VM with a pinned Ansible venv, source-IP-restricted dedicated media SSH key and pinned host identity; keep new timer inactive until Jena/receiver acceptance.
+- Implementation: Installed controller, shared producer, separate service/timer and bounded SUCCESS/FAILURE reporter using existing mail settings. Root Ansible modules on both hosts and GraphDB refusal before maintenance pass. Owner confirmed both notification test messages. All fourteen original application identities/start times preserved; 76 production tests pass. Final source bundle retained and SHA-verified on office Mac.
+- Open: Office pull/Borg encryption/key recovery/freshness integration, first production Jena snapshot and schedule switchover after cutover acceptance.
+- Risks/Assumptions: Dedicated key permits root commands from the API VM; no root SSH policy was loosened, private key never fetched. New timer disabled; existing GraphDB jobs unchanged. Production snapshots include controller key material and require protected off-host handling.
+
 ### Update 2026-11-08 23:46
 - Decisions: Use repository@digest for production targets because classic Docker config IDs differ from home OCI IDs; preserve exact reviewed registry content.
 - Implementation: Preloaded all core/provider/Tools images, verified registry identity/architecture and isolated CLI/library startup. Added checked repackaging and registry-aware batch generation; staged seven SHA-verified artifacts on API VM and office Mac. Full resolved source configurations and all fourteen original container/image identities match the source checkpoint; no restarts. 73 production tests pass.

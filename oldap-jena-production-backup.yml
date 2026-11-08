@@ -5,7 +5,7 @@
   hosts: oldap_prod
   become: true
   vars:
-    ansible_user: rosenth
+    ansible_user: '{{ backup_controller_user | default("rosenth") }}'
     ansible_python_interpreter: /usr/bin/python3
     snapshot_api_host: dhlab-oldap.dhlab.unibas.ch
     media_host: dhlab-iii.dhlab.unibas.ch
@@ -22,6 +22,10 @@
       - srv/storage/oldap-data/oldap-harvesters
       - opt/oldap/compose
       - etc/oldap-harvest.env
+      - opt/oldap-backup-controller
+      - root/.ssh/oldap_jena_backup
+      - root/.ssh/oldap_jena_backup.pub
+      - root/.ssh/oldap_jena_backup_known_hosts
       - usr/local/lib/oldap
       - etc/systemd/system
     media_paths:

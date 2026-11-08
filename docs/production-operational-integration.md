@@ -144,3 +144,9 @@ establishes the reason for the I/O timing difference. Plan production maintenanc
 with margin rather than promising the earlier best measurement. No new Borg
 archive or full application restore was run in this step; prior Borg/application
 restore evidence remains separate.
+
+Controller follow-up: the autonomous production controller, dedicated peer
+authentication and tested status-mail path are now installed but inactive; see
+`production-backup-controller.md`. Historical prerequisite gaps above are resolved
+for the controller. Office receiver/Borg and first production snapshot/schedule
+acceptance remain separate.

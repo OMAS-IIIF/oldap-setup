@@ -1,0 +1,17 @@
+{
+  "status": "installed_inactive_mail_confirmed",
+  "artifact": "candidate-backup-controller-02.tar",
+  "bytes": 61440,
+  "sha256": "bbd5b17ac8b80eda0b8740eb8cad22d9bb0520c4cd13eef324ef9c3ab155ebf3",
+  "private_key_included": false,
+  "fingerprint": "256 SHA256:i0unZ52W2qafvHjcK8wu5XhvAxpLhzDCNidBreo6oNo oldap-jena-backup (ED25519)",
+  "running_services_unchanged": true,
+  "graphdb_guard_test": "rejected before lock or snapshot",
+  "mail_delivery": "success and failure test emails received; confirmed by owner",
+  "controller_and_peer_root_module_test": "passed",
+  "production_tests": 76,
+  "timer_state": "new Jena timer disabled/inactive; original GraphDB timer active",
+  "receiver_directory": "/Users/rosenth/OLDAP_BACKUP/releases/production-backup-controller-20261108-02",
+  "receiver_sha256_verified": true,
+  "production_snapshot_started": false
+}

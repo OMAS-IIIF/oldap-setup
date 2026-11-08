@@ -4,14 +4,19 @@
 
 The fresh paired production snapshot passed an isolated **six-service**
 GraphDB → Jena → GraphDB test on api.home.org. Production was recovered after
-snapshot capture and has not been switched to Jena. The normal home deployment
-retains all eight recorded API-host container IDs, image IDs and start times.
+snapshot capture and has not been switched to Jena. At the end of this isolated
+test, normal home retained all eight API-host container IDs, images and start times.
 The isolated rehearsal is now stopped; its inputs, both datasets and evidence remain.
 See `production-rehearsal-results.json` for checksums and actual API results.
 
 This is not full production acceptance: public proxies/frontends, scheduled jobs,
 media workers, partial configuration installation and the two-host rollback
 playbook were not exercised by this clone.
+
+Later the same day, the separate fourteen-service two-host rehearsal passed and
+normal home was restored with its original images and matching data. See
+`home-production-rollback-rehearsal.md`; the limitations above describe this
+earlier six-service test, not the later follow-up.
 
 ## Retained evidence and execution
 
@@ -70,8 +75,8 @@ on home confirms selecting a directory with `--no-recursion` excludes its Redis
 subtree. Local failure tests reject wrong hashes, traversal, public writers,
 unclean GraphDB and wrong recreated images.
 
-Before production activation, rehearse this complete runner including a partial
-configuration failure and all production services. If any original persistent
+The subsequent two-host rehearsal covered this runner, including partial
+configuration failure and all source services. If any original persistent
 state was changed, this configuration-only rollback is insufficient: restore the
 matched complete checkpoint into fresh storage. Once opening intent is durable,
 simple rollback is forbidden even if public opening subsequently fails.

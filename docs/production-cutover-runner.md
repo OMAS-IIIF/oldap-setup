@@ -1,9 +1,10 @@
 # Production execution preparation
 
-Status: **local preparation, 2026-11-07; not executed on either server**.
-The new playbooks are not a production migration approval. In particular, the
-post-replacement rollback still needs an isolated end-to-end rehearsal before
-`production_cutover_rehearsed` may be set. Keep the historical home-only guards.
+Status: **two-host pre-opening rollback rehearsed on home, 2026-11-08**.
+The shared rollback tasks pass partial-configuration and private-native-outage
+cases; normal home is restored. See `home-production-rollback-rehearsal.md`.
+This does not approve production activation or replace final candidate/private
+acceptance. Keep the historical home-only guards.
 See [cutover and rollback plan](jena-production-cutover.md) for source mounts,
 retained images, migration rules and the recovery boundary.
 
@@ -129,10 +130,12 @@ retained source images and matching private configuration:
 **Step 3 now has a guarded pre-opening runner, `oldap-production-rollback-private.yml`.**
 It requires `production_rollback_approved=true` and a held root-owned checkpoint;
 it restores original Compose inputs and pinned containers against untouched source
-state. Local failure tests pass, but the full two-host runner and a partial
-configuration failure still require rehearsal before production activation.
-The six-service clone migration/outage/rollback passed on November 8; see
-[the measured scope and evidence](production-rehearsal-20261108.md).
+state. Both wrappers use the same tasks. The full fourteen-service home source
+passed partial-configuration and private-native-outage recovery on November 8;
+see [two-host evidence](home-production-rollback-rehearsal.md). Explicit
+container recreation prevents stale network references; target-only Compose
+inputs are quarantined. The earlier six-service clone migration/outage/rollback
+is documented in [its separate evidence](production-rehearsal-20261108.md).
 A Boolean acknowledgement is not test evidence.
 
 ## Private acceptance and public opening

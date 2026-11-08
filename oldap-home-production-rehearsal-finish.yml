@@ -39,10 +39,10 @@
         - {host: '{{ media_host }}', role: media, root: '{{ media_root }}'}
       delegate_to: '{{ item.host }}'
     - name: Recreate original home containers with retained exact images
-      ansible.builtin.command: 'docker compose -p compose -f {{ item.root }}/home-compose.json up --no-start --no-deps --pull never'
+      ansible.builtin.command: 'docker compose -p compose -f {{ item.root }}/home-compose.json up --no-start --no-deps --pull never {{ item.services }}'
       loop:
-        - {host: '{{ inventory_hostname }}', root: '{{ api_root }}'}
-        - {host: '{{ media_host }}', root: '{{ media_root }}'}
+        - {host: '{{ inventory_hostname }}', root: '{{ api_root }}', services: 'redis oldap-jena oldap-jena-identity oldap-api caddy oldap-app fasnachts-page salsah-2'}
+        - {host: '{{ media_host }}', root: '{{ media_root }}', services: 'imageserver mediaserver ingest-worker export-worker mobile-media-worker caddy'}
       delegate_to: '{{ item.host }}'
       no_log: true
     - name: Verify all home image identities before restarting any service

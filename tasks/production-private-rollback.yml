@@ -51,10 +51,12 @@
   delegate_to: '{{ item.host }}'
   no_log: true
 - name: Recreate source API containers with exact saved image identities
-  ansible.builtin.command: 'docker compose -p compose -f {{ checkpoint }}/source-compose.json up --no-start --no-deps --pull never graphdb redis archive-writer oldap-api caddy oldap-app fasnachts-page salsah-2'
+  # Old stopped containers may retain network IDs removed during target setup.
+  # Rebuild their definitions even when Compose considers the config unchanged.
+  ansible.builtin.command: 'docker compose -p compose -f {{ checkpoint }}/source-compose.json up --no-start --no-deps --pull never --force-recreate graphdb redis archive-writer oldap-api caddy oldap-app fasnachts-page salsah-2'
   no_log: true
 - name: Recreate source media containers without opening writers
-  ansible.builtin.command: 'docker compose -p compose -f {{ media_checkpoint }}/source-compose.json up --no-start --no-deps --pull never imageserver mediaserver ingest-worker export-worker mobile-media-worker caddy'
+  ansible.builtin.command: 'docker compose -p compose -f {{ media_checkpoint }}/source-compose.json up --no-start --no-deps --pull never --force-recreate imageserver mediaserver ingest-worker export-worker mobile-media-worker caddy'
   delegate_to: '{{ media_host }}'
   no_log: true
 - ansible.builtin.slurp: {src: '{{ checkpoint }}/source-state.json'}

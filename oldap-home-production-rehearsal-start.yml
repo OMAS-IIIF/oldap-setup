@@ -47,7 +47,7 @@
         - {host: '{{ media_host }}', role: media, root: '{{ media_root }}'}
       delegate_to: '{{ item.host }}'
     - name: Create source containers without starting them
-      ansible.builtin.command: 'docker compose -p compose -f {{ item.root }}/source-compose.json up --no-start --no-deps --pull never {{ item.services }}'
+      ansible.builtin.command: 'docker compose -p compose -f {{ item.root }}/source-compose.json up --no-start --no-deps --pull never --force-recreate {{ item.services }}'
       loop:
         - {host: '{{ inventory_hostname }}', root: '{{ api_root }}', services: 'graphdb redis archive-writer oldap-api caddy oldap-app fasnachts-page salsah-2'}
         - {host: '{{ media_host }}', root: '{{ media_root }}', services: 'imageserver mediaserver ingest-worker export-worker mobile-media-worker caddy'}

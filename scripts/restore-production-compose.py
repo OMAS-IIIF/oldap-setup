@@ -2,7 +2,8 @@
 """Restore only original Compose inputs from a verified frozen checkpoint.
 
 All containers must be stopped by the caller. Persistent GraphDB, Redis and media
-state is NOT extracted or overwritten. The source's resolved, image-pinned JSON
+state is NOT extracted or overwritten. Target-only configuration is quarantined
+outside the active Compose directory, preventing stale automatic overrides. The source's resolved, image-pinned JSON
 is used for recreation, avoiding mutable tags. Partial failures remain closed.
 """
 import argparse
@@ -11,7 +12,59 @@ import json
 import os
 from pathlib import Path, PurePosixPath
 import subprocess
+import stat
+import tempfile
 import tarfile
+
+
+REQUIRED_FILES = {
+    'api': {'.env', 'docker-compose.yml', 'Caddyfile'},
+    'media': {'docker-compose.yml', 'Caddyfile', 'mediaserver.env',
+              'mediahelper-access.env', 'ingest-worker.env', 'export-worker.env',
+              'mobile-media-worker.env'},
+}
+
+
+def unexpected_inputs(directory, expected, excluded=None):
+    """Find target-only inputs without traversing preserved Redis state or links.
+
+    expected contains paths relative to the Compose directory, including their
+    parent directories. Unknown directories are moved as units, not traversed.
+    """
+    extras=[]
+    if directory.is_symlink() or (directory.exists() and not directory.is_dir()):
+        raise ValueError('Current Compose root is not an ordinary directory')
+    if not directory.exists(): return extras
+    for parent, directories, files in os.walk(directory, followlinks=False):
+        for name in directories[:] + files:
+            path=Path(parent)/name
+            relative=path.relative_to(directory)
+            if excluded is not None and (relative==excluded or excluded in relative.parents):
+                if name in directories: directories.remove(name)
+                continue
+            mode=path.lstat().st_mode
+            if not (stat.S_ISREG(mode) or stat.S_ISDIR(mode)):
+                raise ValueError('Unexpected link or special current Compose input')
+            if relative not in expected:
+                extras.append(path)
+                if name in directories: directories.remove(name)
+    return extras
+
+
+def quarantine_inputs(directory, extras, checkpoint):
+    """Atomically move target-only inputs outside Compose, retaining private evidence.
+
+    A sibling directory keeps every rename on the same filesystem, even when
+    /opt and the checkpoint live on different disks. No source data is deleted.
+    """
+    if not extras: return
+    quarantine=Path(tempfile.mkdtemp(prefix='.rollback-config-'+checkpoint.name+'-',dir=directory.parent))
+    for path in extras:
+        target=quarantine/path.relative_to(directory)
+        target.parent.mkdir(mode=0o700,parents=True,exist_ok=True)
+        path.rename(target)
+    (checkpoint/'rollback-config-quarantine.json').write_text(json.dumps(
+        {'path':str(quarantine),'inputs':[str(p.relative_to(directory)) for p in extras]},indent=2)+'\n')
 
 
 def restore(role, checkpoint, *, check_only=False):
@@ -59,12 +112,17 @@ def restore(role, checkpoint, *, check_only=False):
             if any(path.is_symlink() for path in [destination,*destination.parents]):
                 raise ValueError('Source Compose destination contains a symlink')
             names.append(member.name)
-    if prefix+'/.env' not in regular or prefix+'/docker-compose.yml' not in regular:
-        raise ValueError('Incomplete original Compose configuration')
+    if not {prefix+'/'+name for name in REQUIRED_FILES[role]}.issubset(regular):
+        raise ValueError('Incomplete original Compose configuration for '+role)
+    directory=Path('/')/prefix
+    expected={Path(name).relative_to(prefix) for name in seen}
+    for name in list(expected): expected.update(name.parents)
+    extras=unexpected_inputs(directory,expected,Path('redis-data') if role=='api' else None)
     if check_only:
         print('Original Compose inputs verified; no files or services changed')
         return
     os.umask(0o077)
+    quarantine_inputs(directory,extras,checkpoint)
     selection=checkpoint/'rollback-config-members.list'
     selection.write_bytes(b''.join(name.encode()+b'\0' for name in names))
     subprocess.run(['tar','--acls','--xattrs','--same-owner','--numeric-owner','--no-recursion',

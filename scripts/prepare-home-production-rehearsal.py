@@ -33,6 +33,14 @@ HOST_REPLACEMENTS = {'api.salsah.org':'api.home.org', 'www.salsah.org':'www.sals
     'fasnacht.digital':'fasnacht.home.org', 'api.oldap.org':'api.home.org',
     'media.oldap.org':'media.home.org', 'app.oldap.org':'app.home.org', 'graphdb.oldap.org':'graphdb.home.org'}
 
+TRANSPORT_ENV = {
+    'OLDAP_AUTH_ALLOWED_ORIGINS', 'OLDAP_MEDIA_EXPORT_URL', 'OLDAP_MEDIA_INGEST_URL',
+    'OLDAP_MEDIA_INTERNAL_URL', 'OLDAP_PASSWORD_RESET_FRONTEND_URL', 'OLDAP_PUBLIC_APP_URL',
+    'PUBLIC_API_URL', 'PUBLIC_IIIF_URL', 'PUBLIC_MEDIASERVER_URL', 'PUBLIC_UPLOAD_URL',
+    'ORIGIN', 'PUBLIC_MEDIA_URL', 'CORS_ORIGINS', 'IIIF_BASE_URL', 'MEDIA_BASE_URL',
+    'OLDAP_API_URL', 'SIPI_PUBLIC_BASE_URL',
+}
+
 
 def write_json(path, value):
     """Persist private state before moving any live path."""
@@ -50,6 +58,23 @@ def home_url(value):
     for source, destination in HOST_REPLACEMENTS.items():
         value=value.replace(source,destination)
     return value
+
+
+def home_environment(environment):
+    """Return home transport settings without changing RDF identifiers or secrets.
+
+    Only reviewed transport keys are rewritten, even if another key contains
+    'URL'. Service-account subjects and project namespaces retain their meaning.
+    Mail is console-only; private API/media transport avoids certificate changes.
+    """
+    result=dict(environment)
+    for key in TRANSPORT_ENV & result.keys():
+        if isinstance(result[key],str): result[key]=home_url(result[key])
+    for key in ['OLDAP_API_URL','OLDAP_MEDIA_INTERNAL_URL','OLDAP_MEDIA_EXPORT_URL','OLDAP_MEDIA_INGEST_URL']:
+        if key in result: result[key]=result[key].replace('https://','http://')
+    for key in ['OLDAP_EXPORT_EMAIL_BACKEND','OLDAP_IMPORT_EMAIL_BACKEND','OLDAP_PASSWORD_RESET_EMAIL_BACKEND']:
+        if key in result: result[key]='console'
+    return result
 
 
 def require_stopped():
@@ -79,17 +104,29 @@ def prepare(role, root, source_tree, source_config):
     for service in config['services'].values():
         service['image']=images.resolve_source_image(service['image'],role)
         service['pull_policy']='never'
-        for key,value in service.get('environment',{}).items():
-            if isinstance(value,str) and any(word in key for word in ['URL','ORIGIN']):
-                service['environment'][key]=home_url(value)
-        # Internal HTTP is restricted to the home rehearsal; avoid relying on
-        # production public certificates or mutating the hosts' trust stores.
-        for key in ['OLDAP_API_URL','OLDAP_MEDIA_INTERNAL_URL','OLDAP_MEDIA_EXPORT_URL','OLDAP_MEDIA_INGEST_URL']:
-            if key in service.get('environment',{}):
-                service['environment'][key]=service['environment'][key].replace('https://','http://')
-        for key in ['OLDAP_EXPORT_EMAIL_BACKEND','OLDAP_IMPORT_EMAIL_BACKEND','OLDAP_PASSWORD_RESET_EMAIL_BACKEND']:
-            if key in service.get('environment',{}): service['environment'][key]='console'
+        if 'environment' in service:
+            service['environment']=home_environment(service['environment'])
     write_json(root/'source-compose.json',config)
+    caddy=source_tree/DIRECTORIES[role].lstrip('/')/'Caddyfile'
+    # The API's SALSAH alias needs its own site address; merging both site
+    # blocks would make Caddy reject an ambiguous api.home.org definition.
+    text=home_url(caddy.read_text().replace('api.salsah.org','api-salsah.home.org'))
+    text=text.replace('{','{\n    local_certs',1)
+    host='api.home.org' if role=='api' else 'media.home.org'
+    text=text.replace(host+' {','http://'+host+', https://'+host+' {',1)
+    probe=root/'caddy-validated.Caddyfile'
+    probe.write_text(text)
+    # Compose JSON doubles literal dollars. Docker's env-file consumes the
+    # runtime values directly, so undo that escaping exactly once for validation.
+    proxy_env=root/'caddy-validation.env'
+    values=config['services']['caddy'].get('environment',{})
+    if any('\n' in str(value) or '\r' in str(value) for value in values.values()):
+        raise ValueError('Proxy validation requires single-line environment values')
+    proxy_env.write_text(''.join(f'{key}={str(value).replace("$$", "$")}\n' for key,value in values.items()))
+    subprocess.run(['docker','run','--rm','--pull','never','--network','none','--entrypoint','caddy',
+                    '--env-file',str(proxy_env),'-v',str(probe)+':/etc/caddy/Caddyfile:ro',config['services']['caddy']['image'],
+                    'validate','--config','/etc/caddy/Caddyfile','--adapter','caddyfile'],
+                   check=True,capture_output=True)
     tree=root/'source-tree';tree.mkdir()
     for prefix in PREFIXES[role]:
         source=source_tree/prefix
@@ -104,10 +141,6 @@ def prepare(role, root, source_tree, source_config):
         if cache.exists(): shutil.rmtree(cache)
         cache.mkdir(parents=True,mode=0o755)
     caddy=tree/DIRECTORIES[role].lstrip('/')/'Caddyfile'
-    text=home_url(caddy.read_text())
-    text=text.replace('{','{\n    local_certs',1)
-    host='api.home.org' if role=='api' else 'media.home.org'
-    text=text.replace(host+' {','http://'+host+', https://'+host+' {',1)
     caddy.write_text(text)
     # Configure only harmless transport differences. The archived home-specific
     # Caddyfile must survive the actual production rollback extraction.
@@ -137,7 +170,14 @@ def swap(role,root):
         if item['home_existed']: live.rename(saved)
         if item['source_exists']:
             live.parent.mkdir(parents=True,exist_ok=True)
-            subprocess.run(['cp','-a','--reflink=auto',str(root/'source-tree'/prefix),str(live)],check=True)
+            staged=root/'source-tree'/prefix
+            # Data roots normally share the staging filesystem: rename rather
+            # than copying tens of GB during the outage. /opt and /etc may be on
+            # another filesystem; their small configuration trees need copying.
+            if staged.stat().st_dev == live.parent.stat().st_dev:
+                staged.rename(live)
+            else:
+                subprocess.run(['cp','-a','--reflink=auto',str(staged),str(live)],check=True)
     write_json(root/'home-rehearsal.json',{'snapshot_id':root.name.removeprefix('oldap-cutover-'),'home_retained':True})
 
 

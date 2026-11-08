@@ -25,20 +25,20 @@ Before the first production cutover, close these bounded gates:
    containers stopped, live source unchanged. See `home-restore-writes.md` and its
    evidence JSON. Bounded functional scope, not a load test or arbitrary crash
    matrix; mobile resumable workers and harvesting are excluded from this probe.
-3. **Fresh-source cutover and rollback rehearsal — preflight in progress.**
-   The source-specific plan and abort/rollback boundaries are recorded in
-   `jena-production-cutover.md`; executable production adaptation remains open. Image/configuration retention
-   is recorded separately in `jena-production-retention-results.json`.
-   Fresh native RDF-star conversion and offline persisted import pass; source
-   writer/configuration and legacy mobile shutdown differences are recorded in
-   `production-backup-inventory.md` (2026-11-07). No coordinated snapshot or
-   real fresh-source rollback has run yet. Preserve home test work before
-   replacing it. Rehearse the documented GraphDB-to-Jena migration with a fresh,
-   coordinated production export/media snapshot and the final pinned release set.
-   Verify counts, relationships, permissions, search and media. Rehearse rollback
-   to the matched old data/configuration/images before reopening writes. After
-   new production writes are admitted, rolling back old snapshots would lose those
-   changes; require an explicit reconciliation/restore plan, not just an image swap.
+3. **Fresh-source migration and pre-opening rollback — rehearsals passed.**
+   The November 8 coordinated production snapshot is verified locally and on the
+   office Mac. The isolated source-to-Jena conversion/import/API comparison and
+   rollback pass; see `production-rehearsal-20261108.md`. The later full two-host
+   rehearsal also passes: fourteen source services, partial configuration failure,
+   private native outage, exact image recovery and source API/media comparison.
+   Normal home was restored and compared; see
+   `home-production-rollback-rehearsal.md`. The owner approved the documented
+   single-word legacy versus multiword Jena AND search difference.
+   Final model cleanup/all-project fulltext, the immutable production candidate
+   bundles and all nine private production acceptance checks remain open.
+   These rehearsals establish pre-opening recovery against untouched source
+   state; after target opening, require reconciliation of new writes rather than
+   a simple rollback to old snapshots.
 4. **Freeze and operate the accepted release — local preparation in progress.**
    Source inventory and timestamped snapshot health checks are prepared/tested;
    see `jena-release-operations.md`. All 14 running images match the accepted snapshot; Jena JAR hashes and
@@ -47,9 +47,9 @@ Before the first production cutover, close these bounded gates:
    see `jena-image-retention-results.json`. Growth mitigation and night-window
    compaction pass local acceptance and are checkpointed. Their new candidate
    passed home rollout and 31 isolated write/27 live checks; first live nighttime
-   compaction observation remains open. Production rollback images/configuration have now been retained and verified
+   compaction observation passed on November 8 (38.7 GB to 314 MB). Production rollback images/configuration have now been retained and verified
    (see `jena-production-retention-results.json`); coordinated source data/media
-   rollback and final source/release freeze remain open.
+   rollback is rehearsed; the final source/release freeze remains open.
    Growth mechanism is now reproduced: empty worker transactions persist receipts
    and amplify TDB index storage; see `tdb-growth-analysis.md`.
    Review/checkpoint pending Git

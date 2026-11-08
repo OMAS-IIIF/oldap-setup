@@ -129,7 +129,6 @@
     "source": "Native home service log; observed 2026-11-08"
   },
   "open": [
-    "Full two-host production rollback runner and partial-configuration failure rehearsal",
     "Final model cleanup and fulltext configuration for all projects",
     "Final immutable candidate bundle and nine private production acceptance checks",
     "Production Jena backup/harvester wiring and receiver acceptance before schedule release"
@@ -318,5 +317,9 @@
     "mode": "offline-review-only",
     "outputSha256": "48ad1586bfe602af9b6ae36b930f1a20ed2eedc3c9e4871bcc972b228b19ab5a",
     "roundTripVerified": true
+  },
+  "two_host_followup": {
+    "status": "two_host_preopening_rollback_and_home_restoration_passed",
+    "evidence": "home-production-rollback-results.json"
   }
 }

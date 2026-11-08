@@ -89,5 +89,8 @@ A controller-host restoration requires the same supported Python/OS environment,
 restored or reinstalled controller code/venv, its dedicated SSH identity, verified
 media host trust and the matching source-IP-restricted authorization on media.
 Keep schedules disabled until those checks and a full matched snapshot succeed.
-The office pull/Borg encryption/recovery and freshness/notification integration
-remain the next operational acceptance step.
+Office repository encryption and exported-key fixture recovery now pass; the owner
+confirmed independent key custody in Apple Passwords. See
+[the receiver checkpoint](production-backup-receiver.md). Complete pair pulling,
+freshness/notification/retention integration and the first real production Jena
+backup remain open.

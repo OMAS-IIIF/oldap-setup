@@ -1,0 +1,25 @@
+{
+  "checked_at": "2026-11-09T00:07:00+01:00",
+  "receiver": "131.152.51.209",
+  "repository": "/Users/rosenth/OLDAP_BACKUP/jena/borg",
+  "repository_id": "8fb098bbaddd2dd2e8726c667df6d6d318ca3c07abe8f1a4523a7bdc6310b55f",
+  "encryption": "repokey-blake2",
+  "credential_files_mode": "0600",
+  "fixture_archive": "acceptance-fixture-01",
+  "exported_key_recovery": "passed",
+  "exact_fixture_extraction": "passed",
+  "recovered_clone_borg_verify_data": "passed",
+  "original_repository_unchanged": true,
+  "office_ssh_api": "passed",
+  "office_ssh_media": "passed",
+  "apple_passwords_storage": "owner-confirmed; not independently inspected",
+  "retention_approved": {
+    "borg_daily": 30,
+    "borg_weekly": 12,
+    "borg_monthly": 24,
+    "server_confirmed_pairs": 3,
+    "office_confirmed_pairs": 2
+  },
+  "automatic_retention_installed": false,
+  "first_production_jena_pair_accepted": false
+}

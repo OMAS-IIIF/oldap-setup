@@ -1,3 +1,9 @@
+### Update 2026-11-09 00:07
+- Decisions: Record independent key custody and approved 30/12/24 Borg plus 3-server/2-office confirmed-pair retention; keep automatic deletion inactive until receipt guards are implemented and tested.
+- Implementation: Verified encrypted office repository identity, protected credential file ownership/mode, fixture-only contents, successful exported-key recovery evidence and strict SSH to both source hosts. Owner confirmed Apple Passwords storage. Added receiver runbook and secret-free acceptance evidence.
+- Open: Latest/freshness marker, receiver orchestration/mail, paired acknowledgements/retention, first real Jena pair and schedule switch.
+- Risks/Assumptions: Synthetic fixture recovery proves key usability, not full production restore or independent reading of Apple Passwords. Production remains GraphDB; no services/schedules or historical backups changed in this checkpoint.
+
 ### Update 2026-11-08 23:56
 - Decisions: Execute production snapshots autonomously on the API VM with a pinned Ansible venv, source-IP-restricted dedicated media SSH key and pinned host identity; keep new timer inactive until Jena/receiver acceptance.
 - Implementation: Installed controller, shared producer, separate service/timer and bounded SUCCESS/FAILURE reporter using existing mail settings. Root Ansible modules on both hosts and GraphDB refusal before maintenance pass. Owner confirmed both notification test messages. All fourteen original application identities/start times preserved; 76 production tests pass. Final source bundle retained and SHA-verified on office Mac.

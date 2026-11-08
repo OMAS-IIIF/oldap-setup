@@ -48,8 +48,8 @@ def canonical_stories(stories):
     return result
 
 
-def run():
-    """Check login, restored permissions, stories, archive, fulltext and signed media."""
+def run(*, include_media=True):
+    """Check API data and optionally signed media; record the actual acceptance scope."""
     api='http://127.0.0.1:8000'
     media=os.getenv('RESTORE_MEDIA_URL','http://oldap-mediahelper:8000')
     iiif=os.getenv('RESTORE_IIIF_URL','http://oldap-imageserver:8182/iiif/3')
@@ -80,10 +80,11 @@ def run():
         if label=='admin':admin_caps=caps
         else:public_caps=caps
     check('Publication capabilities distinguish administrator and public user',admin_caps!=public_caps)
-    for token in (None,'invalid-restore-test-token'):
-        check('Upload rejects absent/invalid token',request(media+'/upload',{},token)[0]==401)
-    status,body=request(media+'/upload',{},admin)
-    check('Fresh restored token accepted before form validation',status==400 and json.loads(body).get('message')=='Missing projectId field')
+    if include_media:
+        for token in (None,'invalid-restore-test-token'):
+            check('Upload rejects absent/invalid token',request(media+'/upload',{},token)[0]==401)
+        status,body=request(media+'/upload',{},admin)
+        check('Fresh restored token accepted before form validation',status==400 and json.loads(body).get('message')=='Missing projectId field')
     stories=data('/data/search/fasnacht/class/fasnacht:Story',{
         'includeProperties':['fasnacht:storyTitle','fasnacht:storyDate','fasnacht:isPublished',
                              'fasnacht:leadImage','fasnacht:leadImageRegion','fasnacht:storyKeywords','schema:abstract'],
@@ -109,17 +110,23 @@ def run():
         check('Fulltext AND results nonempty and word-order independent',bool(hits[0]) and normalize(hits[0])==normalize(hits[1]))
     report.update(fulltext_matches=len(hits[0]),fulltext_sha256=digest(hits[0]),
                   fulltext_cases=[{'query':term, 'count':len(rows), 'sha256':digest(rows)} for term,rows in zip(terms,hits)])
-    asset='bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004'
-    token=data('/data/mediaobject/id/'+asset,token=public)['token']
-    base=iiif+'/'+asset; query='?'+urlencode({'token':token})
-    status,body=request(base+'/info.json'+query)
-    check('Restored signed IIIF metadata',status==200 and 'width' in json.loads(body))
-    report['iiif_dimensions']={k:json.loads(body)[k] for k in ('width','height')}
-    status,body=request(base+'/full/!160,160/0/default.jpg'+query)
-    check('Restored signed JPEG',status==200 and body.startswith(b'\xff\xd8\xff'))
-    report.update(image_bytes=len(body),image_sha256=hashlib.sha256(body).hexdigest(),status='passed')
+    if include_media:
+        asset='bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004'
+        token=data('/data/mediaobject/id/'+asset,token=public)['token']
+        base=iiif+'/'+asset; query='?'+urlencode({'token':token})
+        status,body=request(base+'/info.json'+query)
+        check('Restored signed IIIF metadata',status==200 and 'width' in json.loads(body))
+        report['iiif_dimensions']={k:json.loads(body)[k] for k in ('width','height')}
+        status,body=request(base+'/full/!160,160/0/default.jpg'+query)
+        check('Restored signed JPEG',status==200 and body.startswith(b'\xff\xd8\xff'))
+        report.update(image_bytes=len(body),image_sha256=hashlib.sha256(body).hexdigest())
+    report.update(status='passed', scope='api-and-media' if include_media else 'api-only')
     return report
 
 
 if __name__=='__main__':
-    print(json.dumps(run(),indent=2))
+    import argparse
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--api-only', action='store_true', help='Private cutover API acceptance; media remains a separate mandatory gate')
+    args=parser.parse_args()
+    print(json.dumps(run(include_media=not args.api_only),indent=2))

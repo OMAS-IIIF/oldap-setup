@@ -52,10 +52,60 @@ def clear_cache(client, *, apply=False):
             'retained_entries':retained,'other_databases_untouched':True}
 
 
+def clear_private_production(target_root):
+    """Run both cache passes only on newly bound Redis with all clients stopped.
+
+    Called by the private cutover play before identity/API startup. Inspect actual
+    Docker mounts and process states; never trust the desired Compose file alone.
+    The existing API image supplies Python/redis; no host package install needed.
+    """
+    from pathlib import Path
+    import re
+    import socket
+    import subprocess
+    if os.geteuid() != 0 or socket.gethostname().split('.')[0] != 'dhlab-oldap':
+        raise ValueError('Private production cleanup requires API-host root')
+    root = Path(target_root)
+    if not re.fullmatch(r'/srv/storage/oldap-jena-production-[a-zA-Z0-9_-]+', str(root)) or root.resolve() != root:
+        raise ValueError('Invalid private production root')
+    running = set(subprocess.check_output(['docker', 'ps', '--format', '{{.Names}}'], text=True).split())
+    if running != {'redis', 'compose-oldap-jena-1'}:
+        raise ValueError('Keep all target clients and public services stopped')
+    rows = json.loads(subprocess.check_output(['docker', 'inspect', 'redis', 'oldap-api', 'compose-oldap-jena-identity-1']))
+    by_name = {row['Name'].lstrip('/'): row for row in rows}
+    for name in ('oldap-api', 'compose-oldap-jena-identity-1'):
+        if by_name[name]['State']['Running']:
+            raise ValueError('Target client is already running')
+    mounts = [m for m in by_name['redis']['Mounts'] if m['Destination'] == '/data']
+    if len(mounts) != 1 or mounts[0]['Type'] != 'bind' or mounts[0]['Source'] != str(root/'data/redis'):
+        raise ValueError('Redis is not the isolated target copy')
+    if (root/'data/redis').resolve() != root/'data/redis':
+        raise ValueError('Target Redis path resolves outside reviewed storage')
+    api = by_name['oldap-api']
+    environment = dict(item.split('=', 1) for item in api['Config']['Env'])
+    if environment.get('OLDAP_BACKEND') != 'jena' or environment.get('OLDAP_REDIS_URL') not in ('redis://redis:6379', 'redis://redis:6379/0'):
+        raise ValueError('Unexpected target backend/Redis database')
+    env = dict(os.environ, OLDAP_REDIS_URL='redis://127.0.0.1:6379/0')
+    command = ['docker', 'run', '--rm', '--network', 'container:redis',
+               '--mount', f'type=bind,src={Path(__file__).resolve()},dst=/clear-cache.py,readonly',
+               '-e', 'OLDAP_REDIS_URL', api['Image'], 'python', '/clear-cache.py']
+    results = []
+    for arguments in ([], ['--apply']):
+        result = subprocess.check_output(command + arguments, env=env)
+        results.append(json.loads(result))
+    if results[0]['derived_objects'] != results[1]['derived_objects']:
+        raise ValueError('Derived cache changed between plan and application')
+    return {'status': 'passed', 'target_root': str(root), 'passes': results}
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--apply', action='store_true')
+    parser.add_argument('--private-production-root')
     args = parser.parse_args()
+    if args.private_production_root:
+        print(json.dumps(clear_private_production(args.private_production_root), indent=2))
+        raise SystemExit(0)
     import redis
     client = redis.Redis.from_url(os.environ['OLDAP_REDIS_URL'])
     print(json.dumps(clear_cache(client, apply=args.apply), indent=2))

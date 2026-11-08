@@ -66,9 +66,10 @@ def archive_cases():
     return cases
 
 
-def run():
+def run(base='http://api.home.org'):
     """Compare complete responses at 16-way concurrency; return sanitized evidence."""
-    base = 'http://api.home.org'
+    if base not in ('http://api.home.org', 'http://127.0.0.1:8000'):
+        raise ValueError('Use home or in-container private API only')
     with urlopen(Request(base + '/admin/auth/unknown', data=b'{}',
                          headers={'Content-Type': 'application/json'}), timeout=30) as response:
         token = json.loads(response.read())['accessToken']
@@ -103,6 +104,9 @@ def run():
 
 
 if __name__ == '__main__':
-    report = run()
+    import argparse
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--base', default='http://api.home.org', choices=['http://api.home.org','http://127.0.0.1:8000'])
+    report = run(parser.parse_args().base)
     print(json.dumps(report, indent=2))
     raise SystemExit(0 if report['status'] == 'passed' else 1)

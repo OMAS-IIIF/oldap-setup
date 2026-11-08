@@ -28,6 +28,10 @@
       no_log: true
     - ansible.builtin.assert:
         that: (frozen_manifest.content | b64decode | from_json).status == 'source-frozen'
+    - name: Bind verified off-host recovery to every frozen source artifact
+      ansible.builtin.script: 'scripts/check-production-offhost-checkpoint.py {{ checkpoint }}'
+      args: {executable: python3}
+      changed_when: false
     - name: Require all original writers stopped
       ansible.builtin.script: 'scripts/check-cutover-containers.py {{ item.role }} frozen'
       args: {executable: python3}
@@ -91,6 +95,15 @@
       retries: 60
       delay: 2
       changed_when: false
+    - name: Clear only derived model cache in isolated Redis before any client starts
+      ansible.builtin.script: 'scripts/clear-migrated-model-cache.py --private-production-root {{ target_root }}'
+      args: {executable: python3}
+      register: private_cache_cleanup
+    - name: Retain cache cleanup evidence without values or credentials
+      ansible.builtin.copy:
+        dest: '{{ checkpoint }}/target-cache-cleanup.json'
+        content: '{{ private_cache_cleanup.stdout }}'
+        mode: '0600'
     # Recreate namespace consumers after owner starts; never reuse stale netns.
     - name: Start identity before API namespace consumer
       ansible.builtin.command: 'docker compose up -d --no-deps --pull never --force-recreate --wait {{ item }}'

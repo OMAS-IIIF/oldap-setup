@@ -1,0 +1,132 @@
+{
+  "status": "passed",
+  "scope": "private target acceptance; public opening not yet performed",
+  "snapshot_id": "20261109-final-01",
+  "source_sha256": "39f67d8bfd02750bb33e12c7277d42f91b6f592042c384fbe477588549356072",
+  "accepted_at": "2026-11-08T23:45:39.524802+00:00",
+  "checks": [
+    "data",
+    "permissions",
+    "relationships",
+    "fulltext",
+    "media-auth",
+    "concurrency",
+    "native-console",
+    "harvester-backend",
+    "backup-readiness"
+  ],
+  "images": {
+    "api": {
+      "caddy": "sha256:612f0ff47f33888e3b61a8db399ff2dc22c2cefb8cb652d86a619e52eabcd51f",
+      "compose-oldap-jena-1": "sha256:3b0c5a2ef254c787a8efaa090bcba8f424453d1fc8f3a07d9d9e0033cba26f77",
+      "compose-oldap-jena-identity-1": "sha256:99f4bb525f55a34a3f920c4a1a05f34fba9dde9dfc5ceeef871bc08e23f006ed",
+      "compose-salsah-2-1": "sha256:0e6f376aa5fbd65c474cf5659bb7db9417d9f23afb3d2adcdf225a09e0fff855",
+      "fasnachts-page": "sha256:46498b01a9ebcb6cc9cca0cdc7bbd613b2d1d4e764eeef64a76ee204639b4e6f",
+      "oldap-api": "sha256:99f4bb525f55a34a3f920c4a1a05f34fba9dde9dfc5ceeef871bc08e23f006ed",
+      "oldap-app": "sha256:6579efecdce4c19084f1630a804f59bb25766a62d379f30faef38a88003b63af",
+      "redis": "sha256:487efc0616382465781b8fdc3d6d1db449e6fd80ae23bf48432a2da6b6929908"
+    },
+    "media": {
+      "oldap-export-worker": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+      "oldap-imageserver": "sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5",
+      "oldap-ingest-worker": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+      "oldap-media-caddy": "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f",
+      "oldap-mediahelper": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+      "oldap-mobile-media-worker": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+    }
+  },
+  "reports": {
+    "api": {
+      "file": "private-api.json",
+      "sha256": "ce9b6090a053d3c9472606dbce7fcc9e62883e855746aa56e7512b41ef255128"
+    },
+    "models": {
+      "file": "private-models.json",
+      "sha256": "4915541757bcc72a6e82ba0b545ecddde15668248e2840f341de8377a0da3ca5"
+    },
+    "fulltext": {
+      "file": "private-fulltext.json",
+      "sha256": "2923ffdfd5e9ac28a66ecc282d20d10c62e82e514ff023a3868e16e57bfe0ae7"
+    },
+    "concurrency": {
+      "file": "private-concurrency.json",
+      "sha256": "c9b96f3f7cc8483fedcfc75afe81b84f741a8a8d666783699c30928b551edd0b"
+    },
+    "console": {
+      "file": "private-console.json",
+      "sha256": "ef4c1fbe3cd4bf22ba1dda5efa3d80790f42987471d8d54593124526f16e86fe"
+    },
+    "media": {
+      "file": "private-media.json",
+      "sha256": "57e9bbc2c388032b04dbe653117962cf52420356c93278f473c6bdb7876e310a"
+    },
+    "harvesters": {
+      "file": "private-harvesters.json",
+      "sha256": "04f562ca3396740640467c08307c75182360c7f6bebf961c6aaafcacbeab3ffb"
+    },
+    "backup": {
+      "file": "private-backup.json",
+      "sha256": "ced0f1033d156d528c6d60b8482cfb4c6ed51a3228ed87b872d17041584c78f8"
+    },
+    "baseline-comparison": {
+      "file": "private-baseline-comparison.json",
+      "sha256": "4a41989870b57241fc64bd372ac684244c0ab7cd0c9e4f3b83cce0078006a9e1"
+    }
+  },
+  "remaining": [
+    "Explicit public opening approval",
+    "Public HTTPS/frontends/media smoke checks",
+    "First real Jena backup and office restore verification",
+    "Coordinated backup/harvester/office schedule activation"
+  ],
+  "source_offhost": {
+    "status": "passed",
+    "snapshot_id": "20261109-final-01",
+    "verified_at": "2026-11-08T23:35:38.800060+00:00",
+    "repository_id": "8fb098bbaddd2dd2e8726c667df6d6d318ca3c07abe8f1a4523a7bdc6310b55f",
+    "archive": "cutover-20261109-final-01",
+    "files": {
+      "api.tar": {
+        "bytes": 924313600,
+        "sha256": "7c724a70d7fd568481fd19f56e22fd0a36725ccbb74c45e1241b99e9cb76728a"
+      },
+      "media.tar": {
+        "bytes": 21283584000,
+        "sha256": "886dd684e3989b379453187f6b7b2031735fb5185eb233e479d513aa7be55ac7"
+      },
+      "source.trig": {
+        "bytes": 8897555,
+        "sha256": "39f67d8bfd02750bb33e12c7277d42f91b6f592042c384fbe477588549356072"
+      },
+      "api-source-compose.json": {
+        "bytes": 12377,
+        "sha256": "3b48bf4bf7dbbfe6df9645d3bdd5a04c0f50770e99c68cddd0e7e402f0b9afd3"
+      },
+      "media-source-compose.json": {
+        "bytes": 15092,
+        "sha256": "563e22df736fbd69c4892450f0a796212f5a855c52f9f5cd71900f38a5fa48e5"
+      },
+      "source-state.json": {
+        "bytes": 3639,
+        "sha256": "2f8cf82ae8979f91195d7bb2d9574ec61678fb583cac81a60be245c9e49b2fa8"
+      },
+      "manifest.json": {
+        "bytes": 7485,
+        "sha256": "f4a929dad09ad5861f2150e8ce97f90f365b6b09a1a7455d593ee77bff17417c"
+      }
+    },
+    "scope": "frozen GraphDB rollback checkpoint; all seven files pulled and restored-byte verified; outside production-* pruning"
+  },
+  "api_summary": {
+    "stories": 30,
+    "archive_objects": 100,
+    "fulltext_matches": 10
+  },
+  "concurrency_summary": {
+    "concurrency": 16,
+    "parallel_requests": 48,
+    "complete_responses_match": true
+  },
+  "dns": "fuseki.oldap.org resolved to 131.152.238.105 on development and API host",
+  "public_opened": false
+}

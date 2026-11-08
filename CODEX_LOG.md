@@ -1,3 +1,9 @@
+### Update 2026-11-08 22:57
+- Decisions: Keep production operational acceptance open; inspect production read-only before adapting jobs.
+- Implementation: Recorded capacity, four matching frozen source file hashes and exact candidate image availability; documented consolidated-Compose harvester detection and home-only backup/receiver gaps.
+- Open: Pinned batch overlay/backend selection, production snapshot/receiver integration, image preload, final complete source drift and private acceptance checks.
+- Risks/Assumptions: File hashes cover four inputs only; capacity is point-in-time. No production service, schedule or image changed.
+
 ### Update 2026-11-08 22:45
 - Decisions: Preserve production semantics outside the approved Fasnacht part-model cleanup. Inventory actual filesystem connectors for every project; do not infer indexes from RDF. Prepare a private pinned core package without production deployment.
 - Implementation: Added checksum-bound model inventory/cleanup operators; removed 27 model quads with exact preservation, replay and round-trip checks. Six project models and thirteen API fields pass on a fresh persisted clone, again after selective derived-object cache cleanup. Source connector has exactly nine matching Fasnacht fields; other five projects have none. Built complete API/media/runtime archives from accepted topology and production credentials/URLs/mail/policy with fresh Jena keys and separate writable roots. Fixed input hashes, guarded home-secret fallback, validated archives/Compose/both exact Caddy images. 66 Python tests and seven Java safety cases pass. Clone stopped; eight live API-host identities/start times unchanged; immutable artifacts and evidence retained privately; all five package artifacts additionally SHA-verified on Studio.

@@ -3,7 +3,8 @@
 
 Defaults target the isolated network. For a live reference run, supply only the
 media URLs via RESTORE_MEDIA_URL and RESTORE_IIIF_URL. Credentials come from that
-container's environment. Login affects only its own Redis session state.
+container's environment. RESTORE_BACKEND=graphdb compares single-word searches;
+the legacy query builder does not have the new Jena multiword AND semantics. Login affects only its own Redis session state.
 """
 import hashlib
 import json
@@ -94,10 +95,20 @@ def run():
                  {'includeProperties':['schema:name'],'limit':100,'sortBy':['schema:name']},public)
     check('Archive overview has results',bool(objects))
     report.update(archive_objects=len(objects),archive_sha256=digest(objects))
+    backend = os.getenv('RESTORE_BACKEND', 'jena')
+    check('Supported comparison backend', backend in {'jena', 'graphdb'})
+    # Compare the old installation with its restored copy using unchanged single
+    # words. Its multiword query scopes only the first word to the selected field;
+    # Jena's deliberately improved AND semantics require a separate acceptance.
+    terms = ('Laterne', 'Stamm') if backend == 'graphdb' else ('Laterne Stamm', 'Stamm Laterne')
     hits=[data('/data/search/fasnacht',{'ftfilter':[{'field':'archiveObjectTitle','query':term}],
-          'includeProperties':['schema:name'],'limit':100},public) for term in ('Laterne Stamm','Stamm Laterne')]
-    check('Fulltext AND results nonempty and word-order independent',bool(hits[0]) and normalize(hits[0])==normalize(hits[1]))
-    report.update(fulltext_matches=len(hits[0]),fulltext_sha256=digest(hits[0]))
+          'includeProperties':['schema:name'],'limit':100},public) for term in terms]
+    if backend == 'graphdb':
+        check('Source single-word fulltext searches have results', all(hits))
+    else:
+        check('Fulltext AND results nonempty and word-order independent',bool(hits[0]) and normalize(hits[0])==normalize(hits[1]))
+    report.update(fulltext_matches=len(hits[0]),fulltext_sha256=digest(hits[0]),
+                  fulltext_cases=[{'query':term, 'count':len(rows), 'sha256':digest(rows)} for term,rows in zip(terms,hits)])
     asset='bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004'
     token=data('/data/mediaobject/id/'+asset,token=public)['token']
     base=iiif+'/'+asset; query='?'+urlencode({'token':token})

@@ -17,6 +17,48 @@ import subprocess
 import tarfile
 
 
+def verify_loaded_image(tag, digest, expected_layers=None):
+    """Verify loaded bytes across engines with different displayed image IDs.
+
+    Re-export the selected image and check its original config hash and layer
+    identities. Return the current engine's immutable ID for Compose pinning.
+    The private compatibility tag is only a lookup hint, never proof of identity.
+    """
+    inspected = json.loads(subprocess.check_output(['docker', 'image', 'inspect', tag], stderr=subprocess.PIPE))[0]
+    process = subprocess.Popen(['docker', 'image', 'save', tag], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    config = None
+    with tarfile.open(fileobj=process.stdout, mode='r|') as exported:
+        for member in exported:
+            if member.isfile() and Path(member.name).name.removesuffix('.json') == digest:
+                raw = exported.extractfile(member).read()
+                if hashlib.sha256(raw).hexdigest() != digest:
+                    raise ValueError('Re-exported config checksum mismatch')
+                config = json.loads(raw)
+    process.stdout.read()
+    if process.wait() != 0 or config is None:
+        raise RuntimeError('Re-export verification failed')
+    layers = config['rootfs']['diff_ids']
+    if inspected['RootFS']['Layers'] != layers or (expected_layers is not None and expected_layers != layers):
+        raise ValueError('Loaded filesystem layers differ')
+    return inspected['Id']
+
+
+def resolve_source_image(source_id, role):
+    """Use an exact OCI/config identity, or verify a legacy compatibility import.
+
+    Newer source engines record OCI index IDs; loading their complete original
+    archives preserves that identity. Legacy config IDs may instead require the
+    private compatibility tag and a byte-verified re-export on the target engine.
+    """
+    result = subprocess.run(['docker', 'image', 'inspect', source_id], capture_output=True, text=True)
+    if result.returncode == 0:
+        installed = json.loads(result.stdout)[0]
+        if installed['Id'] == source_id:
+            return source_id
+    digest = source_id.removeprefix('sha256:')
+    return verify_loaded_image('oldap-rollback/'+role+':'+digest, digest)
+
+
 def verify(source, target, prefix):
     """Create a fresh compatibility archive and verify all loaded image contents."""
     os.umask(0o077)
@@ -45,22 +87,7 @@ def verify(source, target, prefix):
     target.chmod(0o600)
     subprocess.run(['docker', 'image', 'load', '-i', str(target)], capture_output=True, check=True)
     for tag, (digest, config) in configs.items():
-        inspected = json.loads(subprocess.check_output(['docker', 'image', 'inspect', tag]))[0]
-        if inspected['RootFS']['Layers'] != config['rootfs']['diff_ids']:
-            raise ValueError('Loaded filesystem layers differ')
-        # Read the complete export stream; verify the raw config, not the engine's
-        # displayed image ID (legacy config digest versus containerd manifest ID).
-        process = subprocess.Popen(['docker', 'image', 'save', tag], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        found = False
-        with tarfile.open(fileobj=process.stdout, mode='r|') as exported:
-            for member in exported:
-                if member.isfile() and Path(member.name).name.removesuffix('.json') == digest:
-                    if hashlib.sha256(exported.extractfile(member).read()).hexdigest() != digest:
-                        raise ValueError('Re-exported config checksum mismatch')
-                    found = True
-        process.stdout.read()
-        if process.wait() != 0 or not found:
-            raise RuntimeError('Re-export verification failed')
+        verify_loaded_image(tag, digest, config['rootfs']['diff_ids'])
     with target.open('rb') as stream:
         target_hash = hashlib.file_digest(stream, 'sha256').hexdigest()
     result = {'original': source.name, 'compatibility_archive': target.name,

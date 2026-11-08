@@ -19,7 +19,7 @@ EXPECTED = {
 }
 
 
-def run(root=ROOT, project=PROJECT, workers=False):
+def run(root=ROOT, project=PROJECT, workers=False, backend="jena"):
     """Check actual container mounts, network isolation, limits and disabled jobs."""
     if root.parent != Path("/srv/storage") or not root.name.startswith(
         "oldap-restore-rehearsal-"
@@ -41,7 +41,8 @@ def run(root=ROOT, project=PROJECT, workers=False):
     by_service = {
         c["Config"]["Labels"]["com.docker.compose.service"]: c for c in containers
     }
-    expected = EXPECTED | (
+    source_services = (EXPECTED - {"oldap-jena", "oldap-jena-identity"}) | {"graphdb", "archive-writer"}
+    expected = (source_services if backend == "graphdb" else EXPECTED) | (
         {"oldap-ingest-worker", "oldap-export-worker", "restore-export-proxy"}
         if workers
         else set()
@@ -65,7 +66,7 @@ def run(root=ROOT, project=PROJECT, workers=False):
         for row in addresses
         for a in row.get("addr_info", [])
     )
-    owner = by_service["oldap-jena"]["Id"]
+    owner = by_service["oldap-jena"]["Id"] if backend == "jena" else None
     for name, c in by_service.items():
         assert c["State"]["Running"], name + " is not running"
         host = c["HostConfig"]
@@ -79,7 +80,7 @@ def run(root=ROOT, project=PROJECT, workers=False):
             assert mount["Type"] == "bind" and Path(
                 mount["Source"]
             ).resolve().is_relative_to(root.resolve())
-        if name in ("oldap-api", "oldap-jena-identity"):
+        if backend == "jena" and name in ("oldap-api", "oldap-jena-identity"):
             assert host["NetworkMode"] == "container:" + owner
         else:
             assert set(c["NetworkSettings"]["Networks"]) == {project + "_default"}
@@ -162,5 +163,6 @@ if __name__ == "__main__":
         action="store_true",
         help="Expect exactly the two isolated ZIP workers",
     )
+    parser.add_argument("--backend", choices=["jena", "graphdb"], default="jena")
     args = parser.parse_args()
-    print(json.dumps(run(args.root, args.project, args.workers), indent=2))
+    print(json.dumps(run(args.root, args.project, args.workers, args.backend), indent=2))

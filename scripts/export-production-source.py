@@ -18,43 +18,56 @@ from redis import Redis
 from urllib.parse import quote
 writer=Redis.from_url(os.environ['OLDAP_STAGING_LOCK_REDIS_URL'],socket_timeout=10)
 assert writer.ping()
-for key in ['oldap-api:staging:mutation','oldap-api:staging:recovery:barrier','oldap-api:staging:recovery:controller']:
+for key in ['oldap-api:staging:mutation','oldap-api:staging:recovery:barrier']:
     assert writer.get(key) is None, 'Source coordinator is occupied'
+recovery=Redis.from_url(os.environ['OLDAP_WRITER_RECOVERY_REDIS_URL'],socket_timeout=10)
+assert recovery.get('oldap-api:staging:recovery:controller') is None, 'Source recovery controller is occupied'
 assert Redis(host='redis',port=6379,db=1,socket_timeout=10).dbsize()==0, 'Ordinary coordination is occupied'
 url=os.environ['OLDAP_TS_SERVER'].rstrip('/')+'/repositories/'+quote(os.environ['OLDAP_TS_REPO'],safe='')+'/statements'
 user=os.environ.get('OLDAP_TS_USER','');password=os.environ.get('OLDAP_TS_PASSWORD','')
 with requests.get(url,params={'infer':'false'},headers={'Accept':'application/x-trigstar'},auth=(user,password) if user else None,stream=True,timeout=(10,120)) as response:
     response.raise_for_status()
     assert response.headers.get('Content-Type','').split(';')[0] in ['application/x-trigstar','application/trig','application/x-trig']
+    if os.environ.get('OLDAP_CUTOVER_CHECK_ONLY') == '1':
+        print('Source export preflight passed')
+        raise SystemExit(0)
     with open('/snapshot/source.trig','xb') as output:
         for block in response.iter_content(1024*1024):output.write(block)
         output.flush();os.fsync(output.fileno())
 '''
 
 
-def export(root):
+def export(root, check_only=False):
     """Use a disposable read-only client, retaining private export inputs for recovery."""
     os.umask(0o077)
     row = json.loads(subprocess.check_output(['docker','inspect','oldap-api']))[0]
-    if row['State']['Running']:
+    if row['State']['Running'] and not check_only:
         raise RuntimeError('API must be stopped before source export')
     environment = row['Config']['Env']
     if any('\n' in line or '\r' in line for line in environment):
         raise ValueError('Environment cannot be represented safely as an env-file')
-    env_file = root/'source-api.env'
+    env_file = root/('source-probe.env' if check_only else 'source-api.env')
     with env_file.open('x') as stream:
         stream.write('\n'.join(environment)+'\n')
-    subprocess.run(['docker','run','--rm','--pull','never','--name','oldap-cutover-source-reader',
+    result = subprocess.run(['docker','run','--rm','--pull','never','--name','oldap-cutover-source-reader',
                     '--network','compose_default','--read-only','--user','0:0',
                     '--cap-drop','ALL','--security-opt','no-new-privileges',
                     '--tmpfs','/tmp:rw,noexec,nosuid,size=16m',
                     '--volumes-from','oldap-api:ro','--env-file',str(env_file),
                     '--mount','type=bind,src='+str(root)+',dst=/snapshot',
+                    '--env','OLDAP_CUTOVER_CHECK_ONLY='+('1' if check_only else '0'),
                     '--entrypoint','python',row['Image'],'-c',CLIENT],
-                   check=True,capture_output=True)
+                   capture_output=True)
+    if result.returncode:
+        # Keep diagnostics private; even exception messages may include URLs.
+        with (root/('probe-error.log' if check_only else 'export-error.log')).open('xb') as stream:
+            stream.write(result.stderr)
+        raise RuntimeError('Source client failed; private diagnostic retained')
+    if check_only:
+        return
     if (root/'source.trig').stat().st_size == 0:
         raise RuntimeError('Empty repository export')
 
 
 if __name__ == '__main__':
-    export(Path(sys.argv[1]))
+    export(Path(sys.argv[1]), check_only='--check-only' in sys.argv[2:])

@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class SourceResumeTests(unittest.TestCase):
-    def exercise(self, failure=''):
+    def exercise(self, failure='', recreated=False):
         tasks = yaml.safe_load((ROOT/'tasks/production-source-resume.yml').read_text())
         for task in tasks:
             task.pop('delegate_to', None)
@@ -27,7 +27,7 @@ with open(os.environ['TEST_COMMANDS'],'a') as f:f.write(json.dumps(args)+'\\n')
 fail=os.environ['TEST_FAILURE']
 if args[0]=='inspect':
  if '--format' in args: print('healthy')
- else: print(json.dumps([{'Name':'/'+n,'Id':n+('changed' if fail=='identity' else ''),'Image':'image'} for n in args[1:]]))
+ else: print(json.dumps([{'Name':'/'+n,'Id':n+('changed' if fail=='identity' else ''),'Image':('wrong' if fail=='image' else 'image')} for n in args[1:]]))
 if fail=='storage' and args[:2]==['start','graphdb']:sys.exit(1)
 if fail=='repository' and args[0]=='exec' and 'requests.post' in args[-1]:sys.exit(1)
 '''
@@ -37,7 +37,7 @@ if fail=='repository' and args[0]=='exec' and 'requests.post' in args[-1]:sys.ex
                 path.chmod(0o755)
             evidence = json.dumps({'containers': {'source': {'id':'source','image':'image'}}})
             play = [{'hosts':'localhost','gather_facts':False,
-                     'vars': {'ansible_python_interpreter':sys.executable,
+                     'vars': {'ansible_python_interpreter':sys.executable, 'source_recreated':recreated,
                               'source_api':{'stdout':evidence}, 'source_media':{'stdout':evidence},
                               'source_timers':{'results':[{'item':'oldap-backup.timer','stdout':'active'},
                                                           {'item':'oldap-harvest.timer','stdout':'inactive'}]}},
@@ -66,3 +66,11 @@ if fail=='repository' and args[0]=='exec' and 'requests.post' in args[-1]:sys.ex
                 self.assertNotIn(['start','caddy'], commands)
                 self.assertNotIn(['start','oldap-media-caddy'], commands)
                 self.assertNotIn(['start','oldap-backup.timer'], commands)
+
+    def test_recreated_containers_require_original_images(self):
+        result, commands = self.exercise('identity', recreated=True)
+        self.assertEqual(result.returncode, 0, result.stdout+result.stderr)
+        self.assertIn(['start','caddy'], commands)
+        result, commands = self.exercise('image', recreated=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertNotIn(['start','caddy'], commands)

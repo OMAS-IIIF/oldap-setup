@@ -68,6 +68,18 @@
         - {host: dhlab-oldap.dhlab.unibas.ch, path: '{{ api_snapshot }}'}
         - {host: '{{ media_host }}', path: '{{ media_snapshot }}'}
       delegate_to: '{{ item.host }}'
+    - name: Capture resolved source configuration and exact installed image IDs
+      ansible.builtin.script: 'scripts/capture-production-compose.py {{ item.role }} {{ item.path }}'
+      args: {executable: python3}
+      loop:
+        - {role: api, host: dhlab-oldap.dhlab.unibas.ch, path: '{{ api_snapshot }}'}
+        - {role: media, host: '{{ media_host }}', path: '{{ media_snapshot }}'}
+      delegate_to: '{{ item.host }}'
+      no_log: true
+    - name: Check exact read-only export client before any interruption
+      ansible.builtin.script: 'scripts/export-production-source.py {{ api_snapshot }} --check-only'
+      args: {executable: python3}
+      no_log: true
     - name: Retain sanitized original lifecycle evidence
       ansible.builtin.copy:
         dest: '{{ api_snapshot }}/source-state.json'
@@ -164,6 +176,8 @@
         - {host: dhlab-oldap.dhlab.unibas.ch, path: '{{ api_snapshot }}/api.tar'}
         - {host: '{{ media_host }}', path: '{{ media_snapshot }}/media.tar'}
         - {host: dhlab-oldap.dhlab.unibas.ch, path: '{{ api_snapshot }}/source.trig'}
+        - {host: dhlab-oldap.dhlab.unibas.ch, path: '{{ api_snapshot }}/source-compose.json'}
+        - {host: '{{ media_host }}', path: '{{ media_snapshot }}/source-compose.json'}
       delegate_to: '{{ item.host }}'
       register: artifacts
     - name: Publish complete matched source evidence

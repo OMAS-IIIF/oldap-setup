@@ -108,8 +108,16 @@ def read_compose(directory):
     return json.loads(result.stdout)
 
 
-def isolated_service(original, root, tree):
-    """Keep runtime settings but replace all host/network/storage identities."""
+def isolated_service(original, root, tree, *, allowed_root=None):
+    """Keep runtime settings but replace all host/network/storage identities.
+
+    By default binds must remain in the extracted source tree. A separately
+    prepared candidate may explicitly admit its broader private rehearsal root;
+    symlinks outside that selected boundary remain forbidden.
+    """
+    bind_root = tree if allowed_root is None else allowed_root
+    if not bind_root.resolve().is_relative_to(root.resolve()):
+        raise ValueError("Bind boundary must remain inside the rehearsal root")
     fields = (
         "image",
         "entrypoint",
@@ -137,10 +145,10 @@ def isolated_service(original, root, tree):
         if mount["type"] == "bind":
             source = Path(mount["source"])
             # Relative env-file mounts can already have been resolved under tree.
-            if not source.is_relative_to(tree):
+            if not source.is_relative_to(bind_root):
                 source = tree / str(source).lstrip("/")
             if (
-                not source.resolve().is_relative_to(tree.resolve())
+                not source.resolve().is_relative_to(bind_root.resolve())
                 or not source.exists()
             ):
                 raise ValueError("Mount is absent from restored tree")

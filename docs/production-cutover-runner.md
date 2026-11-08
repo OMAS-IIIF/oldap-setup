@@ -126,11 +126,14 @@ retained source images and matching private configuration:
    source fixtures before opening ingress/restoring original schedules. Record
    exact commands, hashes and outcomes as the production rollback procedure.
 
-**Step 3 is deliberately not implemented as a generic unattended restore today.**
-The safe unchanged-source resume is tested; restoring configuration/container
-identities after replacement is a different operation. Final candidate bundles
-and the executable post-replacement rollback must be completed and rehearsed
-before production activation. A Boolean acknowledgement is not test evidence.
+**Step 3 now has a guarded pre-opening runner, `oldap-production-rollback-private.yml`.**
+It requires `production_rollback_approved=true` and a held root-owned checkpoint;
+it restores original Compose inputs and pinned containers against untouched source
+state. Local failure tests pass, but the full two-host runner and a partial
+configuration failure still require rehearsal before production activation.
+The six-service clone migration/outage/rollback passed on November 8; see
+[the measured scope and evidence](production-rehearsal-20261108.md).
+A Boolean acknowledgement is not test evidence.
 
 ## Private acceptance and public opening
 
@@ -157,7 +160,7 @@ harvester wiring, receiver checks and production SUCCESS/FAILURE email path;
 then explicitly release the cutover lock and enable the approved schedules.
 Never resume the old GraphDB backup job against Jena.
 
-## Local validation
+## Original November 7 preparation validation (historical)
 
 - 31 production preparation/retention tests pass, including lifecycle,
   archive/mount, lock contention and durable write-boundary checks.

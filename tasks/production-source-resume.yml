@@ -1,7 +1,8 @@
 ---
-# Only valid before any deployment/configuration replacement. Do not use for
-# post-activation rollback: the original containers must still be the same ones.
-- name: Require unchanged original API container identities before source resume
+# Shared original-source recovery. The dedicated pre-opening rollback permits
+# recreated container IDs only after restoring verified, image-pinned inputs.
+# Image identity and readiness checks remain mandatory in either path.
+- name: Require source API image identities and original IDs unless explicitly recreated
   ansible.builtin.command:
     argv:
       - python3
@@ -10,12 +11,13 @@
         import json,subprocess,sys
         before=json.loads(sys.argv[1])['containers']
         rows=json.loads(subprocess.check_output(['docker','inspect',*before]))
-        assert all(before[r['Name'].lstrip('/')]['id']==r['Id'] and before[r['Name'].lstrip('/')]['image']==r['Image'] for r in rows), 'Source was replaced; use reviewed rollback'
+        assert all((sys.argv[2]=='true' or before[r['Name'].lstrip('/')]['id']==r['Id']) and before[r['Name'].lstrip('/')]['image']==r['Image'] for r in rows), 'Source was replaced; use reviewed rollback'
       - '{{ source_api.stdout }}'
+      - '{{ source_recreated | default(false) | bool | ternary("true", "false") }}'
   changed_when: false
 - name: Check media identities
   ansible.builtin.command:
-    argv: [python3, -c, 'import json,subprocess,sys; b=json.loads(sys.argv[1])["containers"]; r=json.loads(subprocess.check_output(["docker","inspect",*b])); assert all(b[c["Name"].lstrip("/")]["id"]==c["Id"] and b[c["Name"].lstrip("/")]["image"]==c["Image"] for c in r)', '{{ source_media.stdout }}']
+    argv: [python3, -c, 'import json,subprocess,sys; b=json.loads(sys.argv[1])["containers"]; r=json.loads(subprocess.check_output(["docker","inspect",*b])); assert all((sys.argv[2]=="true" or b[c["Name"].lstrip("/")]["id"]==c["Id"]) and b[c["Name"].lstrip("/")]["image"]==c["Image"] for c in r)', '{{ source_media.stdout }}', '{{ source_recreated | default(false) | bool | ternary("true", "false") }}']
   delegate_to: '{{ media_host }}'
   changed_when: false
 - name: Start source database and both coordinators

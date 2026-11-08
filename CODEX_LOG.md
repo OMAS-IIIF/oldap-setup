@@ -1,3 +1,9 @@
+### Update 2026-11-08 23:46
+- Decisions: Use repository@digest for production targets because classic Docker config IDs differ from home OCI IDs; preserve exact reviewed registry content.
+- Implementation: Preloaded all core/provider/Tools images, verified registry identity/architecture and isolated CLI/library startup. Added checked repackaging and registry-aware batch generation; staged seven SHA-verified artifacts on API VM and office Mac. Full resolved source configurations and all fourteen original container/image identities match the source checkpoint; no restarts. 73 production tests pass.
+- Open: Autonomous backup/controller/peer SSH/mail and receiver Borg/key/schedule integration; final held snapshot, migration and private acceptance before opening.
+- Risks/Assumptions: package-registry-01/batch-registry-01 supersede earlier installation archives; original runtime/credentials unchanged. GraphDB and existing timers remain active. API Docker filesystem has about 13 GiB free after preload.
+
 ### Update 2026-11-08 23:34
 - Decisions: Use explicit provider Compose selections for consolidated Jena; share one compared snapshot implementation across home/production, with explicit production lock/receiver boundaries.
 - Implementation: Prepared pinned production batch supplement; preserved provider inputs/OCR limits and target identity/policy. Added production snapshot wrapper, mount-coverage guards, application/proxy state coverage, frontend/image-service drain and matching restore allowlist. Extended receiver with fixed production endpoints. Retained two private supplement archives and verified hashes on office Mac. Full updated home snapshot/source comparison/restore-header checks and Studio pull pass; 19 API checks, 14 services restored. Producer 21m49s, API ingress outage 18m (longer than earlier 11m25s; cause not isolated).

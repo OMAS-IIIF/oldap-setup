@@ -1,5 +1,8 @@
 # Reviewed model, fulltext and production core package — 2026-11-08
 
+Deployment update: use `package-registry-01` / `batch-registry-01` as described in
+`production-image-preload.md`; the earlier packages below remain provenance.
+
 ## Accepted result
 
 The frozen production snapshot contains six projects and 23 named graphs. Its

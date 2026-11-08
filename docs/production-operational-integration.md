@@ -1,5 +1,8 @@
 # Jena operational supplement — 2026-11-08
 
+Deployment update: use `package-registry-01` / `batch-registry-01` as described in
+`production-image-preload.md`; the earlier packages below remain provenance.
+
 This supplement prepares batch launchers and matched snapshots for the accepted
 consolidated production core. It does not install production jobs, enable timers,
 change mail transport or activate Jena. The core package remains immutable.

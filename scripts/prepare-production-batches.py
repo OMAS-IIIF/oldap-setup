@@ -30,8 +30,8 @@ def prepare_service(source, core, image):
     Reject unknown environment/mount boundaries rather than silently dropping a
     future provider setting. No credentials are printed or copied from home.
     """
-    if not re.fullmatch(r'sha256:[a-f0-9]{64}', image):
-        raise ValueError('Require an accepted local image ID')
+    if not re.fullmatch(r'(?:[a-z0-9/_-]+@)?sha256:[a-f0-9]{64}', image):
+        raise ValueError('Require an accepted immutable image reference')
     api = core['services']['oldap-api']
     env = api['environment']
     if env.get('OLDAP_BACKEND') != 'jena':

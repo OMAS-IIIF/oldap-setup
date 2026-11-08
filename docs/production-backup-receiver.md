@@ -67,20 +67,97 @@ never infer acceptance from age, a successful transfer alone, or an archive name
 Both source hosts must agree on the pair before deleting either side. Keep the
 receipts after transport cleanup so the decision remains auditable.
 
-**This policy is approved but automatic pruning is not installed or activated
-at this checkpoint.** No transport copy or historical backup was removed.
+## Installed receiver workflow
 
-## Remaining integration before scheduling
+`/Users/rosenth/OLDAP_BACKUP/jena/tools/` now contains the reviewed receiver,
+transport helper and existing pair puller. No dependency installation is needed;
+use `/opt/homebrew/bin/python3`. The API controller's shared producer publishes
+`/srv/storage/oldap-jena-latest.json` atomically only after both archives and the
+per-pair ready marker are complete. Its installed playbook passes syntax checks.
 
-1. Publish a latest-completed production snapshot marker only after successful
-   comparison, recovery and hashing; detect missing/stale publications.
-2. Wire the office pull to encrypted Borg creation and verification, with
-   success/failure mail, retry handling and serialized execution.
-3. Implement paired durable acknowledgements and guarded retention; test refusal
-   for missing receipts, wrong identities, incomplete pairs and failed Borg runs.
-4. Accept the first real production Jena pair and its restore before switching
-   schedules. The new producer timer remains disabled, and the old GraphDB jobs
-   remain active until the coordinated switch.
+`run-production-backup-receiver.py` serializes the entire run and enforces:
 
-See [the controller runbook](production-backup-controller.md) for production
-snapshot execution and activation boundaries.
+1. The protected credential file, expected repository ID and `repokey-blake2`.
+2. An automatic snapshot ID and a completion no older than 12 hours, with at
+   most five minutes of clock lead. Missing/stale publication is FAILURE, never
+   success based on yesterday's backup. Both clocks must be synchronized.
+3. The existing fixed-endpoint puller's manifest equality and archive hashes.
+4. Borg creation (or existing-archive retry), exact three-file inventory and
+   stored manifest equality. Both tar files are streamed back from Borg and
+   checked against source byte counts and SHA-256 values. No additional full-size
+   extraction directory is required. Any Borg warning/nonzero exit fails the run.
+5. A durable local receipt followed by media acknowledgement, then API
+   acknowledgement. The source validates its tar before first acknowledgement;
+   the API additionally compares its ready marker. Retries reuse the exact
+   receipt and verify the stored archive again.
+6. Comparison of both source receipt inventories. Before either side is retired,
+   both sides of the complete deletion plan are validated. Only automatic-ID
+   tar files beyond the latest three matching pairs are eligible. Matching Borg
+   archive IDs must still exist. Missing archives are conservatively preserved.
+7. Local transport retention keeps the latest two paired confirmations. Unknown
+   files, symlinks, digest mismatches or inconsistent receipts stop cleanup.
+   Small manifests, directories and receipts remain as audit records; the large
+   tar files are removed. An interrupted deletion can safely be retried.
+8. Borg pruning is restricted to `production-*`, with the approved calendar
+   tiers, followed by compaction. This operates only on the new repository.
+
+Copies without paired confirmation are retained regardless of age. Fixture and
+manual archive names are outside automatic retention. Snapshot IDs are ordered
+by the producer's UTC timestamp; only the controller generates eligible IDs.
+Post-backup verification and cleanup run while application services are online.
+
+SUCCESS/FAILURE emails contain a bounded status and the private log location,
+not raw logs or credentials. The owner confirmed both explicit office test mails.
+A mail submission failure makes the receiver invocation fail as well.
+
+## Schedule and installation state
+
+The 04:00 receiver plist is staged at
+`OLDAP_BACKUP/jena/schedule/org.oldap.jena-backup.plist`, **outside LaunchAgents**,
+and is not loaded. It uses Homebrew Python, a private umask and private logs at
+`OLDAP_BACKUP/jena/logs/receiver.log`. Local Mac time must be Europe/Zurich for
+this schedule. The new 03:15 producer timer remains disabled/inactive.
+
+The production server's original GraphDB backup timer remains active. Inspection
+of the office Mac found the legacy `OldapBackup` plist at its expected path but
+**no loaded OldapBackup job** in the system/user/gui domains and no user crontab.
+This step did not unload it or change its files. The reason is not established;
+do not describe the existing office pull as active based solely on the plist.
+Resolve its intended schedule state during the cutover decision. Do not leave
+both receiver jobs registered for routine execution.
+
+Deploy/update the three Python files together while the new receiver is inactive;
+copy the plist only into `jena/schedule` until activation is approved. Install
+producer changes through `oldap-jena-backup-controller-install.yml`. Keep
+credentials separate. Never initialize an existing repository during deployment.
+
+For a manual first Jena acceptance after cutover, invoke the installed receiver
+with Homebrew Python and redirect output into its private log directory. Only
+after a real matched production pair and its Borg restore pass should the new
+plist be placed in `~/Library/LaunchAgents/` and bootstrapped in the intended
+user login domain. The Mac must remain available overnight; a user LaunchAgent
+requires the appropriate logged-in user session. Verify schedule registration
+and the first actual scheduled completion rather than assuming file placement
+is sufficient.
+
+## Acceptance and remaining gate
+
+- 83 production unit/contract tests pass; the ten backup-specific tests were
+  repeated after making receipt writes interruption-safe with unique temp files.
+- `tests/accept_production_receiver_borg.py`, run with Homebrew Python on the
+  office Mac, passed against a **disposable encrypted repository** and five small
+  synthetic pairs. Source operations were mapped to temporary directories; no
+  real production tar was deleted. Real Borg creation, streamed restore hashes,
+  three-server/two-office retention, five daily Borg archives, repeat invocation,
+  corrupt-digest rejection and full Borg data checking passed.
+- The installed helper's read-only inventory succeeds over actual pinned SSH to
+  both servers; both have no acknowledged production Jena transports yet.
+- The installed receiver correctly refuses the missing latest publication before
+  pulling or creating an archive. No production snapshot was started.
+- Plist validation and producer installation/syntax checks pass. Only the shared
+  producer task file changed on the API controller; no application restart.
+
+The first **real production Jena pair**, its independent restore/acceptance and
+schedule switchover remain open. The fixture does not establish full-size runtime
+or replace application restore testing. See
+[the controller runbook](production-backup-controller.md) for snapshot execution.

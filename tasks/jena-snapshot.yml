@@ -199,3 +199,12 @@
         remote_src: true
         owner: rosenth
         mode: '0600'
+
+    - name: Publish latest production completion only after the per-pair marker
+      when: snapshot_api_host == 'dhlab-oldap.dhlab.unibas.ch'
+      ansible.builtin.copy:
+        src: '{{ api_backup }}/ready.json'
+        dest: /srv/storage/oldap-jena-latest.json
+        remote_src: true
+        owner: rosenth
+        mode: '0600'

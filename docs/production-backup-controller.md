@@ -91,6 +91,7 @@ media host trust and the matching source-IP-restricted authorization on media.
 Keep schedules disabled until those checks and a full matched snapshot succeed.
 Office repository encryption and exported-key fixture recovery now pass; the owner
 confirmed independent key custody in Apple Passwords. See
-[the receiver checkpoint](production-backup-receiver.md). Complete pair pulling,
-freshness/notification/retention integration and the first real production Jena
-backup remain open.
+[the receiver checkpoint](production-backup-receiver.md). Pair pulling, freshness, notifications and guarded retention are now installed
+and tested with disposable encrypted fixtures. The first real production Jena
+backup and coordinated schedule activation remain open. The shared producer
+publishes its latest marker only after the completed per-pair marker.

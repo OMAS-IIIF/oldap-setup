@@ -20,6 +20,37 @@
     "server_confirmed_pairs": 3,
     "office_confirmed_pairs": 2
   },
-  "automatic_retention_installed": false,
-  "first_production_jena_pair_accepted": false
+  "automatic_retention_installed": true,
+  "first_production_jena_pair_accepted": false,
+  "workflow_installed": true,
+  "receiver_schedule_loaded": false,
+  "producer_timer_enabled": false,
+  "legacy_server_backup_timer_active": true,
+  "legacy_office_launchagent_loaded": false,
+  "legacy_office_schedule_changed_in_this_step": false,
+  "office_notification_tests": "SUCCESS and FAILURE delivered; owner confirmed",
+  "production_tests_passed": 83,
+  "backup_tests_repeated": 10,
+  "real_borg_fixture": {
+    "status": "passed",
+    "isolated_repository": true,
+    "synthetic_pairs": 5,
+    "server_pairs_retained": 3,
+    "office_pairs_retained": 2,
+    "borg_daily_archives_retained": 5,
+    "retry": "passed",
+    "corrupt_digest": "rejected",
+    "verify_data": "passed",
+    "real_production_transport_deleted": false
+  },
+  "missing_latest_publication": "refused before pull/create",
+  "shared_producer_installed": "latest marker after per-pair publication; installer changed=1 failed=0",
+  "source_bundle": {
+    "name": "candidate-backup-operations-03.tar",
+    "bytes": 143360,
+    "sha256": "63bca77d2c185aa730203905dc4f454dfacc25e42e08fd02b95ced28d324e7d1",
+    "office_directory": "/Users/rosenth/OLDAP_BACKUP/releases/production-backup-operations-20261109-03",
+    "archive_members_and_installed_office_script_hashes": "verified"
+  },
+  "office_local_timezone_verified": "CET (Europe/Zurich winter offset)"
 }

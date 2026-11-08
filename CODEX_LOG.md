@@ -1,3 +1,9 @@
+### Update 2026-11-09 00:20
+- Decisions: Accept only a fresh matched publication and exact restored Borg bytes; require matching paired acknowledgements and existing Borg archive IDs before transport retirement. Keep audit metadata and all unconfirmed copies.
+- Implementation: Installed office receiver/helper and inactive 04:00 plist; updated API producer's atomic latest marker. Implemented retry-safe receipts, guarded 3/2 transport retention, dedicated 30/12/24 Borg pruning and bounded mail. 83 production tests plus repeat ten backup tests pass; real disposable encrypted Borg/five-pair retention/retry/corruption/data-check acceptance passes. Both office test mails delivered, owner confirmed. Source-only operations supplement 03 retained on office Mac; all members and installed receiver script hashes verified.
+- Open: First real production Jena pair/restore and coordinated schedule switch. Legacy office OldapBackup plist exists but is not loaded in checked launchd domains; cause/intent unknown and unchanged here.
+- Risks/Assumptions: Production remains GraphDB. No production transport deleted or application restarted. New schedules inactive; legacy server backup timer active. Fixture uses temporary source directories and does not establish full-size performance. Office user LaunchAgent needs the intended login session and local Europe/Zurich clock.
+
 ### Update 2026-11-09 00:07
 - Decisions: Record independent key custody and approved 30/12/24 Borg plus 3-server/2-office confirmed-pair retention; keep automatic deletion inactive until receipt guards are implemented and tested.
 - Implementation: Verified encrypted office repository identity, protected credential file ownership/mode, fixture-only contents, successful exported-key recovery evidence and strict SSH to both source hosts. Owner confirmed Apple Passwords storage. Added receiver runbook and secret-free acceptance evidence.

@@ -1,0 +1,52 @@
+---
+# Freeze the cloned GraphDB source; never used on production or on live home Jena.
+- name: Freeze the temporary GraphDB source on the existing home pair
+  hosts: oldap_home
+  become: true
+  gather_facts: false
+  vars:
+    ansible_become_exe: /usr/bin/sudo.ws
+    ansible_user: rosenth
+    ansible_python_interpreter: /usr/bin/python3
+    media_host: media.home.org
+    checkpoint: '/srv/storage/oldap-cutover-{{ snapshot_id }}'
+  tasks:
+    - ansible.builtin.assert:
+        that:
+          - ansible_host == 'api.home.org'
+          - snapshot_id is match('^home-rehearsal-[a-zA-Z0-9_-]+$')
+          - home_production_rehearsal_approved | default(false) | bool
+    - ansible.builtin.slurp: {src: '{{ checkpoint }}/home-rehearsal.json'}
+      register: ownership
+    - ansible.builtin.assert:
+        that: (ownership.content | b64decode | from_json).home_retained == true
+    - name: Require the rehearsal source to be GraphDB
+      ansible.builtin.command:
+        argv: [docker, exec, oldap-api, python, -c, 'import os; assert os.getenv("OLDAP_BACKEND","graphdb")=="graphdb"']
+      changed_when: false
+    - ansible.builtin.command: docker stop --timeout -1 oldap-media-caddy
+      delegate_to: '{{ media_host }}'
+    - ansible.builtin.command: docker stop --timeout -1 oldap-mediahelper oldap-ingest-worker oldap-export-worker
+      delegate_to: '{{ media_host }}'
+    - name: Require unused source mobile registry before its legacy SIGINT drain
+      ansible.builtin.command:
+        argv: [docker, exec, oldap-mobile-media-worker, python, -c, 'import sqlite3; c=sqlite3.connect("file:/data/mobile-uploads/registry.sqlite3?mode=ro",uri=True); tables=[r[0] for r in c.execute("SELECT name FROM sqlite_master WHERE type=\"table\" AND name LIKE \"mobile_%\"")]; assert "mobile_uploads" in tables; assert all(c.execute("SELECT COUNT(*) FROM "+chr(34)+t.replace(chr(34),chr(34)*2)+chr(34)).fetchone()[0]==0 for t in tables)']
+      delegate_to: '{{ media_host }}'
+      changed_when: false
+      no_log: true
+    - ansible.builtin.command: docker stop --signal SIGINT --timeout -1 oldap-mobile-media-worker
+      delegate_to: '{{ media_host }}'
+    - ansible.builtin.command: docker stop --timeout -1 oldap-imageserver
+      delegate_to: '{{ media_host }}'
+    - ansible.builtin.command: docker stop --timeout -1 caddy oldap-api oldap-app fasnachts-page compose-salsah-2-1
+    - ansible.builtin.command: docker stop --timeout -1 graphdb redis compose-archive-writer-1
+    - name: Verify clean frozen source on both real hosts
+      ansible.builtin.script: 'scripts/check-cutover-containers.py {{ item.role }} frozen'
+      args: {executable: python3}
+      loop:
+        - {role: api, host: '{{ inventory_hostname }}'}
+        - {role: media, host: '{{ media_host }}'}
+      delegate_to: '{{ item.host }}'
+      changed_when: false
+    - name: Hold the rehearsal maintenance unit until the common rollback releases it
+      ansible.builtin.command: systemd-run --unit=oldap-cutover-lock --collect /usr/bin/sleep infinity

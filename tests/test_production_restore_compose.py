@@ -49,3 +49,20 @@ class RestoreTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     restore.restore('api', root)
                 command.assert_not_called()
+
+    def test_preflight_does_not_extract_or_create_selection(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(restore.subprocess, 'run') as command:
+            root = Path(directory)
+            self.fixture(root)
+            before = set(root.iterdir())
+            restore.restore('api', root, check_only=True)
+            self.assertEqual(before, set(root.iterdir()))
+            command.assert_not_called()
+
+    def test_duplicate_configuration_is_rejected(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(restore.subprocess, 'run') as command:
+            root = Path(directory)
+            self.fixture(root, 'opt/oldap/compose/.env')
+            with self.assertRaises(ValueError):
+                restore.restore('api', root)
+            command.assert_not_called()

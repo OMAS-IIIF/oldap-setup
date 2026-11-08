@@ -14,8 +14,11 @@ import subprocess
 import tarfile
 
 
-def restore(role, checkpoint):
-    """Verify archive/config bytes and restore the bounded original Compose tree."""
+def restore(role, checkpoint, *, check_only=False):
+    """Verify inputs, optionally restoring only the bounded original Compose tree.
+
+    check_only performs no writes.
+    """
     manifest=json.loads((checkpoint/'manifest.json').read_text())
     if manifest['status']!='source-frozen':
         raise ValueError('Require a held final source checkpoint')
@@ -32,6 +35,8 @@ def restore(role, checkpoint):
     prefix='opt/oldap/compose' if role=='api' else 'opt/oldap-mediaserver/compose'
     excluded='opt/oldap/compose/redis-data'
     names=[]
+    seen=set()
+    regular=set()
     with tarfile.open(archive) as stream:
         for member in stream:
             name=PurePosixPath(member.name)
@@ -42,6 +47,11 @@ def restore(role, checkpoint):
                 continue
             if value!=prefix and not value.startswith(prefix+'/'):
                 continue
+            if value in seen:
+                raise ValueError('Duplicate Compose input')
+            seen.add(value)
+            if member.isfile():
+                regular.add(value)
             if not (member.isfile() or member.isdir()):
                 raise ValueError('Unexpected link/special Compose input')
             # Existing symlinks could redirect an otherwise safe extraction.
@@ -49,8 +59,11 @@ def restore(role, checkpoint):
             if any(path.is_symlink() for path in [destination,*destination.parents]):
                 raise ValueError('Source Compose destination contains a symlink')
             names.append(member.name)
-    if prefix+'/.env' not in names or prefix+'/docker-compose.yml' not in names:
+    if prefix+'/.env' not in regular or prefix+'/docker-compose.yml' not in regular:
         raise ValueError('Incomplete original Compose configuration')
+    if check_only:
+        print('Original Compose inputs verified; no files or services changed')
+        return
     os.umask(0o077)
     selection=checkpoint/'rollback-config-members.list'
     selection.write_bytes(b''.join(name.encode()+b'\0' for name in names))
@@ -64,8 +77,9 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('role',choices=['api','media'])
     parser.add_argument('checkpoint',type=Path)
+    parser.add_argument('--check-only', action='store_true')
     args=parser.parse_args()
     expected_parent=Path('/srv/storage') if args.role=='api' else Path('/data')
     if args.checkpoint.parent!=expected_parent or not args.checkpoint.name.startswith('oldap-cutover-') or args.checkpoint.resolve()!=args.checkpoint:
         raise ValueError('Invalid production checkpoint path')
-    restore(args.role,args.checkpoint)
+    restore(args.role,args.checkpoint, check_only=args.check_only)

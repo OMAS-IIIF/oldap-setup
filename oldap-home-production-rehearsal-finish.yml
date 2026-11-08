@@ -1,0 +1,63 @@
+---
+# Caller must first drain ALL rehearsal processes on both hosts. This deliberately
+# does not guess how to interrupt workers after an arbitrary failure.
+- name: Restore retained Jena home state after the production rollback rehearsal
+  hosts: oldap_home
+  become: true
+  gather_facts: false
+  vars:
+    ansible_become_exe: /usr/bin/sudo.ws
+    ansible_user: rosenth
+    ansible_python_interpreter: /usr/bin/python3
+    media_host: media.home.org
+    api_root: '/srv/storage/oldap-cutover-{{ snapshot_id }}'
+    media_root: '/data/oldap-cutover-{{ snapshot_id }}'
+    media_writers: [oldap-mediahelper, oldap-ingest-worker, oldap-export-worker, oldap-mobile-media-worker]
+    api_running: {stdout_lines: []}
+  tasks:
+    - ansible.builtin.assert:
+        that:
+          - ansible_host == 'api.home.org'
+          - snapshot_id is match('^home-rehearsal-[a-zA-Z0-9_-]+$')
+          - home_production_rehearsal_approved | default(false) | bool
+    - name: Require both hosts stopped before replacing any path
+      ansible.builtin.command: docker ps -q
+      register: running
+      failed_when: running.stdout | trim != ''
+      changed_when: false
+      delegate_to: '{{ item }}'
+      loop: ['{{ inventory_hostname }}', '{{ media_host }}']
+    - name: Remove only named stopped rehearsal services; leave historical console/init containers alone
+      ansible.builtin.command:
+        argv: [python3, -c, 'import subprocess; allowed={"graphdb","redis","compose-archive-writer-1","oldap-api","caddy","oldap-app","fasnachts-page","compose-salsah-2-1","compose-oldap-jena-1","compose-oldap-jena-identity-1","oldap-imageserver","oldap-mediahelper","oldap-ingest-worker","oldap-export-worker","oldap-mobile-media-worker","oldap-media-caddy"}; names=subprocess.check_output(["docker","ps","-a","--format","{% raw %}{{.Names}}{% endraw %}"],text=True).split(); selected=sorted(allowed.intersection(names)); subprocess.run(["docker","rm",*selected],check=True) if selected else None']
+      delegate_to: '{{ item }}'
+      loop: ['{{ inventory_hostname }}', '{{ media_host }}']
+    - name: Restore journaled original home directories
+      ansible.builtin.command: 'python3 /home/rosenth/prepare-home-production-rehearsal.py restore {{ item.role }} {{ item.root }}'
+      loop:
+        - {host: '{{ inventory_hostname }}', role: api, root: '{{ api_root }}'}
+        - {host: '{{ media_host }}', role: media, root: '{{ media_root }}'}
+      delegate_to: '{{ item.host }}'
+    - name: Recreate original home containers with retained exact images
+      ansible.builtin.command: 'docker compose -p compose -f {{ item.root }}/home-compose.json up --no-start --no-deps --pull never'
+      loop:
+        - {host: '{{ inventory_hostname }}', root: '{{ api_root }}'}
+        - {host: '{{ media_host }}', root: '{{ media_root }}'}
+      delegate_to: '{{ item.host }}'
+      no_log: true
+    - name: Verify all home image identities before restarting any service
+      ansible.builtin.command:
+        argv: [python3, -c, 'import json,subprocess,sys; expected=json.load(open(sys.argv[1])); rows=json.loads(subprocess.check_output(["docker","inspect",*expected])); assert {r["Name"].lstrip("/"):r["Image"] for r in rows}==expected', '{{ item.root }}/home-images.json']
+      loop:
+        - {host: '{{ inventory_hostname }}', root: '{{ api_root }}'}
+        - {host: '{{ media_host }}', root: '{{ media_root }}'}
+      delegate_to: '{{ item.host }}'
+      changed_when: false
+    - ansible.builtin.command: docker start oldap-app fasnachts-page compose-salsah-2-1
+    - ansible.builtin.command: docker start oldap-imageserver
+      delegate_to: '{{ media_host }}'
+    - ansible.builtin.include_tasks: tasks/jena-home-start.yml
+    - name: Release the rehearsal-only maintenance unit after home recovery
+      ansible.builtin.command: systemctl stop oldap-cutover-lock.service
+      register: release_unit
+      failed_when: release_unit.rc not in [0, 5]

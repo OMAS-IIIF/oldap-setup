@@ -29,6 +29,7 @@ if args[0]=='inspect':
  if '--format' in args: print('healthy')
  else: print(json.dumps([{'Name':'/'+n,'Id':n+('changed' if fail=='identity' else ''),'Image':('wrong' if fail=='image' else 'image')} for n in args[1:]]))
 if fail=='storage' and args[:2]==['start','graphdb']:sys.exit(1)
+if fail=='media' and args[:3]==['exec','oldap-mediahelper','python']:sys.exit(1)
 if fail=='repository' and args[0]=='exec' and 'requests.post' in args[-1]:sys.exit(1)
 '''
             for binary in ['docker', 'systemctl']:
@@ -74,3 +75,10 @@ if fail=='repository' and args[0]=='exec' and 'requests.post' in args[-1]:sys.ex
         result, commands = self.exercise('image', recreated=True)
         self.assertNotEqual(result.returncode, 0)
         self.assertNotIn(['start','caddy'], commands)
+
+    def test_media_failure_keeps_media_ingress_and_timers_closed(self):
+        result, commands = self.exercise('media')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertNotIn(['start','oldap-media-caddy'], commands)
+        self.assertNotIn(['start','oldap-backup.timer'], commands)
+        self.assertNotIn(['stop','oldap-cutover-lock.service'], commands)

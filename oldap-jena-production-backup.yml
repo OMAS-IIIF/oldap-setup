@@ -1,0 +1,77 @@
+---
+# Manual production successor. Install/schedule only after private acceptance.
+# Requires the reviewed lock holder script; never calls the GraphDB backup job.
+- name: Capture a matched production Jena snapshot under the harvest lock
+  hosts: oldap_prod
+  become: true
+  vars:
+    ansible_user: rosenth
+    ansible_python_interpreter: /usr/bin/python3
+    snapshot_api_host: dhlab-oldap.dhlab.unibas.ch
+    media_host: dhlab-iii.dhlab.unibas.ch
+    api_backup: '/srv/storage/oldap-jena-snapshot-{{ snapshot_id }}'
+    media_backup: '/data/oldap-jena-snapshot-{{ snapshot_id }}'
+    home_media_precopy: false
+    home_snapshot_publish: true
+    mobile_stop_signal: SIGTERM
+    media_writers: [oldap-mediahelper, oldap-ingest-worker, oldap-export-worker, oldap-mobile-media-worker]
+    api_paths:
+      - srv/storage/oldap-jena-production-20261108
+      - srv/storage/caddy
+      - srv/storage/oldap-data/oldap-app
+      - srv/storage/oldap-data/oldap-harvesters
+      - opt/oldap/compose
+      - etc/oldap-harvest.env
+      - usr/local/lib/oldap
+      - etc/systemd/system
+    media_paths:
+      - data/media
+      - data/oldap-import-records
+      - data/oldap-ingest
+      - data/oldap-mobile-uploads
+      - data/oldap-exports
+      - opt/oldap-mediaserver
+    backup_lock_unit: 'oldap-jena-backup-lock-{{ snapshot_id }}'
+    backup_lock_ready: '/run/oldap-jena-backup-{{ snapshot_id }}.ready'
+  tasks:
+    - name: Require an approved Jena production backup and fixed boundaries
+      ansible.builtin.assert:
+        that:
+          - ansible_host == snapshot_api_host
+          - production_backup_approved | default(false) | bool
+          - snapshot_id is match('^[a-zA-Z0-9_-]+$')
+          - not home_media_precopy
+    - name: Verify Jena before holding the shared lock
+      ansible.builtin.command:
+        argv: [docker, exec, oldap-api, python, -c, 'import os; assert os.environ["OLDAP_BACKEND"] == "jena"']
+      changed_when: false
+    - name: Refuse an existing lock readiness marker
+      ansible.builtin.stat: {path: '{{ backup_lock_ready }}'}
+      register: lock_marker
+    - ansible.builtin.assert:
+        that: not lock_marker.stat.exists
+    - name: Prepare the private maintenance helper directory
+      ansible.builtin.file: {path: /usr/local/lib/oldap, state: directory, owner: root, group: root, mode: '0755'}
+    - name: Install the reviewed maintenance lock holder
+      ansible.builtin.copy:
+        src: scripts/hold-production-cutover-lock.py
+        dest: /usr/local/lib/oldap/hold-production-cutover-lock.py
+        owner: root
+        group: root
+        mode: '0700'
+    - name: Hold the existing maintenance lock independently of SSH
+      ansible.builtin.command:
+        argv: [systemd-run, '--unit={{ backup_lock_unit }}', --collect, --service-type=exec,
+               /usr/bin/python3, /usr/local/lib/oldap/hold-production-cutover-lock.py,
+               /srv/storage/oldap-data/job-locks/maintenance.lock, '{{ backup_lock_ready }}']
+    - name: Confirm exclusive maintenance ownership before stopping any writer
+      ansible.builtin.wait_for:
+        path: '{{ backup_lock_ready }}'
+        timeout: 10
+    # On failure keep the lock and recovery pause for explicit operator recovery.
+    # Never restart a GraphDB backup or a harvester against a partially recovered stack.
+    - name: Capture the reviewed production snapshot
+      ansible.builtin.include_tasks: tasks/jena-snapshot.yml
+    - name: Release maintenance only after successful snapshot publication
+      ansible.builtin.command:
+        argv: [systemctl, stop, '{{ backup_lock_unit }}']

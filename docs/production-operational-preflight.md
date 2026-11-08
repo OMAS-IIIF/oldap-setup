@@ -51,3 +51,10 @@ backup/harvest schedules only after their production-specific checks pass.
 The core package remains unchanged. These findings do not invalidate the model,
 API, fulltext or pre-opening rollback rehearsals, and do not authorize treating
 operational acceptance as complete.
+
+## Follow-up
+
+The provider selectors, pinned batch supplement, shared producer and explicit
+production receiver policy are now prepared; see
+`production-operational-integration.md`. Deployment/scheduling and final production
+acceptance remain open. The preflight above records the original findings.

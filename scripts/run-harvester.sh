@@ -37,6 +37,30 @@ case "$selection" in
         fi
         ;;
 esac
+# Consolidated releases supply complete, provider-specific Compose selections.
+# They already contain the pinned image/backend/policy and do not need legacy
+# overlays. Values are literal paths, never shell code. Keep old installs working.
+case "$source" in
+    europeana) batch_key=OLDAP_EUROPEANA_COMPOSE_FILE ;;
+    swisscovery) batch_key=OLDAP_SWISSCOVERY_COMPOSE_FILE ;;
+esac
+batch_selection=$(sed -n "s/^$batch_key=//p" "$compose_dir/.env")
+if [ -n "$batch_selection" ]; then
+    files=""
+    previous_ifs=$IFS
+    IFS=:
+    set -f
+    for file in $batch_selection; do
+        case "$file" in /*) ;; *) file="$compose_dir/$file" ;; esac
+        if [ ! -f "$file" ]; then
+            echo "Missing explicit batch Compose input; no job started" >&2
+            exit 2
+        fi
+        files="${files:+$files:}$file"
+    done
+    set +f
+    IFS=$previous_ifs
+fi
 # Scheduling is optional on home. Its shared maintenance lock remains mandatory
 # when installed, and the Swisscovery-specific flock remains in its own overlay.
 if [ -f "$compose_dir/harvest-schedule-compose.yml" ]; then

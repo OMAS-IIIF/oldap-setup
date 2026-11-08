@@ -83,3 +83,22 @@ class SnapshotPullTests(unittest.TestCase):
                 target = pull.pull('test', root, Path('/config'))
             self.assertEqual(calls, ['api', 'media'])
             self.assertEqual((target/'api.tar').read_bytes(), b'api')
+
+    def test_production_endpoints_are_explicit_and_cannot_mix_with_home(self):
+        data=self.manifest()
+        with self.assertRaises(ValueError):
+            pull.validate_manifest(data,'test','production')
+        data['media']['host']='dhlab-iii.dhlab.unibas.ch'
+        with self.assertRaises(ValueError):
+            pull.validate_manifest(data,'test','home')
+        calls=[]
+        def transfer(command, **kwargs):
+            calls.append(command)
+            Path(command[-1]).write_bytes(Path(command[-1]).stem.encode())
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(pull.subprocess,'check_output',return_value=json.dumps(data).encode()) as fetch, patch.object(pull.subprocess,'run',side_effect=transfer):
+                target=pull.pull('test',Path(directory),Path('/production-config'),'production')
+                self.assertTrue((target/'manifest.json').exists())
+                self.assertEqual(fetch.call_args.args[0][-3],'dhlab-oldap.dhlab.unibas.ch')
+            self.assertTrue(calls[0][-2].startswith('dhlab-oldap.dhlab.unibas.ch:'))
+            self.assertTrue(calls[1][-2].startswith('dhlab-iii.dhlab.unibas.ch:'))

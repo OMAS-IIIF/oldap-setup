@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Pull one published home snapshot; accept only a fully verified pair of archives.
+"""Pull one published Jena snapshot; accept only a fully verified pair of archives.
 
-Run on Studio with its dedicated SSH configuration. Interrupted transfers remain
+Run on the approved receiver with its dedicated SSH configuration. Interrupted transfers remain
 in incoming/ and can be retried with the same ID. No extraction, pruning, Borg
-initialization or service operation is performed. This is home-only rehearsal.
+initialization or service operation is performed. Home remains the default; production requires explicit selection.
 """
 import argparse
 import fcntl
@@ -16,7 +16,14 @@ import shlex
 import subprocess
 
 
-def validate_manifest(data, snapshot_id):
+# Receiver policy is local, never taken from the downloaded manifest.
+ENDPOINTS = {
+    'home': {'api': 'api.home.org', 'media': 'media.home.org'},
+    'production': {'api': 'dhlab-oldap.dhlab.unibas.ch', 'media': 'dhlab-iii.dhlab.unibas.ch'},
+}
+
+
+def validate_manifest(data, snapshot_id, environment='home'):
     """Reject unexpected endpoints, paths, sizes or hashes before invoking rsync."""
     if data.get('snapshot_id') != snapshot_id or data.get('status') != 'offline-compared':
         raise ValueError('Snapshot identity/status mismatch')
@@ -29,7 +36,7 @@ def validate_manifest(data, snapshot_id):
             raise ValueError('Invalid archive size')
         if not re.fullmatch('[0-9a-f]{64}', entry.get('sha256', '')):
             raise ValueError('Invalid SHA-256')
-    if data['media'].get('host') != 'media.home.org':
+    if data['media'].get('host') != ENDPOINTS[environment]['media']:
         raise ValueError('Unexpected media host')
     return data
 
@@ -46,7 +53,7 @@ def verify(path, entry):
         raise ValueError(f'Archive checksum mismatch: {path.name}')
 
 
-def pull(snapshot_id, root, config):
+def pull(snapshot_id, root, config, environment='home'):
     """Download and atomically publish one verified set; retain failures for retry.
 
     A receiver-wide advisory lock excludes concurrent invocations. Remote ready.json
@@ -55,6 +62,7 @@ def pull(snapshot_id, root, config):
     """
     if not re.fullmatch('[a-zA-Z0-9_-]+', snapshot_id):
         raise ValueError('Invalid snapshot ID')
+    endpoints = ENDPOINTS[environment]
     os.umask(0o077)
     root.mkdir(parents=True, exist_ok=True)
     with (root / '.pull.lock').open('a') as lock:
@@ -73,7 +81,7 @@ def pull(snapshot_id, root, config):
         manifest_path = f'/srv/storage/oldap-jena-snapshot-{snapshot_id}/ready.json'
         def fetch_manifest():
             return validate_manifest(json.loads(subprocess.check_output(
-                ssh + ['api.home.org', 'cat', manifest_path])), snapshot_id)
+                ssh + [endpoints['api'], 'cat', manifest_path])), snapshot_id, environment)
         manifest = fetch_manifest()
         for role in ('api', 'media'):
             archive = stage / f'{role}.tar'
@@ -92,7 +100,7 @@ def pull(snapshot_id, root, config):
             if not reusable:
                 subprocess.run(['rsync', '-t', '--whole-file', '--ignore-times',
                                 '--partial', '-e', shlex.join(ssh),
-                                f'{role}.home.org:{manifest[role]["path"]}',
+                                f'{endpoints[role]}:{manifest[role]["path"]}',
                                 str(archive)], check=True)
                 verify(archive, manifest[role])
             archive.chmod(0o600)
@@ -113,10 +121,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('snapshot_id')
     parser.add_argument('--root', type=Path, default=Path.home() / 'OLDAP_BACKUP')
-    parser.add_argument('--ssh-config', type=Path,
-                        default=Path.home() / '.ssh/oldap_home_backup.conf')
+    parser.add_argument('--environment', choices=ENDPOINTS, default='home')
+    parser.add_argument('--ssh-config', type=Path)
     args = parser.parse_args()
-    print(pull(args.snapshot_id, args.root, args.ssh_config))
+    if args.environment == 'production' and args.ssh_config is None:
+        parser.error('Production requires an explicit --ssh-config')
+    config = args.ssh_config or Path.home() / '.ssh/oldap_home_backup.conf'
+    print(pull(args.snapshot_id, args.root, config, args.environment))
 
 
 if __name__ == '__main__':

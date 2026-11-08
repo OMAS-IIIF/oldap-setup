@@ -301,3 +301,13 @@ class RestoreRestartTests(unittest.TestCase):
         )
         timer.return_value.start.assert_called_once()
         self.assertTrue(timer.return_value.cancel.called)
+
+
+class ExtendedSnapshotRootsTests(unittest.TestCase):
+    def test_additional_application_and_proxy_state_stay_bounded(self):
+        for role,name in [('api','srv/storage/oldap-data/oldap-app/settings.json'),
+                          ('media','opt/oldap-mediaserver/caddy-data/certificates/file')]:
+            restore.validate_members([tarfile.TarInfo(name)],role)
+        for role,name in [('api','srv/storage/oldap-data/other/file'),
+                          ('media','opt/oldap-mediaserver-other/file')]:
+            with self.assertRaises(ValueError):restore.validate_members([tarfile.TarInfo(name)],role)

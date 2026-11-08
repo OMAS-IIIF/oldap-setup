@@ -31,6 +31,14 @@
   when: jena_admin_ready_key is defined
   no_log: true
   changed_when: false
+- name: Resume snapshot frontend state services before ingress
+  ansible.builtin.command:
+    argv: '{{ ["docker", "start", "oldap-app", "fasnachts-page"] + (["compose-salsah-2-1"] if "compose-salsah-2-1" in api_running.stdout_lines else []) }}'
+  when: snapshot_restart_extra_services | default(false) | bool
+- name: Resume snapshot image delivery before media ingress
+  ansible.builtin.command: docker start oldap-imageserver
+  delegate_to: '{{ media_host }}'
+  when: snapshot_restart_extra_services | default(false) | bool
 - name: Reopen API ingress for media workers
   ansible.builtin.command: docker start caddy
 - name: Resume existing media writers

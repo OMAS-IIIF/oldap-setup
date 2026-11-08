@@ -67,3 +67,11 @@ These are final acceptance gates, not a request to restart all earlier performan
 or feature work. The known QName/full-IRI serialization variability should be
 assessed against actual clients during the fresh-source acceptance. No unresolved
 access-control, data-loss or recovery issue may be waived as cosmetic.
+
+November 8 operational follow-up: pinned provider overlays, explicit selectors,
+shared snapshot mechanics, complete application/proxy mount coverage and an
+explicit production receiver policy are prepared. See
+`production-operational-integration.md` and its results JSON. These changes do not
+close unattended producer/controller credentials, production backup mail or
+receiver Borg/key/scheduling acceptance. Core images and final private cutover
+gates remain separate.

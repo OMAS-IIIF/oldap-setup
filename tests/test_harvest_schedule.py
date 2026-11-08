@@ -166,3 +166,32 @@ class HarvestScheduleTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+class ConsolidatedBatchLauncherTests(unittest.TestCase):
+    def test_explicit_provider_selection_and_missing_file_fail_closed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            folder=Path(directory)
+            for name in ('run-harvester.sh','run-swisscovery.sh'):
+                (folder/name).write_text((ROOT/'scripts'/name).read_text())
+                (folder/name).chmod(0o755)
+            (folder/'docker-compose.yml').write_text('services: {}\n')
+            for name in ('europeana','swisscovery'):
+                (folder/f'batch-{name}.yml').write_text('services: {}\n')
+            (folder/'.env').write_text('COMPOSE_FILE=docker-compose.yml\n'+''.join(
+                f'OLDAP_{name.upper()}_COMPOSE_FILE=docker-compose.yml:batch-{name}.yml\n' for name in ('europeana','swisscovery')))
+            docker=folder/'docker'
+            docker.write_text('#!'+sys.executable+'\nimport json,os,sys\nprint(json.dumps([os.environ["COMPOSE_FILE"],sys.argv[1:]]))\n')
+            docker.chmod(0o755)
+            env={**os.environ,'PATH':str(folder)+os.pathsep+os.environ['PATH']}
+            for source in ('europeana','swisscovery'):
+                command=['sh',str(folder/'run-harvester.sh'),source,'--help']
+                if source=='swisscovery':command=['sh',str(folder/'run-swisscovery.sh'),'--help']
+                result=subprocess.run(command,env=env,cwd='/',capture_output=True,text=True,check=True)
+                files,args=json.loads(result.stdout)
+                self.assertEqual(files, f'{folder}/docker-compose.yml:{folder}/batch-{source}.yml')
+                self.assertNotIn('writer-compose.yml', files)
+                self.assertEqual(args[-1],'--help')
+            (folder/'batch-europeana.yml').unlink()
+            result=subprocess.run(['sh',str(folder/'run-harvester.sh'),'europeana','--help'],env=env,capture_output=True,text=True)
+            self.assertNotEqual(result.returncode,0)
+            self.assertEqual(result.stdout,'')

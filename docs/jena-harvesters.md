@@ -53,3 +53,9 @@ The standard-image launcher separately skipped the new Europeana record. Native
 OCR on the accepted image recognized a retained historic page in 24.07 seconds,
 34 lines, byte-identical to the earlier reference. Full discovery, schedules and
 production activation remain separate; the one real new home record is retained.
+
+## Consolidated production release
+
+For the consolidated core, use the explicit provider selections and pinned batch
+supplement described in `production-operational-integration.md`. Do not apply
+the home installer or infer the production backend from Compose filenames.

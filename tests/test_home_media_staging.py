@@ -23,7 +23,7 @@ class MediaStagingTests(unittest.TestCase):
         """Preserve metadata, detect hidden edits/deletions, and freeze the copy."""
         play = yaml.safe_load((ROOT / 'oldap-jena-home-backup.yml').read_text())[0]
         selected = {}
-        for task in play['tasks']:
+        for task in yaml.safe_load((ROOT / 'tasks/jena-snapshot.yml').read_text()):
             for item in task.get('block', [task]):
                 selected[item['name']] = item
 

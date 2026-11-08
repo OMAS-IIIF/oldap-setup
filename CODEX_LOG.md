@@ -1,3 +1,9 @@
+### Update 2026-11-08 23:34
+- Decisions: Use explicit provider Compose selections for consolidated Jena; share one compared snapshot implementation across home/production, with explicit production lock/receiver boundaries.
+- Implementation: Prepared pinned production batch supplement; preserved provider inputs/OCR limits and target identity/policy. Added production snapshot wrapper, mount-coverage guards, application/proxy state coverage, frontend/image-service drain and matching restore allowlist. Extended receiver with fixed production endpoints. Retained two private supplement archives and verified hashes on office Mac. Full updated home snapshot/source comparison/restore-header checks and Studio pull pass; 19 API checks, 14 services restored. Producer 21m49s, API ingress outage 18m (longer than earlier 11m25s; cause not isolated).
+- Open: Production unattended controller/SSH/mail/timer wiring, receiver Borg/key recovery and final cutover gates remain open.
+- Risks/Assumptions: No production services/schedules changed; existing core package is immutable. Production snapshot failure deliberately retains maintenance lock. Default office Python requires Xcode license; select installed Homebrew Python explicitly. No library or application API signatures changed.
+
 ### Update 2026-11-08 22:57
 - Decisions: Keep production operational acceptance open; inspect production read-only before adapting jobs.
 - Implementation: Recorded capacity, four matching frozen source file hashes and exact candidate image availability; documented consolidated-Compose harvester detection and home-only backup/receiver gaps.

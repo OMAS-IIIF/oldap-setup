@@ -23,6 +23,7 @@ ALLOWED = {
     "api": (
         "srv/storage/oldap-jena-home-20261102",
         "srv/storage/oldap-data/oldap-api",
+        "srv/storage/oldap-data/oldap-app",
         "srv/storage/caddy",
         "opt/oldap/compose",
     ),
@@ -32,7 +33,7 @@ ALLOWED = {
         "data/oldap-ingest",
         "data/oldap-mobile-uploads",
         "data/oldap-exports",
-        "opt/oldap-mediaserver/compose",
+        "opt/oldap-mediaserver",
     ),
 }
 

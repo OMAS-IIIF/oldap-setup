@@ -98,7 +98,7 @@ class BackupCompletionOrderingTests(unittest.TestCase):
         failure propagation, rather than assuming how always blocks behave.
         """
         play = yaml.safe_load((ROOT / 'oldap-jena-home-backup.yml').read_text())[0]
-        tasks = play['tasks']
+        tasks = yaml.safe_load((ROOT / 'tasks/jena-snapshot.yml').read_text())
         start = next(i for i, task in enumerate(tasks)
                      if task['name'] == 'Pre-copy media and operational state while services are online')
         cases = [(True, failure) for failure in (

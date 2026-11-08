@@ -35,9 +35,15 @@ class LauncherRuntimeTests(unittest.TestCase):
             for name in ['writer-compose.yml', 'jena-compose.yml', 'archive-policy-compose.yml',
                          'jena-harvesters-compose.yml', 'jena-swisscovery-compose.yml', 'harvest-schedule-compose.yml']:
                 (folder/name).write_text('services: {}\n')
-            for backend in ['graphdb', 'jena']:
+            for backend in ['graphdb', 'jena', 'consolidated']:
                 selection = 'docker-compose.yml:writer-compose.yml' if backend == 'graphdb' else 'docker-compose.yml:jena-compose.yml:archive-policy-compose.yml'
-                (folder/'.env').write_text('COMPOSE_FILE='+selection+'\n')
+                if backend == 'consolidated':
+                    selection = 'docker-compose.yml'
+                    for provider in ['europeana','swisscovery']:
+                        override = {'services': {}} if provider == 'europeana' else {'services': {'oldap-harvesters': {'command': swiss}}}
+                        (folder/f'batch-{provider}.yml').write_text(json.dumps(override))
+                extra = ''.join(f'OLDAP_{provider.upper()}_COMPOSE_FILE=docker-compose.yml:batch-{provider}.yml\n' for provider in ['europeana','swisscovery']) if backend == 'consolidated' else ''
+                (folder/'.env').write_text('COMPOSE_FILE='+selection+'\n'+extra)
                 for source in ['europeana', 'swisscovery']:
                     defaults = base['services']['oldap-harvesters']['command'] if source == 'europeana' else swiss
                     for arguments in [[], ['--help'], ['--config', 'explicit spaced.toml', '--dry-run-output', 'out.json']]:

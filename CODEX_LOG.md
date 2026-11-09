@@ -1,3 +1,9 @@
+### Update 2026-11-09 17:36
+- Decisions: Close the coordinated mainline integration after verifying all remote refs; retain migration branches and original GraphDB checkouts.
+- Implementation: All nine exact primary merge IDs, migration tips and peeled pre-jena-merge-20261109 tags verified by ls-remote. Working trees clean. Setup merge b0fa78e5ebcc744225c06eda8e92b0ebfab32036; completion evidence recorded in docs/jena-mainline-merge-20261109.json.
+- Open: Final 1.0.0 artifact publication and oldap-app dependency-alert triage remain separate work.
+- Risks/Assumptions: No application or production change. Local historical primary branches/worktrees were not reset; remote primary branches now contain Jena.
+
 ### Update 2026-11-09 17:35
 - Decisions: Merge all nine accepted Jena histories into primary branches without changing deployment or RC version metadata; preserve prior primary refs with annotated pre-jena-merge-20261109 tags.
 - Implementation: Eight source merge commits and migration branches are published atomically per repository; setup integration follows with exact inventory. All merge trees match their documented migration tips, no source conflict. Media tests: 391 passed, 20 skipped, four subtests; Black and Poetry checks pass. Docker Hub automated-build flags false; inspected workflow/hook limitations documented.

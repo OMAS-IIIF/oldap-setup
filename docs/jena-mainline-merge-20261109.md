@@ -1,5 +1,7 @@
 # Jena mainline integration — 2026-11-09
 
+Status: **completed and verified on GitHub for all nine repositories**.
+
 The owner authorized merging the accepted Jena migration after production cutover,
 backup recovery and the successful frontend performance rollout. This integration
 preserves complete history; it does not deploy, change package versions, publish
@@ -25,7 +27,7 @@ Migration branches are retained; no remote branch deletion or force-push is used
 | Repository | Primary | Previous primary | Reviewed source | Merge |
 |---|---|---|---|---|
 | oldaplib | main | `c4c618075767` | `3f213a52c78b` | `a7a878ebd80433f50e52343111dfdad14643ced3` |
-| oldap-setup | main | `938f7ed656be` | `a8009a39add3` | `recorded in containing merge` |
+| oldap-setup | main | `938f7ed656be` | `a8009a39add3` | `b0fa78e5ebcc744225c06eda8e92b0ebfab32036` |
 | oldap-tools | main | `1949fc5015b2` | `a4be9592f3f6` | `7e769aca3f6a3342790a63decf19bfb62980b664` |
 | oldap-app | main | `9698a77a602e` | `6c01cc453566` | `4f5d121baa66bb681f89e187d41692378575bd88` |
 | FasnachtsPage | master | `c2297fe552f2` | `2116ad8ae94e` | `e0703388b29a42cd280580d0ae2548894991854a` |
@@ -76,3 +78,8 @@ an explicit development-directory cleanup is agreed.
 GitHub reported 52 Dependabot alerts on oldap-app during the successful push
 (2 critical, 23 high, 18 moderate, 9 low). These were not triaged in the merge
 operation; follow up separately without assuming all apply to production runtime.
+
+Final `git ls-remote` verification confirms all nine exact merge IDs, published
+migration tips and peeled baseline tags. All nine local working trees are clean.
+A subsequent documentation-only setup commit records this completion; it does
+not change runtime files or deployment.

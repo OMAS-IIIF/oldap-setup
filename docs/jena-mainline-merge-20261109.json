@@ -1,5 +1,6 @@
 {
   "date": "2026-11-09",
+  "status": "All nine remote primary merges and baseline tags verified",
   "repositories": [
     {
       "repo": "oldaplib",
@@ -17,7 +18,8 @@
       "before": "938f7ed656be006dfcdf206696728811ddbd06b6",
       "migration": "a8009a39add3fe2b8581a084eb09fc0db19428ad",
       "tree": "c361f35d5e8aa8d96bd893ef3cd2b2699ada8c3f",
-      "documentation_tip": "4c196ae790f162e7063508278c182232f81a8bc2"
+      "documentation_tip": "8ccc118fca3d26295089bb418c3068e63ef89203",
+      "merge": "b0fa78e5ebcc744225c06eda8e92b0ebfab32036"
     },
     {
       "repo": "oldap-tools",
@@ -90,5 +92,78 @@
       "published": true
     }
   ],
-  "note": "Eight source mainlines published. Setup merge contains this record; final verification is recorded separately."
+  "verification": [
+    {
+      "repo": "oldaplib",
+      "primary": "main",
+      "merge": "a7a878ebd80433f50e52343111dfdad14643ced3",
+      "remote_verified": true,
+      "backup_tag_verified": true,
+      "worktree_clean": true
+    },
+    {
+      "repo": "oldap-setup",
+      "primary": "main",
+      "merge": "b0fa78e5ebcc744225c06eda8e92b0ebfab32036",
+      "remote_verified": true,
+      "backup_tag_verified": true,
+      "worktree_clean": true
+    },
+    {
+      "repo": "oldap-tools",
+      "primary": "main",
+      "merge": "7e769aca3f6a3342790a63decf19bfb62980b664",
+      "remote_verified": true,
+      "backup_tag_verified": true,
+      "worktree_clean": true
+    },
+    {
+      "repo": "oldap-app",
+      "primary": "main",
+      "merge": "4f5d121baa66bb681f89e187d41692378575bd88",
+      "remote_verified": true,
+      "backup_tag_verified": true,
+      "worktree_clean": true
+    },
+    {
+      "repo": "FasnachtsPage",
+      "primary": "master",
+      "merge": "e0703388b29a42cd280580d0ae2548894991854a",
+      "remote_verified": true,
+      "backup_tag_verified": true,
+      "worktree_clean": true
+    },
+    {
+      "repo": "oldap-harvesters",
+      "primary": "main",
+      "merge": "39eda81370d36571c42c5f1934ad7b77fc617dfb",
+      "remote_verified": true,
+      "backup_tag_verified": true,
+      "worktree_clean": true
+    },
+    {
+      "repo": "salsah-2",
+      "primary": "main",
+      "merge": "eaa4d21621d42c3fe6f14d7ccb19a8c3b728e6ff",
+      "remote_verified": true,
+      "backup_tag_verified": true,
+      "worktree_clean": true
+    },
+    {
+      "repo": "oldap-api",
+      "primary": "main",
+      "merge": "9d1b6b592cfffecc1eee0447f55d8a6d0a4bc63c",
+      "remote_verified": true,
+      "backup_tag_verified": true,
+      "worktree_clean": true
+    },
+    {
+      "repo": "oldap-mediaserver",
+      "primary": "main",
+      "merge": "e8e61d22807dcd83a943940d5101bc6f89f02024",
+      "remote_verified": true,
+      "backup_tag_verified": true,
+      "worktree_clean": true
+    }
+  ]
 }

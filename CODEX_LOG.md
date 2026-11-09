@@ -1,3 +1,9 @@
+### Update 2026-11-09 17:35
+- Decisions: Merge all nine accepted Jena histories into primary branches without changing deployment or RC version metadata; preserve prior primary refs with annotated pre-jena-merge-20261109 tags.
+- Implementation: Eight source merge commits and migration branches are published atomically per repository; setup integration follows with exact inventory. All merge trees match their documented migration tips, no source conflict. Media tests: 391 passed, 20 skipped, four subtests; Black and Poetry checks pass. Docker Hub automated-build flags false; inspected workflow/hook limitations documented.
+- Open: Final remote verification after setup publication; final 1.0.0 artifact release remains separate. Triage oldap-app Dependabot report (52 alerts including two critical) separately.
+- Risks/Assumptions: No cross-repository atomic Git transaction. No deployment, source implementation change or version bump. Old GraphDB worktrees retained; no claim that previous main tips equal production GraphDB provenance.
+
 ### Update 2026-11-09 17:33
 - Decisions: Preserve complete migration history in main via a non-squashed merge; keep pre-jena-merge-20261109 at the previous remote primary tip. No final release/version change or deployment.
 - Implementation: Refreshed origin; primary has no unique commits and merge-tree exactly matches reviewed migration a8009a39add3. Added current integration context only; runtime sources remain unchanged.

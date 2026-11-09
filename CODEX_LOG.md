@@ -1,3 +1,9 @@
+### Update 2026-11-09 11:59
+- Decisions: Owner approved immediate production interruption for the replacement backup and office verification.
+- Implementation: Same systemd service completed snapshot 20261109T104533Z-4d7208ef; 204.894-second ingress stop. All 19 post-restart public checks match baseline. Complete office runner exit 0 proves Borg restored-byte checks, paired acknowledgement, retention and mail. Office key-only/agent-free access to both servers also passes; source repair retained off-host. Next timer remains 03:15, office 04:00.
+- Open: Owner confirmation of both replacement SUCCESS mails; observe next central-management and scheduled cycle.
+- Risks/Assumptions: No full application restore against production; archive restoration verifies bytes, complementing earlier home restore. Current secondary SSH policy is preserved but future central policy changes require host-manager coordination.
+
 ### Update 2026-11-09 11:44
 - Decisions: Keep central SSH ownership intact; use its already-supported secondary authorization file and enforce ticket-independent backup authentication. Require media preflight before maintenance ownership.
 - Implementation: Diagnosed 03:15 failure: central Ansible replaced primary authorized_keys at 03:03:54 and removed the backup key. Installed restricted key in authorized_keys2, forced public-key-only controller SSH, added pre-lock peer check and secondary-file snapshot coverage. Ticket-free systemd positive test and actual invalid-key negative test pass; two lock-lifetime tests and syntax checks pass. All 14 services remained running; diagnosed stale lock released safely.

@@ -50,8 +50,22 @@ unlink the shared flock inode to recover a held lock.
 - Two snapshot tests pass, covering success, failure before lock, failure while
   acquiring ownership and failure during capture. Both changed plays pass syntax.
 
-A fresh full-size retry and office restore verification are pending the owner's
-choice of interruption time. Observe the next central-management/nightly cycle;
-we have not executed or altered that separate management system. If its policy
-later changes the secondary key path, coordinate the key with the host managers
-instead of repeatedly editing centrally owned configuration.
+## Owner-approved full retry — passed
+
+Snapshot `20261109T104533Z-4d7208ef` ran through the same scheduled systemd service.
+Producer exit 0, completed 10:50:33 UTC. API ingress was stopped for 204.894 seconds
+(3m25s, measured from container timestamps). All 19 public API/media checks passed
+after restart with no baseline changes. Recovery service also reports success.
+
+The complete office receiver exited 0 at 10:57:51 UTC, including matching pulled
+archives, encrypted Borg creation, restored size/SHA verification of both files,
+paired acknowledgements, retention and SUCCESS mail submission. See the adjacent
+results JSON. Full private receipt remains on the office Mac and development
+readiness directory. Source repair bundle is retained and SHA-verified off-host.
+
+Next producer trigger remains November 10, 03:15 Europe/Zurich; office pull 04:00.
+Observe the next central-management/nightly cycle: that separate management system
+was not executed or altered during repair. If its policy later changes the
+secondary key path, coordinate the key with the host managers instead of
+repeatedly editing centrally owned configuration. Owner confirmation of the new
+SUCCESS emails remains pending; prior mail delivery was separately confirmed.

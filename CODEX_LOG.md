@@ -1,3 +1,9 @@
+### Update 2026-11-09 17:25
+- Decisions: Owner-authorized publication and production-only rollout of the three reviewed frontend optimizations; retain isolated tags and exact image rollback.
+- Implementation: Built AMD64 source dd316a4, startup verified, published jena-0.1.49-rc1-31da5ef618c6-amd64 (digest f8e1e718…9e0b41); replaced only FasnachtsPage in consolidated Compose. Seven other API-host containers unchanged. Public overview 7511/7968 → 4090/4517 ms; selected detail 4824/4321 → 2334/1811 ms. Overview searches 18→9. Complete desktop/mobile smoke and screenshots pass.
+- Open: Monitor real use and previously observed intermittent upstream failures; first extra media smoke timed out, independent diagnosis and complete repeat passed. No authenticated write/upload tests in this rollout. Home unchanged; main merge remains separate.
+- Risks/Assumptions: Two sequential public timing samples per version, not a load test. Only immutable new image tag published. Exact previous Compose retained as docker-compose.yml.before-fasnacht-performance-20261109T172105; no data migration or backend restart. See oldap-setup/docs/fasnacht-performance-rollout-20261109.md.
+
 ### Update 2026-11-09 12:03
 - Decisions: Accept owner confirmation of both replacement-backup SUCCESS emails.
 - Implementation: Recorded producer and office mail delivery for snapshot 20261109T104533Z-4d7208ef in the incident acceptance evidence.

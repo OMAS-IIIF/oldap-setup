@@ -1,3 +1,9 @@
+### Update 2026-11-09 17:33
+- Decisions: Preserve complete migration history in main via a non-squashed merge; keep pre-jena-merge-20261109 at the previous remote primary tip. No final release/version change or deployment.
+- Implementation: Refreshed origin; primary has no unique commits and merge-tree exactly matches reviewed migration a8009a39add3. Added current integration context only; runtime sources remain unchanged.
+- Open: Verify coordinated remote refs and record final merge IDs in setup/docs/jena-mainline-merge-20261109.md. Final 1.0.0 artifact publication and old checkout cleanup remain separate.
+- Risks/Assumptions: Existing deployed/candidate acceptance covers identical runtime trees; this is not a fresh full-system test. All nine checkouts were clean. Existing GraphDB checkouts and migration branches are retained.
+
 ### Update 2026-11-09 17:25
 - Decisions: Owner-authorized publication and production-only rollout of the three reviewed frontend optimizations; retain isolated tags and exact image rollback.
 - Implementation: Built AMD64 source dd316a4, startup verified, published jena-0.1.49-rc1-31da5ef618c6-amd64 (digest f8e1e718…9e0b41); replaced only FasnachtsPage in consolidated Compose. Seven other API-host containers unchanged. Public overview 7511/7968 → 4090/4517 ms; selected detail 4824/4321 → 2334/1811 ms. Overview searches 18→9. Complete desktop/mobile smoke and screenshots pass.

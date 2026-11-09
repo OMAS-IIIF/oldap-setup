@@ -9,8 +9,11 @@ cannot detect this: a restart can keep the ID while replacing the namespace.
 Compose dependency restart propagation applies to explicit Compose operations,
 not automatic runtime restarts ([Docker reference](https://docs.docker.com/reference/compose-file/services/#depends_on)).
 
-`scripts/jena-recovery.py` is a small host-side reconciler, installed only on home
-by `oldap-jena-recovery-install.yml`. A systemd timer checks ten seconds after the
+`scripts/jena-recovery.py` is a small host-side reconciler, installed on home
+by `oldap-jena-recovery-install.yml` and on production by
+`oldap-jena-production-recovery-install.yml`. Both use the shared tasks in
+`tasks/jena-recovery-install.yml`. The production entry point stages its timer
+disabled; activation follows operational acceptance. A systemd timer checks ten seconds after the
 previous check finishes; it does not overlap a running service. See the
 [systemd timer documentation](https://freedesktop.org/software/systemd/man/latest/systemd.timer.html).
 
@@ -110,3 +113,12 @@ were reopened afterward. The before/after read probes pass all 120 requests,
 including 96 parallel requests at concurrency 16, with identical common response
 hashes. Setup tests: 95 cases, 91 passed and four skipped; 13 focused tests cover
 recovery decisions and partial-failure handling. No production changes.
+
+## Production acceptance — 2026-11-09
+
+Installed the home-tested implementation without changing its recovery algorithm.
+Thirteen unit tests and installer syntax checks pass. After the first real Jena
+backup and complete office restore verification, the timer was enabled; its
+healthy check returned exit 0. No production crash was injected. State in
+`/var/lib/oldap-jena-recovery` is ephemeral bookkeeping; do not restore stale
+maintenance markers. Backup pauses and resumes recovery around planned stops.

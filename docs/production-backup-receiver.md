@@ -1,5 +1,15 @@
 # Production receiver: encryption and recovery checkpoint
 
+## Live production status — 2026-11-09
+
+The first actual production pair `20261108T235609Z-1b5ca95a` passed the complete
+receiver including restored-byte verification, paired acknowledgement, retention
+and mail (exit 0). The new 04:00 office LaunchAgent is registered in gui/501.
+The old `OldapBackup` label is disabled and its plist preserved outside
+LaunchAgents. Server producer runs at 03:15 Europe/Zurich. Earlier preparation
+notes below describe the pre-activation state; see the final cutover report for
+current evidence. No historical GraphDB backup data was removed.
+
 ## Accepted setup
 
 The office receiver is `rosenth@131.152.51.209` (`dhlab-da24-002`).

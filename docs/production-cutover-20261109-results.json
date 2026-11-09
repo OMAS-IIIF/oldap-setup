@@ -1,6 +1,6 @@
 {
   "status": "passed",
-  "scope": "private target acceptance; public opening not yet performed",
+  "scope": "private and public production acceptance, first backup and operational schedules",
   "snapshot_id": "20261109-final-01",
   "source_sha256": "39f67d8bfd02750bb33e12c7277d42f91b6f592042c384fbe477588549356072",
   "accepted_at": "2026-11-08T23:45:39.524802+00:00",
@@ -128,5 +128,122 @@
     "complete_responses_match": true
   },
   "dns": "fuseki.oldap.org resolved to 131.152.238.105 on development and API host",
-  "public_opened": false
+  "public_opened": false,
+  "public_acceptance": {
+    "checks": [
+      "API /status returns 200",
+      "API /admin/auth/[account] returns 200",
+      "API /admin/auth/[account] returns 200",
+      "API /archive/fasnacht/publication/capabilities returns 200",
+      "API /archive/fasnacht/publication/capabilities returns 200",
+      "Publication capabilities distinguish administrator and public user",
+      "Upload rejects absent/invalid token",
+      "Upload rejects absent/invalid token",
+      "Fresh restored token accepted before form validation",
+      "API /data/search/fasnacht/class/fasnacht:Story returns 200",
+      "API /data/search/fasnacht/class/fasnacht:ArchiveObject returns 200",
+      "Archive overview has results",
+      "Supported comparison backend",
+      "API /data/search/fasnacht returns 200",
+      "API /data/search/fasnacht returns 200",
+      "Fulltext AND results nonempty and word-order independent",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 returns 200",
+      "Restored signed IIIF metadata",
+      "Restored signed JPEG"
+    ],
+    "admin_capabilities_sha256": "43a8d76d263a5b9c1dcc56451e966922bbfd6bfd34d7f67ae73b8c2281afa100",
+    "public_capabilities_sha256": "088a70a7588f1db196e6ccdf10d58bbf6de2a8d54f65edc1ac3181751bfd71a2",
+    "stories": 30,
+    "stories_sha256": "26975a21d9088bdb0a86dc185120881b8b6ac2c4e40579f223a1e3337b52f012",
+    "stories_rdf_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "archive_objects": 100,
+    "archive_sha256": "aa649936245fed8d80fe3f3405f99dc72d001eaab857168f7d4b090b91cc6ef2",
+    "fulltext_matches": 10,
+    "fulltext_sha256": "c44d1db3513e688c9d9680d95525f29d469f4dee9adf49aec9df0d21bbcd43c7",
+    "fulltext_cases": [
+      {
+        "query": "Laterne Stamm",
+        "count": 10,
+        "sha256": "c44d1db3513e688c9d9680d95525f29d469f4dee9adf49aec9df0d21bbcd43c7"
+      },
+      {
+        "query": "Stamm Laterne",
+        "count": 10,
+        "sha256": "c44d1db3513e688c9d9680d95525f29d469f4dee9adf49aec9df0d21bbcd43c7"
+      }
+    ],
+    "iiif_dimensions": {
+      "width": 1589,
+      "height": 2914
+    },
+    "image_bytes": 9898,
+    "image_sha256": "94c924b11db83f628511f9d1b948f2b916423214aa43fc06f85976daaa506799",
+    "status": "passed",
+    "scope": "api-and-media"
+  },
+  "browser": {
+    "status": "passed",
+    "pages": [
+      {
+        "route": "archive",
+        "status": 200,
+        "title": "",
+        "searches": 18,
+        "detail_links": 48,
+        "page_errors": [],
+        "server_failures": [],
+        "visible_error": false
+      },
+      {
+        "route": "geschichten",
+        "status": 200,
+        "title": "",
+        "searches": 2,
+        "detail_links": 30,
+        "page_errors": [],
+        "server_failures": [],
+        "visible_error": false
+      }
+    ]
+  },
+  "first_backup_timing": {
+    "api_ingress_stopped_at": "2026-11-08T23:56:19.06194525Z",
+    "api_ingress_started_at": "2026-11-08T23:59:11.129338701Z",
+    "api_ingress_outage_seconds": 172.067,
+    "snapshot_id": "20261108T235609Z-1b5ca95a",
+    "snapshot_completed_at": "2026-11-09T00:00:35Z",
+    "api_archive_bytes": 463124480,
+    "media_archive_bytes": 21283594240
+  },
+  "first_office_backup": {
+    "status": "passed",
+    "snapshot_id": "20261108T235609Z-1b5ca95a",
+    "completed_at": "2026-11-09T00:10:19.117041+00:00",
+    "receiver_exit_code": 0,
+    "mail_submitted": true,
+    "scope": "complete installed receiver: pull, restored SHA verification, paired acknowledgement, retention and notification",
+    "archive": "production-20261108T235609Z-1b5ca95a",
+    "archive_id": "e52a2eff7d087c004d6f935d38bf876c000ebf26c49d3a09873e5e8e01359ee6",
+    "artifacts": {
+      "api": {
+        "bytes": 463124480,
+        "path": "/srv/storage/oldap-jena-snapshot-20261108T235609Z-1b5ca95a/api.tar",
+        "sha256": "ee0627d6a908f9f01a0f70490b42e4f77ce856ab6ef4989c7e13a0944b75c245"
+      },
+      "media": {
+        "bytes": 21283594240,
+        "host": "dhlab-iii.dhlab.unibas.ch",
+        "path": "/data/oldap-jena-snapshot-20261108T235609Z-1b5ca95a/media.tar",
+        "sha256": "ced385be871b5fd50e12a690a7795f5ac1f6f7ea7b8074d51b853bc08a4153d8"
+      }
+    }
+  },
+  "schedules": {
+    "server_backup": "daily 03:15 Europe/Zurich",
+    "office_receiver": "daily 04:00 Europe/Zurich, gui/501",
+    "harvest": "Sunday 05:00 Europe/Zurich; next 2026-11-15",
+    "recovery": "10 seconds after previous check; healthy exit 0",
+    "legacy_graphdb_backup": "disabled",
+    "legacy_office": "disabled; plist preserved outside LaunchAgents"
+  }
 }

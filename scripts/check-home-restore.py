@@ -50,7 +50,7 @@ def canonical_stories(stories):
 
 def run(*, include_media=True):
     """Check API data and optionally signed media; record the actual acceptance scope."""
-    api='http://127.0.0.1:8000'
+    api=os.getenv('RESTORE_API_URL','http://127.0.0.1:8000')
     media=os.getenv('RESTORE_MEDIA_URL','http://oldap-mediahelper:8000')
     iiif=os.getenv('RESTORE_IIIF_URL','http://oldap-imageserver:8182/iiif/3')
     checks=[]; report={'checks':checks}

@@ -1,0 +1,26 @@
+---
+# Stage the home-tested recovery mechanism; scheduling follows backup acceptance.
+- name: Install inactive recovery on the accepted production Jena stack
+  hosts: oldap_prod
+  become: true
+  gather_facts: false
+  vars:
+    jena_recovery_timer_enabled: false
+  tasks:
+    - name: Require the production Jena host
+      ansible.builtin.assert:
+        that: ansible_host == 'dhlab-oldap.dhlab.unibas.ch'
+    - name: Require the running API to use Jena before installing its recovery
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - |
+            import subprocess
+            subprocess.run([
+                "docker", "exec", "oldap-api", "python", "-c",
+                "import os; assert os.environ['OLDAP_BACKEND'] == 'jena'",
+            ], check=True)
+      changed_when: false
+    - name: Install the shared recovery without activating its timer
+      ansible.builtin.include_tasks: tasks/jena-recovery-install.yml

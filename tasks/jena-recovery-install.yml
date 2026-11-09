@@ -1,0 +1,54 @@
+---
+# Shared implementation; entry points retain their explicit host guards.
+- name: Verify the installed backend and consumers before enabling automation
+  ansible.builtin.command: docker inspect --format '{{ "{{.State.Running}}" }}' compose-oldap-jena-1
+    compose-oldap-jena-identity-1 oldap-api
+  register: running
+  changed_when: false
+- name: Require all three services to be running
+  ansible.builtin.assert:
+    that: running.stdout_lines == ['true', 'true', 'true']
+- name: Create root-owned program directory
+  ansible.builtin.file:
+    path: /usr/local/lib/oldap
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- name: Create private recovery state directory
+  ansible.builtin.file:
+    path: /var/lib/oldap-jena-recovery
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+- name: Install recovery program
+  ansible.builtin.copy:
+    src: scripts/jena-recovery.py
+    dest: /usr/local/lib/oldap/jena-recovery.py
+    owner: root
+    group: root
+    mode: '0755'
+- name: Install systemd units
+  ansible.builtin.copy:
+    src: files/{{ item }}
+    dest: /etc/systemd/system/{{ item }}
+    mode: '0644'
+  loop:
+  - oldap-jena-recovery.service
+  - oldap-jena-recovery.timer
+- name: Validate installed units
+  ansible.builtin.command: systemd-analyze verify /etc/systemd/system/oldap-jena-recovery.service
+    /etc/systemd/system/oldap-jena-recovery.timer
+  changed_when: false
+- name: Check existing connections before scheduling
+  ansible.builtin.command: /usr/bin/python3 /usr/local/lib/oldap/jena-recovery.py
+    check
+  changed_when: false
+- name: Set explicitly selected recovery schedule state
+  ansible.builtin.systemd_service:
+    name: oldap-jena-recovery.timer
+    daemon_reload: true
+    enabled: '{{ jena_recovery_timer_enabled | default(true) | bool }}'
+    state: '{{ ''started'' if (jena_recovery_timer_enabled | default(true) | bool)
+      else ''stopped'' }}'

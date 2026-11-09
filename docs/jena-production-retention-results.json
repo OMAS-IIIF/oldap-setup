@@ -1,0 +1,234 @@
+{
+  "date": "2026-11-07",
+  "scope": "online production rollback preparation; no coordinated data snapshot or deployment",
+  "local_directory": "/Users/rosenth/Library/Application Support/OLDAP-Jena/releases/production-rollback-20261107",
+  "receiver": {
+    "status": "passed",
+    "files": 14,
+    "bytes": 7657004670,
+    "receiver": "/Users/rosenth/OLDAP_BACKUP/releases/production-rollback-20261107",
+    "sha256_and_private_permissions_verified": true
+  },
+  "source_container_count": 14,
+  "source_identities_and_start_times_unchanged": true,
+  "image_checks": {
+    "api": {
+      "original": "api-images.tar",
+      "compatibility_archive": "api-compatible.tar",
+      "compatibility_sha256": "c572b9d926f18b8b2520677355b3fd44cd8a7c681f62c4ca1d3ec7964dc01e13",
+      "image_config_ids": [
+        "1b339e98b2755a6a679c7c6b9be751e45fe76e7a1cdeaa072115818ef9be2cc5",
+        "1e6436aae3353d9dc2d57e5dea383b5e269a517cab8fa3d8a6dfef7c8474aef2",
+        "3bd282abc46393a5a8ab9a5e9a138a2895a46d0c413a90ca06274343ea2f42eb",
+        "487efc0616382465781b8fdc3d6d1db449e6fd80ae23bf48432a2da6b6929908",
+        "5f703438f575677037751d8350dc8ca2b8a1075655247757048c8a86f0fb4f02",
+        "612f0ff47f33888e3b61a8db399ff2dc22c2cefb8cb652d86a619e52eabcd51f",
+        "86feb16aa79f90ef4c22833397251980728d97a9428c8ead1ba566bc7c1e0037",
+        "ff086d98eab00e84f3076e389401d75eb67aaea02f797bbb72db77a42be1f19c"
+      ],
+      "load_and_reexport_verified": true
+    },
+    "batch": {
+      "original": "extra-images.tar",
+      "compatibility_archive": "batch-compatible.tar",
+      "compatibility_sha256": "04067386e4a59382ec16d9752ccbcbccc53ec73243de45cc2cecdb14e261c1ea",
+      "image_config_ids": [
+        "edbfc2cf04fd295cc2398849feb67e5fb066fa308986eeacc14a5c34ba1f0b4d",
+        "b3a031457b211162ec8e94ff576eb9093b7812ae034f5f2c42d32fc91faa9430",
+        "c7c011de4f6787ea58768542f207f25b6f1b076d78343293d95730d2f5062d15"
+      ],
+      "load_and_reexport_verified": true
+    },
+    "media": {
+      "original": "extra-images.tar",
+      "compatibility_archive": "media-compatible.tar",
+      "compatibility_sha256": "c2d813bc1eaf7a89da6f9c37905940a657aa999b2ba4f6a67dd870d67cf825ad",
+      "image_config_ids": [
+        "612f0ff47f33888e3b61a8db399ff2dc22c2cefb8cb652d86a619e52eabcd51f",
+        "70a126bc6cf47198bf840f254bf4e85e672cfb567b2ade6be683339587eefefb",
+        "1b49340a5ad54b5a4d567791980c35682d34cf55f0fb6a9395d8519db3a58e8a"
+      ],
+      "load_and_reexport_verified": true
+    }
+  },
+  "configuration": {
+    "api": {
+      "paths": [
+        "/etc/oldap",
+        "/etc/oldap-backup.env",
+        "/etc/oldap-harvest.env",
+        "/etc/systemd/system/oldap-backup.service",
+        "/etc/systemd/system/oldap-backup.service.d",
+        "/etc/systemd/system/oldap-backup.timer",
+        "/etc/systemd/system/oldap-harvest.service",
+        "/etc/systemd/system/oldap-harvest.timer",
+        "/opt/oldap",
+        "/srv/storage/caddy",
+        "/usr/local/bin/oldap-backup.sh"
+      ],
+      "archive": {
+        "sha256": "edb692f13c6ecb0f91e3436db3e5d1e29f7e030342281d8b9105f04856a0ddf7",
+        "bytes": 1730560
+      },
+      "source_tar_compare_passed": true,
+      "configured_images": [
+        {
+          "reference": "caddy:2.8",
+          "id": "sha256:612f0ff47f33888e3b61a8db399ff2dc22c2cefb8cb652d86a619e52eabcd51f"
+        },
+        {
+          "reference": "curlimages/curl:8.9.0",
+          "id": "sha256:b3a031457b211162ec8e94ff576eb9093b7812ae034f5f2c42d32fc91faa9430"
+        },
+        {
+          "reference": "lrosenth/fasnachts-page:v0.1.49",
+          "id": "sha256:3bd282abc46393a5a8ab9a5e9a138a2895a46d0c413a90ca06274343ea2f42eb"
+        },
+        {
+          "reference": "lrosenth/oldap-api:v0.2.37",
+          "id": "sha256:1e6436aae3353d9dc2d57e5dea383b5e269a517cab8fa3d8a6dfef7c8474aef2"
+        },
+        {
+          "reference": "lrosenth/oldap-app:v0.2.7",
+          "id": "sha256:ff086d98eab00e84f3076e389401d75eb67aaea02f797bbb72db77a42be1f19c"
+        },
+        {
+          "reference": "lrosenth/oldap-harvesters:0.1.13",
+          "id": "sha256:c7c011de4f6787ea58768542f207f25b6f1b076d78343293d95730d2f5062d15"
+        },
+        {
+          "reference": "lrosenth/oldap-tools:v0.3.22",
+          "id": "sha256:edbfc2cf04fd295cc2398849feb67e5fb066fa308986eeacc14a5c34ba1f0b4d"
+        },
+        {
+          "reference": "lrosenth/salsah-2:v0.0.2",
+          "id": "sha256:1b339e98b2755a6a679c7c6b9be751e45fe76e7a1cdeaa072115818ef9be2cc5"
+        },
+        {
+          "reference": "ontotext/graphdb:11.3.0",
+          "id": "sha256:86feb16aa79f90ef4c22833397251980728d97a9428c8ead1ba566bc7c1e0037"
+        },
+        {
+          "reference": "redis:7-alpine",
+          "id": "sha256:487efc0616382465781b8fdc3d6d1db449e6fd80ae23bf48432a2da6b6929908"
+        },
+        {
+          "reference": "redis:7.4.6-alpine@sha256:3b73847e72874be07e6657b129a94761662b79bc0f679273757d4218573b2a98",
+          "id": "sha256:5f703438f575677037751d8350dc8ca2b8a1075655247757048c8a86f0fb4f02"
+        }
+      ]
+    },
+    "media": {
+      "paths": [
+        "/opt/oldap-mediaserver"
+      ],
+      "archive": {
+        "sha256": "058ac143e3d53f7063d524411529b440d207bd26d2a51204ff79af61e885547d",
+        "bytes": 133120
+      },
+      "source_tar_compare_passed": true,
+      "configured_images": [
+        {
+          "reference": "caddy:2.8",
+          "id": "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f"
+        },
+        {
+          "reference": "lrosenth/oldap-mediahelper:v0.2.17",
+          "id": "sha256:6781e67eeb1a60e098a4f8da08d4142a82416655fd74c8b52df2133c4272e248"
+        },
+        {
+          "reference": "lrosenth/sipi-2:1.0.0",
+          "id": "sha256:a73eb14452639c3c65ab79910357984a0fb18145541b28dbd1b7f49f1bef87ea"
+        }
+      ]
+    }
+  },
+  "production_schedule_observation": {
+    "oldap-backup.timer": "enabled/active",
+    "oldap-harvest.timer": "enabled/active",
+    "oldap-harvest.service": {
+      "result": "exit-code",
+      "exit_status": 1,
+      "last_start": "2026-11-01 05:00:01 CET",
+      "last_exit": "2026-11-01 05:00:06 CET",
+      "changed_by_this_work": false
+    }
+  },
+  "limitations": [
+    "Online configuration capture is not a consistent database/media snapshot",
+    "Load/re-export checks use the existing development Docker daemon, not a clean recovery host",
+    "Original legacy archives retained alongside verified cross-engine import copies",
+    "No production cutover, write pause, configuration replacement, timer change or email delivery test",
+    "Missing-argument defect corrected on production; next full scheduled import has not been observed. Historical mail queue failure is not reproducible; current notification delivery confirmed by owner."
+  ],
+  "batch_coverage_complete": true,
+  "harvester_launcher": {
+    "production_deployed": true,
+    "sha256": "39db43969b5d10745f214a664e13eb69e59d3e937832d69c30753b03a6db0138",
+    "provider_help_checks": [
+      "europeana",
+      "swisscovery"
+    ],
+    "real_runtime_combinations": 12,
+    "full_import_started": false,
+    "home_deployed": true,
+    "home_provider_help_checks": [
+      "europeana",
+      "swisscovery"
+    ]
+  },
+  "notification_acceptance": {
+    "diagnostic_messages": 1,
+    "synthetic_success_messages": 1,
+    "synthetic_failure_messages": 1,
+    "local_mail_exit_codes": [
+      0,
+      0,
+      0
+    ],
+    "owner_confirmed_all_three_received": true,
+    "historical_queue_failure_cause": "not established; not currently reproducible",
+    "mail_permissions_changed": false
+  },
+  "harvest_supplement": {
+    "source": {
+      "scope": "Provider-specific rollback supplement",
+      "ocr_reference": "lrosenth/oldap-harvesters:0.1.13-ocr",
+      "ocr_image_id": "sha256:5e5a2610717bb599e44206481b55bd424ee2a8d3e86353e87650a3bccb16c0b9",
+      "input_paths": [
+        "/opt/oldap/.env/archive-writer-client",
+        "/opt/oldap/compose/run-locked.py",
+        "/srv/storage/oldap-data/oldap-harvesters/harvesters.toml",
+        "/srv/storage/oldap-data/oldap-harvesters/secrets",
+        "/srv/storage/oldap-data/oldap-harvesters/swisscovery/config.toml",
+        "/srv/storage/oldap-data/oldap-harvesters/swisscovery/german_print.mlmodel"
+      ],
+      "archives": {
+        "ocr-image.tar": {
+          "bytes": 1964864512,
+          "sha256": "0539f5fde9b0455a733e1bc142da412f57736dd892070d38a9c43271467364c2"
+        },
+        "provider-inputs.tar": {
+          "bytes": 16455680,
+          "sha256": "18921460c07fc33dbd5a85f8d5cd998cf8397155838c21d81c69991ba7181846"
+        }
+      }
+    },
+    "image_verification": {
+      "original": "ocr-image.tar",
+      "compatibility_archive": "ocr-compatible.tar",
+      "compatibility_sha256": "0a0d3ff1513cbf0c482317f7274f908c17e27d725388d93c70f3dbc7caeb7cdb",
+      "image_config_ids": [
+        "5e5a2610717bb599e44206481b55bd424ee2a8d3e86353e87650a3bccb16c0b9"
+      ],
+      "load_and_reexport_verified": true
+    },
+    "receiver": {
+      "status": "passed",
+      "files": 6,
+      "bytes": 3946196607,
+      "receiver": "/Users/rosenth/OLDAP_BACKUP/releases/production-rollback-harvest-20261107",
+      "sha256_and_permissions_verified": true
+    }
+  }
+}

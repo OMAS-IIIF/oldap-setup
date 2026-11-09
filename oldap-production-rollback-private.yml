@@ -1,0 +1,18 @@
+---
+# Pre-opening rollback only: never discard possible public target writes.
+# Untouched source storage is retained; full data restore is a different workflow.
+- name: Recover the retained GraphDB source after private candidate replacement
+  hosts: oldap_prod
+  become: true
+  gather_facts: false
+  vars:
+    checkpoint: '/srv/storage/oldap-cutover-{{ snapshot_id }}'
+    media_checkpoint: '/data/oldap-cutover-{{ snapshot_id }}'
+    media_host: dhlab-iii.dhlab.unibas.ch
+  tasks:
+    - ansible.builtin.assert:
+        that:
+          - ansible_host == 'dhlab-oldap.dhlab.unibas.ch'
+          - snapshot_id is match('^[a-zA-Z0-9_-]+$')
+          - production_rollback_approved | default(false) | bool
+    - ansible.builtin.include_tasks: tasks/production-private-rollback.yml

@@ -1,0 +1,86 @@
+{
+  "checks": [
+    "API selects Jena",
+    "GraphDB is stopped",
+    "Private Jena backend has no published ports",
+    "oldap-api running",
+    "compose-oldap-jena-1 running",
+    "compose-oldap-jena-identity-1 running",
+    "redis running",
+    "caddy running",
+    "API /status HTTP 200",
+    "Existing administrator can log in",
+    "Media upload accepts a fresh API token before form validation",
+    "Media upload rejects missing or invalid access token",
+    "Media upload rejects missing or invalid access token",
+    "API /admin/auth/unknown HTTP 200",
+    "Proxy blocks private identity callback",
+    "Proxy blocks private identity callback",
+    "Export worker route reaches service authentication without proxy shadowing",
+    "API /data/search/fasnacht/class/fasnacht:Story HTTP 200",
+    "API /data/search/fasnacht HTTP 200",
+    "API /data/search/fasnacht HTTP 200",
+    "Nonempty fulltext AND search is independent of word order",
+    "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 HTTP 200",
+    "Signed IIIF metadata delivered by home media service",
+    "Signed image delivered as JPEG",
+    "fasnacht.home.org page available",
+    "app.home.org page available"
+  ],
+  "images": {
+    "oldap-api": "lrosenth/oldap-api@sha256:1fcca708de88b67e3671c22ca1597d8a752d90a55301c3631bf6c77889449c91",
+    "compose-oldap-jena-1": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+    "compose-oldap-jena-identity-1": "lrosenth/oldap-api@sha256:1fcca708de88b67e3671c22ca1597d8a752d90a55301c3631bf6c77889449c91",
+    "graphdb": "ontotext/graphdb:11.3.0",
+    "redis": "redis:7-alpine",
+    "caddy": "caddy:2.8"
+  },
+  "stories": 30,
+  "stories_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+  "fulltext_matches": 10,
+  "image_bytes": 9898,
+  "status": "passed",
+  "release": {
+    "oldap-api": {
+      "digest": "sha256:1fcca708de88b67e3671c22ca1597d8a752d90a55301c3631bf6c77889449c91",
+      "platform_manifests": [
+        "lrosenth/oldap-api@sha256:808488e6c926cc831da9b59d313dd01cfcef33df35bb9f1b915e94d6064f06f3",
+        "lrosenth/oldap-api@sha256:b0d88e3be2cc1574ec1f7cca948f45aec41a9889355c3d821a0a0a8bf6c0748b"
+      ],
+      "reference": "lrosenth/oldap-api:jena-0.2.37-rc3-55372bad3896"
+    },
+    "oldap-tools": {
+      "digest": "sha256:7e2a73d28ddce7a10f2ca65e397a3871ce62c0f225ee1b21d4cfe7c0b7537ee9",
+      "platform_manifests": [
+        "lrosenth/oldap-tools@sha256:1d36f0cbe143aac2fba6ebaf30bb75fd5a13d14bcbfd2f192267b778970aa89c",
+        "lrosenth/oldap-tools@sha256:59b67c58b7271402eb7e764c51b4181e287136b3147853f08a3c224bcfc2e585"
+      ],
+      "reference": "lrosenth/oldap-tools:jena-0.3.22-rc3-55372bad3896"
+    }
+  },
+  "diagnostic_self_test": "passed; native installed API; public 503/request ID preserved; sentinel absent from log",
+  "import_states": {
+    "IMPORTED": 3,
+    "INVALID": 1
+  },
+  "tests": {
+    "local_import": 54,
+    "packaged_audit_views": 10,
+    "setup": 9,
+    "both_architecture_transport": "passed, including explicit concurrent BEGIN 409 and replacement"
+  },
+  "observed_failure": {
+    "time_utc": [
+      "2026-11-03T17:34:37Z",
+      "2026-11-03T17:34:47Z"
+    ],
+    "endpoint": "internal_import_claims.claim_next_import_task",
+    "exception": "OldapErrorAlreadyExists",
+    "operation": "BEGIN",
+    "later_claim_response": 204,
+    "later_export_claim_response": 200,
+    "context": "Observed immediately after client replacement; not proof of the original validation callback exception."
+  },
+  "original_callback_cause": "Not recoverable from old logs; concurrent admission is plausible and independently reproduced.",
+  "retry_policy": "Unchanged: failed validation publication ends heartbeat; next claim waits for five-minute lease expiry."
+}

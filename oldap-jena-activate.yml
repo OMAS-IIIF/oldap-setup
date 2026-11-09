@@ -1,0 +1,227 @@
+---
+# Controlled first activation for the inventoried home environment only.
+# Run after freeze/backup and candidate acceptance. No image build or registry push.
+- name: Activate the accepted Jena backend on home.org
+  hosts: oldap_home
+  become: true
+  vars:
+    ansible_become_exe: /usr/bin/sudo.ws
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_user: rosenth
+    oldap_jena_backup_root: /srv/storage/oldap-jena-backup-20261102
+    oldap_jena_media_host: media.home.org
+    media_writers: [oldap-mediahelper, oldap-ingest-worker, oldap-export-worker, oldap-mobile-media-worker]
+  tasks:
+    - name: Require explicit home candidate and backup
+      ansible.builtin.assert:
+        that:
+          - ansible_host == 'api.home.org'
+          - oldap_jena_media_host == 'media.home.org'
+          - oldap_jena_root is match('^/srv/storage/oldap-jena-[a-zA-Z0-9_-]+$')
+          - oldap_jena_backup_root is match('^/srv/storage/oldap-jena-backup-[a-zA-Z0-9_-]+$')
+          - oldap_jena_accept_candidate | default(false) | bool
+    - name: Inspect the durable target opening marker
+      ansible.builtin.stat:
+        path: '{{ oldap_jena_backup_root }}/target-opened.txt'
+      register: target_opened
+    - name: Refuse first activation after target writes may have started
+      ansible.builtin.assert:
+        that: not target_opened.stat.exists
+        fail_msg: Target was already opened; use coordinated update/recovery, never automatic GraphDB rollback.
+    - name: Read completed backup manifest
+      ansible.builtin.slurp:
+        src: '{{ oldap_jena_backup_root }}/manifest.json'
+      register: manifest
+    - name: Require the exact accepted source snapshot
+      ansible.builtin.assert:
+        that:
+          - (manifest.content | b64decode | from_json).status == 'frozen-backed-up'
+          - (manifest.content | b64decode | from_json).source_sha256 == oldap_jena_expected_source_sha256
+          - (manifest.content | b64decode | from_json).source_coordination_keys == 0
+    - name: Require stopped original services before configuration changes
+      ansible.builtin.command:
+        argv: [docker, inspect, --format, '{{ "{{.State.Running}}" }}', graphdb, oldap-api, redis, caddy]
+      register: stopped
+      changed_when: false
+    - name: Refuse activation while source writers or ingress are active
+      ansible.builtin.assert:
+        that: stopped.stdout_lines == ['false', 'false', 'false', 'false']
+    - name: Flush completed backup files to their filesystems
+      ansible.builtin.command: 'sync -f {{ oldap_jena_backup_root }}/api.tar'
+      changed_when: false
+    - name: Flush completed media backup
+      ansible.builtin.command: 'sync -f {{ (manifest.content | b64decode | from_json).media_backup }}'
+      delegate_to: '{{ oldap_jena_media_host }}'
+      changed_when: false
+    - name: Retain original environment and proxy for activation rollback
+      ansible.builtin.copy:
+        remote_src: true
+        src: '/opt/oldap/compose/{{ item }}'
+        dest: '{{ oldap_jena_backup_root }}/{{ item }}.activation-original'
+        mode: '0600'
+        force: false
+      loop: [.env, Caddyfile, docker-compose.yml]
+      no_log: true
+    - name: Read candidate inputs privately
+      ansible.builtin.slurp:
+        src: '{{ oldap_jena_root }}/config/jena.env'
+      register: candidate_env
+      no_log: true
+    - name: Activate with source restoration if private startup fails
+      block:
+        - name: Stop rehearsal clients before their namespace owner
+          ansible.builtin.command: docker stop --time 90 oldap-jena-review-api
+          changed_when: true
+        - name: Stop rehearsal callbacks after public clients drain
+          ansible.builtin.command: docker stop --time 90 oldap-jena-review-oldap-jena-identity-1
+          changed_when: true
+        - name: Stop rehearsal backend and Redis after clients
+          ansible.builtin.command: docker stop --time 90 oldap-jena-review-oldap-jena-1 oldap-jena-review-redis
+          changed_when: true
+        - name: Remove stopped source API and Redis containers, retaining bind-mounted data
+          ansible.builtin.command: docker rm oldap-api redis
+          changed_when: true
+        - name: Install the reviewed base with explicit coordination settings
+          ansible.builtin.copy:
+            src: docker-compose.yml
+            dest: /opt/oldap/compose/docker-compose.yml
+            mode: '0644'
+        - name: Install the accepted Jena overlay
+          ansible.builtin.copy:
+            src: jena-compose.yml
+            dest: /opt/oldap/compose/jena-compose.yml
+            mode: '0644'
+        - name: Merge Jena settings without replacing application credentials
+          ansible.builtin.lineinfile:
+            path: /opt/oldap/compose/.env
+            regexp: '^{{ item.split("=", 1)[0] }}='
+            line: '{{ item }}'
+            mode: '0600'
+          loop: '{{ (candidate_env.content | b64decode).splitlines() | select("match", "^OLDAP_JENA_[A-Z_]+=") | list }}'
+          no_log: true
+        - name: Select the Jena overlay and separate Redis storage
+          ansible.builtin.lineinfile:
+            path: /opt/oldap/compose/.env
+            regexp: '^{{ item.key }}='
+            line: '{{ item.key }}={{ item.value }}'
+            mode: '0600'
+          loop:
+            - {key: COMPOSE_FILE, value: 'docker-compose.yml:jena-compose.yml'}
+            - {key: REDIS_DATA, value: '{{ oldap_jena_root }}/data/redis'}
+          no_log: true
+        - name: Invalidate pre-cutover access and refresh tokens
+          # Users keep their passwords. Fresh login prevents old permission claims
+          # from surviving the explicitly approved membership/default corrections.
+          ansible.builtin.lineinfile:
+            path: /opt/oldap/compose/.env
+            regexp: '^{{ item }}='
+            line: '{{ item }}={{ lookup("password", "/dev/null", length=64, chars=["ascii_letters", "digits"]) }}'
+            mode: '0600'
+          loop: [OLDAP_ACCESS_JWT_SECRET, OLDAP_REFRESH_JWT_SECRET]
+          no_log: true
+        - name: Install proxy configuration blocking private identity callbacks
+          ansible.builtin.template:
+            src: Caddyfile.j2
+            dest: /opt/oldap/compose/Caddyfile
+            mode: '0644'
+        - name: Start the full Jena API while public ingress remains stopped
+          ansible.builtin.command: docker compose up -d oldap-api
+          args: {chdir: /opt/oldap/compose}
+          no_log: true
+          changed_when: true
+        - name: Check complete private API startup
+          ansible.builtin.command:
+            argv: [docker, exec, oldap-api, python, -c,
+                   'import urllib.request; assert urllib.request.urlopen("http://127.0.0.1:8000/status", timeout=5).status == 200']
+          register: ready
+          retries: 30
+          delay: 2
+          until: ready.rc == 0
+          changed_when: false
+        - name: Validate proxy configuration before exposing the API
+          ansible.builtin.command: docker compose run --rm --no-deps caddy caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+          args: {chdir: /opt/oldap/compose}
+          changed_when: false
+          no_log: true
+      rescue:
+        # Enumerate first so an absent, never-created container is harmless.
+        # Docker/stop/remove failures must abort rescue before source restart:
+        # otherwise two writable backends could become active simultaneously.
+        - name: Inventory containers before rollback
+          ansible.builtin.command:
+            argv: [docker, ps, -a, --format, '{{ "{{.Names}}" }}']
+          register: rollback_containers
+          changed_when: false
+        - name: Stop failed target clients and backend before rollback
+          ansible.builtin.command:
+            argv: [docker, stop, --time, '90', '{{ item }}']
+          loop: &rollback_targets [oldap-api, compose-oldap-jena-identity-1, compose-oldap-jena-1, redis]
+          when: item in rollback_containers.stdout_lines
+          changed_when: true
+        - name: Remove target containers without removing storage
+          ansible.builtin.command:
+            argv: [docker, rm, '{{ item }}']
+          loop: *rollback_targets
+          when: item in rollback_containers.stdout_lines
+          changed_when: true
+        - name: Restore original application and proxy configuration
+          ansible.builtin.copy:
+            remote_src: true
+            src: '{{ oldap_jena_backup_root }}/{{ item }}.activation-original'
+            dest: '/opt/oldap/compose/{{ item }}'
+            mode: '0600'
+          loop: [.env, Caddyfile, docker-compose.yml]
+          no_log: true
+        - name: Remove inactive Jena overlay after rollback
+          ansible.builtin.file:
+            path: /opt/oldap/compose/jena-compose.yml
+            state: absent
+        - name: Restore original GraphDB API and public ingress
+          ansible.builtin.command: docker compose up -d graphdb redis oldap-api caddy
+          args: {chdir: /opt/oldap/compose}
+          changed_when: true
+          no_log: true
+        - name: Restore original media writers
+          ansible.builtin.command:
+            argv: '{{ ["docker", "start"] + media_writers }}'
+          delegate_to: '{{ oldap_jena_media_host }}'
+          changed_when: true
+        - name: Stop after restoring the source configuration
+          ansible.builtin.fail:
+            msg: Jena activation failed; source configuration/services restored. Verify source health before retrying.
+    - name: Distribute the rotated access key to media consumers before reopening
+      ansible.builtin.include_tasks: tasks/jena-home-media-access.yml
+    # Public traffic is enabled only after the rollback-protected private checks.
+    - name: Mark the end of automatic pre-write rollback before reopening traffic
+      ansible.builtin.copy:
+        dest: '{{ oldap_jena_backup_root }}/target-opened.txt'
+        mode: '0600'
+        content: >-
+          Public Jena activation is being opened. From this point assume target
+          writes may have occurred; GraphDB rollback requires reconciliation.
+    - name: Open public ingress on the accepted target
+      ansible.builtin.command: docker compose up -d caddy oldap-app fasnachts-page
+      args: {chdir: /opt/oldap/compose}
+      changed_when: true
+      no_log: true
+    - name: Resume media services against the unchanged public API URL
+      ansible.builtin.command:
+        argv: [docker, compose, up, -d, --no-deps, mediaserver, ingest-worker, export-worker, mobile-media-worker]
+      args: {chdir: /opt/oldap-mediaserver/compose}
+      delegate_to: '{{ oldap_jena_media_host }}'
+      changed_when: true
+      no_log: true
+    - name: Retain non-secret activation and backup evidence
+      ansible.builtin.copy:
+        dest: '{{ oldap_jena_root }}/activation.json'
+        owner: '1000'
+        group: '1000'
+        mode: '0600'
+        content: >-
+          {{ {"backend": "jena", "host": ansible_host,
+              "api_image": oldap_jena_api_image,
+              "tools_image": oldap_jena_tools_image,
+              "backup": manifest.content | b64decode | from_json,
+              "access_refresh_keys_rotated": true,
+              "graphdb": "stopped, storage retained",
+              "public_acceptance": "operator checks still required"} | to_nice_json }}

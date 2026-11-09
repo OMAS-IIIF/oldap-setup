@@ -26,6 +26,21 @@
     compose_stack_dir: "/opt/oldap/compose"
 
   pre_tasks:
+    - name: Locate installed deployment selection
+      ansible.builtin.stat:
+        path: /opt/oldap/compose/.env
+      register: installed_compose_selection
+    - name: Detect installed Jena selection before legacy reset or provisioning
+      ansible.builtin.command:
+        argv: [grep, -q, ':jena-compose.yml', /opt/oldap/compose/.env]
+      register: installed_jena_selection
+      changed_when: false
+      failed_when: installed_jena_selection.rc not in [0, 1]
+      when: installed_compose_selection.stat.exists
+    - name: Refuse legacy reset of a Jena deployment
+      ansible.builtin.assert:
+        that: installed_jena_selection.rc | default(1) != 0
+        fail_msg: "Use the coordinated Jena lifecycle in README.md; legacy reset is not supported."
     - name: Ensure base packages
       apt:
         name:

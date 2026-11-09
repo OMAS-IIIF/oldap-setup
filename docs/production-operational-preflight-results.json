@@ -1,0 +1,93 @@
+{
+  "checked_at": "2026-11-08T22:57:00+01:00",
+  "mode": "read_only_no_production_changes",
+  "source_configuration_hashes": "all_four_match_frozen_package",
+  "hosts": {
+    "api": {
+      "host": "dhlab-oldap.dhlab.unibas.ch",
+      "images": {
+        "redis": {
+          "id": "sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99",
+          "present": false
+        },
+        "oldap-jena": {
+          "id": "sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+          "present": false
+        },
+        "oldap-jena-identity": {
+          "id": "sha256:5ba4f39f95976c1db88144a6268d7d2042820bc2067f9e1aa2fa0d0de42a49d9",
+          "present": false
+        },
+        "oldap-api": {
+          "id": "sha256:5ba4f39f95976c1db88144a6268d7d2042820bc2067f9e1aa2fa0d0de42a49d9",
+          "present": false
+        },
+        "caddy": {
+          "id": "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f",
+          "present": false
+        },
+        "oldap-app": {
+          "id": "sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7",
+          "present": false
+        },
+        "fasnachts-page": {
+          "id": "sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9",
+          "present": false
+        },
+        "salsah-2": {
+          "id": "sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3",
+          "present": false
+        }
+      }
+    },
+    "media": {
+      "host": "dhlab-iii.dhlab.unibas.ch",
+      "images": {
+        "imageserver": {
+          "id": "sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5",
+          "present": false
+        },
+        "mediaserver": {
+          "id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+          "present": false
+        },
+        "ingest-worker": {
+          "id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+          "present": false
+        },
+        "export-worker": {
+          "id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+          "present": false
+        },
+        "mobile-media-worker": {
+          "id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+          "present": false
+        },
+        "caddy": {
+          "id": "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f",
+          "present": true
+        }
+      }
+    }
+  },
+  "capacity": {
+    "api": {
+      "ram_gib_approx": 16,
+      "available_ram_gib_approx": 12,
+      "data_available_gib_approx": 371
+    },
+    "media": {
+      "ram_gib_approx": 16,
+      "available_ram_gib_approx": 14,
+      "data_available_gib_approx": 780
+    },
+    "receiver": {
+      "available_tib_approx": 1.6
+    }
+  },
+  "limitations": [
+    "Source Compose resolution and credentials require final freeze comparison; four file hashes are not a whole deployment drift check.",
+    "Capacity is a point-in-time observation, not a load acceptance.",
+    "No image preloading, backup replacement, schedule change or target activation performed."
+  ]
+}

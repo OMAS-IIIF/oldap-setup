@@ -1,0 +1,108 @@
+---
+# Coordinated repair of the already activated home Jena topology.
+# Never import data, rotate keys or change published application images here.
+- name: Isolate Jena token verification from public API worker capacity
+  hosts: oldap_home
+  become: true
+  vars:
+    ansible_become_exe: /usr/bin/sudo.ws
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_user: rosenth
+    media_host: media.home.org
+    mobile_stop_signal: SIGTERM
+    media_writers: [oldap-mediahelper, oldap-ingest-worker, oldap-export-worker, oldap-mobile-media-worker]
+  tasks:
+    - name: Require the authorized home runtime
+      ansible.builtin.assert:
+        that:
+          - ansible_host == 'api.home.org'
+          - oldap_jena_root is match('^/srv/storage/oldap-jena-[a-zA-Z0-9_-]+$')
+    - name: Read active API backend selection
+      ansible.builtin.command:
+        argv: [docker, exec, oldap-api, python, -c, 'import os; assert os.environ["OLDAP_BACKEND"] == "jena"']
+      changed_when: false
+    - name: Retain pre-repair private settings
+      ansible.builtin.copy:
+        remote_src: true
+        src: '{{ item }}'
+        dest: '{{ item }}.before-identity-isolation'
+        mode: '0600'
+        force: false
+      loop:
+        - /opt/oldap/compose/.env
+        - /opt/oldap/compose/jena-compose.yml
+        - '{{ oldap_jena_root }}/config/service.properties'
+      no_log: true
+    - name: Create the identity entry point directory
+      ansible.builtin.file:
+        path: '{{ oldap_jena_root }}/identity'
+        state: directory
+        owner: '1000'
+        group: '1000'
+        mode: '0700'
+    - name: Install the reviewed identity entry point
+      ansible.builtin.copy:
+        src: scripts/jena_identity.py
+        dest: '{{ oldap_jena_root }}/identity/jena_identity.py'
+        mode: '0644'
+    - name: Add entry point to the retained runtime environment
+      ansible.builtin.lineinfile:
+        path: /opt/oldap/compose/.env
+        regexp: '^OLDAP_JENA_IDENTITY_APP='
+        line: 'OLDAP_JENA_IDENTITY_APP={{ oldap_jena_root }}/identity/jena_identity.py'
+        mode: '0600'
+    - name: Install independent callback service configuration
+      ansible.builtin.copy:
+        src: jena-compose.yml
+        dest: /opt/oldap/compose/jena-compose.yml
+        mode: '0644'
+    - name: Detect installed recovery before legacy namespace maintenance
+      ansible.builtin.stat: {path: /usr/local/lib/oldap/jena-recovery.py}
+      register: recovery_program
+    - name: Pause installed recovery before namespace maintenance
+      ansible.builtin.command: /usr/bin/python3 /usr/local/lib/oldap/jena-recovery.py pause
+      when: recovery_program.stat.exists
+    - name: Start and verify the independent callback before maintenance
+      ansible.builtin.command: docker compose up -d --wait oldap-jena-identity
+      args: {chdir: /opt/oldap/compose}
+      changed_when: true
+      no_log: true
+    - name: Quiesce writers before restarting the API namespace
+      ansible.builtin.include_tasks: tasks/jena-home-quiesce.yml
+    - name: Drain public ingress and API clients
+      ansible.builtin.command: docker compose stop -t 90 oldap-api
+      args: {chdir: /opt/oldap/compose}
+      changed_when: true
+      no_log: true
+    - name: Stop the callback consumer before its namespace owner
+      ansible.builtin.command: docker compose stop -t 90 oldap-jena-identity oldap-jena
+      args: {chdir: /opt/oldap/compose}
+      changed_when: true
+      no_log: true
+    - name: Select the independent callback listener
+      ansible.builtin.lineinfile:
+        path: '{{ oldap_jena_root }}/config/service.properties'
+        regexp: '^identityUrl='
+        line: identityUrl=http://127.0.0.1:8001/internal/jena/identity
+        mode: '0600'
+    - name: Recreate the namespace owner and every persistent consumer together
+      ansible.builtin.command: docker compose up -d --force-recreate --wait oldap-jena oldap-jena-identity oldap-api
+      args: {chdir: /opt/oldap/compose}
+      changed_when: true
+      no_log: true
+    - name: Reopen public ingress only after health checks pass
+      ansible.builtin.command: docker compose up -d caddy
+      args: {chdir: /opt/oldap/compose}
+      changed_when: true
+      no_log: true
+    - name: Resume media writers
+      ansible.builtin.command:
+        argv: '{{ ["docker", "start"] + media_writers }}'
+      delegate_to: media.home.org
+      changed_when: true
+    - name: Reopen media ingress after workers have resumed
+      ansible.builtin.command: docker start oldap-media-caddy
+      delegate_to: '{{ media_host }}'
+    - name: Resume installed recovery after successful maintenance
+      ansible.builtin.command: /usr/bin/python3 /usr/local/lib/oldap/jena-recovery.py resume
+      when: recovery_program.stat.exists

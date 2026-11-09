@@ -1,0 +1,169 @@
+---
+# Install an inactive, self-contained production backup controller. Never run a
+# snapshot or enable its timer here; GraphDB's existing jobs remain unchanged.
+- name: Prepare autonomous Jena backup execution on the production API VM
+  hosts: oldap_prod
+  become: true
+  gather_facts: false
+  vars:
+    ansible_user: rosenth
+    ansible_python_interpreter: /usr/bin/python3
+    peer: dhlab-iii.dhlab.unibas.ch
+    controller: /opt/oldap-backup-controller
+  tasks:
+    - name: Require the fixed production API host
+      tags: [backup-ssh]
+      ansible.builtin.assert:
+        that: ansible_host == 'dhlab-oldap.dhlab.unibas.ch'
+    - name: Refuse updating a running Jena backup controller
+      tags: [backup-ssh]
+      ansible.builtin.command: systemctl is-active oldap-jena-backup.service
+      register: active_controller
+      failed_when: active_controller.rc not in [0, 3, 4]
+      changed_when: false
+    - tags: [backup-ssh]
+      ansible.builtin.assert:
+        that: active_controller.stdout != 'active' and active_controller.stdout != 'activating'
+    - name: Determine the actual source address for the media connection
+      tags: [backup-ssh]
+      ansible.builtin.command:
+        argv: [python3, -c, 'import socket,json,subprocess; ip=socket.gethostbyname("dhlab-iii.dhlab.unibas.ch"); route=json.loads(subprocess.check_output(["ip","-j","route","get",ip]))[0]; print(route["prefsrc"])']
+      register: controller_address
+      changed_when: false
+    - name: Inspect the existing peer SSH policy for this backup connection
+      tags: [backup-ssh]
+      ansible.builtin.command:
+        argv: [/usr/sbin/sshd, -T, -C, 'user=root,addr={{ controller_address.stdout }},host=dhlab-oldap.dhlab.unibas.ch']
+      delegate_to: '{{ peer }}'
+      register: peer_policy
+      changed_when: false
+      no_log: true
+    - name: Require existing public-key root access without weakening SSH policy
+      tags: [backup-ssh]
+      ansible.builtin.assert:
+        that:
+          - "'pubkeyauthentication yes' in peer_policy.stdout_lines"
+          - "'.ssh/authorized_keys2' in (peer_policy.stdout_lines | select('match', '^authorizedkeysfile ') | first).split()[1:]"
+          - "'permitrootlogin prohibit-password' in peer_policy.stdout_lines or 'permitrootlogin without-password' in peer_policy.stdout_lines or 'permitrootlogin yes' in peer_policy.stdout_lines"
+    - name: Read peer public host key over the already verified operator connection
+      tags: [backup-ssh]
+      ansible.builtin.slurp: {src: /etc/ssh/ssh_host_ed25519_key.pub}
+      delegate_to: '{{ peer }}'
+      register: peer_host_key
+    - name: Install Python virtual environment support
+      ansible.builtin.apt:
+        name: python3-venv
+        state: present
+    - name: Create root-owned controller directories
+      tags: [backup-ssh]
+      ansible.builtin.file:
+        path: '{{ item }}'
+        state: directory
+        owner: root
+        group: root
+        mode: '0700'
+      loop: ['{{ controller }}', '{{ controller }}/scripts', '{{ controller }}/tasks', /root/.ssh]
+    - name: Create isolated controller Python environment
+      ansible.builtin.command:
+        argv: [python3, -m, venv, '{{ controller }}/venv']
+        creates: '{{ controller }}/venv/bin/python'
+    - name: Install the controller version used in acceptance tests
+      ansible.builtin.pip:
+        name: ansible-core==2.20.5
+        executable: '{{ controller }}/venv/bin/pip'
+    - name: Generate a dedicated backup key on its owner host only
+      tags: [backup-ssh]
+      ansible.builtin.command:
+        argv: [ssh-keygen, -q, -t, ed25519, -N, '', -C, oldap-jena-backup, -f, /root/.ssh/oldap_jena_backup]
+        creates: /root/.ssh/oldap_jena_backup
+      no_log: true
+    - name: Read only the public backup identity
+      tags: [backup-ssh]
+      ansible.builtin.slurp: {src: /root/.ssh/oldap_jena_backup.pub}
+      register: backup_public_key
+    # Central host management replaces authorized_keys. Use the secondary file
+    # already enabled by sshd; preserve primary keys and the existing SSH policy.
+    - name: Authorize this key only from the API VM without forwarding or PTY
+      tags: [backup-ssh]
+      ansible.posix.authorized_key:
+        user: root
+        path: /root/.ssh/authorized_keys2
+        manage_dir: false
+        state: present
+        key: '{{ backup_public_key.content | b64decode }}'
+        key_options: 'restrict,from="{{ controller_address.stdout }}"'
+        exclusive: false
+      delegate_to: '{{ peer }}'
+    - name: Pin the media host key in a dedicated controller trust file
+      tags: [backup-ssh]
+      ansible.builtin.copy:
+        content: |
+          {{ peer }} {{ (peer_host_key.content | b64decode).split()[:2] | join(" ") }}
+        dest: /root/.ssh/oldap_jena_backup_known_hosts
+        owner: root
+        group: root
+        mode: '0600'
+    - name: Install local controller inventory without sudo passwords
+      tags: [backup-ssh]
+      ansible.builtin.copy:
+        dest: '{{ controller }}/inventory.ini'
+        owner: root
+        group: root
+        mode: '0600'
+        content: |
+          [oldap_prod]
+          dhlab-oldap ansible_host=dhlab-oldap.dhlab.unibas.ch ansible_connection=local ansible_python_interpreter=/usr/bin/python3
+          [oldap_backup_peer]
+          dhlab-iii.dhlab.unibas.ch ansible_user=root ansible_python_interpreter=/usr/bin/python3 ansible_ssh_private_key_file=/root/.ssh/oldap_jena_backup ansible_ssh_common_args='-o UserKnownHostsFile=/root/.ssh/oldap_jena_backup_known_hosts -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes -o BatchMode=yes -o GSSAPIAuthentication=no -o PreferredAuthentications=publickey'
+          [all:vars]
+          backup_controller_user=root
+    - name: Install the reviewed producer and all shared implementation dependencies
+      ansible.builtin.copy:
+        src: '{{ item }}'
+        dest: '{{ controller }}/{{ item }}'
+        owner: root
+        group: root
+        mode: '0600'
+      loop:
+        - oldap-jena-production-backup.yml
+        - tasks/jena-snapshot.yml
+        - tasks/jena-home-stop.yml
+        - tasks/jena-home-quiesce.yml
+        - tasks/jena-home-start.yml
+        - scripts/check-snapshot-mounts.py
+        - scripts/snapshot-images.py
+        - scripts/hold-production-cutover-lock.py
+        - scripts/run-jena-backup.py
+    - name: Validate installed playbook without executing it
+      ansible.builtin.command:
+        argv: ['{{ controller }}/venv/bin/ansible-playbook', -i, '{{ controller }}/inventory.ini', '{{ controller }}/oldap-jena-production-backup.yml', --syntax-check]
+      changed_when: false
+    - name: Verify unattended media access with pinned host identity
+      tags: [backup-ssh]
+      ansible.builtin.command:
+        argv: [ssh, -i, /root/.ssh/oldap_jena_backup, -o, GSSAPIAuthentication=no, -o, PreferredAuthentications=publickey, -o, IdentitiesOnly=yes, -o, BatchMode=yes, -o, StrictHostKeyChecking=yes, -o, UserKnownHostsFile=/root/.ssh/oldap_jena_backup_known_hosts, 'root@{{ peer }}', /usr/bin/id, -u]
+      register: peer_identity
+      changed_when: false
+    - tags: [backup-ssh]
+      ansible.builtin.assert:
+        that: peer_identity.stdout == '0'
+    - name: Verify the installed controller can execute harmless modules on both hosts
+      tags: [backup-ssh]
+      ansible.builtin.command:
+        argv: ['{{ controller }}/venv/bin/ansible', all, -i, '{{ controller }}/inventory.ini', -m, ansible.builtin.command, -a, /usr/bin/id -u]
+      changed_when: false
+    - name: Install separate Jena service and timer definitions without enabling
+      ansible.builtin.copy:
+        src: 'templates/backup/{{ item }}'
+        dest: '/etc/systemd/system/{{ item }}'
+        owner: root
+        group: root
+        mode: '0644'
+      loop: [oldap-jena-backup.service, oldap-jena-backup.timer]
+    - name: Reload unit definitions without starting services or timers
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+    - name: Verify inactive new timer and still-active original timer
+      ansible.builtin.command:
+        argv: [python3, -c, 'import subprocess; assert subprocess.run(["systemctl","is-active","--quiet","oldap-jena-backup.timer"]).returncode != 0; assert subprocess.run(["systemctl","is-enabled","--quiet","oldap-jena-backup.timer"]).returncode != 0; assert subprocess.run(["systemctl","is-active","--quiet","oldap-backup.timer"]).returncode == 0; print("New timer disabled; original GraphDB backup remains active")']
+      changed_when: false

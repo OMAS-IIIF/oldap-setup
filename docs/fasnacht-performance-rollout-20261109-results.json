@@ -1,0 +1,84 @@
+{
+  "new_image": "lrosenth/fasnachts-page:jena-0.1.49-rc1-31da5ef618c6-amd64@sha256:f8e1e718f55864db013637a803ff295b501d7716ea1488f656d80878e89e0b41",
+  "source_commit": "dd316a43fb2b93c456c980d6ef208ff009694418",
+  "source_fingerprint": "31da5ef618c6a0614255853478e10d00eab55893cd1315cfda246aa355e3ee5f",
+  "local_image_id": "sha256:f8e1e718f55864db013637a803ff295b501d7716ea1488f656d80878e89e0b41",
+  "date": "2026-11-09",
+  "previous_image": "lrosenth/fasnachts-page@sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9",
+  "rollback_file": "/opt/oldap/compose/docker-compose.yml.before-fasnacht-performance-20261109T172105",
+  "unchanged_other_containers": 7,
+  "smoke": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "tabs": [
+        "Alle 1103",
+        "Medien 666",
+        "Gegenst\u00e4nde 422",
+        "Anl\u00e4sse 15"
+      ],
+      "heading": "\"Ar-te-plage am Rhy!\" Querschnitt durch die Basler Fasnacht 2002 : Live-Aufnahmen von den Vorfasnachts-Veranstaltungen und den Schnitzelb\u00e4nken",
+      "medium": "Tambouren des Stamms BMG 1913 und Laterne",
+      "errors": [],
+      "failures": []
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "tabs": [
+        "Alle 1103",
+        "Medien 666",
+        "Gegenst\u00e4nde 422",
+        "Anl\u00e4sse 15"
+      ],
+      "heading": "\"Ar-te-plage am Rhy!\" Querschnitt durch die Basler Fasnacht 2002 : Live-Aufnahmen von den Vorfasnachts-Veranstaltungen und den Schnitzelb\u00e4nken",
+      "medium": "Tambouren des Stamms BMG 1913 und Laterne",
+      "errors": [],
+      "failures": []
+    }
+  ],
+  "before": [
+    {
+      "sample": 0,
+      "overview_ms": 7511,
+      "detail_ms": 4824,
+      "detailHref": "/archive/urn%3Auuid%3A0990c14d-a131-41ff-a6c5-6d86f0975fde",
+      "api_requests": 56,
+      "overview_searches": 18,
+      "server_errors": 0
+    },
+    {
+      "sample": 1,
+      "overview_ms": 7968,
+      "detail_ms": 4321,
+      "detailHref": "/archive/urn%3Auuid%3A0990c14d-a131-41ff-a6c5-6d86f0975fde",
+      "api_requests": 56,
+      "overview_searches": 18,
+      "server_errors": 0
+    }
+  ],
+  "after": [
+    {
+      "sample": 0,
+      "overview_ms": 4090,
+      "detail_ms": 2334,
+      "detailHref": "/archive/urn%3Auuid%3A0990c14d-a131-41ff-a6c5-6d86f0975fde",
+      "api_requests": 26,
+      "overview_searches": 9,
+      "server_errors": 0
+    },
+    {
+      "sample": 1,
+      "overview_ms": 4517,
+      "detail_ms": 1811,
+      "detailHref": "/archive/urn%3Auuid%3A0990c14d-a131-41ff-a6c5-6d86f0975fde",
+      "api_requests": 26,
+      "overview_searches": 9,
+      "server_errors": 0
+    }
+  ]
+}

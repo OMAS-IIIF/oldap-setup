@@ -1,0 +1,286 @@
+{
+  "date": "2026-11-08",
+  "status": "two_host_preopening_rollback_and_home_restoration_passed",
+  "snapshot_id": "home-rehearsal-20261108",
+  "production_changed": false,
+  "source_services": {
+    "api": 8,
+    "media": 6
+  },
+  "private_candidate_services": 4,
+  "home_safety_snapshot": {
+    "snapshot_id": "20261108-before-two-host-rehearsal",
+    "status": "offline-compared",
+    "api": {
+      "bytes": 516741120,
+      "path": "/srv/storage/oldap-jena-snapshot-20261108-before-two-host-rehearsal/api.tar",
+      "sha256": "908f55553837408681a92c58c5e57d8c80698f2856cbec5d467739920be4d83d"
+    },
+    "media": {
+      "bytes": 21153853440,
+      "host": "media.home.org",
+      "path": "/data/oldap-jena-snapshot-20261108-before-two-host-rehearsal/media.tar",
+      "sha256": "6d86d4c6d69f1ea0b06de0974568cb37e2cdb2bdaa58e875f279f67ea8584f3f"
+    }
+  },
+  "cases": {
+    "partial_configuration": {
+      "status": "passed",
+      "faults": [
+        "Malformed Compose and Caddy inputs on both hosts",
+        "Target-only API compose.yaml",
+        "Target-only media .env"
+      ],
+      "original_config_files_verified": {
+        "api": 50,
+        "media": 12
+      },
+      "target_only_inputs_quarantined": true,
+      "baseline_fields_matched": 13,
+      "api": {
+        "checks": [
+          "API /status returns 200",
+          "API /admin/auth/[account] returns 200",
+          "API /admin/auth/[account] returns 200",
+          "API /archive/fasnacht/publication/capabilities returns 200",
+          "API /archive/fasnacht/publication/capabilities returns 200",
+          "Publication capabilities distinguish administrator and public user",
+          "Upload rejects absent/invalid token",
+          "Upload rejects absent/invalid token",
+          "Fresh restored token accepted before form validation",
+          "API /data/search/fasnacht/class/fasnacht:Story returns 200",
+          "API /data/search/fasnacht/class/fasnacht:ArchiveObject returns 200",
+          "Archive overview has results",
+          "Supported comparison backend",
+          "API /data/search/fasnacht returns 200",
+          "API /data/search/fasnacht returns 200",
+          "Source single-word fulltext searches have results",
+          "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 returns 200",
+          "Restored signed IIIF metadata",
+          "Restored signed JPEG"
+        ],
+        "admin_capabilities_sha256": "43a8d76d263a5b9c1dcc56451e966922bbfd6bfd34d7f67ae73b8c2281afa100",
+        "public_capabilities_sha256": "088a70a7588f1db196e6ccdf10d58bbf6de2a8d54f65edc1ac3181751bfd71a2",
+        "stories": 30,
+        "stories_sha256": "26975a21d9088bdb0a86dc185120881b8b6ac2c4e40579f223a1e3337b52f012",
+        "stories_rdf_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+        "archive_objects": 100,
+        "archive_sha256": "aa649936245fed8d80fe3f3405f99dc72d001eaab857168f7d4b090b91cc6ef2",
+        "fulltext_matches": 19,
+        "fulltext_sha256": "7d768bf76738a5df2241ba394c0237cd1fbf2dc6a42f524b2852a6424c173393",
+        "fulltext_cases": [
+          {
+            "query": "Laterne",
+            "count": 19,
+            "sha256": "7d768bf76738a5df2241ba394c0237cd1fbf2dc6a42f524b2852a6424c173393"
+          },
+          {
+            "query": "Stamm",
+            "count": 33,
+            "sha256": "b734020e96b8516d1747ccc0c4c3d8caa7287c4e867a39e1aa0c62dcf1edd57f"
+          }
+        ],
+        "iiif_dimensions": {
+          "width": 1589,
+          "height": 2914
+        },
+        "image_bytes": 9898,
+        "image_sha256": "94c924b11db83f628511f9d1b948f2b916423214aa43fc06f85976daaa506799",
+        "status": "passed"
+      }
+    },
+    "private_native_outage": {
+      "status": "passed",
+      "private_login_passed": true,
+      "backend_port_3031_unreachable_after_stop": true,
+      "public_target_never_opened": true,
+      "clean_corrected_run_without_manual_retry": true,
+      "baseline_fields_matched": 13,
+      "api": {
+        "checks": [
+          "API /status returns 200",
+          "API /admin/auth/[account] returns 200",
+          "API /admin/auth/[account] returns 200",
+          "API /archive/fasnacht/publication/capabilities returns 200",
+          "API /archive/fasnacht/publication/capabilities returns 200",
+          "Publication capabilities distinguish administrator and public user",
+          "Upload rejects absent/invalid token",
+          "Upload rejects absent/invalid token",
+          "Fresh restored token accepted before form validation",
+          "API /data/search/fasnacht/class/fasnacht:Story returns 200",
+          "API /data/search/fasnacht/class/fasnacht:ArchiveObject returns 200",
+          "Archive overview has results",
+          "Supported comparison backend",
+          "API /data/search/fasnacht returns 200",
+          "API /data/search/fasnacht returns 200",
+          "Source single-word fulltext searches have results",
+          "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 returns 200",
+          "Restored signed IIIF metadata",
+          "Restored signed JPEG"
+        ],
+        "admin_capabilities_sha256": "43a8d76d263a5b9c1dcc56451e966922bbfd6bfd34d7f67ae73b8c2281afa100",
+        "public_capabilities_sha256": "088a70a7588f1db196e6ccdf10d58bbf6de2a8d54f65edc1ac3181751bfd71a2",
+        "stories": 30,
+        "stories_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+        "stories_rdf_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+        "archive_objects": 100,
+        "archive_sha256": "aa649936245fed8d80fe3f3405f99dc72d001eaab857168f7d4b090b91cc6ef2",
+        "fulltext_matches": 19,
+        "fulltext_sha256": "7d768bf76738a5df2241ba394c0237cd1fbf2dc6a42f524b2852a6424c173393",
+        "fulltext_cases": [
+          {
+            "query": "Laterne",
+            "count": 19,
+            "sha256": "7d768bf76738a5df2241ba394c0237cd1fbf2dc6a42f524b2852a6424c173393"
+          },
+          {
+            "query": "Stamm",
+            "count": 33,
+            "sha256": "b734020e96b8516d1747ccc0c4c3d8caa7287c4e867a39e1aa0c62dcf1edd57f"
+          }
+        ],
+        "iiif_dimensions": {
+          "width": 1589,
+          "height": 2914
+        },
+        "image_bytes": 9898,
+        "image_sha256": "94c924b11db83f628511f9d1b948f2b916423214aa43fc06f85976daaa506799",
+        "status": "passed"
+      }
+    }
+  },
+  "home_restored": {
+    "status": "passed",
+    "baseline_fields_matched": 13,
+    "api": {
+      "checks": [
+        "API /status returns 200",
+        "API /admin/auth/[account] returns 200",
+        "API /admin/auth/[account] returns 200",
+        "API /archive/fasnacht/publication/capabilities returns 200",
+        "API /archive/fasnacht/publication/capabilities returns 200",
+        "Publication capabilities distinguish administrator and public user",
+        "Upload rejects absent/invalid token",
+        "Upload rejects absent/invalid token",
+        "Fresh restored token accepted before form validation",
+        "API /data/search/fasnacht/class/fasnacht:Story returns 200",
+        "API /data/search/fasnacht/class/fasnacht:ArchiveObject returns 200",
+        "Archive overview has results",
+        "Supported comparison backend",
+        "API /data/search/fasnacht returns 200",
+        "API /data/search/fasnacht returns 200",
+        "Fulltext AND results nonempty and word-order independent",
+        "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 returns 200",
+        "Restored signed IIIF metadata",
+        "Restored signed JPEG"
+      ],
+      "admin_capabilities_sha256": "43a8d76d263a5b9c1dcc56451e966922bbfd6bfd34d7f67ae73b8c2281afa100",
+      "public_capabilities_sha256": "088a70a7588f1db196e6ccdf10d58bbf6de2a8d54f65edc1ac3181751bfd71a2",
+      "stories": 30,
+      "stories_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+      "stories_rdf_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+      "archive_objects": 100,
+      "archive_sha256": "aa649936245fed8d80fe3f3405f99dc72d001eaab857168f7d4b090b91cc6ef2",
+      "fulltext_matches": 10,
+      "fulltext_sha256": "de5f24b3a795b9e229bd543258f1ca8cbe43fb476588c9d30810e2d28946a48a",
+      "fulltext_cases": [
+        {
+          "query": "Laterne Stamm",
+          "count": 10,
+          "sha256": "de5f24b3a795b9e229bd543258f1ca8cbe43fb476588c9d30810e2d28946a48a"
+        },
+        {
+          "query": "Stamm Laterne",
+          "count": 10,
+          "sha256": "de5f24b3a795b9e229bd543258f1ca8cbe43fb476588c9d30810e2d28946a48a"
+        }
+      ],
+      "iiif_dimensions": {
+        "width": 1589,
+        "height": 2914
+      },
+      "image_bytes": 9898,
+      "image_sha256": "94c924b11db83f628511f9d1b948f2b916423214aa43fc06f85976daaa506799",
+      "status": "passed"
+    },
+    "runtime": {
+      "api": {
+        "role": "api",
+        "status": "passed",
+        "exact_images": {
+          "redis": "sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99",
+          "compose-oldap-jena-1": "sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+          "compose-oldap-jena-identity-1": "sha256:5ba4f39f95976c1db88144a6268d7d2042820bc2067f9e1aa2fa0d0de42a49d9",
+          "oldap-api": "sha256:5ba4f39f95976c1db88144a6268d7d2042820bc2067f9e1aa2fa0d0de42a49d9",
+          "caddy": "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f",
+          "oldap-app": "sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7",
+          "fasnachts-page": "sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9",
+          "compose-salsah-2-1": "sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3"
+        },
+        "running_services": 8,
+        "paths_restored": true
+      },
+      "media": {
+        "role": "media",
+        "status": "passed",
+        "exact_images": {
+          "oldap-imageserver": "sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5",
+          "oldap-mediahelper": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+          "oldap-ingest-worker": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+          "oldap-export-worker": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+          "oldap-mobile-media-worker": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+          "oldap-media-caddy": "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f"
+        },
+        "running_services": 6,
+        "paths_restored": true
+      }
+    },
+    "https": [
+      {
+        "url": "https://api.home.org/status",
+        "exit": 0,
+        "status": "200",
+        "error": ""
+      },
+      {
+        "url": "https://fasnacht.home.org/archive",
+        "exit": 0,
+        "status": "200",
+        "error": ""
+      },
+      {
+        "url": "https://app.home.org/",
+        "exit": 0,
+        "status": "200",
+        "error": ""
+      },
+      {
+        "url": "https://salsah.home.org/",
+        "exit": 0,
+        "status": "200",
+        "error": ""
+      },
+      {
+        "url": "https://fuseki.home.org/",
+        "exit": 0,
+        "status": "401",
+        "error": ""
+      }
+    ],
+    "maintenance_released": true
+  },
+  "corrections": [
+    "Require media service env files rather than a nonexistent source .env",
+    "Quarantine target-only Compose selectors outside active directories",
+    "Force recreation of pinned original containers to remove stale network IDs",
+    "Use a distinct logical network key for the private rehearsal candidate",
+    "Verify media health and image-server connection before media ingress/timer release"
+  ],
+  "limits": [
+    "Rollback fixtures contain configuration only; complete source/home snapshots are retained separately",
+    "No target public writes or post-opening reconciliation tested",
+    "Production installer, final bundle and nine private acceptance checks remain separate gates",
+    "Production schedules and mail were not enabled on home",
+    "This is not a power-loss or full disaster recovery test"
+  ]
+}

@@ -1,0 +1,61 @@
+---
+# Shared by first activation and the bounded home repair. Read the ACTIVE API
+# key rather than an older local Vault copy. Never copy refresh/admin secrets.
+- name: Read active API access-verification settings privately
+  ansible.builtin.command:
+    argv:
+      - docker
+      - exec
+      - oldap-api
+      - python
+      - -c
+      - 'import json, os; print(json.dumps({k: os.environ[k] for k in ("OLDAP_ACCESS_JWT_SECRET", "OLDAP_JWT_ISSUER", "OLDAP_JWT_AUDIENCE")}))'
+  register: jena_active_access
+  changed_when: false
+  no_log: true
+
+- name: Require valid active access-verification settings
+  ansible.builtin.assert:
+    that:
+      - (jena_active_access.stdout | from_json).OLDAP_ACCESS_JWT_SECRET | length >= 32
+      - (jena_active_access.stdout | from_json).OLDAP_JWT_ISSUER | length > 0
+      - (jena_active_access.stdout | from_json).OLDAP_JWT_AUDIENCE | length > 0
+  no_log: true
+
+- name: Read inventoried home media environment files
+  ansible.builtin.slurp:
+    src: '/opt/oldap-mediaserver/compose/{{ item }}'
+  loop: [mediaserver.env, mediahelper-access.env, ingest-worker.env, export-worker.env, mobile-media-worker.env]
+  delegate_to: '{{ oldap_jena_media_host }}'
+  register: jena_media_environments
+  no_log: true
+
+- name: Identify existing access-token consumers without adding privileges
+  ansible.builtin.set_fact:
+    jena_media_access_files: []
+
+- name: Collect files that already verify access tokens
+  ansible.builtin.set_fact:
+    jena_media_access_files: >-
+      {{ jena_media_access_files | default([]) + [item.source] }}
+  loop: '{{ jena_media_environments.results }}'
+  when: (item.content | b64decode) is search('(?m)^OLDAP_ACCESS_JWT_SECRET=')
+  no_log: true
+
+- name: Require the inventoried media access configuration
+  ansible.builtin.assert:
+    that:
+      - jena_media_access_files | default([]) | length > 0
+      - "'/opt/oldap-mediaserver/compose/mediahelper-access.env' in jena_media_access_files"
+  no_log: true
+
+- name: Synchronize only access-token verification settings and retain private backups
+  ansible.builtin.lineinfile:
+    path: '{{ item.0 }}'
+    regexp: '^{{ item.1 }}='
+    line: '{{ item.1 }}={{ (jena_active_access.stdout | from_json)[item.1] }}'
+    mode: '0600'
+    backup: true
+  loop: '{{ jena_media_access_files | product(["OLDAP_ACCESS_JWT_SECRET", "OLDAP_JWT_ISSUER", "OLDAP_JWT_AUDIENCE"]) | list }}'
+  delegate_to: '{{ oldap_jena_media_host }}'
+  no_log: true

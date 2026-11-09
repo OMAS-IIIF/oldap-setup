@@ -1,0 +1,16 @@
+[Unit]
+Description=Sequential OLDAP harvesting with per-source email reports
+Requires=docker.service
+Wants=network-online.target
+After=docker.service network-online.target
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+UMask=0077
+EnvironmentFile=/etc/oldap-harvest.env
+ExecStart=/usr/bin/python3 /opt/oldap/compose/run-weekly-harvest.py
+TimeoutStartSec=infinity
+SuccessExitStatus=75
+# No automatic retries: partial imports need an explicit next run.

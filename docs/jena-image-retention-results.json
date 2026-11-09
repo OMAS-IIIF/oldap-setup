@@ -1,0 +1,235 @@
+{
+  "scope": "Accepted home images before idle-poll and compaction rollout; not final production release",
+  "created_at": "2026-11-07T00:14:02.969638+00:00",
+  "receiver_directory": "/Users/rosenth/OLDAP_BACKUP/releases/home-accepted-20261107",
+  "images": {
+    "api": {
+      "caddy": {
+        "architecture": "amd64",
+        "configured_reference": "caddy:2.8",
+        "image_id": "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f",
+        "os": "linux",
+        "repo_digests": [
+          "caddy@sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f"
+        ],
+        "variant": ""
+      },
+      "compose-oldap-jena-1": {
+        "architecture": "amd64",
+        "configured_reference": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+        "image_id": "sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+        "os": "linux",
+        "repo_digests": [
+          "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0"
+        ],
+        "variant": ""
+      },
+      "compose-oldap-jena-identity-1": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+        "image_id": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def"
+        ],
+        "variant": ""
+      },
+      "compose-salsah-2-1": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/salsah-2:jena-0.0.2-rc1-47f138b8070c-amd64@sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3",
+        "image_id": "sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/salsah-2@sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3"
+        ],
+        "variant": ""
+      },
+      "fasnachts-page": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/fasnachts-page:jena-0.1.49-rc1-21d046f8dd07-amd64@sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9",
+        "image_id": "sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/fasnachts-page@sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9"
+        ],
+        "variant": ""
+      },
+      "oldap-api": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+        "image_id": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def"
+        ],
+        "variant": ""
+      },
+      "oldap-app": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/oldap-app:jena-0.2.7-rc1-6e5e392b8e5a-amd64@sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7",
+        "image_id": "sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/oldap-app@sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7"
+        ],
+        "variant": ""
+      },
+      "redis": {
+        "architecture": "amd64",
+        "configured_reference": "redis:7-alpine",
+        "image_id": "sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99",
+        "os": "linux",
+        "repo_digests": [
+          "redis@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99"
+        ],
+        "variant": ""
+      }
+    },
+    "media": {
+      "oldap-export-worker": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+        ],
+        "variant": ""
+      },
+      "oldap-imageserver": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/sipi-2:0.1.0",
+        "image_id": "sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/sipi-2@sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5"
+        ],
+        "variant": ""
+      },
+      "oldap-ingest-worker": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+        ],
+        "variant": ""
+      },
+      "oldap-media-caddy": {
+        "architecture": "amd64",
+        "configured_reference": "caddy:2.8",
+        "image_id": "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f",
+        "os": "linux",
+        "repo_digests": [
+          "caddy@sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f"
+        ],
+        "variant": ""
+      },
+      "oldap-mediahelper": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+        ],
+        "variant": ""
+      },
+      "oldap-mobile-media-worker": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+        ],
+        "variant": ""
+      }
+    }
+  },
+  "archives": {
+    "api": {
+      "bytes": 532359168,
+      "sha256": "e6b419d60e9cd516c54d5476e4f756e2ed64823c87b007fbea6f0b193e5e8976",
+      "image_ids": [
+        "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f",
+        "sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99",
+        "sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3",
+        "sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7",
+        "sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9",
+        "sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+        "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def"
+      ],
+      "receiver_rehash_verified": true,
+      "local_docker_load_verified": true
+    },
+    "media": {
+      "bytes": 439976960,
+      "sha256": "d737c7aa6908ab952d646c65ca99a27f17c049d117ab1bdfdb28d7e03440443c",
+      "image_ids": [
+        "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f",
+        "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5"
+      ],
+      "receiver_rehash_verified": true,
+      "local_docker_load_verified": true
+    }
+  },
+  "batch": {
+    "scope": "Accepted home images before idle-poll and compaction rollout; not final production release",
+    "created_at": "2026-11-07T00:14:57.492079+00:00",
+    "receiver_directory": "/Users/rosenth/OLDAP_BACKUP/releases/home-accepted-20261107/batch",
+    "images": {
+      "api": {
+        "harvester": {
+          "configured_reference": "lrosenth/oldap-harvesters@sha256:de1798a05da402a2b318d5c0b7cbd3f484fd973cb88a56cebbb0d126c63d2fc2",
+          "image_id": "sha256:de1798a05da402a2b318d5c0b7cbd3f484fd973cb88a56cebbb0d126c63d2fc2"
+        },
+        "harvester-ocr": {
+          "configured_reference": "lrosenth/oldap-harvesters@sha256:43d4c5026ade3de85fadf402789ecda9fb2af4790e4c700c216676f517bca227",
+          "image_id": "sha256:43d4c5026ade3de85fadf402789ecda9fb2af4790e4c700c216676f517bca227"
+        },
+        "tools": {
+          "configured_reference": "lrosenth/oldap-tools@sha256:a553bee166a4928d50bfe1406284b925fd9dddba78c53a2291f9bb0f9c819baf",
+          "image_id": "sha256:a553bee166a4928d50bfe1406284b925fd9dddba78c53a2291f9bb0f9c819baf"
+        }
+      }
+    },
+    "archives": {
+      "api": {
+        "bytes": 618636800,
+        "sha256": "89759cb0edd4b6875b44e4fcab63740f22e4358557483a491b94faf5b8523c4b",
+        "image_ids": [
+          "sha256:43d4c5026ade3de85fadf402789ecda9fb2af4790e4c700c216676f517bca227",
+          "sha256:a553bee166a4928d50bfe1406284b925fd9dddba78c53a2291f9bb0f9c819baf",
+          "sha256:de1798a05da402a2b318d5c0b7cbd3f484fd973cb88a56cebbb0d126c63d2fc2"
+        ],
+        "receiver_rehash_verified": true,
+        "local_docker_load_verified": true
+      }
+    }
+  },
+  "service_bundle": {
+    "service_sha256": "42901bf6b98d8a92df2fce65b3799ee5dd45abb6e843ef7016a5a6d6da038694",
+    "fuseki_sha256": "2c92c598e65ab69d99820052e05f4277ed1d77980a8845f87545ad35b71a76ee",
+    "receiver_sha256_verified": true
+  },
+  "limitations": [
+    "Docker load verified on development Docker daemon, not an empty isolated daemon",
+    "No production GraphDB rollback artifacts retained by this operation",
+    "New maintenance candidate has not been deployed"
+  ],
+  "maintenance_capacity": {
+    "logical_tdb_bytes": 33749945586,
+    "free_bytes": 72719212544,
+    "total_bytes": 263083986944,
+    "minimum_free_before_compaction": 86366742974,
+    "shortfall_bytes": 13647530430
+  },
+  "setup_test_results": {
+    "passed": 120,
+    "skipped": 5,
+    "note": "125 tests collected; four missing-redis environment errors rerun successfully in API venv. No SMTP delivery attempted."
+  }
+}

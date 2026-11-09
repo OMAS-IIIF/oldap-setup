@@ -1,0 +1,77 @@
+{
+  "date": "2026-11-08",
+  "status": "prepared_locally_tested_and_home_snapshot_receiver_accepted",
+  "production_services_changed": false,
+  "production_schedules_changed": false,
+  "application_signatures_changed": false,
+  "batch_images": {
+    "europeana": "sha256:de1798a05da402a2b318d5c0b7cbd3f484fd973cb88a56cebbb0d126c63d2fc2",
+    "swisscovery": "sha256:43d4c5026ade3de85fadf402789ecda9fb2af4790e4c700c216676f517bca227"
+  },
+  "tests": {
+    "production": 70,
+    "receiver": 6,
+    "harvest_schedule": 8,
+    "network_isolated_compose_combinations": 18,
+    "shared_snapshot_recovery": 5,
+    "mount_boundary": 2,
+    "home_restore": 9,
+    "linux_staging_fixture": 1
+  },
+  "target_bind_mounts_covered": {
+    "api": 12,
+    "media": 18
+  },
+  "batch_compose_resolution": "passed_for_both_providers_against_real_core",
+  "actual_cli_help_and_jena_import": "passed_for_both_images_network_disabled",
+  "external_supplement": {
+    "host": "131.152.51.209",
+    "directory": "/Users/rosenth/OLDAP_BACKUP/releases/production-operations-20261108",
+    "sha256_verified": true,
+    "method": "remote shasum compared to controller",
+    "production_services_unchanged": true
+  },
+  "home_snapshot": {
+    "id": "20261108-operations-acceptance",
+    "status": "passed",
+    "completed_at": "2026-11-08T22:30:42Z",
+    "producer_elapsed_seconds": 1309,
+    "api_ingress_interruption_seconds": 1080,
+    "archives": {
+      "api": {
+        "bytes": 516741120,
+        "path": "/srv/storage/oldap-jena-snapshot-20261108-operations-acceptance/api.tar",
+        "sha256": "1b055475172e696e6fae85576ccfa3c5270b42e397fa5392d1d826ed92bfa1e4"
+      },
+      "media": {
+        "bytes": 21153914880,
+        "host": "media.home.org",
+        "path": "/data/oldap-jena-snapshot-20261108-operations-acceptance/media.tar",
+        "sha256": "9bbd39da3123f6b7b13b565258a296827c9b79d310bb8b6a9a7b05b4d2717d1b"
+      }
+    },
+    "restore_header_validation": {
+      "api": {
+        "status": "passed",
+        "members": 208
+      },
+      "media": {
+        "status": "passed",
+        "members": 6925
+      }
+    },
+    "post_recovery_checks": 19,
+    "post_recovery_running_services": 14,
+    "https_checks": "API health and three frontends 200; native console requires auth (401)",
+    "receiver": "studio.home.org",
+    "receiver_directory": "/Users/rosenth/OLDAP_BACKUP/snapshots/20261108-operations-acceptance",
+    "receiver_size_sha256_and_manifest_verified": true,
+    "borg_run": false,
+    "performance_note": "18-minute API ingress interruption exceeded the earlier 11m25s rehearsal; cause not isolated. Additional media archive content is only about 60 KiB, so do not attribute the difference to archive expansion."
+  },
+  "remaining": [
+    "Production unattended producer/controller credentials and mail wiring",
+    "Production receiver SSH policy, Borg encryption/key recovery and scheduling",
+    "Exact image preload and final nine private target acceptance checks"
+  ]
+}

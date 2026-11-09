@@ -1,0 +1,210 @@
+---
+# Shared compared two-host snapshot; wrapper fixes hosts, paths and lock policy.
+- name: Require explicit home snapshot identifier
+  ansible.builtin.assert:
+    that:
+      - ansible_host == snapshot_api_host
+      - snapshot_id is match('^[a-zA-Z0-9_-]+$')
+      - mobile_stop_signal in ['SIGTERM', 'SIGINT']
+- name: Require the current API to select Jena
+  ansible.builtin.command:
+    argv: [docker, exec, oldap-api, python, -c, 'import os; assert os.environ["OLDAP_BACKEND"] == "jena"']
+  changed_when: false
+- name: Inventory running API-host containers
+  ansible.builtin.command: docker ps --format '{{ "{{.Names}}" }}'
+  register: api_running
+  changed_when: false
+- name: Inventory running media-host containers
+  ansible.builtin.command: docker ps --format '{{ "{{.Names}}" }}'
+  delegate_to: '{{ media_host }}'
+  register: media_running
+  changed_when: false
+- name: Refuse unexpected writers or an already stopped stack
+  ansible.builtin.assert:
+    that:
+      - api_running.stdout_lines | difference(['compose-salsah-2-1', 'compose-jena-console-1']) | sort == ['oldap-api', 'compose-oldap-jena-1', 'compose-oldap-jena-identity-1', 'redis', 'caddy', 'fasnachts-page', 'oldap-app'] | sort
+      - media_running.stdout_lines | sort == (media_writers + ['oldap-imageserver', 'oldap-media-caddy']) | sort
+- name: Verify every running API bind mount is covered before maintenance
+  ansible.builtin.command:
+    argv: [python3, -c, '{{ lookup("file", "scripts/check-snapshot-mounts.py") }}']
+    stdin: '{{ {"containers": api_running.stdout_lines, "roots": api_paths} | to_json }}'
+  changed_when: false
+- name: Verify every running media bind mount is covered before maintenance
+  ansible.builtin.command:
+    argv: [python3, -c, '{{ lookup("file", "scripts/check-snapshot-mounts.py") }}']
+    stdin: '{{ {"containers": media_running.stdout_lines, "roots": media_paths} | to_json }}'
+  delegate_to: '{{ media_host }}'
+  changed_when: false
+- name: Inspect API backup destination
+  ansible.builtin.stat: {path: '{{ api_backup }}'}
+  register: api_destination
+- name: Inspect media backup destination
+  ansible.builtin.stat: {path: '{{ media_backup }}'}
+  delegate_to: '{{ media_host }}'
+  register: media_destination
+- name: Refuse overwrite of either snapshot
+  ansible.builtin.assert:
+    that: not api_destination.stat.exists and not media_destination.stat.exists
+- name: Create private API snapshot directory
+  ansible.builtin.file: {path: '{{ api_backup }}', state: directory, mode: '0700'}
+- name: Create private media snapshot directory
+  ansible.builtin.file: {path: '{{ media_backup }}', state: directory, mode: '0700'}
+  delegate_to: '{{ media_host }}'
+- name: Require rsync on the media host before any interruption
+  when: home_media_precopy | bool
+  ansible.builtin.command: rsync --version
+  delegate_to: '{{ media_host }}'
+  changed_when: false
+- name: Create a private independent media staging tree
+  when: home_media_precopy | bool
+  ansible.builtin.file: {path: '{{ media_backup }}/tree', state: directory, mode: '0700'}
+  delegate_to: '{{ media_host }}'
+# This copy is deliberately untrusted while writers are running. Vanished
+# files are expected during live operation; all other errors abort here.
+- name: Pre-copy media and operational state while services are online
+  when: home_media_precopy | bool
+  ansible.builtin.command:
+    argv: '{{ media_sync_argv }}'
+  delegate_to: '{{ media_host }}'
+  register: media_precopy
+  failed_when: media_precopy.rc not in [0, 24]
+- name: Quiesce both hosts and copy offline state
+  block:
+    - name: Drain the home stack
+      ansible.builtin.include_tasks: tasks/jena-home-stop.yml
+    - name: Stop frontend state writers and media delivery before archiving
+      ansible.builtin.command:
+        argv: '{{ ["docker", "stop", "--timeout", "90", "oldap-app", "fasnachts-page"] + (["compose-salsah-2-1"] if "compose-salsah-2-1" in api_running.stdout_lines else []) }}'
+    - name: Stop image delivery before archiving its configuration
+      ansible.builtin.command: docker stop --timeout 90 oldap-imageserver
+      delegate_to: '{{ media_host }}'
+    - name: Refuse an unclean snapshot frontend shutdown
+      ansible.builtin.command:
+        argv: [python3, -c, 'import json,subprocess; states=json.loads(subprocess.check_output(["docker","inspect","oldap-app","fasnachts-page"])); assert all(not c["State"]["Running"] and c["State"]["ExitCode"] != 137 for c in states)']
+      changed_when: false
+    - name: Refuse an unclean snapshot image service shutdown
+      ansible.builtin.command:
+        argv: [python3, -c, 'import json,subprocess; c=json.loads(subprocess.check_output(["docker","inspect","oldap-imageserver"]))[0]; assert not c["State"]["Running"] and c["State"]["ExitCode"] != 137']
+      delegate_to: '{{ media_host }}'
+      changed_when: false
+    # Capture actual images, including workers and optional clients. Never
+    # persist raw docker inspect output (it includes environment secrets).
+    - name: Record API host image provenance
+      ansible.builtin.script:
+        cmd: 'scripts/snapshot-images.py {{ api_running.stdout_lines | join(" ") }}'
+        executable: /usr/bin/python3
+      register: api_images
+      changed_when: false
+    - name: Record media host image provenance
+      ansible.builtin.script:
+        cmd: 'scripts/snapshot-images.py {{ media_running.stdout_lines | join(" ") }}'
+        executable: /usr/bin/python3
+      delegate_to: '{{ media_host }}'
+      register: media_images
+      changed_when: false
+    - name: Archive stopped dataset, release, API state, Redis and configuration
+      ansible.builtin.command:
+        argv: '{{ ["tar", "--acls", "--xattrs", "-cpf", api_backup ~ "/api.tar", "-C", "/"] + api_paths }}'
+    - name: Archive media directly from stopped sources
+      when: not (home_media_precopy | bool)
+      ansible.builtin.command:
+        argv: '{{ ["tar", "--acls", "--xattrs", "-cpf", media_backup ~ "/media.tar", "-C", "/"] + media_paths }}'
+      delegate_to: '{{ media_host }}'
+    # Checksums detect even same-size/same-mtime updates since pre-copy.
+    # Deletions affect only the new staging tree; never use hardlink copies
+    # or --inplace against live data. Workers remain stopped throughout.
+    - name: Finalize media staging from stopped sources
+      when: home_media_precopy | bool
+      ansible.builtin.command:
+        argv: '{{ media_sync_argv[:1] + ["--checksum"] + media_sync_argv[1:] }}'
+      delegate_to: '{{ media_host }}'
+    - name: Verify finalized media staging against stopped sources
+      when: home_media_precopy | bool
+      ansible.builtin.command:
+        argv: '{{ media_sync_argv[:1] + ["--checksum", "--dry-run", "--itemize-changes"] + media_sync_argv[1:] }}'
+      delegate_to: '{{ media_host }}'
+      register: media_stage_comparison
+      changed_when: false
+      failed_when: media_stage_comparison.rc != 0 or media_stage_comparison.stdout | trim != ''
+    - name: Restrict API archive permissions
+      ansible.builtin.file: {path: '{{ api_backup }}/api.tar', mode: '0600'}
+    - name: Compare API archive with still-stopped source files
+      ansible.builtin.command: 'tar --compare --acls --xattrs -f {{ api_backup }}/api.tar -C /'
+      changed_when: false
+    - name: Compare media archive with stopped sources
+      when: not (home_media_precopy | bool)
+      ansible.builtin.command:
+        argv: [tar, --compare, --acls, --xattrs, -f, '{{ media_backup }}/media.tar', -C, /]
+      delegate_to: '{{ media_host }}'
+      changed_when: false
+  always:
+    - name: Recover the home stack in namespace order
+      ansible.builtin.include_tasks: tasks/jena-home-start.yml
+      vars:
+        snapshot_restart_extra_services: true
+# Writers can now resume: all later media work reads only the independent,
+# verified staging tree. No later synchronization may alter that tree.
+- name: Archive frozen media staging while services are online
+  when: home_media_precopy | bool
+  ansible.builtin.command:
+    argv: '{{ ["tar", "--acls", "--xattrs", "-cpf", media_backup ~ "/media.tar", "-C", media_backup ~ "/tree"] + media_paths }}'
+  delegate_to: '{{ media_host }}'
+- name: Restrict media archive permissions
+  ansible.builtin.file: {path: '{{ media_backup }}/media.tar', mode: '0600'}
+  delegate_to: '{{ media_host }}'
+- name: Compare media archive with frozen staging
+  when: home_media_precopy | bool
+  ansible.builtin.command:
+    argv: [tar, --compare, --acls, --xattrs, -f, '{{ media_backup }}/media.tar', -C, '{{ media_backup }}/tree']
+  delegate_to: '{{ media_host }}'
+  changed_when: false
+# Only immutable archive files are read below: services are already online.
+# A failed copy/compare or recovery aborts before these tasks and publication.
+- name: Hash API snapshot
+  ansible.builtin.stat: {path: '{{ api_backup }}/api.tar', checksum_algorithm: sha256}
+  register: api_archive
+- name: Hash media snapshot
+  ansible.builtin.stat: {path: '{{ media_backup }}/media.tar', checksum_algorithm: sha256}
+  delegate_to: '{{ media_host }}'
+  register: media_archive
+- name: Read completion time after successful recovery and archive hashing
+  ansible.builtin.command: date -u +%Y-%m-%dT%H:%M:%SZ
+  register: snapshot_completed_at
+  changed_when: false
+- name: Record completed snapshot manifest
+  ansible.builtin.copy:
+    dest: '{{ api_backup }}/manifest.json'
+    mode: '0600'
+    content: '{{ {"snapshot_id": snapshot_id, "status": "offline-compared", "completed_at": snapshot_completed_at.stdout, "media_snapshot_method": ("online-precopy-offline-checksum-sync" if (home_media_precopy | bool) else "offline-tar-compare"), "images": {"api": api_images.stdout | from_json, "media": media_images.stdout | from_json}, "api": {"path": api_backup ~ "/api.tar", "sha256": api_archive.stat.checksum, "bytes": api_archive.stat.size}, "media": {"host": media_host, "path": media_backup ~ "/media.tar", "sha256": media_archive.stat.checksum, "bytes": media_archive.stat.size}} | to_nice_json }}'
+# Publication is opt-in and occurs only after successful recovery above.
+# The pull account receives access to these immutable-by-convention archives,
+# never to the live database directory. Keep the containing directory private.
+- name: Publish the verified snapshot for the home receiver
+  when: home_snapshot_publish | default(false) | bool
+  block:
+    - name: Allow receiver account to traverse the API snapshot
+      ansible.builtin.file: {path: '{{ api_backup }}', owner: rosenth, mode: '0700'}
+    - name: Allow receiver account to read the API archive
+      ansible.builtin.file: {path: '{{ api_backup }}/api.tar', owner: rosenth, mode: '0600'}
+    - name: Allow receiver account to traverse the media snapshot
+      ansible.builtin.file: {path: '{{ media_backup }}', owner: rosenth, mode: '0700'}
+      delegate_to: '{{ media_host }}'
+    - name: Allow receiver account to read the media archive
+      ansible.builtin.file: {path: '{{ media_backup }}/media.tar', owner: rosenth, mode: '0600'}
+      delegate_to: '{{ media_host }}'
+    - name: Publish ready marker last after both archives are accessible
+      ansible.builtin.copy:
+        src: '{{ api_backup }}/manifest.json'
+        dest: '{{ api_backup }}/ready.json'
+        remote_src: true
+        owner: rosenth
+        mode: '0600'
+
+    - name: Publish latest production completion only after the per-pair marker
+      when: snapshot_api_host == 'dhlab-oldap.dhlab.unibas.ch'
+      ansible.builtin.copy:
+        src: '{{ api_backup }}/ready.json'
+        dest: /srv/storage/oldap-jena-latest.json
+        remote_src: true
+        owner: rosenth
+        mode: '0600'

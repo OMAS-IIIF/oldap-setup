@@ -1,0 +1,104 @@
+{
+  "checks": [
+    "API selects Jena",
+    "GraphDB is stopped",
+    "Private Jena backend has no published ports",
+    "oldap-api running",
+    "compose-oldap-jena-1 running",
+    "compose-oldap-jena-identity-1 running",
+    "redis running",
+    "caddy running",
+    "API /status HTTP 200",
+    "Existing administrator can log in",
+    "Media upload accepts a fresh API token before form validation",
+    "Media upload rejects missing or invalid access token",
+    "Media upload rejects missing or invalid access token",
+    "API /admin/auth/unknown HTTP 200",
+    "Proxy blocks private identity callback",
+    "Proxy blocks private identity callback",
+    "Export worker route reaches service authentication without proxy shadowing",
+    "API /data/search/fasnacht/class/fasnacht:Story HTTP 200",
+    "API /data/search/fasnacht HTTP 200",
+    "API /data/search/fasnacht HTTP 200",
+    "Nonempty fulltext AND search is independent of word order",
+    "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 HTTP 200",
+    "Signed IIIF metadata delivered by home media service",
+    "Signed image delivered as JPEG",
+    "fasnacht.home.org page available",
+    "app.home.org page available"
+  ],
+  "images": {
+    "oldap-api": "lrosenth/oldap-api@sha256:8ea94bac6882c7ae07416678312ebc6edff0c5dfa65785909e45daae22711a8a",
+    "compose-oldap-jena-1": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+    "compose-oldap-jena-identity-1": "lrosenth/oldap-api@sha256:8ea94bac6882c7ae07416678312ebc6edff0c5dfa65785909e45daae22711a8a",
+    "graphdb": "ontotext/graphdb:11.3.0",
+    "redis": "redis:7-alpine",
+    "caddy": "caddy:2.8"
+  },
+  "stories": 30,
+  "stories_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+  "fulltext_matches": 10,
+  "image_bytes": 9898,
+  "status": "passed",
+  "release": {
+    "oldap-api": {
+      "digest": "sha256:8ea94bac6882c7ae07416678312ebc6edff0c5dfa65785909e45daae22711a8a",
+      "platform_manifests": [
+        "lrosenth/oldap-api@sha256:4fb37d341fa1df48cdbaf94e0c0d7b5f9f91d6d94184ed38ba5ef3c5fe039cfc",
+        "lrosenth/oldap-api@sha256:779a846a1fa57d7efcf52c4b64fd01692cb125ee61c2e2083e6a5aeafaa4b6e4"
+      ],
+      "reference": "lrosenth/oldap-api:jena-0.2.37-rc4-e3903e70a220"
+    },
+    "oldap-tools": {
+      "digest": "sha256:0ebe46ceeeb50a2a1c482d077a0346b7ad518da82498f0e3dd05cb13a544b182",
+      "platform_manifests": [
+        "lrosenth/oldap-tools@sha256:fb2ccc740889f9354dd559cbc5feb9709778adba4ac536fa6fb41102493a5f67",
+        "lrosenth/oldap-tools@sha256:0ed44c9258f4be8261318689f33bb0a970a775c8096d7a9bbfb5aa51b0019c69"
+      ],
+      "reference": "lrosenth/oldap-tools:jena-0.3.22-rc4-e3903e70a220"
+    }
+  },
+  "baseline": "RC3 current home response, not original GraphDB source snapshot",
+  "stories_equal_rc3": true,
+  "tests": {
+    "library": 61,
+    "library_subtests": 3,
+    "api_import": 54,
+    "packaged_transport": 29,
+    "local_architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "native_home_isolated_acceptance": "passed before/after namespace replacement; real contention recovered; exactly one UPDATE and COMMIT"
+  },
+  "installed_library": "0.7.29+jena.rc4.e3903e70a220",
+  "begin_retry": {
+    "maximum_attempts": 5,
+    "backoff_seconds": [
+      0.05,
+      0.1,
+      0.2,
+      0.4
+    ],
+    "only_condition": "explicit HTTP 409 at BEGIN",
+    "fresh_identifiers": true,
+    "uncertain_admission_retried": false,
+    "updates_replayed": false,
+    "commits_replayed": false
+  },
+  "import_states": {
+    "IMPORTED": 3,
+    "INVALID": 1
+  },
+  "active_claims": 0,
+  "worker_polling": {
+    "import": 204,
+    "export": 200
+  },
+  "limitations": [
+    "Persistent contention still propagates failure.",
+    "Backoff is bounded to 750 ms; HTTP request timeouts remain separately configured.",
+    "Five-minute worker lease policy unchanged.",
+    "User ZIP end-to-end retry acceptance remains a manual follow-up."
+  ]
+}

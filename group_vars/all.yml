@@ -81,3 +81,7 @@ oldap_frontends:
       password_reset: /password-reset
       import_status: /imports/{import_id}
       export_status: /exports/{export_id}
+
+# Optional administrative reader, enabled explicitly after a Jena installation.
+oldap_jena_console_enabled: false
+oldap_jena_console_origin: "{{ 'https://fuseki.oldap.org' if caddy_mode == 'prod' else 'https://fuseki.home.org' }}"

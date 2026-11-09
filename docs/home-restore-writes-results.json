@@ -1,0 +1,198 @@
+{
+  "status": "passed",
+  "date": "2026-11-06",
+  "snapshot": "20261106-studio-staged-03",
+  "project": "oldap-restore-staged-03",
+  "application": {
+    "id": "67c7bb2d5eef",
+    "folder": "urn:uuid:804da1e9-b7ee-49ee-bd55-6bcd5e20fcd3",
+    "import_id": "60149c08-c074-4b60-b3a0-8d462e55e59d",
+    "export_id": "8bd2c9c3-0a41-4f2b-a0f3-0bd65c5f0976",
+    "imported_iris": [
+      "urn:uuid:2d1a856a-ac39-59c7-a3da-e613ef3e97c0",
+      "urn:uuid:7eab2ec8-1f83-51e7-9727-bf3a43ca938d"
+    ],
+    "publication_operation": "a3adaced-04ec-407d-85ee-21de8d02c5d4",
+    "publication_result": {
+      "operationId": "a3adaced-04ec-407d-85ee-21de8d02c5d4",
+      "resourceIris": [
+        "urn:uuid:a54e9078-dff3-4700-b01c-38326efe4228",
+        "urn:uuid:db42853f-2a0e-4e57-96c4-e5441f67e1c3"
+      ],
+      "state": "committed"
+    },
+    "export_entries": 7,
+    "status": "passed",
+    "checks": [
+      "Non-administrator editor can publish",
+      "Editor creates dedicated staging folder",
+      "Editor update persists",
+      "Public actor cannot edit private folder",
+      "Single image upload stores original checksum",
+      "Public actor cannot upload",
+      "ZIP stored through upload capability",
+      "Editor transforms uploaded staging image into archive medium",
+      "Public actor cannot publish or read private draft",
+      "Publication review covers root and linked uploaded medium",
+      "Publication retry returns identical receipt",
+      "Published resource is readable with published status",
+      "Viewer can read the private test folder through its role",
+      "ZIP worker reaches READY",
+      "ZIP confirmation accepted",
+      "ZIP worker reaches IMPORTED",
+      "Exactly two ZIP resources after worker restart",
+      "Completed import rejects another confirmation",
+      "Staging export queued",
+      "Reader role can read the private test folder",
+      "Reader resource grant cannot update",
+      "Reader role cannot publish",
+      "Export ZIP CRC checks pass",
+      "Export contains uploaded image bytes",
+      "Export contains UTF-8 ZIP text bytes",
+      "Public actor cannot access private export",
+      "Export rejects absent capability and spoofed internal path",
+      "Export range download matches complete ZIP",
+      "Imported resource identities remain unchanged after further worker polls",
+      "Publication receipt remains unchanged after worker restart",
+      "Newly published upload is available through signed IIIF",
+      "Newly published image renders as JPEG"
+    ]
+  },
+  "restart": {
+    "project": "oldap-restore-staged-03",
+    "import_id": "60149c08-c074-4b60-b3a0-8d462e55e59d",
+    "observing_since": "2026-11-06T22:53:20.875354+00:00",
+    "claim_log": "2026-11-06 22:53:36,199 INFO oldap.ingest-worker ingest_claimed importId=60149c08-c074-4b60-b3a0-8d462e55e59d",
+    "signal_requested_at": "2026-11-06T22:53:36.200050+00:00",
+    "signal_returned_at": "2026-11-06T22:53:36.223199+00:00",
+    "exit_code": 0,
+    "oom_killed": false,
+    "finished_at": "2026-11-06T22:53:36.986749383Z",
+    "worker_logs": [
+      "2026-11-06 22:53:36,199 INFO oldap.ingest-worker ingest_claimed importId=60149c08-c074-4b60-b3a0-8d462e55e59d",
+      "2026-11-06 22:53:36,208 INFO pyvips VIPS: threadpool completed with 4 workers",
+      "2026-11-06 22:53:36,208 INFO pyvips VIPS: threadpool completed with 3 workers",
+      "2026-11-06 22:53:36,957 INFO oldap.ingest-worker ingest_task_published importId=60149c08-c074-4b60-b3a0-8d462e55e59d outcome=IMPORTED"
+    ],
+    "restarted_at": "2026-11-06T22:53:37.177572+00:00"
+  },
+  "isolation": {
+    "status": "passed",
+    "services": [
+      "oldap-api",
+      "oldap-export-worker",
+      "oldap-imageserver",
+      "oldap-ingest-worker",
+      "oldap-jena",
+      "oldap-jena-identity",
+      "oldap-mediahelper",
+      "redis",
+      "restore-export-proxy"
+    ],
+    "no_published_ports": true,
+    "all_mounts_in_restore_root": true,
+    "isolated_bridge_has_no_host_address": true,
+    "workers_absent": false,
+    "zip_workers_only": true,
+    "mail_and_callback_jobs_disabled": true,
+    "connectivity": [
+      {
+        "host": "192.168.1.230",
+        "port": 80,
+        "reachable": false
+      },
+      {
+        "host": "192.168.1.223",
+        "port": 80,
+        "reachable": false
+      },
+      {
+        "host": "1.1.1.1",
+        "port": 443,
+        "reachable": false
+      }
+    ],
+    "memory_caps_bytes": {
+      "restore-export-proxy": 134217728,
+      "oldap-ingest-worker": 536870912,
+      "oldap-export-worker": 536870912,
+      "oldap-api": 536870912,
+      "oldap-jena-identity": 134217728,
+      "oldap-mediahelper": 536870912,
+      "redis": 268435456,
+      "oldap-jena": 2147483648,
+      "oldap-imageserver": 536870912
+    }
+  },
+  "final_state": {
+    "live_containers_unchanged": 8,
+    "disk_free_bytes": 73300271104,
+    "restored_containers_stopped": 9,
+    "exit_codes": {
+      "/oldap-restore-staged-03-restore-export-proxy-1": 0,
+      "/oldap-restore-staged-03-oldap-ingest-worker-1": 0,
+      "/oldap-restore-staged-03-oldap-export-worker-1": 0,
+      "/oldap-restore-staged-03-oldap-api-1": 0,
+      "/oldap-restore-staged-03-oldap-jena-identity-1": 0,
+      "/oldap-restore-staged-03-oldap-mediahelper-1": 0,
+      "/oldap-restore-staged-03-redis-1": 0,
+      "/oldap-restore-staged-03-oldap-jena-1": 143,
+      "/oldap-restore-staged-03-oldap-imageserver-1": 0
+    }
+  },
+  "live_acceptance": {
+    "checks": [
+      "API selects Jena",
+      "GraphDB is stopped",
+      "Private Jena backend has no published ports",
+      "oldap-api running",
+      "compose-oldap-jena-1 running",
+      "compose-oldap-jena-identity-1 running",
+      "redis running",
+      "caddy running",
+      "API /status HTTP 200",
+      "Existing administrator can log in",
+      "Media upload accepts a fresh API token before form validation",
+      "Media upload rejects missing or invalid access token",
+      "Media upload rejects missing or invalid access token",
+      "API /admin/auth/unknown HTTP 200",
+      "Proxy blocks private identity callback",
+      "Proxy blocks private identity callback",
+      "Export worker route reaches service authentication without proxy shadowing",
+      "API /data/search/fasnacht/class/fasnacht:Story HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "Nonempty fulltext AND search is independent of word order",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 HTTP 200",
+      "Signed IIIF metadata delivered by home media service",
+      "Signed image delivered as JPEG",
+      "fasnacht.home.org page available",
+      "app.home.org page available"
+    ],
+    "images": {
+      "oldap-api": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "compose-oldap-jena-1": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+      "compose-oldap-jena-identity-1": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "graphdb": "ontotext/graphdb:11.3.0",
+      "redis": "redis:7-alpine",
+      "caddy": "caddy:2.8"
+    },
+    "stories": 30,
+    "stories_sha256": "26975a21d9088bdb0a86dc185120881b8b6ac2c4e40579f223a1e3337b52f012",
+    "fulltext_matches": 10,
+    "image_bytes": 9898,
+    "status": "passed"
+  },
+  "unit_tests": {
+    "file": "tests/test_home_restore.py",
+    "methods": 8,
+    "status": "passed"
+  },
+  "limits": [
+    "Bounded fixtures, not load testing",
+    "Graceful active-job drain; not arbitrary forced-kill recovery",
+    "Mobile resumable workers and harvesters excluded",
+    "No production changes"
+  ],
+  "completed_at": "2026-11-07T00:01:23.978164+01:00"
+}

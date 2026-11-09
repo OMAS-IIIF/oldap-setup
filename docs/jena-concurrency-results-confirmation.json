@@ -1,0 +1,373 @@
+{
+  "status": "failed",
+  "concurrency": 16,
+  "sequential_baselines": [
+    {
+      "case": "ArchiveMediaObject",
+      "status": 200,
+      "sha256": "db6c3b9488f2c9a48aababf65958cca506940f8618eb771db2765a7aa38aabb6",
+      "seconds": 0.346
+    },
+    {
+      "case": "ArchiveObject",
+      "status": 200,
+      "sha256": "cf78d5d2e09731ed2b629d12b14007677fdef8fdf38995e0de13be6ad0f2da6c",
+      "seconds": 0.206
+    },
+    {
+      "case": "CarnivalEvent",
+      "status": 200,
+      "sha256": "39b82fc530feb3f19f06548f4410f38120b9db45d67e3f3eaca6afed688f2fee",
+      "seconds": 0.199
+    },
+    {
+      "case": "Agent",
+      "status": 200,
+      "sha256": "775a28bba9f470d21fb434d42d6a66f7bf81f7c37cdfe90e0e5ca84e65009c70",
+      "seconds": 0.229
+    },
+    {
+      "case": "Person",
+      "status": 200,
+      "sha256": "96835f67cb1c00a9132134297dee3e09aaa39ca402180956c24264dbd4df23e6",
+      "seconds": 0.17
+    },
+    {
+      "case": "Organisation",
+      "status": 200,
+      "sha256": "efffdd7ffbe480c84778eb37f6fbbef79c7593bdc6a6b190fc4c13054da77d41",
+      "seconds": 0.179
+    },
+    {
+      "case": "ExternalSource",
+      "status": 200,
+      "sha256": "d92c462be326e8445a78dadffc7699f3e524a2313b7f373699ae24589b5fa807",
+      "seconds": 0.173
+    },
+    {
+      "case": "Story",
+      "status": 200,
+      "sha256": "903a13df09f5c0e9d1e226ab549fd110d0d498eb0f9d4842f616229e9beec743",
+      "seconds": 0.177
+    },
+    {
+      "case": "ObjectTaxonomy",
+      "status": 200,
+      "sha256": "a5a501d1b7f49a9f0cb58d06fc3a5c39c69e4712b0dca89b55c79d0a379f2318",
+      "seconds": 0.021
+    },
+    {
+      "case": "CarnivalEventTaxonomy",
+      "status": 200,
+      "sha256": "2c9a3717fd5319507f27f87311aa4b3d5a56e1710c42dde03e2cd34228c8a0f9",
+      "seconds": 0.018
+    },
+    {
+      "case": "OrganisationTaxonomy",
+      "status": 200,
+      "sha256": "4fda8cf4799f3f9323345156444db1565c5d52082e164cebd21a031151982200",
+      "seconds": 0.021
+    },
+    {
+      "case": "anonymous-profile",
+      "status": 200,
+      "sha256": "8efcb0e9c5533914245a9ef3e7186a03aee77f2a45e18bef6e2377ba3913a83e",
+      "seconds": 0.186
+    }
+  ],
+  "parallel_requests": 48,
+  "http_status_counts": {
+    "200": 48
+  },
+  "complete_responses_match": false,
+  "results": [
+    {
+      "case": "ArchiveMediaObject",
+      "status": 200,
+      "sha256": "54ed913eabb8823c18d266d198f3bbba5636f021bcd7a17334e4cb3f1bacb1c6",
+      "seconds": 0.483
+    },
+    {
+      "case": "ArchiveObject",
+      "status": 200,
+      "sha256": "72e84f3bce2ae7d0a75bbcca755e657cc6cac95f4be6c461314f72f9a5f78329",
+      "seconds": 0.899
+    },
+    {
+      "case": "CarnivalEvent",
+      "status": 200,
+      "sha256": "196730024cdf1527ef10a245e7f28fe1b2ee3acdf1c9f7e090bd51dd08bcfb3a",
+      "seconds": 1.1
+    },
+    {
+      "case": "Agent",
+      "status": 200,
+      "sha256": "775a28bba9f470d21fb434d42d6a66f7bf81f7c37cdfe90e0e5ca84e65009c70",
+      "seconds": 0.693
+    },
+    {
+      "case": "Person",
+      "status": 200,
+      "sha256": "96835f67cb1c00a9132134297dee3e09aaa39ca402180956c24264dbd4df23e6",
+      "seconds": 0.505
+    },
+    {
+      "case": "Organisation",
+      "status": 200,
+      "sha256": "efffdd7ffbe480c84778eb37f6fbbef79c7593bdc6a6b190fc4c13054da77d41",
+      "seconds": 1.364
+    },
+    {
+      "case": "ExternalSource",
+      "status": 200,
+      "sha256": "d92c462be326e8445a78dadffc7699f3e524a2313b7f373699ae24589b5fa807",
+      "seconds": 0.578
+    },
+    {
+      "case": "Story",
+      "status": 200,
+      "sha256": "903a13df09f5c0e9d1e226ab549fd110d0d498eb0f9d4842f616229e9beec743",
+      "seconds": 0.505
+    },
+    {
+      "case": "ObjectTaxonomy",
+      "status": 200,
+      "sha256": "a5a501d1b7f49a9f0cb58d06fc3a5c39c69e4712b0dca89b55c79d0a379f2318",
+      "seconds": 0.061
+    },
+    {
+      "case": "CarnivalEventTaxonomy",
+      "status": 200,
+      "sha256": "2c9a3717fd5319507f27f87311aa4b3d5a56e1710c42dde03e2cd34228c8a0f9",
+      "seconds": 0.059
+    },
+    {
+      "case": "OrganisationTaxonomy",
+      "status": 200,
+      "sha256": "4fda8cf4799f3f9323345156444db1565c5d52082e164cebd21a031151982200",
+      "seconds": 1.366
+    },
+    {
+      "case": "anonymous-profile",
+      "status": 200,
+      "sha256": "8efcb0e9c5533914245a9ef3e7186a03aee77f2a45e18bef6e2377ba3913a83e",
+      "seconds": 1.322
+    },
+    {
+      "case": "ArchiveMediaObject",
+      "status": 200,
+      "sha256": "54ed913eabb8823c18d266d198f3bbba5636f021bcd7a17334e4cb3f1bacb1c6",
+      "seconds": 0.735
+    },
+    {
+      "case": "ArchiveObject",
+      "status": 200,
+      "sha256": "72e84f3bce2ae7d0a75bbcca755e657cc6cac95f4be6c461314f72f9a5f78329",
+      "seconds": 1.624
+    },
+    {
+      "case": "CarnivalEvent",
+      "status": 200,
+      "sha256": "196730024cdf1527ef10a245e7f28fe1b2ee3acdf1c9f7e090bd51dd08bcfb3a",
+      "seconds": 1.091
+    },
+    {
+      "case": "Agent",
+      "status": 200,
+      "sha256": "775a28bba9f470d21fb434d42d6a66f7bf81f7c37cdfe90e0e5ca84e65009c70",
+      "seconds": 1.347
+    },
+    {
+      "case": "Person",
+      "status": 200,
+      "sha256": "96835f67cb1c00a9132134297dee3e09aaa39ca402180956c24264dbd4df23e6",
+      "seconds": 1.816
+    },
+    {
+      "case": "Organisation",
+      "status": 200,
+      "sha256": "efffdd7ffbe480c84778eb37f6fbbef79c7593bdc6a6b190fc4c13054da77d41",
+      "seconds": 2.047
+    },
+    {
+      "case": "ExternalSource",
+      "status": 200,
+      "sha256": "d92c462be326e8445a78dadffc7699f3e524a2313b7f373699ae24589b5fa807",
+      "seconds": 1.4
+    },
+    {
+      "case": "Story",
+      "status": 200,
+      "sha256": "903a13df09f5c0e9d1e226ab549fd110d0d498eb0f9d4842f616229e9beec743",
+      "seconds": 0.54
+    },
+    {
+      "case": "ObjectTaxonomy",
+      "status": 200,
+      "sha256": "a5a501d1b7f49a9f0cb58d06fc3a5c39c69e4712b0dca89b55c79d0a379f2318",
+      "seconds": 0.036
+    },
+    {
+      "case": "CarnivalEventTaxonomy",
+      "status": 200,
+      "sha256": "2c9a3717fd5319507f27f87311aa4b3d5a56e1710c42dde03e2cd34228c8a0f9",
+      "seconds": 0.036
+    },
+    {
+      "case": "OrganisationTaxonomy",
+      "status": 200,
+      "sha256": "4fda8cf4799f3f9323345156444db1565c5d52082e164cebd21a031151982200",
+      "seconds": 0.041
+    },
+    {
+      "case": "anonymous-profile",
+      "status": 200,
+      "sha256": "8efcb0e9c5533914245a9ef3e7186a03aee77f2a45e18bef6e2377ba3913a83e",
+      "seconds": 1.535
+    },
+    {
+      "case": "ArchiveMediaObject",
+      "status": 200,
+      "sha256": "54ed913eabb8823c18d266d198f3bbba5636f021bcd7a17334e4cb3f1bacb1c6",
+      "seconds": 0.477
+    },
+    {
+      "case": "ArchiveObject",
+      "status": 200,
+      "sha256": "72e84f3bce2ae7d0a75bbcca755e657cc6cac95f4be6c461314f72f9a5f78329",
+      "seconds": 1.173
+    },
+    {
+      "case": "CarnivalEvent",
+      "status": 200,
+      "sha256": "196730024cdf1527ef10a245e7f28fe1b2ee3acdf1c9f7e090bd51dd08bcfb3a",
+      "seconds": 1.854
+    },
+    {
+      "case": "Agent",
+      "status": 200,
+      "sha256": "775a28bba9f470d21fb434d42d6a66f7bf81f7c37cdfe90e0e5ca84e65009c70",
+      "seconds": 1.466
+    },
+    {
+      "case": "Person",
+      "status": 200,
+      "sha256": "96835f67cb1c00a9132134297dee3e09aaa39ca402180956c24264dbd4df23e6",
+      "seconds": 0.393
+    },
+    {
+      "case": "Organisation",
+      "status": 200,
+      "sha256": "efffdd7ffbe480c84778eb37f6fbbef79c7593bdc6a6b190fc4c13054da77d41",
+      "seconds": 0.391
+    },
+    {
+      "case": "ExternalSource",
+      "status": 200,
+      "sha256": "d92c462be326e8445a78dadffc7699f3e524a2313b7f373699ae24589b5fa807",
+      "seconds": 1.517
+    },
+    {
+      "case": "Story",
+      "status": 200,
+      "sha256": "903a13df09f5c0e9d1e226ab549fd110d0d498eb0f9d4842f616229e9beec743",
+      "seconds": 1.421
+    },
+    {
+      "case": "ObjectTaxonomy",
+      "status": 200,
+      "sha256": "a5a501d1b7f49a9f0cb58d06fc3a5c39c69e4712b0dca89b55c79d0a379f2318",
+      "seconds": 1.071
+    },
+    {
+      "case": "CarnivalEventTaxonomy",
+      "status": 200,
+      "sha256": "2c9a3717fd5319507f27f87311aa4b3d5a56e1710c42dde03e2cd34228c8a0f9",
+      "seconds": 1.262
+    },
+    {
+      "case": "OrganisationTaxonomy",
+      "status": 200,
+      "sha256": "4fda8cf4799f3f9323345156444db1565c5d52082e164cebd21a031151982200",
+      "seconds": 1.068
+    },
+    {
+      "case": "anonymous-profile",
+      "status": 200,
+      "sha256": "8efcb0e9c5533914245a9ef3e7186a03aee77f2a45e18bef6e2377ba3913a83e",
+      "seconds": 1.254
+    },
+    {
+      "case": "ArchiveMediaObject",
+      "status": 200,
+      "sha256": "db6c3b9488f2c9a48aababf65958cca506940f8618eb771db2765a7aa38aabb6",
+      "seconds": 0.651
+    },
+    {
+      "case": "ArchiveObject",
+      "status": 200,
+      "sha256": "72e84f3bce2ae7d0a75bbcca755e657cc6cac95f4be6c461314f72f9a5f78329",
+      "seconds": 0.494
+    },
+    {
+      "case": "CarnivalEvent",
+      "status": 200,
+      "sha256": "196730024cdf1527ef10a245e7f28fe1b2ee3acdf1c9f7e090bd51dd08bcfb3a",
+      "seconds": 1.382
+    },
+    {
+      "case": "Agent",
+      "status": 200,
+      "sha256": "775a28bba9f470d21fb434d42d6a66f7bf81f7c37cdfe90e0e5ca84e65009c70",
+      "seconds": 1.129
+    },
+    {
+      "case": "Person",
+      "status": 200,
+      "sha256": "96835f67cb1c00a9132134297dee3e09aaa39ca402180956c24264dbd4df23e6",
+      "seconds": 1.136
+    },
+    {
+      "case": "Organisation",
+      "status": 200,
+      "sha256": "efffdd7ffbe480c84778eb37f6fbbef79c7593bdc6a6b190fc4c13054da77d41",
+      "seconds": 1.116
+    },
+    {
+      "case": "ExternalSource",
+      "status": 200,
+      "sha256": "d92c462be326e8445a78dadffc7699f3e524a2313b7f373699ae24589b5fa807",
+      "seconds": 0.568
+    },
+    {
+      "case": "Story",
+      "status": 200,
+      "sha256": "903a13df09f5c0e9d1e226ab549fd110d0d498eb0f9d4842f616229e9beec743",
+      "seconds": 0.427
+    },
+    {
+      "case": "ObjectTaxonomy",
+      "status": 200,
+      "sha256": "a5a501d1b7f49a9f0cb58d06fc3a5c39c69e4712b0dca89b55c79d0a379f2318",
+      "seconds": 0.941
+    },
+    {
+      "case": "CarnivalEventTaxonomy",
+      "status": 200,
+      "sha256": "2c9a3717fd5319507f27f87311aa4b3d5a56e1710c42dde03e2cd34228c8a0f9",
+      "seconds": 0.929
+    },
+    {
+      "case": "OrganisationTaxonomy",
+      "status": 200,
+      "sha256": "4fda8cf4799f3f9323345156444db1565c5d52082e164cebd21a031151982200",
+      "seconds": 0.658
+    },
+    {
+      "case": "anonymous-profile",
+      "status": 200,
+      "sha256": "8efcb0e9c5533914245a9ef3e7186a03aee77f2a45e18bef6e2377ba3913a83e",
+      "seconds": 0.791
+    }
+  ]
+}

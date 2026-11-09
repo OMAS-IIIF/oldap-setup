@@ -1,0 +1,726 @@
+{
+  "snapshot_id": "20261106-studio-timed-02",
+  "producer": {
+    "returncode": 0,
+    "elapsed_seconds": 887.0959888750222,
+    "phases": [
+      {
+        "seconds": 3.429448999930173,
+        "task": "Gathering Facts"
+      },
+      {
+        "seconds": 4.8484033329878,
+        "task": "Require explicit home snapshot identifier"
+      },
+      {
+        "seconds": 4.863456457853317,
+        "task": "Require the current API to select Jena"
+      },
+      {
+        "seconds": 5.381834040861577,
+        "task": "Inventory running API-host containers"
+      },
+      {
+        "seconds": 5.739448457956314,
+        "task": "Inventory running media-host containers"
+      },
+      {
+        "seconds": 6.491125250002369,
+        "task": "Refuse unexpected writers or an already stopped stack"
+      },
+      {
+        "seconds": 6.510306040989235,
+        "task": "Inspect API backup destination"
+      },
+      {
+        "seconds": 6.967528790934011,
+        "task": "Inspect media backup destination"
+      },
+      {
+        "seconds": 7.2916349158622324,
+        "task": "Refuse overwrite of either snapshot"
+      },
+      {
+        "seconds": 7.305469040991738,
+        "task": "Create private API snapshot directory"
+      },
+      {
+        "seconds": 7.719580374890938,
+        "task": "Create private media snapshot directory"
+      },
+      {
+        "seconds": 8.11294495803304,
+        "task": "Drain the home stack"
+      },
+      {
+        "seconds": 8.13458999991417,
+        "task": "Detect installed namespace recovery"
+      },
+      {
+        "seconds": 8.523535749875009,
+        "task": "Pause automatic recovery and wait for any active repair before maintenance"
+      },
+      {
+        "seconds": 8.881513874977827,
+        "task": "Quiesce ingress and media writers"
+      },
+      {
+        "seconds": 8.896444000070915,
+        "task": "Require a drain-capable mobile worker before selecting SIGTERM maintenance"
+      },
+      {
+        "seconds": 9.563085875008255,
+        "task": "Close media ingress"
+      },
+      {
+        "seconds": 10.109119582921267,
+        "task": "Stop media writers while API is still available to finish work"
+      },
+      {
+        "seconds": 11.160833915928379,
+        "task": "Require unused mobile registry for legacy interrupt shutdown"
+      },
+      {
+        "seconds": 11.1749859158881,
+        "task": "Stop mobile worker with the explicitly selected signal"
+      },
+      {
+        "seconds": 11.695624958025292,
+        "task": "Close API ingress after media workers have finished"
+      },
+      {
+        "seconds": 12.234135875012726,
+        "task": "Stop the optional console before its namespace owner"
+      },
+      {
+        "seconds": 12.249075874919072,
+        "task": "Verify clean optional console shutdown"
+      },
+      {
+        "seconds": 12.260301375063136,
+        "task": "Stop API and callback consumers before their namespace owner"
+      },
+      {
+        "seconds": 13.234544832957909,
+        "task": "Stop Jena and persist Redis coordination state"
+      },
+      {
+        "seconds": 14.186881915898994,
+        "task": "Require cleanly stopped API state"
+      },
+      {
+        "seconds": 14.603942082962021,
+        "task": "Require cleanly stopped media writers"
+      },
+      {
+        "seconds": 15.035227499902248,
+        "task": "Record API host image provenance"
+      },
+      {
+        "seconds": 15.446375540923327,
+        "task": "Record media host image provenance"
+      },
+      {
+        "seconds": 15.868556832894683,
+        "task": "Archive stopped dataset, release, API state, Redis and configuration"
+      },
+      {
+        "seconds": 39.00928399991244,
+        "task": "Archive media, operation state and configuration"
+      },
+      {
+        "seconds": 523.1054882078897,
+        "task": "Restrict API archive permissions"
+      },
+      {
+        "seconds": 524.1797024579719,
+        "task": "Restrict media archive permissions"
+      },
+      {
+        "seconds": 524.5681562910322,
+        "task": "Compare API archive with still-stopped source files"
+      },
+      {
+        "seconds": 550.8288895408623,
+        "task": "Compare media archive with still-stopped source files"
+      },
+      {
+        "seconds": 674.6859593328554,
+        "task": "Recover the home stack in namespace order"
+      },
+      {
+        "seconds": 674.7080933749676,
+        "task": "Restart storage and namespace owner"
+      },
+      {
+        "seconds": 678.800122207962,
+        "task": "Wait for the existing dataset to become ready"
+      },
+      {
+        "seconds": 681.6547700408846,
+        "task": "Recreate identity in the restarted backend namespace"
+      },
+      {
+        "seconds": 687.9506992909592,
+        "task": "Recreate API in the restarted backend namespace"
+      },
+      {
+        "seconds": 694.1070287078619,
+        "task": "Recreate optional console in the restarted backend namespace"
+      },
+      {
+        "seconds": 694.1331998328678,
+        "task": "Verify native administration before opening ingress"
+      },
+      {
+        "seconds": 694.1465460408945,
+        "task": "Reopen API ingress for media workers"
+      },
+      {
+        "seconds": 694.6407554580364,
+        "task": "Resume existing media writers"
+      },
+      {
+        "seconds": 695.4683411659207,
+        "task": "Reopen media ingress"
+      },
+      {
+        "seconds": 695.9501476250589,
+        "task": "Detect installed namespace recovery after successful coordinated start"
+      },
+      {
+        "seconds": 696.3124786249828,
+        "task": "Resume automatic recovery only after all services have recovered"
+      },
+      {
+        "seconds": 696.7149924999103,
+        "task": "Hash API snapshot"
+      },
+      {
+        "seconds": 742.8891545829829,
+        "task": "Hash media snapshot"
+      },
+      {
+        "seconds": 883.9763298749458,
+        "task": "Record completed snapshot manifest"
+      },
+      {
+        "seconds": 885.3985642499756,
+        "task": "Allow receiver account to traverse the API snapshot"
+      },
+      {
+        "seconds": 885.71961241588,
+        "task": "Allow receiver account to read the API archive"
+      },
+      {
+        "seconds": 886.0371906659566,
+        "task": "Allow receiver account to traverse the media snapshot"
+      },
+      {
+        "seconds": 886.3846991660539,
+        "task": "Allow receiver account to read the media archive"
+      },
+      {
+        "seconds": 886.7180424579419,
+        "task": "Publish ready marker last after both archives are accessible"
+      }
+    ]
+  },
+  "availability": {
+    "api.home.org": {
+      "first_failed_probe_seconds": 13.17398920794949,
+      "first_recovered_probe_seconds": 695.6171457080636,
+      "observed_seconds": 682.4431565001141,
+      "sampling_lower_bound_seconds": 679.3230004999787,
+      "sampling_upper_bound_seconds": 685.950818833895,
+      "samples": 326,
+      "failed_samples": 224,
+      "endpoint": "/status"
+    },
+    "media.home.org": {
+      "first_failed_probe_seconds": 10.15815837495029,
+      "first_recovered_probe_seconds": 695.6185462500434,
+      "observed_seconds": 685.4603878750931,
+      "sampling_lower_bound_seconds": 681.4203907500487,
+      "sampling_upper_bound_seconds": 688.5252374999691,
+      "samples": 326,
+      "failed_samples": 225,
+      "endpoint": "/health"
+    }
+  },
+  "phase_seconds": {
+    "Gathering Facts": 1.418954333057627,
+    "Require explicit home snapshot identifier": 0.01505312486551702,
+    "Require the current API to select Jena": 0.5183775830082595,
+    "Inventory running API-host containers": 0.3576144170947373,
+    "Inventory running media-host containers": 0.7516767920460552,
+    "Refuse unexpected writers or an already stopped stack": 0.01918079098686576,
+    "Inspect API backup destination": 0.4572227499447763,
+    "Inspect media backup destination": 0.3241061249282211,
+    "Refuse overwrite of either snapshot": 0.013834125129505992,
+    "Create private API snapshot directory": 0.41411133389919996,
+    "Create private media snapshot directory": 0.39336458314210176,
+    "Drain the home stack": 0.021645041881129146,
+    "Detect installed namespace recovery": 0.38894574996083975,
+    "Pause automatic recovery and wait for any active repair before maintenance": 0.357978125102818,
+    "Quiesce ingress and media writers": 0.014930125093087554,
+    "Require a drain-capable mobile worker before selecting SIGTERM maintenance": 0.6666418749373406,
+    "Close media ingress": 0.5460337079130113,
+    "Stop media writers while API is still available to finish work": 1.0517143330071121,
+    "Require unused mobile registry for legacy interrupt shutdown": 0.014151999959722161,
+    "Stop mobile worker with the explicitly selected signal": 0.5206390421371907,
+    "Close API ingress after media workers have finished": 0.538510916987434,
+    "Stop the optional console before its namespace owner": 0.014939999906346202,
+    "Verify clean optional console shutdown": 0.011225500144064426,
+    "Stop API and callback consumers before their namespace owner": 0.9742434578947723,
+    "Stop Jena and persist Redis coordination state": 0.9523370829410851,
+    "Require cleanly stopped API state": 0.4170601670630276,
+    "Require cleanly stopped media writers": 0.43128541694022715,
+    "Record API host image provenance": 0.4111480410210788,
+    "Record media host image provenance": 0.4221812919713557,
+    "Archive stopped dataset, release, API state, Redis and configuration": 23.140727167017758,
+    "Archive media, operation state and configuration": 484.0962042079773,
+    "Restrict API archive permissions": 1.07421425008215,
+    "Restrict media archive permissions": 0.3884538330603391,
+    "Compare API archive with still-stopped source files": 26.260733249830082,
+    "Compare media archive with still-stopped source files": 123.85706979199313,
+    "Recover the home stack in namespace order": 0.02213404211215675,
+    "Restart storage and namespace owner": 4.0920288329944015,
+    "Wait for the existing dataset to become ready": 2.8546478329226375,
+    "Recreate identity in the restarted backend namespace": 6.2959292500745505,
+    "Recreate API in the restarted backend namespace": 6.156329416902736,
+    "Recreate optional console in the restarted backend namespace": 0.026171125005930662,
+    "Verify native administration before opening ingress": 0.013346208026632667,
+    "Reopen API ingress for media workers": 0.494209417141974,
+    "Resume existing media writers": 0.8275857078842819,
+    "Reopen media ingress": 0.4818064591381699,
+    "Detect installed namespace recovery after successful coordinated start": 0.36233099992386997,
+    "Resume automatic recovery only after all services have recovered": 0.40251387492753565,
+    "Hash API snapshot": 46.17416208307259,
+    "Hash media snapshot": 141.08717529196292,
+    "Record completed snapshot manifest": 1.4222343750298023,
+    "Allow receiver account to traverse the API snapshot": 0.32104816590435803,
+    "Allow receiver account to read the API archive": 0.31757825007662177,
+    "Allow receiver account to traverse the media snapshot": 0.3475085000973195,
+    "Allow receiver account to read the media archive": 0.3333432918880135
+  },
+  "status": "passed",
+  "before_public": {
+    "checks": [
+      "API selects Jena",
+      "GraphDB is stopped",
+      "Private Jena backend has no published ports",
+      "oldap-api running",
+      "compose-oldap-jena-1 running",
+      "compose-oldap-jena-identity-1 running",
+      "redis running",
+      "caddy running",
+      "API /status HTTP 200",
+      "Existing administrator can log in",
+      "Media upload accepts a fresh API token before form validation",
+      "Media upload rejects missing or invalid access token",
+      "Media upload rejects missing or invalid access token",
+      "API /admin/auth/unknown HTTP 200",
+      "Proxy blocks private identity callback",
+      "Proxy blocks private identity callback",
+      "Export worker route reaches service authentication without proxy shadowing",
+      "API /data/search/fasnacht/class/fasnacht:Story HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "Nonempty fulltext AND search is independent of word order",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 HTTP 200",
+      "Signed IIIF metadata delivered by home media service",
+      "Signed image delivered as JPEG",
+      "fasnacht.home.org page available",
+      "app.home.org page available"
+    ],
+    "images": {
+      "oldap-api": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "compose-oldap-jena-1": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+      "compose-oldap-jena-identity-1": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "graphdb": "ontotext/graphdb:11.3.0",
+      "redis": "redis:7-alpine",
+      "caddy": "caddy:2.8"
+    },
+    "stories": 30,
+    "stories_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "fulltext_matches": 10,
+    "image_bytes": 9898,
+    "status": "passed"
+  },
+  "after_public": {
+    "checks": [
+      "API selects Jena",
+      "GraphDB is stopped",
+      "Private Jena backend has no published ports",
+      "oldap-api running",
+      "compose-oldap-jena-1 running",
+      "compose-oldap-jena-identity-1 running",
+      "redis running",
+      "caddy running",
+      "API /status HTTP 200",
+      "Existing administrator can log in",
+      "Media upload accepts a fresh API token before form validation",
+      "Media upload rejects missing or invalid access token",
+      "Media upload rejects missing or invalid access token",
+      "API /admin/auth/unknown HTTP 200",
+      "Proxy blocks private identity callback",
+      "Proxy blocks private identity callback",
+      "Export worker route reaches service authentication without proxy shadowing",
+      "API /data/search/fasnacht/class/fasnacht:Story HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "Nonempty fulltext AND search is independent of word order",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 HTTP 200",
+      "Signed IIIF metadata delivered by home media service",
+      "Signed image delivered as JPEG",
+      "fasnacht.home.org page available",
+      "app.home.org page available"
+    ],
+    "images": {
+      "oldap-api": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "compose-oldap-jena-1": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+      "compose-oldap-jena-identity-1": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "graphdb": "ontotext/graphdb:11.3.0",
+      "redis": "redis:7-alpine",
+      "caddy": "caddy:2.8"
+    },
+    "stories": 30,
+    "stories_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "fulltext_matches": 10,
+    "image_bytes": 9898,
+    "status": "passed"
+  },
+  "before_functional": {
+    "checks": [
+      "API /status returns 200",
+      "API /admin/auth/[account] returns 200",
+      "API /admin/auth/[account] returns 200",
+      "API /archive/fasnacht/publication/capabilities returns 200",
+      "API /archive/fasnacht/publication/capabilities returns 200",
+      "Publication capabilities distinguish administrator and public user",
+      "Upload rejects absent/invalid token",
+      "Upload rejects absent/invalid token",
+      "Fresh restored token accepted before form validation",
+      "API /data/search/fasnacht/class/fasnacht:Story returns 200",
+      "API /data/search/fasnacht/class/fasnacht:ArchiveObject returns 200",
+      "Archive overview has results",
+      "API /data/search/fasnacht returns 200",
+      "API /data/search/fasnacht returns 200",
+      "Fulltext AND results nonempty and word-order independent",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 returns 200",
+      "Restored signed IIIF metadata",
+      "Restored signed JPEG"
+    ],
+    "admin_capabilities_sha256": "43a8d76d263a5b9c1dcc56451e966922bbfd6bfd34d7f67ae73b8c2281afa100",
+    "public_capabilities_sha256": "088a70a7588f1db196e6ccdf10d58bbf6de2a8d54f65edc1ac3181751bfd71a2",
+    "stories": 30,
+    "stories_sha256": "26975a21d9088bdb0a86dc185120881b8b6ac2c4e40579f223a1e3337b52f012",
+    "stories_rdf_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "archive_objects": 100,
+    "archive_sha256": "aa649936245fed8d80fe3f3405f99dc72d001eaab857168f7d4b090b91cc6ef2",
+    "fulltext_matches": 10,
+    "fulltext_sha256": "de5f24b3a795b9e229bd543258f1ca8cbe43fb476588c9d30810e2d28946a48a",
+    "iiif_dimensions": {
+      "width": 1589,
+      "height": 2914
+    },
+    "image_bytes": 9898,
+    "image_sha256": "94c924b11db83f628511f9d1b948f2b916423214aa43fc06f85976daaa506799",
+    "status": "passed"
+  },
+  "after_functional": {
+    "checks": [
+      "API /status returns 200",
+      "API /admin/auth/[account] returns 200",
+      "API /admin/auth/[account] returns 200",
+      "API /archive/fasnacht/publication/capabilities returns 200",
+      "API /archive/fasnacht/publication/capabilities returns 200",
+      "Publication capabilities distinguish administrator and public user",
+      "Upload rejects absent/invalid token",
+      "Upload rejects absent/invalid token",
+      "Fresh restored token accepted before form validation",
+      "API /data/search/fasnacht/class/fasnacht:Story returns 200",
+      "API /data/search/fasnacht/class/fasnacht:ArchiveObject returns 200",
+      "Archive overview has results",
+      "API /data/search/fasnacht returns 200",
+      "API /data/search/fasnacht returns 200",
+      "Fulltext AND results nonempty and word-order independent",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 returns 200",
+      "Restored signed IIIF metadata",
+      "Restored signed JPEG"
+    ],
+    "admin_capabilities_sha256": "43a8d76d263a5b9c1dcc56451e966922bbfd6bfd34d7f67ae73b8c2281afa100",
+    "public_capabilities_sha256": "088a70a7588f1db196e6ccdf10d58bbf6de2a8d54f65edc1ac3181751bfd71a2",
+    "stories": 30,
+    "stories_sha256": "26975a21d9088bdb0a86dc185120881b8b6ac2c4e40579f223a1e3337b52f012",
+    "stories_rdf_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "archive_objects": 100,
+    "archive_sha256": "aa649936245fed8d80fe3f3405f99dc72d001eaab857168f7d4b090b91cc6ef2",
+    "fulltext_matches": 10,
+    "fulltext_sha256": "de5f24b3a795b9e229bd543258f1ca8cbe43fb476588c9d30810e2d28946a48a",
+    "iiif_dimensions": {
+      "width": 1589,
+      "height": 2914
+    },
+    "image_bytes": 9898,
+    "image_sha256": "94c924b11db83f628511f9d1b948f2b916423214aa43fc06f85976daaa506799",
+    "status": "passed"
+  },
+  "semantic_functional_equality": true,
+  "studio": {
+    "snapshot_id": "20261106-studio-timed-02",
+    "status": "passed",
+    "steps": {
+      "pull": {
+        "seconds": 256.5834541660006,
+        "returncode": 0
+      },
+      "borg-create": {
+        "seconds": 67.42109862499638,
+        "returncode": 0
+      },
+      "borg-check": {
+        "seconds": 51.93380945899844,
+        "returncode": 0
+      },
+      "borg-extract": {
+        "seconds": 46.71301333299925,
+        "returncode": 0
+      },
+      "restored-hashes": {
+        "seconds": 21.02472183300415,
+        "status": "passed"
+      }
+    },
+    "manifest": {
+      "api": {
+        "bytes": 28702310400,
+        "path": "/srv/storage/oldap-jena-snapshot-20261106-studio-timed-02/api.tar",
+        "sha256": "6a807cbf86acb833c44076b257961564a25944ab814fcd3ae1a0cbb6c628e5ef"
+      },
+      "images": {
+        "api": {
+          "caddy": {
+            "architecture": "amd64",
+            "configured_reference": "caddy:2.8",
+            "image_id": "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f",
+            "os": "linux",
+            "repo_digests": [
+              "caddy@sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f"
+            ],
+            "variant": ""
+          },
+          "compose-oldap-jena-1": {
+            "architecture": "amd64",
+            "configured_reference": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+            "image_id": "sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+            "os": "linux",
+            "repo_digests": [
+              "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0"
+            ],
+            "variant": ""
+          },
+          "compose-oldap-jena-identity-1": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+            "image_id": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def"
+            ],
+            "variant": ""
+          },
+          "compose-salsah-2-1": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/salsah-2:jena-0.0.2-rc1-47f138b8070c-amd64@sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3",
+            "image_id": "sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/salsah-2@sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3"
+            ],
+            "variant": ""
+          },
+          "fasnachts-page": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/fasnachts-page:jena-0.1.49-rc1-21d046f8dd07-amd64@sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9",
+            "image_id": "sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/fasnachts-page@sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9"
+            ],
+            "variant": ""
+          },
+          "oldap-api": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+            "image_id": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def"
+            ],
+            "variant": ""
+          },
+          "oldap-app": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/oldap-app:jena-0.2.7-rc1-6e5e392b8e5a-amd64@sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7",
+            "image_id": "sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/oldap-app@sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7"
+            ],
+            "variant": ""
+          },
+          "redis": {
+            "architecture": "amd64",
+            "configured_reference": "redis:7-alpine",
+            "image_id": "sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99",
+            "os": "linux",
+            "repo_digests": [
+              "redis@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99"
+            ],
+            "variant": ""
+          }
+        },
+        "media": {
+          "oldap-export-worker": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+            "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+            ],
+            "variant": ""
+          },
+          "oldap-imageserver": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/sipi-2:0.1.0",
+            "image_id": "sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/sipi-2@sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5"
+            ],
+            "variant": ""
+          },
+          "oldap-ingest-worker": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+            "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+            ],
+            "variant": ""
+          },
+          "oldap-media-caddy": {
+            "architecture": "amd64",
+            "configured_reference": "caddy:2.8",
+            "image_id": "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f",
+            "os": "linux",
+            "repo_digests": [
+              "caddy@sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f"
+            ],
+            "variant": ""
+          },
+          "oldap-mediahelper": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+            "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+            ],
+            "variant": ""
+          },
+          "oldap-mobile-media-worker": {
+            "architecture": "amd64",
+            "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+            "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+            "os": "linux",
+            "repo_digests": [
+              "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+            ],
+            "variant": ""
+          }
+        }
+      },
+      "media": {
+        "bytes": 21153853440,
+        "host": "media.home.org",
+        "path": "/data/oldap-jena-snapshot-20261106-studio-timed-02/media.tar",
+        "sha256": "ee3a2bd469e21c1a33499b465c551f999a1e392eb119ec3080aa38064d021caa"
+      },
+      "snapshot_id": "20261106-studio-timed-02",
+      "status": "offline-compared"
+    }
+  },
+  "borg_archive_stats": {
+    "compressed_size": 11081888373,
+    "deduplicated_size": 2101094855,
+    "nfiles": 3,
+    "original_size": 49856171036
+  },
+  "availability_transition_evidence": {
+    "api.home.org": [
+      {
+        "host": "api.home.org",
+        "start_seconds": 10.156783665996045,
+        "end_seconds": 10.177111082943156,
+        "status": "200",
+        "ok": true
+      },
+      {
+        "host": "api.home.org",
+        "start_seconds": 13.17398920794949,
+        "end_seconds": 13.269531165948138,
+        "status": "000",
+        "ok": false
+      },
+      {
+        "host": "api.home.org",
+        "start_seconds": 692.5925316659268,
+        "end_seconds": 692.6992876660079,
+        "status": "000",
+        "ok": false
+      },
+      {
+        "host": "api.home.org",
+        "start_seconds": 695.6171457080636,
+        "end_seconds": 696.1076024998911,
+        "status": "200",
+        "ok": true
+      }
+    ],
+    "media.home.org": [
+      {
+        "host": "media.home.org",
+        "start_seconds": 8.127033333061263,
+        "end_seconds": 8.151587165892124,
+        "status": "200",
+        "ok": true
+      },
+      {
+        "host": "media.home.org",
+        "start_seconds": 10.15815837495029,
+        "end_seconds": 11.172231457894668,
+        "status": "000",
+        "ok": false
+      },
+      {
+        "host": "media.home.org",
+        "start_seconds": 692.5926222079434,
+        "end_seconds": 693.6129439158831,
+        "status": "000",
+        "ok": false
+      },
+      {
+        "host": "media.home.org",
+        "start_seconds": 695.6185462500434,
+        "end_seconds": 696.6522708330303,
+        "status": "200",
+        "ok": true
+      }
+    ]
+  }
+}

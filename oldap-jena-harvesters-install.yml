@@ -1,0 +1,115 @@
+---
+# Install explicit candidate batch images/launchers only; never start harvesting.
+- name: Configure accepted Jena harvester images on home
+  hosts: oldap_home
+  become: true
+  vars:
+    ansible_become_exe: /usr/bin/sudo.ws
+  tasks:
+    - name: Require home and published immutable candidate digests
+      ansible.builtin.assert:
+        that:
+          - ansible_host == 'api.home.org'
+          - oldap_jena_harvesters_image is match('^lrosenth/oldap-harvesters@sha256:[a-f0-9]{64}$')
+          - oldap_jena_harvesters_ocr_image is match('^lrosenth/oldap-harvesters@sha256:[a-f0-9]{64}$')
+    - name: Require the running API to select Jena
+      ansible.builtin.command:
+        argv: [docker, exec, oldap-api, python, -c, 'import os; assert os.environ["OLDAP_BACKEND"] == "jena"']
+      changed_when: false
+    - name: Check required existing harvester credential files
+      ansible.builtin.stat:
+        path: '/srv/storage/oldap-data/oldap-harvesters/secrets/{{ item }}'
+        get_checksum: false
+      loop: [oldap.password, europeana.key]
+      register: harvester_credentials
+      no_log: true
+    - name: Require nonempty harvester credentials before installation
+      ansible.builtin.assert:
+        that:
+          - item.stat.isreg | default(false)
+          - item.stat.size | default(0) > 0
+        fail_msg: Install the approved OLDAP and Europeana credential files before enabling harvesters.
+      loop: '{{ harvester_credentials.results }}'
+      no_log: true
+    - name: Pull exact candidate images before changing configuration
+      ansible.builtin.command:
+        argv: [docker, pull, '{{ item }}']
+      loop: ['{{ oldap_jena_harvesters_image }}', '{{ oldap_jena_harvesters_ocr_image }}']
+    - name: Verify library/backend and both CLI entrypoints without configuration or writes
+      ansible.builtin.command:
+        argv: [docker, run, --rm, --entrypoint, python, '{{ item }}', -c, 'import importlib.metadata as m; from oldaplib.src.jena_connection import JenaConnection; from oldap_harvesters.cli import main; from oldap_harvesters.swisscovery_cli import main as swisscovery; assert m.version("oldaplib").startswith("1.")']
+      loop: ['{{ oldap_jena_harvesters_image }}', '{{ oldap_jena_harvesters_ocr_image }}']
+      changed_when: false
+    # First installation may need the approved source settings and OCR model.
+    # Existing operational inputs are retained; subsequent installs can omit them.
+    - name: Create private persistent Swisscovery directories
+      ansible.builtin.file:
+        path: '/srv/storage/oldap-data/oldap-harvesters/swisscovery/{{ item }}'
+        state: directory
+        mode: '0700'
+      loop: ['', reports, locks]
+    - name: Install supplied first-install inputs without replacing operational files
+      ansible.builtin.copy:
+        src: '{{ item.source }}'
+        dest: '/srv/storage/oldap-data/oldap-harvesters/swisscovery/{{ item.name }}'
+        force: false
+        mode: '0600'
+      when: item.source | length > 0
+      loop:
+        - {source: '{{ oldap_jena_harvesters_config_source | default("") }}', name: config.toml}
+        - {source: '{{ oldap_jena_harvesters_model_source | default("") }}', name: german_print.mlmodel}
+      no_log: true
+    - name: Verify the approved installed OCR model checksum
+      ansible.builtin.stat:
+        path: /srv/storage/oldap-data/oldap-harvesters/swisscovery/german_print.mlmodel
+        checksum_algorithm: sha256
+      register: installed_ocr_model
+    - name: Require the previously validated German print model
+      ansible.builtin.assert:
+        that: installed_ocr_model.stat.checksum | default('') == '542970897c3d4d4283e536d3270d86a91708ea2bff9b2bed97a1d5c7f6a569fe'
+    - name: Validate source configuration without connecting
+      ansible.builtin.command:
+        argv:
+          - docker
+          - run
+          - --rm
+          - --network=none
+          - -v
+          - /srv/storage/oldap-data/oldap-harvesters/swisscovery/config.toml:/run/swisscovery/config.toml:ro
+          - --entrypoint=python
+          - '{{ oldap_jena_harvesters_ocr_image }}'
+          - -c
+          - 'from oldap_harvesters.config import load_config; c=load_config("/run/swisscovery/config.toml"); assert c.oldap and c.swisscovery.external_source and c.fasnacht.permissions'
+      changed_when: false
+      no_log: true
+    - name: Preserve installed environment privately
+      ansible.builtin.copy:
+        remote_src: true
+        src: /opt/oldap/compose/.env
+        dest: '/opt/oldap/compose/.env.before-jena-harvesters-{{ ansible_facts["date_time"]["iso8601_basic_short"] }}'
+        mode: '0600'
+        force: false
+      no_log: true
+    - name: Install batch-only image overlays
+      ansible.builtin.copy:
+        src: '{{ item }}'
+        dest: '/opt/oldap/compose/{{ item }}'
+        mode: '0644'
+      loop: [jena-harvesters-compose.yml, jena-swisscovery-compose.yml, swisscovery-compose.yml]
+    - name: Install backend-aware launchers
+      ansible.builtin.copy:
+        src: 'scripts/{{ item }}'
+        dest: '/opt/oldap/compose/{{ item }}'
+        mode: '0755'
+        backup: true
+      loop: [run-harvester.sh, run-swisscovery.sh]
+    - name: Select explicit standard and OCR images without changing the active stack
+      ansible.builtin.lineinfile:
+        path: /opt/oldap/compose/.env
+        regexp: '^{{ item.key }}='
+        line: '{{ item.key }}={{ item.value }}'
+        mode: '0600'
+      loop:
+        - {key: OLDAP_JENA_HARVESTERS_IMAGE, value: '{{ oldap_jena_harvesters_image }}'}
+        - {key: OLDAP_JENA_HARVESTERS_OCR_IMAGE, value: '{{ oldap_jena_harvesters_ocr_image }}'}
+      no_log: true

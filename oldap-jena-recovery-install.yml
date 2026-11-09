@@ -1,0 +1,13 @@
+---
+# Home entry point preserves its existing enabled recovery behavior.
+- name: Install automatic Jena namespace recovery on home
+  hosts: oldap_home
+  become: true
+  vars:
+    ansible_become_exe: /usr/bin/sudo.ws
+  tasks:
+    - name: Require the home test host
+      ansible.builtin.assert:
+        that: ansible_host == 'api.home.org'
+    - name: Install reviewed recovery implementation on home
+      ansible.builtin.include_tasks: tasks/jena-recovery-install.yml

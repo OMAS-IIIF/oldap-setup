@@ -1,0 +1,42 @@
+---
+# Quiesce home ingress and media writers while the API can finish their work.
+- name: Require a drain-capable mobile worker before selecting SIGTERM maintenance
+  ansible.builtin.command:
+    argv: [docker, exec, oldap-mobile-media-worker, python, -c, 'import inspect; from mobile_upload_worker import MobileUploadWorker; assert "stop" in inspect.signature(MobileUploadWorker.run_forever).parameters, "Deploy a drain-capable worker before SIGTERM maintenance"']
+  when: mobile_stop_signal == 'SIGTERM'
+  delegate_to: '{{ media_host }}'
+  changed_when: false
+- name: Close media ingress
+  ansible.builtin.command: docker stop --timeout 90 oldap-media-caddy
+  delegate_to: '{{ media_host }}'
+- name: Stop media writers while API is still available to finish work
+  ansible.builtin.command:
+    argv: '{{ ["docker", "stop", "--timeout", "90"] + (media_writers | reject("equalto", "oldap-mobile-media-worker") | list) }}'
+  delegate_to: '{{ media_host }}'
+# Legacy mobile PID 1 ignores SIGTERM. SIGINT is only admissible for a
+# completely unused registry after ingress/helper stop; never interrupt
+# an active upload, publication, cleanup or recorded lifecycle event.
+- name: Require unused mobile registry for legacy interrupt shutdown
+  ansible.builtin.command:
+    argv:
+      - docker
+      - exec
+      - oldap-mobile-media-worker
+      - python
+      - -c
+      - >-
+        import sqlite3;
+        c=sqlite3.connect('file:/data/mobile-uploads/registry.sqlite3?mode=ro',uri=True);
+        tables=[r[0] for r in c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'mobile_%'")];
+        assert 'mobile_uploads' in tables;
+        assert all(c.execute('SELECT COUNT(*) FROM "'+t.replace('"','""')+'"').fetchone()[0] == 0 for t in tables), 'Legacy interrupt requires an unused mobile registry'
+  when: mobile_stop_signal == 'SIGINT'
+  delegate_to: '{{ media_host }}'
+  changed_when: false
+- name: Stop mobile worker with the explicitly selected signal
+  ansible.builtin.command:
+    argv: [docker, stop, --signal, '{{ mobile_stop_signal }}', --timeout, '{{ "-1" if mobile_stop_signal == "SIGTERM" else "90" }}', oldap-mobile-media-worker]
+  delegate_to: '{{ media_host }}'
+# Keep the API reachable until the mobile worker has recorded its final result.
+- name: Close API ingress after media workers have finished
+  ansible.builtin.command: docker stop --timeout 90 caddy

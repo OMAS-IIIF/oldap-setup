@@ -1,0 +1,120 @@
+---
+# Add a batch service to an already migrated installation; never start an import.
+- name: Install the Swisscovery OCR batch service
+  hosts: oldap
+  become: true
+  vars:
+    compose_dir: /opt/oldap/compose
+    swisscovery_root: /srv/storage/oldap-data/oldap-harvesters/swisscovery
+  tasks:
+    - name: Require approved remote inputs and a published release
+      ansible.builtin.assert:
+        that:
+          - oldap_harvesters_tag is match('^v?[0-9]+[.][0-9]+[.][0-9]+$')
+          - swisscovery_config_source is match('^/')
+          - swisscovery_model_source is match('^/')
+          - swisscovery_model_sha256 is match('^[0-9a-f]{64}$')
+        fail_msg: Supply the approved config and model paths on the VM and the model SHA256.
+
+    - name: Read installed configuration
+      ansible.builtin.slurp:
+        src: "{{ compose_dir }}/.env"
+      register: installed_env
+      no_log: true
+
+    - name: Extract the installed Compose selector
+      ansible.builtin.set_fact:
+        installed_selector: "{{ (installed_env.content | b64decode).splitlines() | select('match', '^COMPOSE_FILE=') | first }}"
+      no_log: true
+
+    - name: Require the installed writer configuration
+      ansible.builtin.assert:
+        that:
+          - installed_selector is match('^COMPOSE_FILE=docker-compose.yml:writer-compose.yml(:salsah-compose.yml)?$')
+
+    - name: Define the candidate environment
+      ansible.builtin.set_fact:
+        swisscovery_environment:
+          COMPOSE_FILE: "docker-compose.yml:writer-compose.yml:swisscovery-compose.yml"
+          OLDAP_HARVESTERS_TAG: "{{ oldap_harvesters_tag }}"
+
+    - name: Verify the approved model source
+      ansible.builtin.stat:
+        path: "{{ swisscovery_model_source }}"
+        checksum_algorithm: sha256
+      register: model_source
+    - name: Require the expected model checksum
+      ansible.builtin.assert:
+        that: model_source.stat.checksum | default('') == swisscovery_model_sha256
+
+    - name: Create persistent Swisscovery directories
+      ansible.builtin.file:
+        path: "{{ swisscovery_root }}/{{ item }}"
+        state: directory
+        mode: '0700'
+      loop: ['', reports, locks]
+
+    - name: Install approved inputs without overwriting existing operational files
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ swisscovery_root }}/{{ item.name }}"
+        remote_src: true
+        force: false
+        mode: '0600'
+      loop:
+        - {src: "{{ swisscovery_config_source }}", name: config.toml}
+        - {src: "{{ swisscovery_model_source }}", name: german_print.mlmodel}
+      no_log: true
+
+    - name: Verify the retained model
+      ansible.builtin.stat:
+        path: "{{ swisscovery_root }}/german_print.mlmodel"
+        checksum_algorithm: sha256
+      register: installed_model
+    - name: Require the installed model to match the approved checksum
+      ansible.builtin.assert:
+        that: installed_model.stat.checksum == swisscovery_model_sha256
+
+    - name: Install the optional batch overlay
+      ansible.builtin.copy:
+        src: swisscovery-compose.yml
+        dest: "{{ compose_dir }}/swisscovery-compose.yml"
+        mode: '0644'
+
+    - name: Install the locked batch launcher
+      ansible.builtin.copy:
+        src: scripts/run-swisscovery.sh
+        dest: "{{ compose_dir }}/run-swisscovery.sh"
+        mode: '0755'
+
+    - name: Validate candidate Compose configuration
+      ansible.builtin.command:
+        cmd: docker compose config --quiet
+        chdir: "{{ compose_dir }}"
+      environment: "{{ swisscovery_environment }}"
+      changed_when: false
+      no_log: true
+
+    - name: Preflight the candidate OCR service without importing
+      ansible.builtin.include_tasks:
+        file: tasks/check-swisscovery.yml
+        apply:
+          environment: "{{ swisscovery_environment }}"
+
+    - name: Back up installed configuration
+      ansible.builtin.copy:
+        src: "{{ compose_dir }}/.env"
+        dest: "{{ compose_dir }}/.env.before-swisscovery-{{ ansible_date_time.iso8601_basic_short }}"
+        remote_src: true
+        mode: '0600'
+      no_log: true
+
+    - name: Select the verified harvester release
+      ansible.builtin.lineinfile:
+        path: "{{ compose_dir }}/.env"
+        regexp: "^{{ item.key }}="
+        line: "{{ item.key }}={{ item.value }}"
+        mode: '0600'
+      loop:
+        - {key: OLDAP_HARVESTERS_TAG, value: "{{ oldap_harvesters_tag }}"}
+      no_log: true

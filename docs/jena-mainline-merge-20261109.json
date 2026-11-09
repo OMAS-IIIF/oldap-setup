@@ -1,0 +1,94 @@
+{
+  "date": "2026-11-09",
+  "repositories": [
+    {
+      "repo": "oldaplib",
+      "primary": "main",
+      "before": "c4c618075767468b2cc59e5bb71d7331a41698ba",
+      "migration": "3f213a52c78b93f3fc53c5d0451706ff620a01e5",
+      "tree": "deb6a7d2cfdc01e80148e4e5c20a28d0619f0a4c",
+      "documentation_tip": "47a0f6e2e4e56a25b83f1e8d1ae2106cd0805d30",
+      "merge": "a7a878ebd80433f50e52343111dfdad14643ced3",
+      "published": true
+    },
+    {
+      "repo": "oldap-setup",
+      "primary": "main",
+      "before": "938f7ed656be006dfcdf206696728811ddbd06b6",
+      "migration": "a8009a39add3fe2b8581a084eb09fc0db19428ad",
+      "tree": "c361f35d5e8aa8d96bd893ef3cd2b2699ada8c3f",
+      "documentation_tip": "4c196ae790f162e7063508278c182232f81a8bc2"
+    },
+    {
+      "repo": "oldap-tools",
+      "primary": "main",
+      "before": "1949fc5015b22a3a99b2d02908f1c7daecc2f48c",
+      "migration": "a4be9592f3f66824d9365290c2f10d6a0e0cda69",
+      "tree": "f2198db16aa0d9327b85bf56b7f1bf5a00f6d6f4",
+      "documentation_tip": "d707e83d664b924482133c9110a65ebf91a5f366",
+      "merge": "7e769aca3f6a3342790a63decf19bfb62980b664",
+      "published": true
+    },
+    {
+      "repo": "oldap-app",
+      "primary": "main",
+      "before": "9698a77a602eeda40c04b125d8ff42c63c216f76",
+      "migration": "6c01cc453566faa5ffe12a4d87b2ff73f3b6e5ec",
+      "tree": "044e2069f89a283cfff132983dbe991f03e61d28",
+      "documentation_tip": "2b0ed502e5132a2075568c10d5fa9ef12ae6a3c9",
+      "merge": "4f5d121baa66bb681f89e187d41692378575bd88",
+      "published": true
+    },
+    {
+      "repo": "FasnachtsPage",
+      "primary": "master",
+      "before": "c2297fe552f22cfd912c84aa747237c1e36f221c",
+      "migration": "2116ad8ae94e3d364adfcfbc6b87661cd245049b",
+      "tree": "6606e5a47343fe40087d3ab0b06ba1251063fb01",
+      "documentation_tip": "69d12d47b77139af3a12593048490519a15c4225",
+      "merge": "e0703388b29a42cd280580d0ae2548894991854a",
+      "published": true
+    },
+    {
+      "repo": "oldap-harvesters",
+      "primary": "main",
+      "before": "4cc2d1607893abe819bf4e7668e1c6e91a32d429",
+      "migration": "4609323335409e765fd1ed1a7258e55e0ea33b94",
+      "tree": "99f62452158eabe40a578b609d79af78cebefe19",
+      "documentation_tip": "b43c44dde2c57dbb3d5ebc57ddc38b3596435e6f",
+      "merge": "39eda81370d36571c42c5f1934ad7b77fc617dfb",
+      "published": true
+    },
+    {
+      "repo": "salsah-2",
+      "primary": "main",
+      "before": "41fc6c75bf0c4a665716d296fcd55ff80c70ef91",
+      "migration": "a0bb3ff3b70c5d6138deb63f10aaee5f5497ccac",
+      "tree": "292dda7714cc437acac8b923ad8c4d98b341556e",
+      "documentation_tip": "f2321015818054848855fb3467611bdc7c8e3274",
+      "merge": "eaa4d21621d42c3fe6f14d7ccb19a8c3b728e6ff",
+      "published": true
+    },
+    {
+      "repo": "oldap-api",
+      "primary": "main",
+      "before": "9d58a12fd443a2e2b8b62aa3f0d078c45ee7ba26",
+      "migration": "776e70a1f706e0015c60552cacf25fb6fb21b8b6",
+      "tree": "9ed6f59b7fa6a20b73adf5a210cec0dce0fd65fe",
+      "documentation_tip": "73ddb530abdd89b85558ba79fb04eec4075e5261",
+      "merge": "9d1b6b592cfffecc1eee0447f55d8a6d0a4bc63c",
+      "published": true
+    },
+    {
+      "repo": "oldap-mediaserver",
+      "primary": "main",
+      "before": "89be99ddf98ab295e5e94eae48e13efbcaf5f1a1",
+      "migration": "397de927dc8dbbdf4c68a37b2f2f943d36b0979b",
+      "tree": "230aebe9815e144ff286c1fe30939b15c1f9b13b",
+      "documentation_tip": "e229998bb520e03af3ed4887d15f4a0ab2a415e4",
+      "merge": "e8e61d22807dcd83a943940d5101bc6f89f02024",
+      "published": true
+    }
+  ],
+  "note": "Eight source mainlines published. Setup merge contains this record; final verification is recorded separately."
+}

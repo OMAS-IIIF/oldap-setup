@@ -1,0 +1,1802 @@
+{
+  "observed_at": "2026-11-03T21:09:28.211516+00:00",
+  "scope": "Merge preparation only; refs fetched, no checkout/index/branch/tag/push/deployment changes. Working file hashes are inventory, not approval to commit.",
+  "repositories": {
+    "oldaplib": {
+      "branch": "migration/jena",
+      "head": "75a31b096c2cacc218283b203db4345ce16d8858",
+      "origin_main": "c4c618075767468b2cc59e5bb71d7331a41698ba",
+      "main_only_branch_only_commits": [
+        0,
+        135
+      ],
+      "committed_merge_clean": true,
+      "merge_tree": "f854b86bc27a2f13de1c4536bef1b81b003bbf36",
+      "tracked_dirty_count": 34,
+      "untracked_count": 80,
+      "working_files": [
+        {
+          "path": "CODEX_LOG.md",
+          "status": "tracked_modified",
+          "sha256": "18ec63d210fe838ef17938c50a946ec81ff18f486d69811a8c30e8ba40b7028f"
+        },
+        {
+          "path": "codex.md",
+          "status": "tracked_modified",
+          "sha256": "2befa45f5a5832f05c99e593352b130ff4825b1134000b1a0ff25cee646658a8"
+        },
+        {
+          "path": "docs/migration/fasnacht-parts.md",
+          "status": "untracked",
+          "sha256": "563c249faf514792749efc4bc3c43c3733f09b050c29f16fecea76ad6db87143"
+        },
+        {
+          "path": "docs/migration/fulltext-consumer-inventory.json",
+          "status": "untracked",
+          "sha256": "f5531b7b36919330a2caf1e692ae7ec00a76b5946c21a730862bdf944f027725"
+        },
+        {
+          "path": "docs/migration/graphdb-rdfstar-conversion-results.txt",
+          "status": "untracked",
+          "sha256": "4fb75c5683f414009ff7fdedb1e1049bf3b5ec4926b19e8071702a2a5ddfa812"
+        },
+        {
+          "path": "docs/migration/graphdb-rdfstar-conversion.md",
+          "status": "untracked",
+          "sha256": "bcef1c06e0b64734db2f8d964d607c09114b375080ba6dd441272f06ccc97464"
+        },
+        {
+          "path": "docs/migration/graphdb-to-jena-cutover.md",
+          "status": "untracked",
+          "sha256": "af95c926f9a4064bf92f191401e0fbca6e0c4ab6a5ba2befc668a128490088a3"
+        },
+        {
+          "path": "docs/migration/jena-archive-assignment-results.json",
+          "status": "untracked",
+          "sha256": "c6f729f910bca231a84ed06ef263272c6a446d766df9cdf4f7b4acc9fb680a52"
+        },
+        {
+          "path": "docs/migration/jena-backup-results.json",
+          "status": "untracked",
+          "sha256": "acddfad5a3f1dba9379265c9088b302dc557d781ffce3f24be73c3cec86a15f1"
+        },
+        {
+          "path": "docs/migration/jena-bounded-entailment.md",
+          "status": "untracked",
+          "sha256": "79dad6b4f531a16e7ffd09ce49419cb1895f252cf1fe55209866f2998deb707a"
+        },
+        {
+          "path": "docs/migration/jena-configured-fulltext-results.json",
+          "status": "untracked",
+          "sha256": "02dc351a9e0b8747fdfd299d04b96c1f86ef4b8ed00294f4486aa6bf49b3b44b"
+        },
+        {
+          "path": "docs/migration/jena-configured-fulltext.md",
+          "status": "untracked",
+          "sha256": "da4dc12895f9b4fab362c5212fa8c11ef04a3ebf31b84ff0c093428023d0cad2"
+        },
+        {
+          "path": "docs/migration/jena-fulltext-activation-results.json",
+          "status": "untracked",
+          "sha256": "8a44dd228d33a69674f4e9ba106b4f1cb08e1808f21b37097db608f9dfc82209"
+        },
+        {
+          "path": "docs/migration/jena-fulltext-activation.md",
+          "status": "untracked",
+          "sha256": "18d02b594d960495ce76e9d2884309b856e28a253ffb50c290d3d093aee5d8b1"
+        },
+        {
+          "path": "docs/migration/jena-fulltext-api-results.json",
+          "status": "untracked",
+          "sha256": "9e67002c32c8a5afbc29f251fd7ceda91708c15d2e2f75bca8fd1ac1c2802faf"
+        },
+        {
+          "path": "docs/migration/jena-fulltext-integration-results.json",
+          "status": "untracked",
+          "sha256": "fe568521818fa118971f5be02dbf91c0f0fb5fd7bbe38e896c5609fc3a1e1f51"
+        },
+        {
+          "path": "docs/migration/jena-fulltext-integration.md",
+          "status": "untracked",
+          "sha256": "0cf93299546c0f0b6a2a63f3f8251af23b0b9a47a218aee0e12d0206ff68da4f"
+        },
+        {
+          "path": "docs/migration/jena-fulltext-language-results.json",
+          "status": "untracked",
+          "sha256": "fac4a16674096222b46fc5b043e2c772222ce5229b908e89d912de6872ea390f"
+        },
+        {
+          "path": "docs/migration/jena-fulltext-language.md",
+          "status": "untracked",
+          "sha256": "ba0f453b28b9856789a5f1e8539cda29af8bcfbab23a7580485dcaf495708f94"
+        },
+        {
+          "path": "docs/migration/jena-relationship-candidates-results.json",
+          "status": "untracked",
+          "sha256": "89b3b8a9fe19c9b74b3d74ef74a29392cee030260052125a258dd0e9927099d0"
+        },
+        {
+          "path": "docs/migration/jena-relationship-growth-results.json",
+          "status": "untracked",
+          "sha256": "c3a1176d47ade4eb40b648bde031beda3d7a9c78161cc6b5a05b7b024e31e30d"
+        },
+        {
+          "path": "docs/migration/jena-seed-ontologies-results.txt",
+          "status": "untracked",
+          "sha256": "a1fb287f0036d9578ea1fce6f1bbe08da446819dd6004c6e2d034610ef9cb812"
+        },
+        {
+          "path": "docs/migration/jena-seed-ontologies.md",
+          "status": "untracked",
+          "sha256": "32f6df3ee8b4b216052d22d570baea55e1e432f487bbd4a463158df98079066e"
+        },
+        {
+          "path": "docs/migration/jena-semantics-step2-results.json",
+          "status": "untracked",
+          "sha256": "bbe1a88a5d66b4370618cf8b858ae73293530d6a778d6290f068bddd95e0f34b"
+        },
+        {
+          "path": "docs/migration/jena-service-results.json",
+          "status": "untracked",
+          "sha256": "5df2a4e81b1affbc3f00944de7a711c46ff58bc75762cef9d81dd013a3c06f55"
+        },
+        {
+          "path": "docs/migration/jena-text-capability-results.json",
+          "status": "untracked",
+          "sha256": "5cc9cb1744149bd9853bce949e3d7cacce19c4d209592cadb524553859f92c11"
+        },
+        {
+          "path": "docs/migration/jena-text-capability.md",
+          "status": "untracked",
+          "sha256": "2399ee64228fdf4a8431e8febd9f1b7b03d410ca26a7bff434b5539f6be5e9d7"
+        },
+        {
+          "path": "docs/migration/oldap-semantics-profile.md",
+          "status": "untracked",
+          "sha256": "4e7d8f69f6021b28cbd37111bfe5ffa630fd8cd1919fd4607f42bb9ba1950266"
+        },
+        {
+          "path": "docs/migration/rdfstar-read-inventory.json",
+          "status": "tracked_modified",
+          "sha256": "6346a796808e6e46fe786273009ae52ca3287955fef5640b4b25d3a192aec892"
+        },
+        {
+          "path": "oldaplib/ontologies/admin-testing.trig",
+          "status": "tracked_modified",
+          "sha256": "c8251d1f71240bc6d18034616bea854ef619b77cd0df712dfa8523f3d40bb0ba"
+        },
+        {
+          "path": "oldaplib/ontologies/admin.trig",
+          "status": "tracked_modified",
+          "sha256": "86886a49f9185318b9c3a6ebd55bd1dc7c99991c1986e5470188a01e94f30568"
+        },
+        {
+          "path": "oldaplib/ontologies/oldap.trig",
+          "status": "tracked_modified",
+          "sha256": "c2c4bb43ba9426948f0b62cec7913a6dc6e113d2ea8d4c517d57fbba47b36965"
+        },
+        {
+          "path": "oldaplib/src/archive_adoption.py",
+          "status": "tracked_modified",
+          "sha256": "59e6ec1a7e5283a35aa74cf1aae3b2124e427ccc4506d8b22d5830c845876d7f"
+        },
+        {
+          "path": "oldaplib/src/archive_domain.py",
+          "status": "tracked_modified",
+          "sha256": "541af3792dc3f009230691e1aea17c154b0237ff0ddcc8435159b09d5c221f03"
+        },
+        {
+          "path": "oldaplib/src/archive_inventory.py",
+          "status": "tracked_modified",
+          "sha256": "f94179869537eced55d91b084da239776da3d732ddcacb88deb34559255fec23"
+        },
+        {
+          "path": "oldaplib/src/archive_publication.py",
+          "status": "tracked_modified",
+          "sha256": "fdb95f3f30fc4eb2ade35e9c4d815a2d31c542f6e715db6dddb557b3666da437"
+        },
+        {
+          "path": "oldaplib/src/archive_repository.py",
+          "status": "tracked_modified",
+          "sha256": "13ce180dbfe45ca06c3a6a3b0b6494128735faaad1ea9f61bcdabaf3af245fde"
+        },
+        {
+          "path": "oldaplib/src/datamodel.py",
+          "status": "tracked_modified",
+          "sha256": "89f32aa0be78197b8dbdd813947f0ad62b165986fae4b5403367bb433d2883f3"
+        },
+        {
+          "path": "oldaplib/src/enums/propertyclassattr.py",
+          "status": "tracked_modified",
+          "sha256": "b291c683ee9e916ce985d434a01946f5de4b161a2726cabb69c574204bd8d1a6"
+        },
+        {
+          "path": "oldaplib/src/enums/xsd_datatypes.py",
+          "status": "tracked_modified",
+          "sha256": "17fcffc76640435755a26f4f4360cec98993be7c18fed9cd7b18aa844bebd09a"
+        },
+        {
+          "path": "oldaplib/src/helpers/construct_processor.py",
+          "status": "tracked_modified",
+          "sha256": "58a091c95790562737b3e36ef0d82341fdd5be22e4bdd21facd84c6f64912937"
+        },
+        {
+          "path": "oldaplib/src/helpers/jena_entailment.py",
+          "status": "untracked",
+          "sha256": "0ae96a1687536d971efd4277aed003d8b5ddc59af143078b88fd9b1cfe90d851"
+        },
+        {
+          "path": "oldaplib/src/helpers/jena_fulltext.py",
+          "status": "untracked",
+          "sha256": "79c365eb78eaccfaaa4d16c83386ab45461fd849561ab3749d2ff58d0dc46257"
+        },
+        {
+          "path": "oldaplib/src/helpers/jena_media.py",
+          "status": "untracked",
+          "sha256": "063d2645b462253a42cd9350253c96f762bd82ecc42d1f79ee8347ec380731f3"
+        },
+        {
+          "path": "oldaplib/src/helpers/jena_permission_write.py",
+          "status": "untracked",
+          "sha256": "c7ac5855139d1f4f9bd32a3872a7c53825805456549dc68ddf247b56bb2b4317"
+        },
+        {
+          "path": "oldaplib/src/helpers/langstring.py",
+          "status": "tracked_modified",
+          "sha256": "3fa66783b930f834dd2b7c36564557775d3d87258a2c415beea40787ea0750d9"
+        },
+        {
+          "path": "oldaplib/src/helpers/observable_set.py",
+          "status": "tracked_modified",
+          "sha256": "5ae48c455b2c69dd011794ca34bca9118bcf17649edf8c00eb0efa5bd65e5c7f"
+        },
+        {
+          "path": "oldaplib/src/helpers/property_path.py",
+          "status": "untracked",
+          "sha256": "8fc569dd689b81bdd81a21f0620e2a49fe0b047c201d5a58cb70826897030e3c"
+        },
+        {
+          "path": "oldaplib/src/helpers/query_processor.py",
+          "status": "tracked_modified",
+          "sha256": "32788c05cd5bd128a2d291d92503e393f442d51085529fd2a38e765e1542cf7b"
+        },
+        {
+          "path": "oldaplib/src/helpers/tools.py",
+          "status": "tracked_modified",
+          "sha256": "7e81cf7e07f34d5e52c437116838b45be8298ff9eec62ab16a0e42e39c78702c"
+        },
+        {
+          "path": "oldaplib/src/iconnection.py",
+          "status": "tracked_modified",
+          "sha256": "9806f4cd2a460c4cef1fb964c51fab8db68bf505eb4daa29b8934d7626ae73bd"
+        },
+        {
+          "path": "oldaplib/src/jena_connection.py",
+          "status": "untracked",
+          "sha256": "d170b2012daadbecbb05dc0f422e82557cd1d8bdae149c1703fcc8090405e101"
+        },
+        {
+          "path": "oldaplib/src/objectfactory.py",
+          "status": "tracked_modified",
+          "sha256": "983d13ad19d59631d3d26cd57be51e0a282689dbffebdc1ec2f6f751ec89dbf6"
+        },
+        {
+          "path": "oldaplib/src/oldaplistnode.py",
+          "status": "tracked_modified",
+          "sha256": "6a291dca52bd5670995574ab199726546974375b5cf13f8ea049a8d294390623"
+        },
+        {
+          "path": "oldaplib/src/project_fulltext.py",
+          "status": "untracked",
+          "sha256": "2b6b89938ffea626153e80c7bf491c79cf8f0f09b1e1eb4cbd0c11a4ecebdb03"
+        },
+        {
+          "path": "oldaplib/src/propertyclass.py",
+          "status": "tracked_modified",
+          "sha256": "30d02c8e978cdfbc36262490a97099d91ca1b5b6742797b9bfa8537c41be3c2a"
+        },
+        {
+          "path": "oldaplib/src/resourceclass.py",
+          "status": "tracked_modified",
+          "sha256": "f4b240f13b161dc8e706198032d6c996762d0f40d71e624fb5a8dd7c3ad33de3"
+        },
+        {
+          "path": "oldaplib/src/user.py",
+          "status": "tracked_modified",
+          "sha256": "4633e26c403d5b68a014827614f3c9e80bf7b48436c17d1aab102532701f87fa"
+        },
+        {
+          "path": "oldaplib/src/xsd/xsd.py",
+          "status": "tracked_modified",
+          "sha256": "0c080570525832b4db0774eb66c6fe06cc2cf768acf9c58f460bade07b364a2a"
+        },
+        {
+          "path": "oldaplib/src/xsd/xsd_gmonthday.py",
+          "status": "tracked_modified",
+          "sha256": "36277663a19c4cd18a9bd49fcdc4cbf4e3d5752a4852be708bfd9916cda9c507"
+        },
+        {
+          "path": "oldaplib/test/test_archive_adoption.py",
+          "status": "tracked_modified",
+          "sha256": "356c4f69dbf8d9d4fb6ade4abdc9d4dffe7663d2d9fed03e028d0144e906ca72"
+        },
+        {
+          "path": "oldaplib/test/test_archive_media_counts.py",
+          "status": "tracked_modified",
+          "sha256": "14ac900210fab93a3f49b25ed48b8fe60dba2bcdf4be1aa64f0d95351e4ea188"
+        },
+        {
+          "path": "oldaplib/test/test_construct_processor.py",
+          "status": "untracked",
+          "sha256": "a7efec252c967606dee52999139b3ea59c0a9dd2fb123a4b854635f9610fec1a"
+        },
+        {
+          "path": "oldaplib/test/test_jena_archive_reads.py",
+          "status": "untracked",
+          "sha256": "9f1f73342afb68fb6ff0fb8d9a915dbebbef04117ca5a24cf991fa87cc33828b"
+        },
+        {
+          "path": "oldaplib/test/test_jena_bulk_reads.py",
+          "status": "untracked",
+          "sha256": "d7d05e085ede81ee0d49221d9d50d7ca83040b0a76f8e4a6b932ca929a5551f2"
+        },
+        {
+          "path": "oldaplib/test/test_jena_connection.py",
+          "status": "untracked",
+          "sha256": "02851688294e38cf578488cb751726e3c296d12252b011d71045dc61cf4a2606"
+        },
+        {
+          "path": "oldaplib/test/test_jena_entailment.py",
+          "status": "untracked",
+          "sha256": "2003889788e5da037c9ab4ebe8c94401b7ae6eaaf957976a084fefe1e1a06483"
+        },
+        {
+          "path": "oldaplib/test/test_jena_fulltext_config.py",
+          "status": "untracked",
+          "sha256": "0c4392daa2df883464accdb47f60f6ff2b865f3b827d11ade76d77480c77fd9c"
+        },
+        {
+          "path": "oldaplib/test/test_jena_media.py",
+          "status": "untracked",
+          "sha256": "870ded75d1e26cf7cd570b94215cfbe916cc6a24ecebec2a66e4aac32d2b4bee"
+        },
+        {
+          "path": "oldaplib/test/test_jena_publication.py",
+          "status": "untracked",
+          "sha256": "2b2f1dd491e1af19e2fd9208b9b463727cc24ac4959232bc72bb069f9d485713"
+        },
+        {
+          "path": "oldaplib/test/test_jena_resource_permissions.py",
+          "status": "untracked",
+          "sha256": "0e5784820a5a71afecf357617c87bd213dddae53c39e0164c2bd06067e5b9503"
+        },
+        {
+          "path": "oldaplib/test/test_jena_user_write.py",
+          "status": "untracked",
+          "sha256": "85ec279c43cd263f0ef4e0f2b488a6c47d691dd3abe005e817adf509c9ab62e4"
+        },
+        {
+          "path": "oldaplib/test/test_resource_class_read_scope.py",
+          "status": "untracked",
+          "sha256": "e27528528df5911f09379faae56dea0e7c5d09ae1a6cedb7b89006d158fa08fc"
+        },
+        {
+          "path": "oldaplib/test/test_resource_transaction.py",
+          "status": "tracked_modified",
+          "sha256": "3e0151f6ab9c0b7195d221805499b304bdf25d2e2b2b751d6fb1a30f3a34d797"
+        },
+        {
+          "path": "oldaplib/test/test_xsd_schema_reuse.py",
+          "status": "untracked",
+          "sha256": "028e5c1e00bf467b4c46a11720a89caa43be50b61e057f323bb89dfaf13f23e9"
+        },
+        {
+          "path": "services/jena/backup.py",
+          "status": "untracked",
+          "sha256": "ed116b48c4ef6fe3597464414089dc3d76ee6fb87cb773412b412ba53e3b6ce1"
+        },
+        {
+          "path": "services/jena/build.py",
+          "status": "untracked",
+          "sha256": "e67e96ddf6931cbac3e57c1c5d6d41b130e9828d9ba90ee424b5ed13be5e3a5c"
+        },
+        {
+          "path": "services/jena/check_backup.py",
+          "status": "untracked",
+          "sha256": "2fd712173347f2b7fec3fdfb0881ed4e849e092030c81a19ae3f74a93487c525"
+        },
+        {
+          "path": "services/jena/check_initial_import.py",
+          "status": "untracked",
+          "sha256": "eb284c44b58d6117a22887a53a756b7d5e823b3ee0ab1f98887310ece9c36477"
+        },
+        {
+          "path": "services/jena/check_service.py",
+          "status": "untracked",
+          "sha256": "b48137cd55af97d4835bf933218d68d5d99a5fe8a102e689843c03d414932098"
+        },
+        {
+          "path": "services/jena/oldap-jena.service",
+          "status": "untracked",
+          "sha256": "12b14032545be0f0aaabde97418246e29bb200fc97ca815d2cfe2afe4e3fff29"
+        },
+        {
+          "path": "services/jena/org.oldap.jena.plist.example",
+          "status": "untracked",
+          "sha256": "2284d12202c718b62e2038610ee0bce423085404887e28b66d0bebfb3ac9255e"
+        },
+        {
+          "path": "services/jena/service.properties.example",
+          "status": "untracked",
+          "sha256": "8b86dda90c283c32cca3032dcf8e3f1ce4c64d7ae4bcbcc0804892e63c366b12"
+        },
+        {
+          "path": "services/jena/src/JenaInitialImport.java",
+          "status": "untracked",
+          "sha256": "953664092e6192be41928b9c14208599bbbdbc3513a6f16bc725b4e6da90c601"
+        },
+        {
+          "path": "services/jena/src/JenaService.java",
+          "status": "untracked",
+          "sha256": "eb7677233cbc78aa943da55acb49b70cf047767790175b8a8a07f8d66b4448c2"
+        },
+        {
+          "path": "services/jena/test_backup.py",
+          "status": "untracked",
+          "sha256": "602929193b9320f1cbb4f723ce942fae229058d19b9f9551f622b2a7bd38cfd6"
+        },
+        {
+          "path": "tools/migration/ConvertLegacyRdfStar.java",
+          "status": "untracked",
+          "sha256": "06f6d1ba245cdc2cb6aaba19f6bb3dcff566e0428c260409c952929c0796dde7"
+        },
+        {
+          "path": "tools/migration/ExtractFasnachtData.java",
+          "status": "untracked",
+          "sha256": "0f255d325acd207d55c44a65741dc22b6d6ccecef5844f0e99c95ca6ad52d52d"
+        },
+        {
+          "path": "tools/migration/FusekiSessionProbe.java",
+          "status": "tracked_modified",
+          "sha256": "98262865b7bd7e94974d9136dcd06a2a5137346034c7f4f8dde1526fce3b64cc"
+        },
+        {
+          "path": "tools/migration/JenaManagedText.java",
+          "status": "untracked",
+          "sha256": "faf0d462d06a3e6310e4aade9266ade2c7a4cc5b8e520dc2b4b50d8faede138d"
+        },
+        {
+          "path": "tools/migration/JenaProjectTransfer.java",
+          "status": "untracked",
+          "sha256": "cd38c4a3af682406f5ff5c0dc08938499e593a98be2740801075662452ea282a"
+        },
+        {
+          "path": "tools/migration/JenaSeedOntologyProbe.java",
+          "status": "untracked",
+          "sha256": "147a7bc6cc57dda269fab6a826df6301089dfeaacb8f29cfea7f0200570db005"
+        },
+        {
+          "path": "tools/migration/JenaSessionEngine.java",
+          "status": "tracked_modified",
+          "sha256": "43b47dcfc18780848732f72089db160c5e5b2f81ccae26229d1e082e85073407"
+        },
+        {
+          "path": "tools/migration/JenaSessionServlet.java",
+          "status": "untracked",
+          "sha256": "d696abfab2cfa14cc8bc77e49647b2753e14a61726357926c43831eeab84fb4e"
+        },
+        {
+          "path": "tools/migration/JenaTextFixture.java",
+          "status": "untracked",
+          "sha256": "db9879b9c182e2910b6ae701bfa5080f8de5390d91f2c814dde0584ea0cad47a"
+        },
+        {
+          "path": "tools/migration/JenaTextProbe.java",
+          "status": "untracked",
+          "sha256": "b5f6beed44a9303d4551b855ee46779baebc2b056bc8087acd3bc1a0cd4f104b"
+        },
+        {
+          "path": "tools/migration/LegacyRdfStarConversionProbe.java",
+          "status": "untracked",
+          "sha256": "c390517dbb3661b35705e63e6eca3f6d12dd3fbcfaa4b1fb0ad4ef99dcfc6d62"
+        },
+        {
+          "path": "tools/migration/MeasurePartQueries.java",
+          "status": "untracked",
+          "sha256": "a9db5ba5d13a017ca09cb18b7c89fc43b937c328ff68400f341a781a0a849899"
+        },
+        {
+          "path": "tools/migration/OldapTextAnalyzer.java",
+          "status": "untracked",
+          "sha256": "ff082ed7e7ae2e1a1f6d6410f7218fbabab7e517e3cd45f8ced9a39350fe1c85"
+        },
+        {
+          "path": "tools/migration/fulltext-fixture.yaml",
+          "status": "untracked",
+          "sha256": "aa13413ad057e2cd7814fdd3dcd7305be26da47c95fc5b651f2dd1e890831011"
+        },
+        {
+          "path": "tools/migration/ontology-seed-grants.tsv",
+          "status": "untracked",
+          "sha256": "c7004d56faa6073997c0c471e04f40cfb133b9325aa33433555a623709533267"
+        },
+        {
+          "path": "tools/migration/probe_archive_assignment_checks.py",
+          "status": "untracked",
+          "sha256": "4de6abd414c1786be655280da1d63d43e776bd0a3ab894dd956a36e73c27af9d"
+        },
+        {
+          "path": "tools/migration/probe_fulltext_activation.py",
+          "status": "untracked",
+          "sha256": "1aec06f6bde4fc0e7dbecda41470ce5b30fd6abb234c088a6cce5af0035f90a5"
+        },
+        {
+          "path": "tools/migration/probe_fulltext_checks.py",
+          "status": "untracked",
+          "sha256": "97204b16286f49474b68f833100557e7544a8929c855d862a154b43eda4843a0"
+        },
+        {
+          "path": "tools/migration/probe_fulltext_config_checks.py",
+          "status": "untracked",
+          "sha256": "b5fb67a86e5a1ac32801b32516ca39f641c02818ad14836f18f06936bdf5a233"
+        },
+        {
+          "path": "tools/migration/probe_fulltext_language.py",
+          "status": "untracked",
+          "sha256": "f8ee08f959a1efcd4f815ad8c5679f16d950fe63ac6c6908c559a3eb6fc486df"
+        },
+        {
+          "path": "tools/migration/probe_legacy_conversion_cli.py",
+          "status": "untracked",
+          "sha256": "8fd9faa6aeb8fd6fb67345ceecdc28d80660479c20141d72d07fbb53bc5e0efd"
+        },
+        {
+          "path": "tools/migration/probe_model_reads.py",
+          "status": "tracked_modified",
+          "sha256": "de7015e25dec03f614b04fc29e574c8e65a8994f92c3bd68f8f58b6dc020d241"
+        },
+        {
+          "path": "tools/migration/probe_relationship_growth.py",
+          "status": "untracked",
+          "sha256": "1a852bb815f6bef62fc100eaf8487af7d3db16ac28b3a753594359db0316d20d"
+        },
+        {
+          "path": "tools/migration/probe_search_checks.py",
+          "status": "tracked_modified",
+          "sha256": "efb6046f19d3718847732eb8f27d1a3eeca28d6db9eb932a6b7900412b792db4"
+        },
+        {
+          "path": "tools/migration/probe_semantics_checks.py",
+          "status": "untracked",
+          "sha256": "ad20250c6f504b359c31c76106fc7cce5ac50df362caffe6ab64b545ee5a0df7"
+        },
+        {
+          "path": "tools/migration/sparql/fasnacht-parts-preflight.rq",
+          "status": "untracked",
+          "sha256": "46e3f108815f526fb9a9ab1410348ed06f977ea9d0e84b0519a38accd997d169"
+        },
+        {
+          "path": "tools/migration/sparql/fasnacht-parts.ru",
+          "status": "untracked",
+          "sha256": "1c687432866f35883910c7804e7772d7ef40aa1681eb2099205c5ad4891af592"
+        },
+        {
+          "path": "tools/migration/sparql/home-writer-recovery-default.ru",
+          "status": "untracked",
+          "sha256": "9cf1de6c45bbdb3a1152ed414259aac4274e73579d50f1a8cc527e3b08ced453"
+        }
+      ],
+      "tracked_workflows_on_main": []
+    },
+    "oldap-api": {
+      "branch": "migration/jena",
+      "head": "4d13567bdf9c87a48c653e2588d4d1b2a94c6b89",
+      "origin_main": "9d58a12fd443a2e2b8b62aa3f0d078c45ee7ba26",
+      "main_only_branch_only_commits": [
+        0,
+        1
+      ],
+      "committed_merge_clean": true,
+      "merge_tree": "d73a8a779f99edb5af8e6d4ca8ad00a5f5693f23",
+      "tracked_dirty_count": 20,
+      "untracked_count": 121,
+      "working_files": [
+        {
+          "path": "API-def/oldap-api.yaml",
+          "status": "tracked_modified",
+          "sha256": "a007914ffcc4a48ccd0e7c7a20d5431f449a9e8deab772e5f1f42e1c757de39c"
+        },
+        {
+          "path": "CODEX_LOG.md",
+          "status": "tracked_modified",
+          "sha256": "26674d8a74fb0eeed0be63a9886b1e692a2dc5036774125cc664a74f1e19965c"
+        },
+        {
+          "path": "Makefile",
+          "status": "tracked_modified",
+          "sha256": "531ee85df1669786c8554006bb3e23ed81e8181c9025f30aff47a5a53d7f7f8c"
+        },
+        {
+          "path": "codex.md",
+          "status": "tracked_modified",
+          "sha256": "ebe160729acb50482fde510b9ed0ea9f23a6a2b77ec5ed9f088eb4424ba6e239"
+        },
+        {
+          "path": "doc/graphdb-jena-performance-results.json",
+          "status": "untracked",
+          "sha256": "457b90670094223db0e027d39ad279759ca34932f21d4c9917b48e278a3fcfa8"
+        },
+        {
+          "path": "doc/graphdb-jena-performance.md",
+          "status": "untracked",
+          "sha256": "590c648243d71bff95a5d9a227694b37379763a4d4f460d42192b4e7c10953e0"
+        },
+        {
+          "path": "doc/graphdb-jena-precheck-comparison-results.json",
+          "status": "untracked",
+          "sha256": "8ca5fd55362080391af4016e00199f8aa29d39da5c28f51aa9c5aac4af4b147a"
+        },
+        {
+          "path": "doc/graphdb-jena-precheck-comparison.md",
+          "status": "untracked",
+          "sha256": "8b2b609f9e5b82ae7cafc959b012a0b01f09e3c5e764c4338831e9eb4207cd6c"
+        },
+        {
+          "path": "doc/graphdb-jena-python-comparison-results.json",
+          "status": "untracked",
+          "sha256": "951075b4e8cbeded28d597cf6a62d8ec8078cf4951967353f6e30e8fe89cc242"
+        },
+        {
+          "path": "doc/graphdb-jena-python-comparison.md",
+          "status": "untracked",
+          "sha256": "595840d9388ae35fdb63cad575a6ec58a11e66351e26cc1c3365e5d57e8d68cd"
+        },
+        {
+          "path": "doc/graphdb-jena-story-overview-results.json",
+          "status": "untracked",
+          "sha256": "934586366fd432b408c3b11884362fb0e5867afc922cc89bda12fa84311b2d31"
+        },
+        {
+          "path": "doc/graphdb-project-rehearsal-results.json",
+          "status": "untracked",
+          "sha256": "68a24e859d6dab3af0d6a5fff07982c958fbc89bd72d442be48077060fc4dda3"
+        },
+        {
+          "path": "doc/graphdb-project-rehearsal.md",
+          "status": "untracked",
+          "sha256": "648d0ad4ac5e3b36b1feec8cfc51a676521f04d341f77ba73d3127ae2aace5a1"
+        },
+        {
+          "path": "doc/jena-api-startup-results.json",
+          "status": "untracked",
+          "sha256": "d84d79f27c6536c8d03dbb32d9f6bd7560ae616c586a08dd69aa11fb4dead55f"
+        },
+        {
+          "path": "doc/jena-api-startup.md",
+          "status": "untracked",
+          "sha256": "890db74cd8e34c265b81c7a9bd8307346ff60830f28fe3fc47ee2c012787ed01"
+        },
+        {
+          "path": "doc/jena-archive-assignment-results.json",
+          "status": "untracked",
+          "sha256": "4c97a67ab3aa284766638237164b2ec6584b422e899045b7db796c2a32e64d1a"
+        },
+        {
+          "path": "doc/jena-archive-assignment.md",
+          "status": "untracked",
+          "sha256": "6c7b69b80a7664b2010c8a85635202771805693fe65f8d1f1586c49b1483386e"
+        },
+        {
+          "path": "doc/jena-archive-reads-results.json",
+          "status": "untracked",
+          "sha256": "2b410b921b9114b08880b7259dac211ddbb10a8f16d05c34f8bbd7d0ed1f5769"
+        },
+        {
+          "path": "doc/jena-archive-reads.md",
+          "status": "untracked",
+          "sha256": "1b14dc6559e2504e7f55321601f3976892c54698cca789a2be34093f3cec7609"
+        },
+        {
+          "path": "doc/jena-archive-writes-results.json",
+          "status": "untracked",
+          "sha256": "b42cf4197bf65060bfb7119ed04030ffbfcb289d7c33a7f5af691591e031c7c5"
+        },
+        {
+          "path": "doc/jena-archive-writes.md",
+          "status": "untracked",
+          "sha256": "05f339af3b2114a77d8d5940e716f0e16451aff5f2f7edd5dee5d6fea1a578d6"
+        },
+        {
+          "path": "doc/jena-asset-authorization-results.json",
+          "status": "untracked",
+          "sha256": "fb9d1c27d0e8877b81c559e35e99b2d6b407d32e301dab4cb533b96912bede90"
+        },
+        {
+          "path": "doc/jena-asset-delivery-results.json",
+          "status": "untracked",
+          "sha256": "f56dae3ae29978cc7cc5111bb60acc67cf3975dacffe8b8ae296c00529d6a63c"
+        },
+        {
+          "path": "doc/jena-asset-delivery.md",
+          "status": "untracked",
+          "sha256": "777364f77f6df86b784f497d384ae1539b7ff1567137f0cd8cbf86ad5d5ba0f8"
+        },
+        {
+          "path": "doc/jena-backend-profile-results.json",
+          "status": "untracked",
+          "sha256": "99d141e849bd0e73fc8e56100a1fa9f5475234bd541dc73cd67bd7ee40ee5219"
+        },
+        {
+          "path": "doc/jena-backend-profile.md",
+          "status": "untracked",
+          "sha256": "592b23109675a166ff158bcbe29fcef4f6bacdb51b5671dac59ea0215c75706a"
+        },
+        {
+          "path": "doc/jena-bounded-entailment-results.json",
+          "status": "untracked",
+          "sha256": "4b224fe3ca9bb0088f9af0a71b0d611ddb5b105b79a38be9e431975264498367"
+        },
+        {
+          "path": "doc/jena-bounded-entailment.md",
+          "status": "untracked",
+          "sha256": "175c412926e781d6e6fdd208892fb6fa29d921d15c21bf81f5567e925a3e1bd1"
+        },
+        {
+          "path": "doc/jena-browser-rehearsal.md",
+          "status": "untracked",
+          "sha256": "1c2d8e165a05f01dc086ddeb1fa64119fb912c040bb7f532fc7f5ee8fc0a014d"
+        },
+        {
+          "path": "doc/jena-browser-results.json",
+          "status": "untracked",
+          "sha256": "63f60a4d11892c0a3ba92c14d0a6a72752e003d6e846b79aa44f3486cb0ec63d"
+        },
+        {
+          "path": "doc/jena-bulk-reads-results.json",
+          "status": "untracked",
+          "sha256": "8ae475e35aa18838f52318217cdb6beb72e6bd725a6a08b63424459229866ee4"
+        },
+        {
+          "path": "doc/jena-bulk-reads.md",
+          "status": "untracked",
+          "sha256": "1dd39190a30bc9bb9ddf6eb2606e9a49ce8542d68913df8c077112f7d6f4e8fa"
+        },
+        {
+          "path": "doc/jena-cache-concurrency-results.json",
+          "status": "untracked",
+          "sha256": "243148bec6ccc97b5733f5974f8cf625b84ba31137472d17686c95af14171875"
+        },
+        {
+          "path": "doc/jena-cache-reads-results.json",
+          "status": "untracked",
+          "sha256": "514ea5571fe278d90a31709cabc74a961e5dc4aae8370b14f979fb5e174872ba"
+        },
+        {
+          "path": "doc/jena-cache-reads.md",
+          "status": "untracked",
+          "sha256": "b595fc0ab9a2ecff0333c4ee74a9b2c830b7582dea2e86c93f9dbf5ba906931e"
+        },
+        {
+          "path": "doc/jena-dating-hydration-results.json",
+          "status": "untracked",
+          "sha256": "87134ed252aa682b98c60f7704c22c1016fe364aff2eae5965d38b70f2bd152d"
+        },
+        {
+          "path": "doc/jena-dating-hydration.md",
+          "status": "untracked",
+          "sha256": "841e4c53f30c7933f806900a2372afc54c8136adb2be806d670fa8b9735b335f"
+        },
+        {
+          "path": "doc/jena-dating-precheck-results.json",
+          "status": "untracked",
+          "sha256": "498fec709ed17c0338e167678bd4da8f1aa6d1a49dafc277a7acd4f5870e9548"
+        },
+        {
+          "path": "doc/jena-dating-precheck.md",
+          "status": "untracked",
+          "sha256": "86404eca106e93056ab56c26d2c0a57c8e5310a34b378ec3f33bf2d778f607e4"
+        },
+        {
+          "path": "doc/jena-fasnacht-export-results.json",
+          "status": "untracked",
+          "sha256": "d0431b7cb0cc4b4ba047765950df7376d54756c60228d7c7a1e546e0cee8a722"
+        },
+        {
+          "path": "doc/jena-fasnacht-export.md",
+          "status": "untracked",
+          "sha256": "7800ad1b5e9b8548cecdf4beb1057cae2d9204a5c27a78051eb3ca99dc1fcc51"
+        },
+        {
+          "path": "doc/jena-fasnacht-fulltext-results.json",
+          "status": "untracked",
+          "sha256": "8dadc844a765ac6b7e4fc5f223ac01f2d4a11b37dd5bdf4208bcfa5628864041"
+        },
+        {
+          "path": "doc/jena-fasnacht-fulltext.md",
+          "status": "untracked",
+          "sha256": "ac945132c66f6b72b5be5518d83486412ba97e9e69a5e66f8343341b72509c58"
+        },
+        {
+          "path": "doc/jena-fasnacht-model-results.json",
+          "status": "untracked",
+          "sha256": "4a4e8dd85fe16a113ef4ae8e90db710989eb74eb1557c58022e1f53d52470937"
+        },
+        {
+          "path": "doc/jena-fasnacht-model.md",
+          "status": "untracked",
+          "sha256": "bd331eaf0c2badf035345c7392d47ad9d9e7f5006bc11fb9df9afedd8b063da3"
+        },
+        {
+          "path": "doc/jena-fulltext-api.md",
+          "status": "untracked",
+          "sha256": "67bd8b01f7da65760cdf635d0fad93d12296b4e63961e51ce4c06ffe9c3279b9"
+        },
+        {
+          "path": "doc/jena-fulltext-folding-results.json",
+          "status": "untracked",
+          "sha256": "f57d372905dfd0c072432fb99c1183b667b432412ad5d54b73a6e07c1f6f0a4f"
+        },
+        {
+          "path": "doc/jena-fulltext-performance-results.json",
+          "status": "untracked",
+          "sha256": "66a090242a8fff05825f562f7ee7aba3639aeeb5cbadaa317caf28d986a04684"
+        },
+        {
+          "path": "doc/jena-fulltext-performance.md",
+          "status": "untracked",
+          "sha256": "ce8e3c39957cf48df24395a2dabc66bf00d09213d19f8a7c4e91e85722ea782c"
+        },
+        {
+          "path": "doc/jena-fulltext-writes-results.json",
+          "status": "untracked",
+          "sha256": "bec38f6a2171db0904920046ab945ad2972f674e5a0c943e6ee0d8ed3cee159d"
+        },
+        {
+          "path": "doc/jena-fulltext-writes.md",
+          "status": "untracked",
+          "sha256": "9c03a856747c237b1f9d556b20a1783a69c189261107ff60416060703769d82a"
+        },
+        {
+          "path": "doc/jena-heap-512m-control-results.json",
+          "status": "untracked",
+          "sha256": "d02b13638075820067e46c1d8285b26fc0302f1b147631ec489dc50bd6879325"
+        },
+        {
+          "path": "doc/jena-heap-8g-results.json",
+          "status": "untracked",
+          "sha256": "e307654c63ba3386034de10911fb8fb3c6a5f0b51a3fc27df537452fa8af67e1"
+        },
+        {
+          "path": "doc/jena-heap-comparison.md",
+          "status": "untracked",
+          "sha256": "409349924f6a2ae7fefa8fddde1cfd31807840f5116cd835d1d73c97124c4d92"
+        },
+        {
+          "path": "doc/jena-local-development.md",
+          "status": "tracked_modified",
+          "sha256": "501530a3f73a4abbc7e5d4810d03290a2fd28af49476464bad0b77c5e814bdf8"
+        },
+        {
+          "path": "doc/jena-media-browser-results.json",
+          "status": "untracked",
+          "sha256": "61574cec23a844337dcbe416fb07a1d031efca501ae838210536ce164c0aed1c"
+        },
+        {
+          "path": "doc/jena-media-browser.md",
+          "status": "untracked",
+          "sha256": "3b5469986d105bcc234d43d47b58dcf6cf33a155617e5d0b8c3698e2691a7e63"
+        },
+        {
+          "path": "doc/jena-media-inventory-results.json",
+          "status": "untracked",
+          "sha256": "82f2b1b99814c8e8098f0403881d427337377c31e27aaca17155de7599fc0f27"
+        },
+        {
+          "path": "doc/jena-media-inventory.md",
+          "status": "untracked",
+          "sha256": "93fc5338bc34d2a511d508271fe8aa40ac743230bd62af34548185121f51bf88"
+        },
+        {
+          "path": "doc/jena-metadata-performance-results.json",
+          "status": "untracked",
+          "sha256": "3990834d8274f5553aabcb66165083cfae37d080726cb597335195f4c4158486"
+        },
+        {
+          "path": "doc/jena-metadata-performance.md",
+          "status": "untracked",
+          "sha256": "03fba81b35aac1c5e9085016910629faa54b328d6d0a056cf9d30a19b9cfed5a"
+        },
+        {
+          "path": "doc/jena-model-read-reuse-results.json",
+          "status": "untracked",
+          "sha256": "74f03604b300dab5b6c59054064ee7822d20e64026b456db0c39341a9d03867b"
+        },
+        {
+          "path": "doc/jena-model-read-reuse.md",
+          "status": "untracked",
+          "sha256": "c8d49adb2bee1b1f2b483426f13cf47fbb22a427b524c8733b1ac094cbb3ad81"
+        },
+        {
+          "path": "doc/jena-parts-performance-results.json",
+          "status": "untracked",
+          "sha256": "9923f71576f93cdbaa124b84e9396642141ce44c60eef0570816a53605b3e860"
+        },
+        {
+          "path": "doc/jena-parts-performance.md",
+          "status": "untracked",
+          "sha256": "c72ba81e21d1e3fce8da5ede94de223f8590f34383e146d9a43a536edc15dcb8"
+        },
+        {
+          "path": "doc/jena-post-validation-profile-results.json",
+          "status": "untracked",
+          "sha256": "7c09e38a8167454895ab3437adde4b5b9ceaab81d3fd8338c82af1172695afde"
+        },
+        {
+          "path": "doc/jena-project-transfer-results.json",
+          "status": "untracked",
+          "sha256": "7526813539494a33c619e56fe7b540ff4eb4774a8a6eeacff50ef9acce2d6fce"
+        },
+        {
+          "path": "doc/jena-project-transfer.md",
+          "status": "untracked",
+          "sha256": "44b27186cd22ab9ac3b39c23043079fce3af6eec526eac2a06064d899811b4e7"
+        },
+        {
+          "path": "doc/jena-publication-results.json",
+          "status": "untracked",
+          "sha256": "7b2a337368ecca84c270fdc63eb7c722ed13f33d9a29537512338e0d6c599762"
+        },
+        {
+          "path": "doc/jena-publication.md",
+          "status": "untracked",
+          "sha256": "45329bae7ba729edb5fe3ba08b45232c3cbcb395c5d2f40544fed16255f761db"
+        },
+        {
+          "path": "doc/jena-relationship-candidates-results.json",
+          "status": "untracked",
+          "sha256": "a8865cd6ac41bfe53e297a5de2bea61a2a4468c1e4be5d5e6ee649322bedeecf"
+        },
+        {
+          "path": "doc/jena-relationship-growth-api-results.json",
+          "status": "untracked",
+          "sha256": "1f607d300bf88037b5116ac8761d19020b099ecb0317aef04a5f64e30ef3afe9"
+        },
+        {
+          "path": "doc/jena-resource-writes-results.json",
+          "status": "untracked",
+          "sha256": "38e89eb97a7183e3e71980e7418108051724560e42ebb51328ae19f5e736621b"
+        },
+        {
+          "path": "doc/jena-resource-writes.md",
+          "status": "untracked",
+          "sha256": "e4ae0230e86916decf3619f48b9354b37891517e91e1f073cc0305f181739fa9"
+        },
+        {
+          "path": "doc/jena-search-candidates-results.json",
+          "status": "untracked",
+          "sha256": "95461c9b208ce98b06ef9a806133bea730616e173b7753dd2fea911521462abc"
+        },
+        {
+          "path": "doc/jena-search-candidates.md",
+          "status": "untracked",
+          "sha256": "bc0cbb87cb32de9826214ab3a8a66d6c57e9560944ee18eb078c8024621b571d"
+        },
+        {
+          "path": "doc/jena-search-load-optimized-results.json",
+          "status": "untracked",
+          "sha256": "1cfef33946c7f530decdabbea83177c8d058c9b99351ee8732045a6580f7f834"
+        },
+        {
+          "path": "doc/jena-search-load-optimized.md",
+          "status": "untracked",
+          "sha256": "0a045c7beedd16282db859eea33679ac130cf909838a093daad3cb3e1ba39a72"
+        },
+        {
+          "path": "doc/jena-search-load-results.json",
+          "status": "untracked",
+          "sha256": "9dac77b92d92a16544f24277a93cefb9324cd1c887a1e52ab482dce2457204ac"
+        },
+        {
+          "path": "doc/jena-search-load.md",
+          "status": "untracked",
+          "sha256": "4cc50c5215d4890f9e8fa33c260d9359c895479bdf2c5f9af379a951c45b727f"
+        },
+        {
+          "path": "doc/jena-search-pagination-results.json",
+          "status": "untracked",
+          "sha256": "3e8e487675529671397d45b684b426b8a0916ca112f77c748f41f8b5a9efa39a"
+        },
+        {
+          "path": "doc/jena-search-pagination.md",
+          "status": "untracked",
+          "sha256": "ca80daff3d44a5e8b2a19503ac4aced76e7431d3485692eb1e648444da6534b6"
+        },
+        {
+          "path": "doc/jena-service-connections.md",
+          "status": "untracked",
+          "sha256": "30480c101b1a01aecd7c2946793b03e4f0bbff5f9699c23382b3e288f6a97a42"
+        },
+        {
+          "path": "doc/jena-summary-payload-results.json",
+          "status": "untracked",
+          "sha256": "5fd33fab43950011c6dd5d218c7c5063879663571782137d8547d00711867858"
+        },
+        {
+          "path": "doc/jena-summary-payload.md",
+          "status": "untracked",
+          "sha256": "92d6f2fe7972d2a3a1dec5a0f4e3ffcc539ef16ef8050a43400a69b8ee02b658"
+        },
+        {
+          "path": "doc/jena-user-writes-results.json",
+          "status": "untracked",
+          "sha256": "35e598aae0be5262238ed3a546dcec0590b04c95dfd460810e34275e9760bca4"
+        },
+        {
+          "path": "doc/jena-user-writes.md",
+          "status": "untracked",
+          "sha256": "ee82099b3491dc9af7034686c593d550320f9baf24f68d6b0cfbfc5747fd23ed"
+        },
+        {
+          "path": "doc/jena-validation-performance-results.json",
+          "status": "untracked",
+          "sha256": "93d63d0e6b897c9ddae042219abcda8fafd955a53a9493cf90469f5fdc8a42aa"
+        },
+        {
+          "path": "doc/jena-validation-performance.md",
+          "status": "untracked",
+          "sha256": "d2966f483bf7d663f5f3d385a3d4af59c3ef42711911c15afd2a6971372a5844"
+        },
+        {
+          "path": "oldap_api/__init__.py",
+          "status": "tracked_modified",
+          "sha256": "67c7ac4058bf7a81fe04c798daea6c2b8d1714df5d4b87e5408e5bcf9ba3928e"
+        },
+        {
+          "path": "oldap_api/authentication.py",
+          "status": "tracked_modified",
+          "sha256": "f9c4ce8a7006b28f4369f52777cdf0701eaa4290fef4536a93b338195cfbe4db"
+        },
+        {
+          "path": "oldap_api/backend.py",
+          "status": "untracked",
+          "sha256": "3733bd4c66452a3827a7ea8c9d8c5185ef50a8e69e665b39e2f2f4dcdb2124a1"
+        },
+        {
+          "path": "oldap_api/factory.py",
+          "status": "tracked_modified",
+          "sha256": "0db791506c13c6ceb89937a6b0842e1c9177ddefc375822ed4a1d83a58f07d26"
+        },
+        {
+          "path": "oldap_api/imports/audit.py",
+          "status": "tracked_modified",
+          "sha256": "8f95139fbd6e93170d3cfcc177a6035fed61f9b57c1ed9412a5372cc98c733d3"
+        },
+        {
+          "path": "oldap_api/test/test_dating_serialization.py",
+          "status": "tracked_modified",
+          "sha256": "099eb27cf9cf6dd16161f36c8bb599cfe353c7f502455183494ac194cdd59d56"
+        },
+        {
+          "path": "oldap_api/test/test_fulltext_views.py",
+          "status": "untracked",
+          "sha256": "abcf3d1d711e23042278822d09d90707c180ccc0e60d4216eb2dcdec83385912"
+        },
+        {
+          "path": "oldap_api/test/test_import_audit.py",
+          "status": "tracked_modified",
+          "sha256": "1ee4d91a280391c76d8463f0553bf9fb5837bb1580fd755e04730e696c02eb68"
+        },
+        {
+          "path": "oldap_api/test/test_import_views.py",
+          "status": "tracked_modified",
+          "sha256": "670b1668f414a3834da129c3d31804b530939e98a11f452e791a4ccf5213f1d6"
+        },
+        {
+          "path": "oldap_api/test/test_jena_backend.py",
+          "status": "untracked",
+          "sha256": "ce1aac6c20bed3d5a5930eaeefdc910b4e91d2caaf329015587c4265bf3c4f64"
+        },
+        {
+          "path": "oldap_api/views/auth_views.py",
+          "status": "tracked_modified",
+          "sha256": "a4bc76fad1ed6fed66dfe7a1f94ff55d618ed99f602d8fd4139929dd1b3c5639"
+        },
+        {
+          "path": "oldap_api/views/datamodelling_views.py",
+          "status": "tracked_modified",
+          "sha256": "c1a12f6753bd8b2c850e1fdac673abeb0640c32c9225097f754488b3a7291223"
+        },
+        {
+          "path": "oldap_api/views/export_views.py",
+          "status": "tracked_modified",
+          "sha256": "f367990649c13555fefb81e2adcbda46111930569b88e68dc2ad723a596418a7"
+        },
+        {
+          "path": "oldap_api/views/fulltext_views.py",
+          "status": "untracked",
+          "sha256": "7942f4688bd95b25bcaad3af589113d46bbb1dd13a6c22419a7b3850fffcce1a"
+        },
+        {
+          "path": "oldap_api/views/import_views.py",
+          "status": "tracked_modified",
+          "sha256": "7cc9041741b127818d1e0d90657e850e08da0f84b46539a57ea091d2f8d9cbb8"
+        },
+        {
+          "path": "oldap_api/views/instance_views.py",
+          "status": "tracked_modified",
+          "sha256": "4ab7922b1f2839acfa24358b862f2898212bd191df7c8c707db5a3f75fa1ccb4"
+        },
+        {
+          "path": "oldap_api/views/jena_identity_views.py",
+          "status": "untracked",
+          "sha256": "7da767641c43ad7d5cbcd951849e9afca9b10716239e22ebced8a6f582a419c0"
+        },
+        {
+          "path": "oldap_api/views/mobile_media_lifecycle_views.py",
+          "status": "tracked_modified",
+          "sha256": "2b99bb9386af86bf5f0197218c12d870bf73428643d191c7e02c284b5c4ccb5d"
+        },
+        {
+          "path": "oldap_api/views/mobile_media_views.py",
+          "status": "tracked_modified",
+          "sha256": "442f6e24749d726e66ad769d5dbe94a94f9892e6428ade6858e4d465b02dbf74"
+        },
+        {
+          "path": "oldap_api/views/user_views.py",
+          "status": "tracked_modified",
+          "sha256": "5f20fbad787ca520cfa5348090ae15c604dabb4de704b29835d4b201bd89c4f9"
+        },
+        {
+          "path": "tools/migration/benchmark_project_reads.py",
+          "status": "untracked",
+          "sha256": "d9df0bd8b855730fa40791880150bad0e4a2392a4da6738aeddb2b5e3c7ea835"
+        },
+        {
+          "path": "tools/migration/check_archive_assignment.py",
+          "status": "untracked",
+          "sha256": "1717b338e22b951a1c3a26c852771475f860056de416b21eb53022ff5534e310"
+        },
+        {
+          "path": "tools/migration/check_archive_reads.py",
+          "status": "untracked",
+          "sha256": "48b286a9cc9be33a92076ff0191a76f2160fb6f842b60fda1a4804957c0ac37c"
+        },
+        {
+          "path": "tools/migration/check_archive_writes.py",
+          "status": "untracked",
+          "sha256": "7bafceddafb889b990b78c586d2c08285b0b266c7bbea14cadb2eeb6fd42f3d0"
+        },
+        {
+          "path": "tools/migration/check_bounded_entailment.py",
+          "status": "untracked",
+          "sha256": "17fb544a0c3f2ea05dcd5f356dfb8f58cdbf28232853070fd67f569d5d9e57ca"
+        },
+        {
+          "path": "tools/migration/check_bulk_reads.py",
+          "status": "untracked",
+          "sha256": "8c061d8f2e8d960f70475605026f52a0feaea433613dc811fb55ad39570bfc85"
+        },
+        {
+          "path": "tools/migration/check_cache_concurrency.py",
+          "status": "untracked",
+          "sha256": "78b5b5a219f45898a641ce1125619fdf24dfc0c6715d3f5dbc03556bfbbe750f"
+        },
+        {
+          "path": "tools/migration/check_cache_reads.py",
+          "status": "untracked",
+          "sha256": "bfbe6c67e5876c63e579b54b457cfa5908f6f458fb7ac5b1aca398526bee74c9"
+        },
+        {
+          "path": "tools/migration/check_fasnacht_export.py",
+          "status": "untracked",
+          "sha256": "b39c954e8751179e2d25b7687b65c562917c257d914f75091315d63e5bbe1cdd"
+        },
+        {
+          "path": "tools/migration/check_fasnacht_fulltext.py",
+          "status": "untracked",
+          "sha256": "ca696b3ae24645c0a2bfc67cd8cee840416f09f3ca4bca2633cb640b44fa9bc7"
+        },
+        {
+          "path": "tools/migration/check_fasnacht_model.py",
+          "status": "untracked",
+          "sha256": "c59b90bd800ae60e9f2a221a45edfdb8c819e9d8acf4db2f3b14ccaa35924c23"
+        },
+        {
+          "path": "tools/migration/check_fulltext_writes.py",
+          "status": "untracked",
+          "sha256": "6efb42daa1fe8b8cbfaad0b597135e0ab7d0df6223d368bf1c689f8ef471f7fe"
+        },
+        {
+          "path": "tools/migration/check_media_inventory.py",
+          "status": "untracked",
+          "sha256": "9325c61f381aa3420c7185a7d6531f2f729e1773c15e099c7db6247761aae930"
+        },
+        {
+          "path": "tools/migration/check_project_transfer.py",
+          "status": "untracked",
+          "sha256": "e6063eee9d172d029901bb4ccecbe88e7c3381339eafeda87014707d00ef1670"
+        },
+        {
+          "path": "tools/migration/check_publication.py",
+          "status": "untracked",
+          "sha256": "4f315742b1a7f2b6b2b694c1eb0fdb6326b77367af78cd0baa822e46650a231b"
+        },
+        {
+          "path": "tools/migration/check_resource_writes.py",
+          "status": "untracked",
+          "sha256": "56992548f36b525cc039d8fe33cfddf9f5e38f43660b072fd33b7c51b2ccdc7b"
+        },
+        {
+          "path": "tools/migration/check_user_writes.py",
+          "status": "untracked",
+          "sha256": "0f929dda816d2a48095302062c71d4d9bc8db0a6bdc5b6c04fe0eb45c3545bac"
+        },
+        {
+          "path": "tools/migration/export_fasnacht_readonly.py",
+          "status": "untracked",
+          "sha256": "d6f5c10c0e368e8d7856c83dca374c48030ca64d28a3f2742ac7ac3a29c8c67c"
+        },
+        {
+          "path": "tools/migration/hold_browser_preview.py",
+          "status": "untracked",
+          "sha256": "502136c90f61cf089de016d7666c511be3f4aa722ee95322c032e17a83b10c50"
+        },
+        {
+          "path": "tools/migration/prepare_fasnacht_export.py",
+          "status": "untracked",
+          "sha256": "391f6f9054559aba8f90af9af04b26df92fcd3e15f10d0db3788eb9ff80c03bc"
+        },
+        {
+          "path": "tools/migration/preview_assets.py",
+          "status": "untracked",
+          "sha256": "4c21dce5c2544083322b2bf317e98d1073cd8b00010c2d97ac327a10470d9316"
+        },
+        {
+          "path": "tools/migration/preview_media.py",
+          "status": "untracked",
+          "sha256": "30a983c63edbd4e2f8c629b8a0ac9625c92d3bc8cfa41fd06b45cc33b7146cfd"
+        },
+        {
+          "path": "tools/migration/probe_api_jena.py",
+          "status": "untracked",
+          "sha256": "5e843928c6bbd46610dfcdac74af903f10fcbeda615b597a5cc1b8c82f2e2141"
+        },
+        {
+          "path": "tools/migration/probe_backend_comparison.py",
+          "status": "untracked",
+          "sha256": "5653ac3e39cc00898e8f48d21b257153cb5108464c500b58497b027175384794"
+        },
+        {
+          "path": "tools/migration/probe_graphdb_project.py",
+          "status": "untracked",
+          "sha256": "f26e4d3278bf802102c8b53ca859d1d32366b2db223f546a031db38150e7e56f"
+        },
+        {
+          "path": "tools/migration/probe_search_load.py",
+          "status": "untracked",
+          "sha256": "5e1dc7b78880634eb12dbb718f2c594240e284610644809f4afb740685e7fef4"
+        },
+        {
+          "path": "tools/migration/probe_search_pagination.py",
+          "status": "untracked",
+          "sha256": "25f5e8c2c07cabd440ccec99afaeaa6103e13c0d73a7c4aafff9469907e09bdd"
+        },
+        {
+          "path": "tools/migration/probe_story_overview.py",
+          "status": "untracked",
+          "sha256": "5c2c7be3116d89191484d4df88d2a54a0cd1ff9c1ffdf67962ee3189c18790a9"
+        },
+        {
+          "path": "tools/migration/profile_archive_metadata.py",
+          "status": "untracked",
+          "sha256": "badf493ade957298976304e0cc002fbbb87b5bcf8e2bbe5243de029b4d20937a"
+        },
+        {
+          "path": "tools/migration/profile_backend_search.py",
+          "status": "untracked",
+          "sha256": "21f742392e2dcbc1da8d3dac57829ea16bc5aa0c70acc42d4c7cddb37507d2ae"
+        },
+        {
+          "path": "tools/migration/profile_fasnacht_fulltext.py",
+          "status": "untracked",
+          "sha256": "566a8830fd8420f5076cba9b6768b8464ab7976b298ae68160edc3ee6d6a35f7"
+        },
+        {
+          "path": "tools/migration/profile_parts_search.py",
+          "status": "untracked",
+          "sha256": "027b609d39845822060782df0c91ac666eb691ad99810890eb3939c43f2f98e2"
+        }
+      ],
+      "tracked_workflows_on_main": []
+    },
+    "oldap-tools": {
+      "branch": "migration/jena",
+      "head": "1949fc5015b22a3a99b2d02908f1c7daecc2f48c",
+      "origin_main": "1949fc5015b22a3a99b2d02908f1c7daecc2f48c",
+      "main_only_branch_only_commits": [
+        0,
+        0
+      ],
+      "committed_merge_clean": true,
+      "merge_tree": "b1519b9966bffcfb031678db53137ac2a53e9f10",
+      "tracked_dirty_count": 14,
+      "untracked_count": 9,
+      "working_files": [
+        {
+          "path": ".gitignore",
+          "status": "tracked_modified",
+          "sha256": "eee8369bd99da8dab5121159b7b64527fec96ec781ad2afcf7d5793653385eef"
+        },
+        {
+          "path": "CODEX_LOG.md",
+          "status": "tracked_modified",
+          "sha256": "371e897d5bd2b4c26fe26125ed38e5a3199a4475c45deae027b82b90a80bdc87"
+        },
+        {
+          "path": "Makefile",
+          "status": "tracked_modified",
+          "sha256": "c3f7f91cf2658a4615d7d43fc8b98615e849be3660b9236c5b167fed8c83975c"
+        },
+        {
+          "path": "README.md",
+          "status": "tracked_modified",
+          "sha256": "fac2fd636c1bd536bfe06e5a6de4670113510c5eb99627b5988274d098b7ac42"
+        },
+        {
+          "path": "codex.md",
+          "status": "tracked_modified",
+          "sha256": "9b6ce50c9d27d8593f74c2012c12fa0a46c6c3354495554314c5d80b88d5ca6f"
+        },
+        {
+          "path": "docs/jena-fulltext.md",
+          "status": "untracked",
+          "sha256": "d41c752f78f72e628be455fac2c47969e26c9a1d7a807a5ddd031f9331fa16dd"
+        },
+        {
+          "path": "docs/jena-project-transfer.md",
+          "status": "untracked",
+          "sha256": "b9cc6e234b1dd0126aca5c6dbca8d2c1fe30fd8c9226edb3e818d6fcf24e4cd8"
+        },
+        {
+          "path": "examples/ontology/fasnacht-jena.yaml",
+          "status": "untracked",
+          "sha256": "849fd18e9de97b4c96fbfbff084cf8da3db404171c83d7861b2b2dff859eba23"
+        },
+        {
+          "path": "fasnacht/fasnacht-onto.yaml",
+          "status": "tracked_modified",
+          "sha256": "ded3fdd560fbf70b7d81bd57123939a8871be4699f98409ef49cee29c8c1a215"
+        },
+        {
+          "path": "fasnacht/fasnachts-onto.md",
+          "status": "tracked_modified",
+          "sha256": "650ab0c6778422a236b9aa3aebada17b1a1d1b588d76e1d9edfa6b68dbcf6d0e"
+        },
+        {
+          "path": "src/oldap_tools/cli.py",
+          "status": "tracked_modified",
+          "sha256": "2a57df23a8f380f1e8387c5ef43aac8413b96531cac13290271cb6983108c2bf"
+        },
+        {
+          "path": "src/oldap_tools/dump_project.py",
+          "status": "tracked_modified",
+          "sha256": "b4b6226431e752d2bb2e5940837d0066e1591a1f9c9cb6af014233cf310aea3e"
+        },
+        {
+          "path": "src/oldap_tools/fulltext.py",
+          "status": "untracked",
+          "sha256": "92c4b97cd94f75bfc451f5964ec617876cf0f28574dcc6f6cdd1dd1bab45eda1"
+        },
+        {
+          "path": "src/oldap_tools/fulltext_api.py",
+          "status": "untracked",
+          "sha256": "fd7f4cf60fe288d81e391feb5f00206555f3ff12defbb9c8db5fdba45fe6cef7"
+        },
+        {
+          "path": "src/oldap_tools/jena_project_transfer.py",
+          "status": "untracked",
+          "sha256": "09d2ee977f981c520d5d2f26d767e3cd95dbed602343aefbc8baf7d51a3f15dd"
+        },
+        {
+          "path": "src/oldap_tools/load_project.py",
+          "status": "tracked_modified",
+          "sha256": "41c92cf8ac6aa78c9cd0c81cd74bafc13b7941fb94aeed88ebe7882d435426dc"
+        },
+        {
+          "path": "src/oldap_tools/ontology.py",
+          "status": "tracked_modified",
+          "sha256": "fa44523d4c37497ee4bbccef768155f5fdb354457082951839b3cd88ae6b86f5"
+        },
+        {
+          "path": "src/oldap_tools/ontology_api.py",
+          "status": "tracked_modified",
+          "sha256": "370eb4b0aba55e292db89c5dcddcd00979892b7e9c2ddb3448e1d8ac9a7e9a46"
+        },
+        {
+          "path": "src/oldap_tools/ontology_api_dump.py",
+          "status": "tracked_modified",
+          "sha256": "6728e0ea72ccb3fa1b4dd1fb580833cf575dc30ad18471864148b92cd6aa0bfd"
+        },
+        {
+          "path": "src/oldap_tools/schemas/ontology_schema.yaml",
+          "status": "tracked_modified",
+          "sha256": "512ab67aa14dcd47b47eff800cc8ced47d02f1cebbe87ca0b2b6f30e65bff446"
+        },
+        {
+          "path": "tests/test_fulltext.py",
+          "status": "untracked",
+          "sha256": "63fa208d34e597319972688ea68703f4bd25e2ee6838a9603bf551a51a6e7d1b"
+        },
+        {
+          "path": "tests/test_fulltext_api.py",
+          "status": "untracked",
+          "sha256": "830104bd6076e4f2dbeac37d0e713b9eaab99a88516041425b856599a58245c5"
+        },
+        {
+          "path": "tests/test_jena_project_transfer.py",
+          "status": "untracked",
+          "sha256": "ba76b68fe33af3f3b6ba9aa68fca6349ce475b96b5a624c06ac27593a9476389"
+        }
+      ],
+      "tracked_workflows_on_main": []
+    },
+    "oldap-setup": {
+      "branch": "migration/jena",
+      "head": "938f7ed656be006dfcdf206696728811ddbd06b6",
+      "origin_main": "938f7ed656be006dfcdf206696728811ddbd06b6",
+      "main_only_branch_only_commits": [
+        0,
+        0
+      ],
+      "committed_merge_clean": true,
+      "merge_tree": "6fe593347d142966c3ab12458afb7e36dcaabc8e",
+      "tracked_dirty_count": 9,
+      "untracked_count": 57,
+      "working_files": [
+        {
+          "path": "CODEX_LOG.md",
+          "status": "tracked_modified",
+          "sha256": "684a7fe66a7f06dcc1d5b60d99b64a992a166d212b05cbb20ceff46ce2dee1fc"
+        },
+        {
+          "path": "Makefile",
+          "status": "tracked_modified",
+          "sha256": "6cf10c341fdda3ff88789cf7aebd292faec91adc7bfa22f7e6a708883c0a5f72"
+        },
+        {
+          "path": "README.md",
+          "status": "tracked_modified",
+          "sha256": "2e899df101881c4c9c5f95608ae50267eeced2fc1addaa1d403dc6311e5a9364"
+        },
+        {
+          "path": "archive-policy-compose.yml",
+          "status": "untracked",
+          "sha256": "488c5194856a2385305dc2e307dc4f3f7563643ecdcffb62cdfc71f295657d36"
+        },
+        {
+          "path": "codex.md",
+          "status": "tracked_modified",
+          "sha256": "e2d6cd6353413c8597b899dcc2274bf59fa5257ccd25a0ccbc9b44a138281c26"
+        },
+        {
+          "path": "docker-compose.yml",
+          "status": "tracked_modified",
+          "sha256": "8dd02c0bdc7cff244ee27a7d0c7868ca600f5d9d123da1e9fc7ca00982049f28"
+        },
+        {
+          "path": "docs/harvest-schedule.md",
+          "status": "untracked",
+          "sha256": "a9d9bbc73285f105591c68dfffe941fae7efcf05b3378b3f40e271297f3db977"
+        },
+        {
+          "path": "docs/jena-archive-policy-results.json",
+          "status": "untracked",
+          "sha256": "26e78cbc74bef390c20da42d85a64ead43a9e6fc2e669387ed5e941b29503631"
+        },
+        {
+          "path": "docs/jena-begin-retry-rc4-home-results.json",
+          "status": "untracked",
+          "sha256": "2b90ed43077b86e79440fcbd95647eac61d649caeb07cae9b5e83253c5f7f0a4"
+        },
+        {
+          "path": "docs/jena-concurrency-results-confirmation.json",
+          "status": "untracked",
+          "sha256": "21d9a8e6594af9f9e0f62d5b1bb8a4b6c45e37ff8c6ebd3206ae1e12208948d8"
+        },
+        {
+          "path": "docs/jena-concurrency-results.json",
+          "status": "untracked",
+          "sha256": "58de5e7ef6ae931375ddf244eca6173f9570af49180e7f3d90244e57984dab70"
+        },
+        {
+          "path": "docs/jena-concurrency-semantic-results.json",
+          "status": "untracked",
+          "sha256": "64cadddebed55695731f1efd64fd4bb87bd494a7611588139bcf126f8b481156"
+        },
+        {
+          "path": "docs/jena-diagnostics-rc3-home-results.json",
+          "status": "untracked",
+          "sha256": "c220d21bfbbb5b067171813c6bd94935d1fcdab9973eaf6b0a1dc6e0d454a3e0"
+        },
+        {
+          "path": "docs/jena-home-after-identity-results.json",
+          "status": "untracked",
+          "sha256": "c9628c9765135c08225c84fe7a903e18f93e8b6324af579083d9f49b90187ef8"
+        },
+        {
+          "path": "docs/jena-home-results.json",
+          "status": "untracked",
+          "sha256": "c4d07a4b8975cd2dddb3661bac5f422b575f4a6f246c423cba9c40f93a99ff86"
+        },
+        {
+          "path": "docs/jena-images-results.json",
+          "status": "untracked",
+          "sha256": "c7de49b773bd1e94282aae4de0388b741dfc73bfaa59340ebc885dbc59e05562"
+        },
+        {
+          "path": "docs/jena-media-access-results.json",
+          "status": "untracked",
+          "sha256": "d23227c00d47957ebfc4513a9cee5ef3baea00bf38bd165d97c4129337a44d2b"
+        },
+        {
+          "path": "docs/jena-network-results.json",
+          "status": "untracked",
+          "sha256": "c628b4a6dbc355582be66fb87c769c2cc0abe2dd1b2b024902de51ca9af0377c"
+        },
+        {
+          "path": "docs/jena-service-rc2-home-results.json",
+          "status": "untracked",
+          "sha256": "de0ad1b8ab8958217320ecea0a55c1a014b6d7fa33f0039767ea012a1f1a08f9"
+        },
+        {
+          "path": "docs/swisscovery.md",
+          "status": "untracked",
+          "sha256": "50371e4f71c54dd9bbb9ed166dd2e12685d40ded8e30a5aad188b65483af53af"
+        },
+        {
+          "path": "files/jena-home-archive-policy.json",
+          "status": "untracked",
+          "sha256": "627f7a495c2a78d8c8540a5a206f99637f4af3ea904313378e6cff469550c2e6"
+        },
+        {
+          "path": "harvest-schedule-compose.yml",
+          "status": "untracked",
+          "sha256": "643300e82918757665a6f87f7f66290ac30ce5c33fa944c33d0fa977a7c8f3da"
+        },
+        {
+          "path": "jena-compose.yml",
+          "status": "untracked",
+          "sha256": "f4983b12e6c4a43aaff91fb990430480c00b85dfda2907c30dac7c4c75d8b539"
+        },
+        {
+          "path": "jena-rehearsal-compose.yml",
+          "status": "untracked",
+          "sha256": "ed03869ceff702cca65934208e6db439697c1162ddb87ec1efd905fe27824b07"
+        },
+        {
+          "path": "oldap-deploy.yml",
+          "status": "tracked_modified",
+          "sha256": "3e1fd933063902682e659d5ac9fe4c877bdf8ebbb4ee4d9b46814fd8dac64c94"
+        },
+        {
+          "path": "oldap-harvest-schedule-install.yml",
+          "status": "untracked",
+          "sha256": "f3fcc55ceef4d59aef00c823bbabae26a7c30faa83332d2e5eb50a54a7acc12e"
+        },
+        {
+          "path": "oldap-jena-activate.yml",
+          "status": "untracked",
+          "sha256": "0ce8fbb432299333560033654c27aaef477bdb64e4cffc6b8ae49b695cf05f64"
+        },
+        {
+          "path": "oldap-jena-archive-enable.yml",
+          "status": "untracked",
+          "sha256": "d69a5dd79c1fe41a8fc6500d5ac8b4574c47e28cf737dc8727fbb1da302406ea"
+        },
+        {
+          "path": "oldap-jena-client-update.yml",
+          "status": "untracked",
+          "sha256": "3e22ee003858733fe2930f43ec315f0a67c911324eca145daa7a96c73f4fb071"
+        },
+        {
+          "path": "oldap-jena-freeze.yml",
+          "status": "untracked",
+          "sha256": "4bef8064ff481194dae8fe266e8d403b7bee4b13f5b066c6eabf281bdd88d65a"
+        },
+        {
+          "path": "oldap-jena-identity-install.yml",
+          "status": "untracked",
+          "sha256": "b476c4f0208634bd33d1012072fd2f18431deca5225968f36f3139a57cd3253d"
+        },
+        {
+          "path": "oldap-jena-media-access.yml",
+          "status": "untracked",
+          "sha256": "ea1fc310ce27c715bfc21ea1df6f68d099f40c065b836247edae0b227742b8a2"
+        },
+        {
+          "path": "oldap-jena-prepare.yml",
+          "status": "untracked",
+          "sha256": "8a711fc9a7aa09a8b260c2c0d038b36e3d000e71828972a8b2b8eeb47c21db7f"
+        },
+        {
+          "path": "oldap-jena-proxy-update.yml",
+          "status": "untracked",
+          "sha256": "796502c07501952eb4702e311cb4ee1c06f1edfd1b1012a78d20d5c9656aa768"
+        },
+        {
+          "path": "oldap-jena-rehearse.yml",
+          "status": "untracked",
+          "sha256": "2689d12e7cac42a71bbe1d09e99ff7385aea9e32087f65c7ec38f2cc04e2339d"
+        },
+        {
+          "path": "oldap-playbook.yaml",
+          "status": "tracked_modified",
+          "sha256": "80c40ca4bd493c33fe245fd76630780d4e2ef0efa29dc333284d36965560ee3d"
+        },
+        {
+          "path": "oldap-swisscovery-install.yml",
+          "status": "untracked",
+          "sha256": "37341fc0af7cd16622affed8448949611f72421c66710741c0c38659db2e6fc1"
+        },
+        {
+          "path": "oldap-update.yml",
+          "status": "tracked_modified",
+          "sha256": "4e38b78ae3f6d9b47c445f1032d32d60e24d9c48992afef30b8faaa1ff003768"
+        },
+        {
+          "path": "release/Dockerfile.jena",
+          "status": "untracked",
+          "sha256": "78b04eea1a4043d67dbf22543a78817129b622d43ddbd5b0177e3b262b3eebee"
+        },
+        {
+          "path": "scripts/check-jena-account-parity.py",
+          "status": "untracked",
+          "sha256": "783c09b6c708699efe7be2d8ce10b98a946812b7e26e8d2b64e5e0adb6c6042a"
+        },
+        {
+          "path": "scripts/check-jena-concurrency.py",
+          "status": "untracked",
+          "sha256": "1173c547d66ccb63790f6ba3213cb02ddf808f2f7a40d720b2752f988c23e251"
+        },
+        {
+          "path": "scripts/check-jena-home.py",
+          "status": "untracked",
+          "sha256": "a97f09bb24eed34bab4818764b742aa6fa00002cb3cc4f58bb32f2aea096d86c"
+        },
+        {
+          "path": "scripts/check-jena-network.py",
+          "status": "untracked",
+          "sha256": "b8fa280771f85e19514441423fdbcdd54b24530edca5cec8dcd0186cd339266f"
+        },
+        {
+          "path": "scripts/jena-images.py",
+          "status": "untracked",
+          "sha256": "5fb012ee9fc78485c858b9011228b03df2cefdb7fa8f0bf728789a1f292c587a"
+        },
+        {
+          "path": "scripts/jena_identity.py",
+          "status": "untracked",
+          "sha256": "0a85acce2d4087bd42c5eaa4691eb0349c816d3f9d4d5804b724841a765c646c"
+        },
+        {
+          "path": "scripts/run-harvester.sh",
+          "status": "untracked",
+          "sha256": "dc96a54426633ca178234e8b5ef1d1739fe23e28abab97fe57373e7c60cd468e"
+        },
+        {
+          "path": "scripts/run-locked.py",
+          "status": "untracked",
+          "sha256": "ebf6183bb9912436b3bf7c142bece7d616d75547fbf5459014044a4967b98845"
+        },
+        {
+          "path": "scripts/run-swisscovery.sh",
+          "status": "untracked",
+          "sha256": "f679abdf8c4195d1584f1abbf903529d0bca3bbd5f0a7dbf72abb95daebe83a2"
+        },
+        {
+          "path": "scripts/run-weekly-harvest.py",
+          "status": "untracked",
+          "sha256": "0d60178518ce901735926ab6472210338c9d69b6014caadaa9f27e849976fa7d"
+        },
+        {
+          "path": "swisscovery-compose.yml",
+          "status": "untracked",
+          "sha256": "d1a7063f7ae88c3b2aca58d70e5f5a03b55031b75cc105259b31a42a98391e85"
+        },
+        {
+          "path": "tasks/check-swisscovery.yml",
+          "status": "untracked",
+          "sha256": "1e1633900f3e98d72664231e352b2dd685dc36086b99e3f0c9f117b295b07a93"
+        },
+        {
+          "path": "tasks/harvest-schedule.yml",
+          "status": "untracked",
+          "sha256": "6a802692e2598e61ecb2ec0e21fb60e169719a5425ba65a18508628bffae44a1"
+        },
+        {
+          "path": "tasks/jena-home-media-access.yml",
+          "status": "untracked",
+          "sha256": "a154aa314274f526b8a73d63dc13a75efc1820a30488dad291cb8d7aacc11f03"
+        },
+        {
+          "path": "templates/Caddyfile.j2",
+          "status": "tracked_modified",
+          "sha256": "f10a6028587b14d32094abe5830c70153afcda71f1fbb1406e4d14f6438af01d"
+        },
+        {
+          "path": "templates/harvesting/backup-lock.conf",
+          "status": "untracked",
+          "sha256": "dc2283930d440d9bcbfa9953f16d63d04c831b7d8df5832a3a21f25f0278237e"
+        },
+        {
+          "path": "templates/harvesting/oldap-harvest.service",
+          "status": "untracked",
+          "sha256": "adfbbed6976c87f1933bee1b26d53a0a094219a2b8c383cb83e7cd35f68570ba"
+        },
+        {
+          "path": "templates/harvesting/oldap-harvest.timer",
+          "status": "untracked",
+          "sha256": "965d95685b96232db757e8c5b6c0070cf9b3c5af04c0b32a03c4259a99dff22f"
+        },
+        {
+          "path": "templates/jena-service.properties.j2",
+          "status": "untracked",
+          "sha256": "4b126cfc9051fbb26521144cc896de53e0368d787d0b94a8daab420ab2a332d0"
+        },
+        {
+          "path": "templates/jena.env.j2",
+          "status": "untracked",
+          "sha256": "a8785e6765dde6f75f0cfe5104b2d4c18740cbf65b340c00347f15344fc80b66"
+        },
+        {
+          "path": "tests/jena_network_peer.py",
+          "status": "untracked",
+          "sha256": "1c0a69815c2c8fc1a6dfd6715f929cf90f2bc93573e356ef7f56df184474fd30"
+        },
+        {
+          "path": "tests/test_harvest_schedule.py",
+          "status": "untracked",
+          "sha256": "2d61fb049c8de50262bcb07b9c1d914dda79c9ed351b54ea6206a0f20fea3866"
+        },
+        {
+          "path": "tests/test_jena_deployment.py",
+          "status": "untracked",
+          "sha256": "3f40202cc858bd40f31bc99654a61947558a4bec688ad91f0b17ff94836c0b3d"
+        },
+        {
+          "path": "tests/test_jena_home_acceptance.py",
+          "status": "untracked",
+          "sha256": "2f5944bc16d8c21cf7d3053b8d75746b9e16a71b8e0ec37765dc3ffbc98730e1"
+        },
+        {
+          "path": "tests/test_jena_images.py",
+          "status": "untracked",
+          "sha256": "26100b7b62492f5ef59d9e94e840e4beccb8a73c9d2aac258b6e8e0cfd973bee"
+        },
+        {
+          "path": "tests/test_swisscovery_deployment.py",
+          "status": "untracked",
+          "sha256": "de56e7f9d2cf14d5da14dae8d2381df64be63fd66fb6e77b6f54b9be6289b9fd"
+        },
+        {
+          "path": "tests/test_swisscovery_lock.py",
+          "status": "untracked",
+          "sha256": "692d4cbf4c70a21494a7a65a2f5309bdfbf7baa9556741393817cadc453feb7f"
+        }
+      ],
+      "tracked_workflows_on_main": []
+    }
+  },
+  "graphdb_library_baseline": {
+    "ref": "origin/refactor/ontology",
+    "commit": "9f7610de81cb37b9fb87b93c4c637b16c5e22a4b",
+    "version": "0.7.29",
+    "note": "Do not use origin/main (0.4.27) as the latest GraphDB library baseline."
+  },
+  "limitations": [
+    "Committed merge-tree checks do not validate local edits or runtime behavior.",
+    "New preparation documents and subsequent context/log changes are not part of this pre-edit inventory.",
+    "Hosted webhooks, branch protections and Docker Hub automated builds have not been verified.",
+    "Production image digests must be inventoried separately; local Git refs do not prove deployed versions."
+  ]
+}

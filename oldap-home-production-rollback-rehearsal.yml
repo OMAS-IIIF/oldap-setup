@@ -1,0 +1,36 @@
+---
+# Execute the SAME rollback tasks on the explicitly prepared home pair.
+# Preparation must retain the home stack and install source state under original
+# production paths. Never point this entry point at a normal live home stack.
+- name: Rehearse pre-opening production rollback on the existing home pair
+  hosts: oldap_home
+  become: true
+  gather_facts: false
+  vars:
+    ansible_become_exe: /usr/bin/sudo.ws
+    ansible_user: rosenth
+    ansible_python_interpreter: /usr/bin/python3
+    media_host: media.home.org
+    checkpoint: '/srv/storage/oldap-cutover-{{ snapshot_id }}'
+    media_checkpoint: '/data/oldap-cutover-{{ snapshot_id }}'
+  tasks:
+    - ansible.builtin.assert:
+        that:
+          - ansible_host == 'api.home.org'
+          - snapshot_id is match('^home-rehearsal-[a-zA-Z0-9_-]+$')
+          - home_production_rehearsal_approved | default(false) | bool
+    - name: Require prepared rehearsal ownership on both hosts
+      ansible.builtin.slurp:
+        src: '{{ item.path }}/home-rehearsal.json'
+      loop:
+        - {host: '{{ inventory_hostname }}', path: '{{ checkpoint }}'}
+        - {host: '{{ media_host }}', path: '{{ media_checkpoint }}'}
+      delegate_to: '{{ item.host }}'
+      register: preparation
+    - ansible.builtin.assert:
+        that:
+          - (item.content | b64decode | from_json).snapshot_id == snapshot_id
+          - (item.content | b64decode | from_json).home_retained == true
+      loop: '{{ preparation.results }}'
+      no_log: true
+    - ansible.builtin.include_tasks: tasks/production-private-rollback.yml

@@ -1,0 +1,122 @@
+---
+# Install already reviewed private Compose bundles and start only private API/Jena.
+# Data import/model migration and private acceptance are separate steps.
+- name: Install the reviewed private production target with source still frozen
+  hosts: oldap_prod
+  become: true
+  gather_facts: false
+  vars:
+    media_host: dhlab-iii.dhlab.unibas.ch
+    checkpoint: '/srv/storage/oldap-cutover-{{ snapshot_id }}'
+    media_checkpoint: '/data/oldap-cutover-{{ snapshot_id }}'
+  tasks:
+    - ansible.builtin.assert:
+        that:
+          - ansible_host == 'dhlab-oldap.dhlab.unibas.ch'
+          - snapshot_id is match('^[a-zA-Z0-9_-]+$')
+          - target_root is match('^/srv/storage/oldap-jena-production-[a-zA-Z0-9_-]+$')
+          - candidate_api_sha256 is match('^[a-f0-9]{64}$')
+          - candidate_media_sha256 is match('^[a-f0-9]{64}$')
+          - private_install_approved | default(false) | bool
+          - production_cutover_rehearsed | default(false) | bool
+    - name: Refuse repeat first activation after public target opening
+      ansible.builtin.script: 'scripts/cutover-write-boundary.py {{ checkpoint }} check-rollback'
+      args: {executable: python3}
+      changed_when: false
+    - ansible.builtin.slurp: {src: '{{ checkpoint }}/manifest.json'}
+      register: frozen_manifest
+      no_log: true
+    - ansible.builtin.assert:
+        that: (frozen_manifest.content | b64decode | from_json).status == 'source-frozen'
+    - name: Bind verified off-host recovery to every frozen source artifact
+      ansible.builtin.script: 'scripts/check-production-offhost-checkpoint.py {{ checkpoint }}'
+      args: {executable: python3}
+      changed_when: false
+    - name: Require all original writers stopped
+      ansible.builtin.script: 'scripts/check-cutover-containers.py {{ item.role }} frozen'
+      args: {executable: python3}
+      loop:
+        - {role: api, host: dhlab-oldap.dhlab.unibas.ch}
+        - {role: media, host: '{{ media_host }}'}
+      delegate_to: '{{ item.host }}'
+      changed_when: false
+    - name: Require both exact candidate bundles before changing either host
+      ansible.builtin.script: 'scripts/check-cutover-bundle.py {{ item.path }} {{ item.checksum }} --destination {{ item.destination }}'
+      args: {executable: python3}
+      loop:
+        - {host: dhlab-oldap.dhlab.unibas.ch, path: '{{ checkpoint }}/candidate-api.tar', checksum: '{{ candidate_api_sha256 }}', destination: /opt/oldap/compose}
+        - {host: '{{ media_host }}', path: '{{ media_checkpoint }}/candidate-media.tar', checksum: '{{ candidate_media_sha256 }}', destination: /opt/oldap-mediaserver/compose}
+      delegate_to: '{{ item.host }}'
+      changed_when: false
+      no_log: true
+    - name: Record configuration replacement before changing either host
+      ansible.builtin.copy:
+        dest: '{{ checkpoint }}/target-installing.json'
+        mode: '0600'
+        force: false
+        content: '{{ {"api_sha256": candidate_api_sha256, "media_sha256": candidate_media_sha256, "target_root": target_root} | to_nice_json }}'
+    - name: Install reviewed complete Compose inputs while all consumers are stopped
+      ansible.builtin.unarchive:
+        src: '{{ item.archive }}'
+        dest: '{{ item.destination }}'
+        remote_src: true
+        owner: root
+        group: root
+      loop:
+        - {host: dhlab-oldap.dhlab.unibas.ch, archive: '{{ checkpoint }}/candidate-api.tar', destination: /opt/oldap/compose}
+        - {host: '{{ media_host }}', archive: '{{ media_checkpoint }}/candidate-media.tar', destination: /opt/oldap-mediaserver/compose}
+      delegate_to: '{{ item.host }}'
+      no_log: true
+    - name: Validate pinned target wiring and isolated API/Redis storage
+      ansible.builtin.script: 'scripts/check-production-target-compose.py {{ item.role }} {{ item.directory }} {{ target_root }}'
+      args: {executable: python3}
+      loop:
+        - {role: api, host: dhlab-oldap.dhlab.unibas.ch, directory: /opt/oldap/compose}
+        - {role: media, host: '{{ media_host }}', directory: /opt/oldap-mediaserver/compose}
+      delegate_to: '{{ item.host }}'
+      changed_when: false
+      no_log: true
+    - name: Precreate reviewed media containers without starting them
+      ansible.builtin.command: docker compose up --no-start --no-deps --pull never imageserver mediaserver ingest-worker export-worker mobile-media-worker caddy
+      args: {chdir: /opt/oldap-mediaserver/compose}
+      delegate_to: '{{ media_host }}'
+      no_log: true
+    - name: Precreate reviewed API consumers without starting public ingress
+      ansible.builtin.command: docker compose up --no-start --no-deps --pull never oldap-jena oldap-jena-identity oldap-api redis caddy oldap-app fasnachts-page salsah-2
+      args: {chdir: /opt/oldap/compose}
+      no_log: true
+    - name: Start only target storage
+      ansible.builtin.command: docker start redis compose-oldap-jena-1
+    - name: Require native ready response before identity/API start
+      ansible.builtin.command:
+        argv: [docker, exec, compose-oldap-jena-1, bash, -c, 'exec 3<>/dev/tcp/127.0.0.1/3031; printf "GET /health HTTP/1.0\r\n\r\n" >&3; cat <&3 | grep -q ready']
+      register: ready
+      until: ready.rc == 0
+      retries: 60
+      delay: 2
+      changed_when: false
+    - name: Clear only derived model cache in isolated Redis before any client starts
+      ansible.builtin.script: 'scripts/clear-migrated-model-cache.py --private-production-root {{ target_root }}'
+      args: {executable: python3}
+      register: private_cache_cleanup
+    - name: Retain cache cleanup evidence without values or credentials
+      ansible.builtin.copy:
+        dest: '{{ checkpoint }}/target-cache-cleanup.json'
+        content: '{{ private_cache_cleanup.stdout }}'
+        mode: '0600'
+    # Recreate namespace consumers after owner starts; never reuse stale netns.
+    - name: Start identity before API namespace consumer
+      ansible.builtin.command: 'docker compose up -d --no-deps --pull never --force-recreate --wait {{ item }}'
+      args: {chdir: /opt/oldap/compose}
+      loop: [oldap-jena-identity, oldap-api]
+      no_log: true
+    - name: Verify private target boundaries on both hosts
+      ansible.builtin.script: 'scripts/check-cutover-containers.py {{ item.role }} target-private'
+      args: {executable: python3}
+      loop:
+        - {role: api, host: dhlab-oldap.dhlab.unibas.ch}
+        - {role: media, host: '{{ media_host }}'}
+      delegate_to: '{{ item.host }}'
+      changed_when: false
+    # No automatic public opening or GraphDB rollback. On failure remain closed
+    # and use the explicit pre-opening rollback procedure after inspecting state.

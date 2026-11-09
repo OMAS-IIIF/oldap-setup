@@ -1,0 +1,108 @@
+{
+  "date": "2026-11-08",
+  "status": "production_images_preloaded_and_candidate_staged_no_cutover",
+  "images": [
+    {
+      "local_image_id": "sha256:612f0ff47f33888e3b61a8db399ff2dc22c2cefb8cb652d86a619e52eabcd51f",
+      "reference": "caddy@sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f"
+    },
+    {
+      "local_image_id": "sha256:524ad0887896d5bdf723d169f97f8eb2ad7b8a6b51171cde1113fc9ed1031b23",
+      "reference": "lrosenth/oldap-harvesters@sha256:43d4c5026ade3de85fadf402789ecda9fb2af4790e4c700c216676f517bca227"
+    },
+    {
+      "local_image_id": "sha256:bd83d5e4737f6347e4bb5149af78ba2ad4b0471fe07cd57623b81734965758ff",
+      "reference": "lrosenth/oldap-tools@sha256:4a721b0e80ccfffeb9471334e658e50a929bd65bbde750824b7bf05896001ff6"
+    },
+    {
+      "local_image_id": "sha256:99f4bb525f55a34a3f920c4a1a05f34fba9dde9dfc5ceeef871bc08e23f006ed",
+      "reference": "lrosenth/oldap-api@sha256:5ba4f39f95976c1db88144a6268d7d2042820bc2067f9e1aa2fa0d0de42a49d9"
+    },
+    {
+      "local_image_id": "sha256:487efc0616382465781b8fdc3d6d1db449e6fd80ae23bf48432a2da6b6929908",
+      "reference": "redis@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99"
+    },
+    {
+      "local_image_id": "sha256:0e6f376aa5fbd65c474cf5659bb7db9417d9f23afb3d2adcdf225a09e0fff855",
+      "reference": "lrosenth/salsah-2@sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3"
+    },
+    {
+      "local_image_id": "sha256:6579efecdce4c19084f1630a804f59bb25766a62d379f30faef38a88003b63af",
+      "reference": "lrosenth/oldap-app@sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7"
+    },
+    {
+      "local_image_id": "sha256:dea9e9edf089e010799dc19ddf9fa376854181bd8ad3add0144c0002cf9b2139",
+      "reference": "lrosenth/oldap-harvesters@sha256:de1798a05da402a2b318d5c0b7cbd3f484fd973cb88a56cebbb0d126c63d2fc2"
+    },
+    {
+      "local_image_id": "sha256:46498b01a9ebcb6cc9cca0cdc7bbd613b2d1d4e764eeef64a76ee204639b4e6f",
+      "reference": "lrosenth/fasnachts-page@sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9"
+    },
+    {
+      "local_image_id": "sha256:3b0c5a2ef254c787a8efaa090bcba8f424453d1fc8f3a07d9d9e0033cba26f77",
+      "reference": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0"
+    },
+    {
+      "local_image_id": "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f",
+      "reference": "caddy@sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f"
+    },
+    {
+      "local_image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+      "reference": "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+    },
+    {
+      "local_image_id": "sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5",
+      "reference": "lrosenth/sipi-2@sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5"
+    }
+  ],
+  "all_14_original_containers_and_images_preserved": true,
+  "preload_restart_check": "running IDs, image IDs and start times unchanged",
+  "source_configuration_drift": "both complete resolved source configurations equal frozen source",
+  "isolated_production_engine_smoke": "API Jena library import and both harvester CLI help passed with network disabled",
+  "core_package": "package-registry-01",
+  "batch_package": "batch-registry-01",
+  "server_stage": "/srv/storage/oldap-release-candidate-20261108",
+  "receiver_stage": "/Users/rosenth/OLDAP_BACKUP/releases/production-registry-20261108",
+  "all_seven_artifacts_sha256_verified_at_both_destinations": true,
+  "artifacts": {
+    "package-registry-01/candidate-api.tar": {
+      "bytes": 30720,
+      "sha256": "65b971d6a3fe24c12cd1ef3de7205a4c955defa350ee761f49e4d646c251fd50"
+    },
+    "package-registry-01/candidate-media.tar": {
+      "bytes": 30720,
+      "sha256": "6504251b9825122758fc536764d75d93c5020a43cb39fa6a67990e3e9c70f821"
+    },
+    "package-registry-01/candidate-runtime.tar": {
+      "bytes": 57344000,
+      "sha256": "77a451e03de0261345057b637ca963431308ed9984dd90ad7925e9a8b6c4f860"
+    },
+    "package-registry-01/manifest.json": {
+      "bytes": 6579,
+      "sha256": "37db043d7ca8e9f567331ccc67f62efa0f052664d40ebfdcd9ccb7800a6aa745"
+    },
+    "candidate-batch-registry-01.tar": {
+      "bytes": 30720,
+      "sha256": "89494c41e553bbb69c2ec26c4e7f5c9b4bc78a11c9394544a8382b4c74763b8c"
+    },
+    "candidate-migration.tar": {
+      "bytes": 81920,
+      "sha256": "e0967af0347af4a0353207d487ceeb18e771afbabfe873051457fef5a37a4b0f"
+    },
+    "candidate-operations.tar": {
+      "bytes": 51200,
+      "sha256": "a6f815efe46d0933a597a58878caed16ffc793c7be953b2d77e582700ace1809"
+    }
+  },
+  "source_graphdb_running": true,
+  "production_write_pause": false,
+  "production_timers_changed": false,
+  "tests": {
+    "production_unit_tests": 73
+  },
+  "remaining": [
+    "Autonomous Jena backup controller, peer authentication, notification and schedule wiring",
+    "Production pull/Borg encryption/key recovery and schedule acceptance",
+    "Fresh held source snapshot, final RDF migration and nine private acceptance gates before opening"
+  ]
+}

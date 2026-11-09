@@ -1,0 +1,67 @@
+{
+  "snapshot_id": "20261106-studio-rehearsal-01",
+  "archive": "home-20261106-studio-rehearsal-01",
+  "repository": "/Users/rosenth/OLDAP_BACKUP/borg",
+  "encryption": "none",
+  "retention": {
+    "daily": 7,
+    "weekly": 4,
+    "monthly": 3
+  },
+  "restore_directory": "/Users/rosenth/OLDAP_BACKUP/restore-test/borg-20261106-studio-rehearsal-01",
+  "status": "passed",
+  "steps": {
+    "source_verify": {
+      "seconds": 19.15,
+      "status": "passed"
+    },
+    "init": {
+      "seconds": 0.32,
+      "returncode": 0
+    },
+    "create": {
+      "seconds": 123.3,
+      "returncode": 0
+    },
+    "integrity": {
+      "seconds": 45.95,
+      "returncode": 0
+    },
+    "extract": {
+      "seconds": 45.38,
+      "returncode": 0
+    },
+    "restore_verify": {
+      "seconds": 19.21,
+      "status": "passed"
+    },
+    "retention_preview": {
+      "seconds": 0.15,
+      "returncode": 0,
+      "diagnostics": "Keeping archive (rule: daily #1):            home-20261106-studio-rehearsal-01    Fri, 2026-11-06 01:06:00 [7f142274b9864b9eaa5e336c6118ed2245cc87726b4512c686bac0dbd1374179]\n"
+    },
+    "retention_apply": {
+      "seconds": 0.15,
+      "returncode": 0,
+      "diagnostics": "Keeping archive (rule: daily #1):            home-20261106-studio-rehearsal-01    Fri, 2026-11-06 01:06:00 [7f142274b9864b9eaa5e336c6118ed2245cc87726b4512c686bac0dbd1374179]\n"
+    }
+  },
+  "archive_stats": {
+    "compressed_size": 11003551528,
+    "deduplicated_size": 10574949949,
+    "nfiles": 3,
+    "original_size": 44536965647
+  },
+  "archive_id": "7f142274b9864b9eaa5e336c6118ed2245cc87726b4512c686bac0dbd1374179",
+  "restored_files": {
+    "api": {
+      "bytes": 23383111680,
+      "sha256": "4c37b359faa6d4ec0ef3a0a5272a2dd7ffe2bca1007de45c01d06bdabe5cd89a"
+    },
+    "media": {
+      "bytes": 21153853440,
+      "sha256": "720c703f46a067a577e6780bafa1a993829019899f23fdb100f742742f9570d1"
+    }
+  },
+  "scope": "Backup-file recovery on Studio only; no Linux service restore, schedule, or production changes."
+}

@@ -1,0 +1,57 @@
+---
+# Update the already active home API and independent identity consumer only.
+# The Jena namespace owner, data, policy overlays and signing keys stay in place.
+- name: Update tested Jena clients on home
+  hosts: oldap_home
+  become: true
+  vars:
+    ansible_become_exe: /usr/bin/sudo.ws
+  tasks:
+    - name: Require home and explicit immutable candidate images
+      ansible.builtin.assert:
+        that:
+          - ansible_host == 'api.home.org'
+          - oldap_jena_api_image is match('^lrosenth/oldap-api@sha256:[a-f0-9]{64}$')
+          - oldap_jena_tools_image is match('^lrosenth/oldap-tools@sha256:[a-f0-9]{64}$')
+    - name: Require the existing Jena backend
+      ansible.builtin.command:
+        argv: [docker, exec, oldap-api, python, -c, 'import os; assert os.environ["OLDAP_BACKEND"] == "jena"']
+      changed_when: false
+    # Resolve both immutable images before modifying the live selection. A registry
+    # failure must leave the existing environment and running clients untouched.
+    - name: Pull both exact candidate images before changing live configuration
+      ansible.builtin.command:
+        argv: [docker, image, pull, '{{ item }}']
+      loop:
+        - '{{ oldap_jena_api_image }}'
+        - '{{ oldap_jena_tools_image }}'
+      changed_when: true
+      no_log: true
+    - name: Preserve installed environment before client update
+      ansible.builtin.copy:
+        remote_src: true
+        src: /opt/oldap/compose/.env
+        dest: "/opt/oldap/compose/.env.before-client-update-{{ ansible_facts['date_time']['iso8601_basic_short'] }}"
+        force: false
+        mode: '0600'
+      no_log: true
+    - name: Select tested client images without replacing other settings
+      ansible.builtin.lineinfile:
+        path: /opt/oldap/compose/.env
+        regexp: '^{{ item.key }}='
+        line: '{{ item.key }}={{ item.value }}'
+        mode: '0600'
+      loop:
+        - {key: OLDAP_JENA_API_IMAGE, value: '{{ oldap_jena_api_image }}'}
+        - {key: OLDAP_JENA_TOOLS_IMAGE, value: '{{ oldap_jena_tools_image }}'}
+      no_log: true
+    - name: Update independent identity verification first
+      ansible.builtin.command: docker compose up -d --no-deps --wait oldap-jena-identity
+      args: {chdir: /opt/oldap/compose}
+      changed_when: true
+      no_log: true
+    - name: Update API without restarting namespace owner or storage
+      ansible.builtin.command: docker compose up -d --no-deps --wait oldap-api
+      args: {chdir: /opt/oldap/compose}
+      changed_when: true
+      no_log: true

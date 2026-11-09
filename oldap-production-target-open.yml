@@ -1,0 +1,78 @@
+---
+# FINAL write-opening step only. Does not build/deploy a candidate or migrate RDF.
+# A separately rehearsed private target and frozen source checkpoint are required.
+- name: Open the accepted production Jena target after private acceptance
+  hosts: oldap_prod
+  become: true
+  gather_facts: false
+  vars:
+    media_host: dhlab-iii.dhlab.unibas.ch
+    checkpoint: '/srv/storage/oldap-cutover-{{ snapshot_id }}'
+  tasks:
+    - name: Require explicit production opening after private acceptance
+      ansible.builtin.assert:
+        that:
+          - ansible_host == 'dhlab-oldap.dhlab.unibas.ch'
+          - snapshot_id is match('^[a-zA-Z0-9_-]+$')
+          - production_open_approved | default(false) | bool
+          - production_cutover_rehearsed | default(false) | bool
+    - name: Read checkpoint and private acceptance without printing contents
+      ansible.builtin.slurp: {src: '{{ checkpoint }}/{{ item }}'}
+      loop: [manifest.json, private-acceptance.json, source-state.json]
+      register: records
+      no_log: true
+    - ansible.builtin.set_fact:
+        checkpoint_record: '{{ records.results[0].content | b64decode | from_json }}'
+        acceptance: '{{ records.results[1].content | b64decode | from_json }}'
+        original_state: '{{ records.results[2].content | b64decode | from_json }}'
+      no_log: true
+    - name: Require the exact frozen source and complete reviewed acceptance
+      ansible.builtin.assert:
+        that:
+          - checkpoint_record.status == 'source-frozen'
+          - acceptance.status == 'passed'
+          - acceptance.snapshot_id == snapshot_id
+          - acceptance.source_sha256 == checkpoint_record.artifacts[2].checksum
+          - acceptance.checks | difference(['data', 'permissions', 'relationships', 'fulltext', 'media-auth', 'concurrency', 'native-console', 'harvester-backend', 'backup-readiness']) | length == 0
+          - acceptance.checks | unique | length == 9
+    - name: Require closed ingress and only private target consumers
+      ansible.builtin.script: 'scripts/check-cutover-containers.py {{ item.role }} target-private'
+      args: {executable: python3}
+      loop:
+        - {role: api, host: dhlab-oldap.dhlab.unibas.ch}
+        - {role: media, host: '{{ media_host }}'}
+      delegate_to: '{{ item.host }}'
+      changed_when: false
+    - name: Require exact reviewed image IDs for all target consumers
+      ansible.builtin.command:
+        argv: [python3, -c, 'import json,subprocess,sys; expected=json.loads(sys.argv[1]); required=json.loads(sys.argv[2]); assert set(expected)==set(required); rows=json.loads(subprocess.check_output(["docker","inspect",*required])); assert all(expected[c["Name"].lstrip("/")]==c["Image"] for c in rows)', '{{ acceptance.images[item.role] | to_json }}', '{{ item.names | to_json }}']
+      loop:
+        - role: api
+          host: dhlab-oldap.dhlab.unibas.ch
+          names: [oldap-api, compose-oldap-jena-1, compose-oldap-jena-identity-1, redis, caddy, oldap-app, fasnachts-page, compose-salsah-2-1]
+        - role: media
+          host: '{{ media_host }}'
+          names: [oldap-media-caddy, oldap-mediahelper, oldap-ingest-worker, oldap-export-worker, oldap-mobile-media-worker, oldap-imageserver]
+      delegate_to: '{{ item.host }}'
+      changed_when: false
+    - name: Require healthy private backend and API immediately before opening
+      ansible.builtin.command:
+        argv: [docker, exec, oldap-api, python, -c, 'import requests; a=requests.get("http://127.0.0.1:8000/status",timeout=5); a.raise_for_status(); b=requests.get("http://127.0.0.1:3031/health",timeout=5); b.raise_for_status(); assert "ready" in b.text']
+      changed_when: false
+    - name: Hash exact acceptance evidence for the durable write boundary
+      ansible.builtin.stat: {path: '{{ checkpoint }}/private-acceptance.json', checksum_algorithm: sha256}
+      register: acceptance_file
+    - name: Persist the boundary before starting any target ingress or worker
+      ansible.builtin.script: 'scripts/cutover-write-boundary.py {{ checkpoint }} mark-opening --acceptance-sha256 {{ acceptance_file.stat.checksum }}'
+      args: {executable: python3}
+    # There is deliberately NO rescue restoring GraphDB after this point.
+    - name: Start reviewed frontends and API ingress
+      ansible.builtin.command: docker start oldap-app fasnachts-page compose-salsah-2-1 caddy
+    - name: Start reviewed media services against the new API
+      ansible.builtin.command: docker start oldap-imageserver oldap-mediahelper oldap-ingest-worker oldap-export-worker oldap-mobile-media-worker
+      delegate_to: '{{ media_host }}'
+    - name: Open media ingress last
+      ansible.builtin.command: docker start oldap-media-caddy
+      delegate_to: '{{ media_host }}'
+    # Source timers remain paused until public acceptance and the NEW backup
+    # integration are accepted. Never resume the old GraphDB backup against Jena.

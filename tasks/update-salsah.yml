@@ -2,7 +2,7 @@
 # Runs against installed configuration only; no dependency or infrastructure startup.
 - name: Require an explicit SALSAH release
   ansible.builtin.assert:
-    that: salsah_tag is match('^v[0-9]+[.][0-9]+[.][0-9]+$')
+    that: salsah_tag is match('^(v[0-9]+[.][0-9]+[.][0-9]+|jena-[0-9]+[.][0-9]+[.][0-9]+-rc[0-9]+-[a-f0-9]{12}-amd64@sha256:[a-f0-9]{64})$')
 - name: Validate installed SALSAH service
   ansible.builtin.command:
     cmd: docker compose config --services

@@ -1,0 +1,10 @@
+# Private backend configuration. API and Jena share one container network namespace.
+dataset=/var/lib/oldap-jena/dataset
+port=3031
+transactionLifetimeMillis=30000
+identityUrl=http://127.0.0.1:8001/internal/jena/identity
+identitySecret={{ oldap_jena_identity_key }}
+serviceSecret={{ oldap_jena_service_key }}
+bootstrapSecret={{ oldap_jena_bootstrap_key }}
+fulltextSecret={{ oldap_jena_fulltext_key }}
+{% include 'jena-compaction.properties.j2' %}

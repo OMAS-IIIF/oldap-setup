@@ -1,0 +1,158 @@
+{
+  "recorded_at": "2026-11-07T11:23:07.915824+00:00",
+  "status": "home_clients_updated_acceptance_passed_backend_rollout_pending",
+  "before": {
+    "checks": [
+      "API selects Jena",
+      "GraphDB is stopped",
+      "Private Jena backend has no published ports",
+      "oldap-api running",
+      "compose-oldap-jena-1 running",
+      "compose-oldap-jena-identity-1 running",
+      "redis running",
+      "caddy running",
+      "API /status HTTP 200",
+      "Existing administrator can log in",
+      "Media upload accepts a fresh API token before form validation",
+      "Media upload rejects missing or invalid access token",
+      "Media upload rejects missing or invalid access token",
+      "API /admin/auth/unknown HTTP 200",
+      "Proxy blocks private identity callback",
+      "Proxy blocks private identity callback",
+      "Export worker route reaches service authentication without proxy shadowing",
+      "API /data/search/fasnacht/class/fasnacht:Story HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "Nonempty fulltext AND search is independent of word order",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 HTTP 200",
+      "Signed IIIF metadata delivered by home media service",
+      "Signed image delivered as JPEG",
+      "fasnacht.home.org page available",
+      "app.home.org page available"
+    ],
+    "images": {
+      "oldap-api": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "compose-oldap-jena-1": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+      "compose-oldap-jena-identity-1": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+      "graphdb": "ontotext/graphdb:11.3.0",
+      "redis": "redis:7-alpine",
+      "caddy": "caddy:2.8"
+    },
+    "stories": 30,
+    "stories_sha256": "26975a21d9088bdb0a86dc185120881b8b6ac2c4e40579f223a1e3337b52f012",
+    "fulltext_matches": 10,
+    "image_bytes": 9898,
+    "status": "passed"
+  },
+  "blockers": [],
+  "changes": "Pull both immutable images before changing the live Compose environment; syntax check passed",
+  "production_changed": false,
+  "home_application_changed": true,
+  "publication": {
+    "oldap-api": {
+      "digest": "sha256:5ba4f39f95976c1db88144a6268d7d2042820bc2067f9e1aa2fa0d0de42a49d9",
+      "platform_manifests": [
+        "lrosenth/oldap-api@sha256:a5383202b9cc50b15a71d4ccae40d725b882de6dde38e1afacc8c95766591da7",
+        "lrosenth/oldap-api@sha256:514e5f15120dec120382060fff52659e7d127ef4880931468ce8691369285531"
+      ],
+      "reference": "lrosenth/oldap-api:jena-1.0.0-rc1-a30230d5b695"
+    },
+    "oldap-tools": {
+      "digest": "sha256:4a721b0e80ccfffeb9471334e658e50a929bd65bbde750824b7bf05896001ff6",
+      "platform_manifests": [
+        "lrosenth/oldap-tools@sha256:8aa1dd906f59630390020181e46b59a568a54d3ae76341217ab3cbbbaab20180",
+        "lrosenth/oldap-tools@sha256:0717f3faade264a2f9b76b9524320630ee760d750756e000948e6391ddab2302"
+      ],
+      "reference": "lrosenth/oldap-tools:jena-1.0.0-rc1-a30230d5b695"
+    }
+  },
+  "protected_tags_unchanged": true,
+  "updated_at": "2026-11-07T11:38:03.663730+00:00",
+  "capacity_after": {
+    "logical_tdb_bytes": 38666438174,
+    "free_bytes": 169184133120,
+    "total_bytes": 368766263296,
+    "required_before_compaction": 112419690833,
+    "capacity_passed": true
+  },
+  "disk": {
+    "old_gib": 250,
+    "new_gib": 350,
+    "partition": "/dev/sdb1",
+    "filesystem": "ext4",
+    "uuid_preserved": "ffd04155-5ac0-417f-8142-e7b0e512a4a2",
+    "online_resize": true,
+    "partition_table_backup": "/root/oldap-sdb-before-grow-20261107.sfdisk"
+  },
+  "after": {
+    "checks": [
+      "API selects Jena",
+      "GraphDB is stopped",
+      "Private Jena backend has no published ports",
+      "oldap-api running",
+      "compose-oldap-jena-1 running",
+      "compose-oldap-jena-identity-1 running",
+      "redis running",
+      "caddy running",
+      "API /status HTTP 200",
+      "Existing administrator can log in",
+      "Media upload accepts a fresh API token before form validation",
+      "Media upload rejects missing or invalid access token",
+      "Media upload rejects missing or invalid access token",
+      "API /admin/auth/unknown HTTP 200",
+      "Proxy blocks private identity callback",
+      "Proxy blocks private identity callback",
+      "Export worker route reaches service authentication without proxy shadowing",
+      "API /data/search/fasnacht/class/fasnacht:Story HTTP 200",
+      "Story content equals old-image baseline after keyword IRI expansion",
+      "API /data/search/fasnacht HTTP 200",
+      "API /data/search/fasnacht HTTP 200",
+      "Nonempty fulltext AND search is independent of word order",
+      "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 HTTP 200",
+      "Signed IIIF metadata delivered by home media service",
+      "Signed image delivered as JPEG",
+      "fasnacht.home.org page available",
+      "app.home.org page available"
+    ],
+    "images": {
+      "oldap-api": "lrosenth/oldap-api@sha256:5ba4f39f95976c1db88144a6268d7d2042820bc2067f9e1aa2fa0d0de42a49d9",
+      "compose-oldap-jena-1": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+      "compose-oldap-jena-identity-1": "lrosenth/oldap-api@sha256:5ba4f39f95976c1db88144a6268d7d2042820bc2067f9e1aa2fa0d0de42a49d9",
+      "graphdb": "ontotext/graphdb:11.3.0",
+      "redis": "redis:7-alpine",
+      "caddy": "caddy:2.8"
+    },
+    "stories": 30,
+    "stories_sha256": "26975a21d9088bdb0a86dc185120881b8b6ac2c4e40579f223a1e3337b52f012",
+    "stories_semantic_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "fulltext_matches": 10,
+    "image_bytes": 9898,
+    "status": "passed"
+  },
+  "old_new_image_story_comparison": {
+    "old_count": 30,
+    "new_count": 30,
+    "old_hash": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "new_hash": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+    "exact_equal": true
+  },
+  "story_hash_variability": "Both observed hashes differ only in storyKeywords QName/full-IRI representation. Added explicit semantic comparison for this IRI-valued property; raw hash check remains available. Old/new packaged images return the same current dataset content.",
+  "growth_samples": [
+    {
+      "at": "2026-11-07T11:33:57.338988+00:00",
+      "logical_bytes": 38666438774,
+      "allocated_bytes": 38537322496
+    },
+    {
+      "at": "2026-11-07T11:34:42.573225+00:00",
+      "logical_bytes": 38666438774,
+      "allocated_bytes": 38537322496
+    }
+  ],
+  "growth_scope": "45-second observation only; not an isolated daily growth forecast or write-job acceptance",
+  "pending": [
+    "Native home write-job acceptance",
+    "Deploy new Jena service and enable/test night maintenance",
+    "Production fresh-source rollback and mail checks"
+  ]
+}

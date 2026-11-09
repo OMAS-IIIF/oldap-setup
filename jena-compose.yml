@@ -1,0 +1,137 @@
+# Apply LAST, after writer-compose.yml when present. Explicit opt-in only.
+# The backend owns the network namespace; its listener remains loopback-only.
+services:
+  redis:
+    # When no separate writer service is installed, DB 1 also holds durable
+    # mutation coordination. The library refuses writes with Redis defaults.
+    command: [redis-server, --appendonly, "yes", --appendfsync, always, --maxmemory-policy, noeviction]
+
+  oldap-jena:
+    image: ${OLDAP_JENA_RUNTIME_IMAGE:?Pin the reviewed Java 25 runtime by digest}
+    user: "1000:1000"
+    entrypoint: [/opt/oldap-jena/release/start]
+    command: [/run/oldap-jena/service.properties]
+    environment:
+      JAVA_HOME: /opt/java/openjdk
+      JAVA_HEAP_MB: ${OLDAP_JENA_HEAP_MB:-6144}
+      # Direct buffers are outside the heap; mapped TDB/Lucene files remain
+      # reclaimable under the overall cgroup budget below.
+      JAVA_TOOL_OPTIONS: "-XX:MaxDirectMemorySize=${OLDAP_JENA_DIRECT_MB:-512}m"
+    # Budget heap + native allocations + resident file pages, not only -Xmx.
+    # Equal memory/swap limits prevent this service from using host swap.
+    mem_limit: ${OLDAP_JENA_MEMORY_MB:-10240}m
+    memswap_limit: ${OLDAP_JENA_MEMORY_MB:-10240}m
+    volumes:
+      - type: bind
+        source: ${OLDAP_JENA_RELEASE:?Select an immutable built release directory}
+        target: /opt/oldap-jena/release
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${OLDAP_JENA_CONFIG:?Select the private service.properties file}
+        target: /run/oldap-jena/service.properties
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${OLDAP_JENA_DATA:?Select the isolated Jena storage parent}
+        target: /var/lib/oldap-jena
+        bind: {create_host_path: false}
+    networks:
+      default:
+        # Existing Caddy/frontends continue to address oldap-api:8000.
+        aliases: [oldap-api]
+    restart: unless-stopped
+    stop_grace_period: 90s
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    # No published port, including 3031. API port 8000 is reachable on the bridge.
+
+  # Callback capacity must not compete with requests waiting for Jena.
+  # This uses the same installed token verifier in an independent process pool.
+  oldap-jena-identity:
+    image: ${OLDAP_JENA_API_IMAGE:?Select the tested Jena API image digest}
+    network_mode: service:oldap-jena
+    depends_on:
+      oldap-jena: {condition: service_started}
+    command: [gunicorn, "jena_identity:create_app()"]
+    working_dir: /opt/oldap-identity
+    environment:
+      GUNICORN_CMD_ARGS: "--workers=1 --threads=2 --bind=127.0.0.1:8001 --timeout=15 --error-logfile=-"
+      OLDAP_BACKEND: jena
+      OLDAP_JENA_IDENTITY_KEY: ${OLDAP_JENA_IDENTITY_KEY:?Required identity callback key}
+      OLDAP_ACCESS_JWT_SECRET: ${OLDAP_ACCESS_JWT_SECRET:?Required API access signing key}
+      OLDAP_JWT_ISSUER: ${OLDAP_JWT_ISSUER:-https://oldap.org}
+      OLDAP_JWT_AUDIENCE: ${OLDAP_JWT_AUDIENCE:-oldap-api}
+    volumes:
+      - type: bind
+        source: ${OLDAP_JENA_IDENTITY_APP:?Select the reviewed identity entry point}
+        target: /opt/oldap-identity/jena_identity.py
+        read_only: true
+        bind: {create_host_path: false}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/_ready', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 6
+      start_period: 15s
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+
+  oldap-api:
+    image: ${OLDAP_JENA_API_IMAGE:?Select the tested Jena API image digest}
+    network_mode: service:oldap-jena
+    networks: !reset []
+    # Port metadata belongs to the namespace owner, not its consumer.
+    expose: !reset []
+    depends_on:
+      graphdb: !reset null
+      oldap-jena: {condition: service_started}
+      oldap-jena-identity: {condition: service_healthy}
+      redis: {condition: service_started}
+    environment:
+      OLDAP_BACKEND: jena
+      OLDAP_JENA_URL: http://127.0.0.1:3031/tx
+      OLDAP_JENA_SERVICE_KEY: ${OLDAP_JENA_SERVICE_KEY:?Required private transport key}
+      OLDAP_JENA_BOOTSTRAP_KEY: ${OLDAP_JENA_BOOTSTRAP_KEY:?Required bootstrap key}
+      OLDAP_JENA_FULLTEXT_KEY: ${OLDAP_JENA_FULLTEXT_KEY:?Required fulltext key}
+      OLDAP_JENA_IDENTITY_KEY: ${OLDAP_JENA_IDENTITY_KEY:?Required identity callback key}
+      OLDAP_TS_SERVER: http://127.0.0.1:3031
+
+  oldap-tools:
+    image: ${OLDAP_JENA_TOOLS_IMAGE:?Select the tested Jena tools image digest}
+    network_mode: service:oldap-jena
+    networks: !reset []
+    depends_on:
+      graphdb: !reset null
+      oldap-jena: {condition: service_started}
+      oldap-api: {condition: service_started}
+      redis: {condition: service_started}
+    environment: &jena-client
+      OLDAP_BACKEND: jena
+      OLDAP_JENA_URL: http://127.0.0.1:3031/tx
+      OLDAP_JENA_SERVICE_KEY: ${OLDAP_JENA_SERVICE_KEY:?Required private transport key}
+      OLDAP_JENA_BOOTSTRAP_KEY: ${OLDAP_JENA_BOOTSTRAP_KEY:?Required bootstrap key}
+      OLDAP_JENA_FULLTEXT_KEY: ${OLDAP_JENA_FULLTEXT_KEY:?Required fulltext key}
+      OLDAP_TS_SERVER: http://127.0.0.1:3031
+
+  oldap-harvesters:
+    network_mode: service:oldap-jena
+    networks: !reset []
+    depends_on:
+      graphdb: !reset null
+      oldap-jena: {condition: service_started}
+      oldap-api: {condition: service_started}
+      redis: {condition: service_started}
+    environment: *jena-client
+
+  # Retain the source for comparison/rollback, but never initialize/start it as
+  # an implicit dependency of a Jena application. Existing containers are not removed.
+  graphdb:
+    profiles: [graphdb-legacy]
+  graphdb-init:
+    profiles: [graphdb-legacy]

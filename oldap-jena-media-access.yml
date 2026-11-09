@@ -1,0 +1,26 @@
+---
+# Repair only the already-authorized home deployment; no API key rotation.
+- name: Synchronize media upload token verification with the active home API
+  hosts: oldap_home
+  become: true
+  vars:
+    ansible_become_exe: /usr/bin/sudo.ws
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_user: rosenth
+    oldap_jena_media_host: media.home.org
+  tasks:
+    - name: Require the authorized home hosts
+      ansible.builtin.assert:
+        that:
+          - ansible_host == 'api.home.org'
+          - oldap_jena_media_host == 'media.home.org'
+    - name: Synchronize existing token-verification consumers
+      ansible.builtin.include_tasks: tasks/jena-home-media-access.yml
+    - name: Recreate changed media consumers to load their new environment
+      # Restart alone retains the old container environment. No image pull or
+      # dependency restart; graceful termination remains the installed policy.
+      ansible.builtin.command: docker compose up -d --no-deps mediaserver ingest-worker export-worker mobile-media-worker
+      args: {chdir: /opt/oldap-mediaserver/compose}
+      delegate_to: '{{ oldap_jena_media_host }}'
+      changed_when: true
+      no_log: true

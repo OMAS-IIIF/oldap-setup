@@ -1,0 +1,138 @@
+---
+# Freeze and back up the specifically inventoried home stack. Production must
+# supply/review its own writer inventory; this playbook deliberately targets home.
+- name: Freeze and retain the home.org GraphDB baseline
+  hosts: oldap_home
+  become: true
+  vars:
+    # Delegated media tasks do not inherit oldap_home inventory connection vars.
+    ansible_become_exe: /usr/bin/sudo.ws
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_user: rosenth
+    oldap_jena_backup_root: /srv/storage/oldap-jena-backup-20261102
+    oldap_jena_media_backup_root: /data/oldap-jena-backup-20261102
+    oldap_jena_media_host: media.home.org
+    media_writers: [oldap-mediahelper, oldap-ingest-worker, oldap-export-worker, oldap-mobile-media-worker]
+  tasks:
+    - name: Validate fixed home rehearsal inputs
+      ansible.builtin.assert:
+        that:
+          - ansible_host == 'api.home.org'
+          - oldap_jena_media_host == 'media.home.org'
+          - oldap_jena_backup_root is match('^/srv/storage/oldap-jena-backup-[a-zA-Z0-9_-]+$')
+          - oldap_jena_media_backup_root is match('^/data/oldap-jena-backup-[a-zA-Z0-9_-]+$')
+          - oldap_jena_expected_source_sha256 is match('^[a-f0-9]{64}$')
+    - name: Require the GraphDB source before stopping any services
+      # A new backup path must not permit this first-cutover workflow on Jena.
+      ansible.builtin.command:
+        argv: [docker, exec, oldap-api, python, -c,
+               'import os; assert os.getenv("OLDAP_BACKEND", "graphdb") == "graphdb"']
+      changed_when: false
+    - name: Refuse replacement of an existing API backup
+      ansible.builtin.stat:
+        path: '{{ oldap_jena_backup_root }}'
+      register: backup
+    - name: Refuse replacement of an existing media backup
+      ansible.builtin.stat:
+        path: '{{ oldap_jena_media_backup_root }}'
+      delegate_to: '{{ oldap_jena_media_host }}'
+      register: media_backup
+    - name: Require fresh backup paths
+      ansible.builtin.assert:
+        that: not backup.stat.exists and not media_backup.stat.exists
+    - name: Create private API backup directory
+      ansible.builtin.file:
+        path: '{{ oldap_jena_backup_root }}'
+        state: directory
+        mode: '0700'
+    - name: Create private media backup directory
+      ansible.builtin.file:
+        path: '{{ oldap_jena_media_backup_root }}'
+        state: directory
+        mode: '0700'
+      delegate_to: '{{ oldap_jena_media_host }}'
+    - name: Freeze source writers and retain a consistent baseline
+      block:
+        - name: Stop media writers cleanly
+          ansible.builtin.command:
+            argv: '{{ ["docker", "stop", "--time", "90"] + media_writers }}'
+          delegate_to: '{{ oldap_jena_media_host }}'
+          changed_when: true
+        - name: Stop public ingress and the old API
+          ansible.builtin.command: docker stop --time 90 caddy oldap-api
+          changed_when: true
+        - name: Require no active source coordination owner or pending state
+          ansible.builtin.command: docker exec redis redis-cli -n 1 DBSIZE
+          register: coordination
+          changed_when: false
+        - name: Refuse blind migration of coordination records
+          ansible.builtin.assert:
+            that: coordination.stdout | trim == '0'
+        - name: Export all asserted RDF in native TriG-star
+          ansible.builtin.get_url:
+            url: http://127.0.0.1:7200/repositories/oldap/statements?infer=false
+            headers: {Accept: application/x-trigstar}
+            dest: '{{ oldap_jena_backup_root }}/source.trig'
+            mode: '0600'
+            timeout: 120
+          no_log: true
+        - name: Compare final export with the accepted rehearsal input
+          ansible.builtin.stat:
+            path: '{{ oldap_jena_backup_root }}/source.trig'
+            checksum_algorithm: sha256
+          register: final_export
+        - name: Require unchanged source before reusing the reviewed target
+          ansible.builtin.assert:
+            that: final_export.stat.checksum == oldap_jena_expected_source_sha256
+            fail_msg: Source changed; keep the backup and repeat migration on a new target.
+        - name: Stop GraphDB and source Redis for filesystem backup
+          ansible.builtin.command: docker stop --time 90 graphdb redis
+          changed_when: true
+        - name: Back up source database, API files, configuration and Redis
+          ansible.builtin.command:
+            argv: [tar, --acls, --xattrs, -cpf, '{{ oldap_jena_backup_root }}/api.tar', -C, /,
+                   srv/storage/graphdb, srv/storage/oldap-data, srv/storage/caddy, opt/oldap/compose]
+          changed_when: true
+        - name: Back up media, operation files and media deployment configuration
+          ansible.builtin.command:
+            argv: [tar, --acls, --xattrs, -cpf, '{{ oldap_jena_media_backup_root }}/media.tar', -C, /,
+                   data/media, data/oldap-import-records, data/oldap-ingest, data/oldap-mobile-uploads,
+                   data/oldap-exports, opt/oldap-mediaserver/compose]
+          delegate_to: '{{ oldap_jena_media_host }}'
+          changed_when: true
+        - name: Hash the complete API backup
+          ansible.builtin.stat:
+            path: '{{ oldap_jena_backup_root }}/api.tar'
+            checksum_algorithm: sha256
+          register: api_archive
+        - name: Hash the complete media backup
+          ansible.builtin.stat:
+            path: '{{ oldap_jena_media_backup_root }}/media.tar'
+            checksum_algorithm: sha256
+          delegate_to: '{{ oldap_jena_media_host }}'
+          register: media_archive
+        - name: Record the completed two-host freeze and backup
+          ansible.builtin.copy:
+            dest: '{{ oldap_jena_backup_root }}/manifest.json'
+            mode: '0600'
+            content: >-
+              {{ {"source_sha256": final_export.stat.checksum,
+                  "api_backup": oldap_jena_backup_root ~ "/api.tar",
+                  "api_sha256": api_archive.stat.checksum,
+                  "media_host": oldap_jena_media_host,
+                  "media_backup": oldap_jena_media_backup_root ~ "/media.tar",
+                  "media_sha256": media_archive.stat.checksum,
+                  "source_coordination_keys": 0,
+                  "status": "frozen-backed-up"} | to_nice_json }}
+      rescue:
+        - name: Restore original source availability after failed freeze
+          ansible.builtin.command: docker start graphdb redis oldap-api caddy
+          changed_when: true
+        - name: Restore original media writers after failed freeze
+          ansible.builtin.command:
+            argv: '{{ ["docker", "start"] + media_writers }}'
+          delegate_to: '{{ oldap_jena_media_host }}'
+          changed_when: true
+        - name: Stop before activation after a failed backup or consistency check
+          ansible.builtin.fail:
+            msg: Source services restarted. Inspect retained private backup files; no target switch performed.

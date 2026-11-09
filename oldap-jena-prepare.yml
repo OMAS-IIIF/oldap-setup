@@ -1,0 +1,140 @@
+---
+# Prepare a NEW candidate only. No service starts, initialization, .env replacement
+# or production endpoint changes. Activation follows data/identity acceptance.
+- name: Prepare an isolated Jena candidate on an existing Docker host
+  hosts: oldap
+  become: true
+  vars:
+    oldap_jena_root: /srv/storage/oldap-jena-candidate
+    oldap_jena_heap_mb: 6144
+    oldap_jena_direct_mb: 512
+    oldap_jena_memory_mb: 10240
+    oldap_jena_runtime_image: eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0
+  tasks:
+    - name: Require an explicit local release and a bounded candidate path
+      ansible.builtin.assert:
+        that:
+          - oldap_jena_release_source is defined
+          - oldap_jena_api_image is match('^lrosenth/oldap-api@sha256:[a-f0-9]{64}$')
+          - oldap_jena_tools_image is match('^lrosenth/oldap-tools@sha256:[a-f0-9]{64}$')
+          - oldap_jena_root is match('^/srv/storage/oldap-jena-[a-zA-Z0-9_-]+$')
+          - oldap_jena_runtime_image is match('^eclipse-temurin@sha256:[a-f0-9]{64}$')
+          - oldap_jena_heap_mb | int >= 512
+          - oldap_jena_heap_mb | int <= 8192
+          - oldap_jena_direct_mb | int >= 64
+          - oldap_jena_memory_mb | int >= (oldap_jena_heap_mb | int + oldap_jena_direct_mb | int + 2048)
+          - oldap_jena_memory_mb | int <= (ansible_memtotal_mb | int - 4096)
+
+    - name: Require separate private URL-safe keys from protected operator inputs
+      ansible.builtin.assert:
+        that:
+          - item is match('^[A-Za-z0-9_-]{43,128}$')
+      loop: &keys
+        - "{{ oldap_jena_service_key }}"
+        - "{{ oldap_jena_bootstrap_key }}"
+        - "{{ oldap_jena_fulltext_key }}"
+        - "{{ oldap_jena_identity_key }}"
+      no_log: true
+
+    - name: Reject reused service credentials
+      ansible.builtin.assert:
+        that: (jena_keys | unique | length) == 4
+      vars:
+        jena_keys: *keys
+      no_log: true
+
+    - name: Refuse to overwrite an existing candidate or dataset
+      ansible.builtin.stat:
+        path: "{{ oldap_jena_root }}"
+      register: jena_candidate
+    - name: Require a new candidate directory
+      ansible.builtin.assert:
+        that: not jena_candidate.stat.exists
+        fail_msg: "Inspect the existing candidate; preparation never overwrites or initializes storage."
+
+    - name: Read local build metadata
+      ansible.builtin.set_fact:
+        jena_build: "{{ lookup('file', oldap_jena_release_source ~ '/build.json') | from_json }}"
+    - name: Require the reviewed service and dependency generation
+      ansible.builtin.assert:
+        that:
+          - jena_build.version == '1.0.0rc1'
+          - jena_build.fuseki_version == '6.2.0'
+          - jena_build.fuseki_sha256 == '2c92c598e65ab69d99820052e05f4277ed1d77980a8845f87545ad35b71a76ee'
+
+    - name: Require a compaction-capable release for an enabled maintenance policy
+      ansible.builtin.assert:
+        that:
+          - "'services/jena/src/JenaCompaction.java' in jena_build.sources"
+          - oldap_jena_compaction_check_seconds | default(900) | int >= 60
+          - oldap_jena_compaction_min_seconds | default(86400) | int >= oldap_jena_compaction_check_seconds | default(900) | int
+          - oldap_jena_compaction_growth_bytes | default(536870912) | int >= 1048576
+          - oldap_jena_compaction_growth_ratio | default(2.0) | float >= 1.1
+      when: oldap_jena_compaction_enabled | default(false) | bool
+
+    - name: Create private candidate directories for the non-root container
+      ansible.builtin.file:
+        path: "{{ oldap_jena_root }}/{{ item }}"
+        state: directory
+        owner: '1000'
+        group: '1000'
+        mode: '0700'
+      loop: ['', config, data, release, identity]
+
+    - name: Install the independent private identity entry point
+      ansible.builtin.copy:
+        src: scripts/jena_identity.py
+        dest: '{{ oldap_jena_root }}/identity/jena_identity.py'
+        mode: '0644'
+
+    - name: Copy built service without rebuilding on the server
+      ansible.builtin.copy:
+        src: "{{ oldap_jena_release_source }}/"
+        dest: "{{ oldap_jena_root }}/release/"
+        owner: root
+        group: root
+        mode: 'u=rwX,go=rX'
+        directory_mode: '0755'
+
+    - name: Make the service launcher executable explicitly
+      # copy's symbolic X does not retain the executable bit on a newly copied
+      # regular file. The launcher is the only executable release artifact.
+      ansible.builtin.file:
+        path: '{{ oldap_jena_root }}/release/start'
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Verify copied service, dependency and recovery tool hashes
+      ansible.builtin.stat:
+        path: "{{ oldap_jena_root }}/release/{{ item.path }}"
+        checksum_algorithm: sha256
+      loop:
+        - {path: 'lib/oldap-jena-service-1.0.0rc1.jar', expected: '{{ jena_build.service_sha256 }}'}
+        - {path: 'lib/fuseki-server.jar', expected: '{{ jena_build.fuseki_sha256 }}'}
+        - {path: 'backup.py', expected: '{{ jena_build.backup_tool_sha256 }}'}
+      register: jena_artifacts
+    - name: Refuse an inconsistent release
+      ansible.builtin.assert:
+        that: item.stat.checksum == item.item.expected
+      loop: "{{ jena_artifacts.results }}"
+
+    - name: Render candidate credentials without activating application settings
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ oldap_jena_root }}/{{ item.dest }}"
+        owner: '1000'
+        group: '1000'
+        mode: '0600'
+      loop:
+        - {src: jena-service.properties.j2, dest: config/service.properties}
+        - {src: jena.env.j2, dest: config/jena.env}
+      no_log: true
+
+    - name: Retain the candidate overlay for the later reviewed activation
+      ansible.builtin.copy:
+        src: jena-compose.yml
+        dest: "{{ oldap_jena_root }}/jena-compose.yml"
+        owner: root
+        group: root
+        mode: '0644'

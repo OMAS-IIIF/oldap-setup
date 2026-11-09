@@ -1,0 +1,40 @@
+---
+# Offline, two-host snapshot of the current HOME Jena deployment, not GraphDB.
+# Run with one operator and no external writers. Copies stay private on each host.
+# Always reconnect namespace consumers after stopping/restarting the Jena owner.
+- name: Back up the active home Jena system before client updates
+  hosts: oldap_home
+  become: true
+  vars:
+    ansible_become_exe: /usr/bin/sudo.ws
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_user: rosenth
+    snapshot_api_host: api.home.org
+    api_paths:
+      - srv/storage/oldap-jena-home-20261102
+      - srv/storage/oldap-data/oldap-api
+      - srv/storage/oldap-data/oldap-app
+      - srv/storage/caddy
+      - opt/oldap/compose
+    media_host: media.home.org
+    api_backup: '/srv/storage/oldap-jena-snapshot-{{ snapshot_id }}'
+    media_backup: '/data/oldap-jena-snapshot-{{ snapshot_id }}'
+    # One source list drives pre-copy, final synchronization and archive layout.
+    # Full-size home testing found pre-copy slower; keep the measured simpler
+    # offline-tar workflow as default. Staging is retained for explicit experiments.
+    home_media_precopy: false
+    media_paths:
+      - data/media
+      - data/oldap-import-records
+      - data/oldap-ingest
+      - data/oldap-mobile-uploads
+      - data/oldap-exports
+      - opt/oldap-mediaserver
+    # Parent paths (/data, /opt) are layout only, not snapshot members. Their
+    # timestamps may change independently; preserve metadata only below sources.
+    media_sync_argv: '{{ ["rsync", "-aHAXR", "--no-implied-dirs", "--numeric-ids", "--delete-delay"] + (media_paths | map("regex_replace", "^", "/") | list) + [media_backup ~ "/tree/"] }}'
+    media_writers: [oldap-mediahelper, oldap-ingest-worker, oldap-export-worker, oldap-mobile-media-worker]
+    mobile_stop_signal: SIGTERM
+  tasks:
+    - name: Capture the reviewed home snapshot
+      ansible.builtin.include_tasks: tasks/jena-snapshot.yml

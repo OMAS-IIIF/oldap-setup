@@ -1,0 +1,33 @@
+---
+# Shared home maintenance drain: ingress, media writers, API consumers, storage.
+- name: Detect installed namespace recovery
+  ansible.builtin.stat: {path: /usr/local/lib/oldap/jena-recovery.py}
+  register: jena_recovery_program
+- name: Pause automatic recovery and wait for any active repair before maintenance
+  ansible.builtin.command: /usr/bin/python3 /usr/local/lib/oldap/jena-recovery.py pause
+  when: jena_recovery_program.stat.exists
+- name: Quiesce ingress and media writers
+  ansible.builtin.include_tasks: tasks/jena-home-quiesce.yml
+- name: Stop the optional console before its namespace owner
+  ansible.builtin.command: docker stop --timeout 90 compose-jena-console-1
+  when: "'compose-jena-console-1' in api_running.stdout_lines"
+- name: Verify clean optional console shutdown
+  ansible.builtin.command:
+    argv: [python3, -c, 'import json,subprocess; c=json.loads(subprocess.check_output(["docker","inspect","compose-jena-console-1"]))[0]; assert not c["State"]["Running"] and c["State"]["ExitCode"] != 137']
+  when: "'compose-jena-console-1' in api_running.stdout_lines"
+  changed_when: false
+- name: Stop API and callback consumers before their namespace owner
+  ansible.builtin.command: docker stop --timeout 90 oldap-api compose-oldap-jena-identity-1
+# Native TDB compaction must finish before storage closes; never SIGKILL it
+# merely because an online backup/update began during the night window.
+- name: Stop Jena and persist Redis coordination state
+  ansible.builtin.command: docker stop --timeout -1 compose-oldap-jena-1 redis
+- name: Require cleanly stopped API state
+  ansible.builtin.command:
+    argv: [python3, -c, 'import json,subprocess; names=["oldap-api","compose-oldap-jena-identity-1","compose-oldap-jena-1","redis"]; states=json.loads(subprocess.check_output(["docker","inspect",*names])); assert all(not c["State"]["Running"] and c["State"]["ExitCode"] != 137 for c in states), "Unclean stop; inspect before trusting snapshot"']
+  changed_when: false
+- name: Require cleanly stopped media writers
+  ansible.builtin.command:
+    argv: [python3, -c, 'import json,subprocess; names=["oldap-mediahelper","oldap-ingest-worker","oldap-export-worker","oldap-mobile-media-worker"]; states=json.loads(subprocess.check_output(["docker","inspect",*names])); assert all(not c["State"]["Running"] and c["State"]["ExitCode"] != 137 for c in states), "Unclean media stop"']
+  delegate_to: '{{ media_host }}'
+  changed_when: false

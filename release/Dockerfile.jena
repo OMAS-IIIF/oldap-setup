@@ -1,0 +1,16 @@
+# Context contains only locally built wheels and sanitized release metadata.
+ARG PYTHON_IMAGE
+FROM ${PYTHON_IMAGE}
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+COPY wheels/ /tmp/wheels/
+RUN pip install --no-cache-dir /tmp/wheels/*.whl && pip check && rm -rf /tmp/wheels
+RUN groupadd --gid 101 app && useradd --system --uid 100 --gid app --create-home app \
+    && mkdir -p /data/upload /data/tmp /opt/oldap-release \
+    && chown -R app:app /data \
+    && pip freeze > /opt/oldap-release/dependencies.txt
+COPY release.json /opt/oldap-release/release.json
+WORKDIR /app
+USER app
+ENV GUNICORN_CMD_ARGS="--workers=4 --threads=2 --bind=0.0.0.0:8000 --timeout=60 --access-logfile=- --error-logfile=-"
+# Compose selects Jena explicitly; the image does not embed deployment credentials.
+CMD ["gunicorn", "oldap_api.wsgi:app"]

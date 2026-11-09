@@ -1,0 +1,43 @@
+{
+  "status": "passed",
+  "failed_snapshot_id": "20261109T021500Z-ccfc87ee",
+  "retry_snapshot_id": "20261109T104533Z-4d7208ef",
+  "source_commit": "177449e",
+  "producer_completed_at": "2026-11-09T10:50:33Z",
+  "receiver_completed_at": "2026-11-09T10:57:51.967931+00:00",
+  "receiver_exit_code": 0,
+  "mail_submitted": true,
+  "archive": "production-20261109T104533Z-4d7208ef",
+  "archive_id": "9b67cb48914d82a4c244452544e272fff35d80c703aed176774caaaed5f6184f",
+  "artifacts": {
+    "api": {
+      "bytes": 463247360,
+      "path": "/srv/storage/oldap-jena-snapshot-20261109T104533Z-4d7208ef/api.tar",
+      "sha256": "9c8d032432a591a0bec351d0f03468cf4de8e796cec55315564eea30e1b1a442"
+    },
+    "media": {
+      "bytes": 21283594240,
+      "host": "dhlab-iii.dhlab.unibas.ch",
+      "path": "/data/oldap-jena-snapshot-20261109T104533Z-4d7208ef/media.tar",
+      "sha256": "a43ba7725a2c1e39ca753adb6dc5e4a335f38f56ce398e2734984855bde12329"
+    }
+  },
+  "api_ingress_outage_seconds": 204.894091,
+  "public_checks": 19,
+  "public_baseline_changed": false,
+  "checks": [
+    "key-only SSH from API to media",
+    "ticket-free systemd Ansible on both hosts",
+    "real invalid-key refusal before lock acquisition",
+    "office key-only access without Kerberos or agent to both hosts",
+    "stopped-source tar comparisons",
+    "both archive bytes restored and SHA verified from Borg",
+    "paired server acknowledgement and retention",
+    "backup and recovery service success"
+  ],
+  "next_scheduled_backup": "2026-11-10 03:15 Europe/Zurich",
+  "open": [
+    "next nightly central management/scheduler cycle"
+  ],
+  "owner_confirmed_both_success_emails": true
+}

@@ -1,0 +1,75 @@
+---
+# Shared original-source recovery. The dedicated pre-opening rollback permits
+# recreated container IDs only after restoring verified, image-pinned inputs.
+# Image identity and readiness checks remain mandatory in either path.
+- name: Require source API image identities and original IDs unless explicitly recreated
+  ansible.builtin.command:
+    argv:
+      - python3
+      - -c
+      - |
+        import json,subprocess,sys
+        before=json.loads(sys.argv[1])['containers']
+        rows=json.loads(subprocess.check_output(['docker','inspect',*before]))
+        assert all((sys.argv[2]=='true' or before[r['Name'].lstrip('/')]['id']==r['Id']) and before[r['Name'].lstrip('/')]['image']==r['Image'] for r in rows), 'Source was replaced; use reviewed rollback'
+      - '{{ source_api.stdout }}'
+      - '{{ source_recreated | default(false) | bool | ternary("true", "false") }}'
+  changed_when: false
+- name: Check media identities
+  ansible.builtin.command:
+    argv: [python3, -c, 'import json,subprocess,sys; b=json.loads(sys.argv[1])["containers"]; r=json.loads(subprocess.check_output(["docker","inspect",*b])); assert all((sys.argv[2]=="true" or b[c["Name"].lstrip("/")]["id"]==c["Id"]) and b[c["Name"].lstrip("/")]["image"]==c["Image"] for c in r)', '{{ source_media.stdout }}', '{{ source_recreated | default(false) | bool | ternary("true", "false") }}']
+  delegate_to: '{{ media_host }}'
+  changed_when: false
+- name: Start source database and both coordinators
+  ansible.builtin.command: docker start graphdb redis compose-archive-writer-1
+- name: Require archive coordinator health before API recovery
+  ansible.builtin.command: docker inspect --format '{{ "{{.State.Health.Status}}" }}' compose-archive-writer-1
+  register: source_writer_health
+  until: source_writer_health.stdout | trim == 'healthy'
+  retries: 60
+  delay: 2
+  changed_when: false
+- name: Start original API with ingress still closed
+  ansible.builtin.command: docker start oldap-api
+- name: Require complete API readiness before reopening source
+  ansible.builtin.command:
+    argv: [docker, exec, oldap-api, python, -c, 'import urllib.request; assert urllib.request.urlopen("http://127.0.0.1:8000/status",timeout=5).status==200']
+  register: source_api_ready
+  until: source_api_ready.rc == 0
+  retries: 60
+  delay: 2
+  changed_when: false
+- name: Verify source repository answers before any public recovery
+  ansible.builtin.command:
+    argv: [docker, exec, oldap-api, python, -c, 'import os,requests; base=os.environ["OLDAP_TS_SERVER"].rstrip("/"); r=requests.post(base+"/repositories/"+os.environ["OLDAP_TS_REPO"], data={"query":"SELECT (1 AS ?ok) WHERE {}"}, headers={"Accept":"application/sparql-results+json"},auth=(os.environ.get("OLDAP_TS_USER",""),os.environ.get("OLDAP_TS_PASSWORD","")),timeout=10); r.raise_for_status(); assert r.json()["results"]["bindings"][0]["ok"]["value"]=="1"']
+  register: source_repository_ready
+  until: source_repository_ready.rc == 0
+  retries: 60
+  delay: 2
+  changed_when: false
+  no_log: true
+- name: Restart original frontends before ingress
+  ansible.builtin.command: docker start oldap-app fasnachts-page compose-salsah-2-1
+- name: Open source API for media workers
+  ansible.builtin.command: docker start caddy
+- name: Start original media storage and workers
+  ansible.builtin.command: docker start oldap-imageserver oldap-mediahelper oldap-ingest-worker oldap-export-worker oldap-mobile-media-worker
+  delegate_to: '{{ media_host }}'
+- name: Require media HTTP readiness and image-server connectivity before media ingress
+  ansible.builtin.command:
+    argv: [docker, exec, oldap-mediahelper, python, -c, 'import json,socket,urllib.request; r=urllib.request.urlopen("http://127.0.0.1:8000/health",timeout=5); assert r.status==200 and json.load(r)["status"]=="ok"; socket.create_connection(("imageserver",8182),timeout=5).close()']
+  delegate_to: '{{ media_host }}'
+  register: source_media_ready
+  until: source_media_ready.rc == 0
+  retries: 60
+  delay: 2
+  changed_when: false
+- name: Open media ingress after workers have restarted
+  ansible.builtin.command: docker start oldap-media-caddy
+  delegate_to: '{{ media_host }}'
+- name: Release only this workflow's maintenance lock after source recovery
+  ansible.builtin.command: systemctl stop oldap-cutover-lock.service
+- name: Restore initially active source timers
+  ansible.builtin.command: 'systemctl start {{ item.item }}'
+  loop: '{{ source_timers.results }}'
+  when: item.stdout | trim == 'active'

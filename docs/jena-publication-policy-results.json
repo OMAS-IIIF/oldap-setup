@@ -1,0 +1,32 @@
+{
+  "recorded_at": "2026-11-04T22:05:50.903438+01:00",
+  "status": "publication_policy_enabled",
+  "policy_file": "files/jena-home-archive-policy.json",
+  "checks": {
+    "live_role_class_property_validation": "passed",
+    "authenticated_existing_publisher": {
+      "enabled": true,
+      "canPublish": true
+    },
+    "read_only_preview": {
+      "status": "passed",
+      "resource_count": 2,
+      "permission": "DATA_RESTRICTED",
+      "applied": false
+    },
+    "deployment_tests": 7,
+    "anonymous_publication_denied": true,
+    "public_home_checks": {
+      "status": "passed",
+      "count": 26
+    }
+  },
+  "account": {
+    "user_id": "BMG-Archivist",
+    "publisher_role_present": false,
+    "assignment_changed": false,
+    "assignment_status": "awaiting user answer because ArchiveMediaEditor also grants editorial responsibility"
+  },
+  "deployment": "Staged and validated before installation; previous policy retained; API recreated; no image changes.",
+  "production_changed": false
+}

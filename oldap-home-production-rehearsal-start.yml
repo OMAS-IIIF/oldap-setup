@@ -1,0 +1,75 @@
+---
+# Existing-home outage: requires independently prepared source and retained-home inputs.
+- hosts: oldap_home
+  become: true
+  gather_facts: false
+  vars:
+    ansible_become_exe: /usr/bin/sudo.ws
+    ansible_user: rosenth
+    ansible_python_interpreter: /usr/bin/python3
+    media_host: media.home.org
+    api_root: '/srv/storage/oldap-cutover-{{ snapshot_id }}'
+    media_root: '/data/oldap-cutover-{{ snapshot_id }}'
+    mobile_stop_signal: SIGTERM
+    media_writers: [oldap-mediahelper, oldap-ingest-worker, oldap-export-worker, oldap-mobile-media-worker]
+    api_running: {stdout_lines: []}
+  tasks:
+    - ansible.builtin.assert:
+        that:
+          - ansible_host == 'api.home.org'
+          - snapshot_id is match('^home-rehearsal-[a-zA-Z0-9_-]+$')
+          - home_safety_snapshot is match('^[a-zA-Z0-9_-]+$')
+          - home_production_rehearsal_approved | default(false) | bool
+    - name: Require completed fresh home safety snapshot
+      ansible.builtin.slurp:
+        src: '/srv/storage/oldap-jena-snapshot-{{ home_safety_snapshot }}/manifest.json'
+      register: home_snapshot
+    - ansible.builtin.assert:
+        that: (home_snapshot.content | b64decode | from_json).status == 'offline-compared'
+    - ansible.builtin.include_tasks: tasks/jena-home-stop.yml
+    - name: Stop remaining home frontend and image containers
+      ansible.builtin.command: 'docker stop -t -1 {{ item.names }}'
+      loop:
+        - {host: '{{ inventory_hostname }}', names: 'oldap-app fasnachts-page compose-salsah-2-1'}
+        - {host: '{{ media_host }}', names: oldap-imageserver}
+      delegate_to: '{{ item.host }}'
+    - name: Remove only stopped home containers; retain every bind directory
+      ansible.builtin.command: 'docker compose -p compose -f {{ item.root }}/home-compose.json rm -f'
+      loop:
+        - {host: '{{ inventory_hostname }}', root: '{{ api_root }}'}
+        - {host: '{{ media_host }}', root: '{{ media_root }}'}
+      delegate_to: '{{ item.host }}'
+      no_log: true
+    - name: Swap preserved home paths with cloned source paths
+      ansible.builtin.command: 'python3 /home/rosenth/prepare-home-production-rehearsal.py swap {{ item.role }} {{ item.root }}'
+      loop:
+        - {host: '{{ inventory_hostname }}', role: api, root: '{{ api_root }}'}
+        - {host: '{{ media_host }}', role: media, root: '{{ media_root }}'}
+      delegate_to: '{{ item.host }}'
+    - name: Create source containers without starting them
+      ansible.builtin.command: 'docker compose -p compose -f {{ item.root }}/source-compose.json up --no-start --no-deps --pull never --force-recreate {{ item.services }}'
+      loop:
+        - {host: '{{ inventory_hostname }}', root: '{{ api_root }}', services: 'graphdb redis archive-writer oldap-api caddy oldap-app fasnachts-page salsah-2'}
+        - {host: '{{ media_host }}', root: '{{ media_root }}', services: 'imageserver mediaserver ingest-worker export-worker mobile-media-worker caddy'}
+      delegate_to: '{{ item.host }}'
+      no_log: true
+    - name: Capture concrete source container identities for the real resume tasks
+      ansible.builtin.command:
+        argv: [python3, -c, 'import json,subprocess,sys; names=sys.argv[1].split(); rows=json.loads(subprocess.check_output(["docker","inspect",*names])); print(json.dumps({"containers":{r["Name"].lstrip("/"):{"id":r["Id"],"image":r["Image"]} for r in rows}}))', '{{ item.names }}']
+      loop:
+        - {host: '{{ inventory_hostname }}', names: 'graphdb redis compose-archive-writer-1 oldap-api caddy oldap-app fasnachts-page compose-salsah-2-1'}
+        - {host: '{{ media_host }}', names: 'oldap-imageserver oldap-mediahelper oldap-ingest-worker oldap-export-worker oldap-mobile-media-worker oldap-media-caddy'}
+      delegate_to: '{{ item.host }}'
+      register: source_states
+      changed_when: false
+    - ansible.builtin.set_fact:
+        source_api: {stdout: '{{ source_states.results[0].stdout }}'}
+        source_media: {stdout: '{{ source_states.results[1].stdout }}'}
+        source_timers: {results: []}
+    - ansible.builtin.copy:
+        dest: '{{ api_root }}/source-state.json'
+        content: '{{ {"api": source_api.stdout | from_json, "media": source_media.stdout | from_json, "timers": ["inactive", "inactive"]} | to_nice_json }}'
+        mode: '0600'
+    - name: Start a rehearsal-only maintenance lock unit for identical recovery handling
+      ansible.builtin.command: systemd-run --unit=oldap-cutover-lock --collect /usr/bin/sleep infinity
+    - ansible.builtin.include_tasks: tasks/production-source-resume.yml

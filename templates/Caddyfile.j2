@@ -22,6 +22,9 @@
 
     @api host api.home.org
     handle @api {
+        # Backend identity callbacks stay inside the shared API/Jena namespace.
+        @private path /internal/jena /internal/jena/*
+        respond @private 404
         reverse_proxy oldap-api:8000
     }
 
@@ -58,6 +61,8 @@ https://app.home.org, https://api.home.org, https://fasnacht.home.org, https://g
 {% if caddy_mode == "prod" %}
 # API
 api.oldap.org {
+    @private path /internal/jena /internal/jena/*
+    respond @private 404
     # Flask owns the exact-origin, credentialed CORS policy for all requests,
     # including preflight responses.
     reverse_proxy oldap-api:8000 {
@@ -101,6 +106,9 @@ www.salsah.org {
     redir https://salsah.org{uri} permanent
 }
 api.salsah.org {
+    # Keep the alternate API origin behind the same private callback boundary.
+    @private path /internal/jena /internal/jena/*
+    respond @private 404
     reverse_proxy oldap-api:8000
 }
 {% else %}
@@ -109,4 +117,8 @@ https://salsah.home.org {
     reverse_proxy salsah-2:3200
 }
 {% endif %}
+{% endif %}
+
+{% if oldap_jena_console_enabled | default(false) %}
+{% include 'jena-console.Caddyfile.j2' %}
 {% endif %}

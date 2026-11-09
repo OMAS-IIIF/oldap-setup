@@ -1,0 +1,42 @@
+{
+  "checks": [
+    "API selects Jena",
+    "GraphDB is stopped",
+    "Private Jena backend has no published ports",
+    "oldap-api running",
+    "compose-oldap-jena-1 running",
+    "compose-oldap-jena-identity-1 running",
+    "redis running",
+    "caddy running",
+    "API /status HTTP 200",
+    "Existing administrator can log in",
+    "Media upload accepts a fresh API token before form validation",
+    "Media upload rejects missing or invalid access token",
+    "Media upload rejects missing or invalid access token",
+    "API /admin/auth/unknown HTTP 200",
+    "Proxy blocks private identity callback",
+    "Proxy blocks private identity callback",
+    "API /data/search/fasnacht/class/fasnacht:Story HTTP 200",
+    "API /data/search/fasnacht HTTP 200",
+    "API /data/search/fasnacht HTTP 200",
+    "Nonempty fulltext AND search is independent of word order",
+    "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 HTTP 200",
+    "Signed IIIF metadata delivered by home media service",
+    "Signed image delivered as JPEG",
+    "fasnacht.home.org page available",
+    "app.home.org page available"
+  ],
+  "images": {
+    "oldap-api": "lrosenth/oldap-api@sha256:e452566c33ed12f98a0e49f7af09e12afd1490c1174f727f4b5116fe74a01628",
+    "compose-oldap-jena-1": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+    "compose-oldap-jena-identity-1": "lrosenth/oldap-api@sha256:e452566c33ed12f98a0e49f7af09e12afd1490c1174f727f4b5116fe74a01628",
+    "graphdb": "ontotext/graphdb:11.3.0",
+    "redis": "redis:7-alpine",
+    "caddy": "caddy:2.8"
+  },
+  "stories": 30,
+  "stories_sha256": "26975a21d9088bdb0a86dc185120881b8b6ac2c4e40579f223a1e3337b52f012",
+  "fulltext_matches": 10,
+  "image_bytes": 9898,
+  "status": "passed"
+}

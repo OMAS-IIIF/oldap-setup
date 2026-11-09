@@ -1,0 +1,223 @@
+{
+  "status": "core_package_prepared_and_offline_validated",
+  "date": "2026-11-08",
+  "target_root": "/srv/storage/oldap-jena-production-20261108",
+  "source_snapshot": "20261108-rehearsal-02",
+  "core_directory": "package-final",
+  "artifacts": {
+    "candidate-api.tar": {
+      "bytes": 30720,
+      "sha256": "a632932723e66817843577e6921aae95a217b63f920d09be913c52a6300d1d30"
+    },
+    "candidate-media.tar": {
+      "bytes": 30720,
+      "sha256": "df7f5a16da5c6515c2d4498ed8afb613f4b2c79d514196737b1498b806c04aad"
+    },
+    "candidate-runtime.tar": {
+      "bytes": 57344000,
+      "sha256": "77a451e03de0261345057b637ca963431308ed9984dd90ad7925e9a8b6c4f860"
+    },
+    "manifest.json": {
+      "bytes": 6141,
+      "sha256": "d5c1c361c8865a23c17b3cb2e6a53db27b8e7848ddc8ab1052fa5ee6c9c96be6"
+    },
+    "candidate-migration.tar": {
+      "bytes": 81920,
+      "sha256": "e0967af0347af4a0353207d487ceeb18e771afbabfe873051457fef5a37a4b0f"
+    }
+  },
+  "production_deployed": false,
+  "scheduled_jobs_enabled": false,
+  "private_production_acceptance": "pending",
+  "model": {
+    "status": "passed",
+    "inputSha256": "66228f8848a2ffd403d191522394a84a2058739e10eb258eabd354e3f0e9d991",
+    "outputSha256": "24de205bd5afa4807ffae38ac3d299eb8a880fcc9e2c536e8f021ad8b2d452b6",
+    "removedModelQuads": 27,
+    "beforeQuads": 65401,
+    "afterQuads": 65374,
+    "allOtherQuadsUnchanged": true,
+    "idempotent": true,
+    "roundTripVerified": true
+  },
+  "fulltext": {
+    "status": "passed",
+    "projects": [
+      {
+        "project": "chama",
+        "status": "no_source_index",
+        "fields": 0
+      },
+      {
+        "project": "fasnacht",
+        "status": "field_paths_match",
+        "fields": 9,
+        "configuration": {
+          "graph": "http://fasnacht.digital/ns/data",
+          "fields": {
+            "storyContent": [
+              "http://fasnacht.digital/ns/storyContent"
+            ],
+            "abstract": [
+              "https://schema.org/abstract"
+            ],
+            "archiveObjectTitle": [
+              "https://schema.org/name"
+            ],
+            "archiveObjectDescription": [
+              "https://schema.org/description"
+            ],
+            "archiveMediaObjectTitle": [
+              "https://schema.org/name"
+            ],
+            "archiveMediaObjectDescription": [
+              "https://schema.org/description"
+            ],
+            "representedArchiveObjectTitle": [
+              "http://fasnacht.digital/ns/archiveMediaObjectOf",
+              "https://schema.org/name"
+            ],
+            "representedArchiveObjectDescription": [
+              "http://fasnacht.digital/ns/archiveMediaObjectOf",
+              "https://schema.org/description"
+            ],
+            "archiveMediaObjectText": [
+              "http://fasnacht.digital/ns/searchableText"
+            ]
+          }
+        },
+        "source_types": [
+          "http://fasnacht.digital/ns/Story",
+          "http://fasnacht.digital/ns/ArchiveObject",
+          "http://fasnacht.digital/ns/CarnivalEvent",
+          "http://fasnacht.digital/ns/ArchiveMediaObject"
+        ],
+        "source_languages": [
+          "en",
+          "de",
+          "fr",
+          "it",
+          ""
+        ],
+        "semantic_parity_claimed": false
+      },
+      {
+        "project": "mkb_pc",
+        "status": "no_source_index",
+        "fields": 0
+      },
+      {
+        "project": "oldap",
+        "status": "no_source_index",
+        "fields": 0
+      },
+      {
+        "project": "shared",
+        "status": "no_source_index",
+        "fields": 0
+      },
+      {
+        "project": "tgb",
+        "status": "no_source_index",
+        "fields": 0
+      }
+    ],
+    "inputs": {
+      "/Users/rosenth/Library/Application Support/OLDAP-Jena/releases/production-rehearsal-20261108/candidate/inventory/projects.json": "b23d545387fb107cca459d3309e389e5d9220caf3d1b604ca722b2ab795c79be",
+      "/Users/rosenth/Library/Application Support/OLDAP-Jena/releases/production-rehearsal-20261108/candidate/source-lucene-config.json": "d8b0239a3550bfb10be2ae19e89e32178401f894c9e88a6239aec2be7cb34c01",
+      "/Users/rosenth/Library/Application Support/OLDAP-Jena/releases/production-rehearsal-20261108/fasnacht-fulltext-plan.json": "361336fb575c71be46e7e0ce3671bb6e549d6477f6de8400a6bdc85e936f4214"
+    }
+  },
+  "model_api": {
+    "status": "passed",
+    "projects": {
+      "chama": {
+        "model_status": 200,
+        "resource_classes": 14,
+        "fulltext_status": "absent"
+      },
+      "fasnacht": {
+        "model_status": 200,
+        "resource_classes": 16,
+        "fulltext_status": "active"
+      },
+      "mkb_pc": {
+        "model_status": 200,
+        "resource_classes": 0,
+        "fulltext_status": "absent"
+      },
+      "oldap": {
+        "model_status": 200,
+        "resource_classes": 9,
+        "fulltext_status": "absent"
+      },
+      "shared": {
+        "model_status": 200,
+        "resource_classes": 6,
+        "fulltext_status": "absent"
+      },
+      "tgb": {
+        "model_status": 200,
+        "resource_classes": 0,
+        "fulltext_status": "absent"
+      }
+    },
+    "fasnacht_obsolete_fields_absent": true,
+    "place_parent_cardinality_preserved": true
+  },
+  "cache_cleanup": {
+    "status": "applied",
+    "derived_objects": {
+      "DataModel": 7,
+      "ExternalOntology": 11,
+      "OldapList": 10,
+      "Project": 12,
+      "ResourceClass": 10,
+      "Role": 9,
+      "User": 15
+    },
+    "retained_entries": 2,
+    "other_databases_untouched": true,
+    "auth_sentinel_preserved": true,
+    "other_database_sentinel_preserved": true
+  },
+  "api_baseline_fields_matched": 13,
+  "live_api_host_containers_unchanged": 8,
+  "proxy_validation": "both exact accepted Caddy images, network disabled, passed",
+  "tests": {
+    "python": 66,
+    "java_model_safety": 7
+  },
+  "receiver": {
+    "status": "passed",
+    "host": "studio.home.org",
+    "directory": "/Users/rosenth/OLDAP_BACKUP/releases/production-candidate-20261108",
+    "artifacts": [
+      {
+        "name": "candidate-api.tar",
+        "bytes": 30720,
+        "sha256": "a632932723e66817843577e6921aae95a217b63f920d09be913c52a6300d1d30"
+      },
+      {
+        "name": "candidate-media.tar",
+        "bytes": 30720,
+        "sha256": "df7f5a16da5c6515c2d4498ed8afb613f4b2c79d514196737b1498b806c04aad"
+      },
+      {
+        "name": "candidate-runtime.tar",
+        "bytes": 57344000,
+        "sha256": "77a451e03de0261345057b637ca963431308ed9984dd90ad7925e9a8b6c4f860"
+      },
+      {
+        "name": "manifest.json",
+        "bytes": 6141,
+        "sha256": "d5c1c361c8865a23c17b3cb2e6a53db27b8e7848ddc8ab1052fa5ee6c9c96be6"
+      },
+      {
+        "name": "candidate-migration.tar",
+        "bytes": 81920,
+        "sha256": "e0967af0347af4a0353207d487ceeb18e771afbabfe873051457fef5a37a4b0f"
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+# Isolated acceptance target. Apply after the reviewed base and jena-compose.yml.
+# Existing public routes, GraphDB, Redis and application storage are untouched.
+services:
+  oldap-jena:
+    ports: ["127.0.0.1:18000:8000"]
+  oldap-api:
+    container_name: oldap-jena-review-api
+    volumes: !override
+      - ${OLDAP_JENA_DATA}/api:/data
+  redis:
+    container_name: oldap-jena-review-redis
+    volumes: !override
+      - ${OLDAP_JENA_DATA}/redis:/data

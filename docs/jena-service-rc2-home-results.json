@@ -1,0 +1,62 @@
+{
+  "checks": [
+    "API selects Jena",
+    "GraphDB is stopped",
+    "Private Jena backend has no published ports",
+    "oldap-api running",
+    "compose-oldap-jena-1 running",
+    "compose-oldap-jena-identity-1 running",
+    "redis running",
+    "caddy running",
+    "API /status HTTP 200",
+    "Existing administrator can log in",
+    "Media upload accepts a fresh API token before form validation",
+    "Media upload rejects missing or invalid access token",
+    "Media upload rejects missing or invalid access token",
+    "API /admin/auth/unknown HTTP 200",
+    "Proxy blocks private identity callback",
+    "Proxy blocks private identity callback",
+    "Export worker route reaches service authentication without proxy shadowing",
+    "API /data/search/fasnacht/class/fasnacht:Story HTTP 200",
+    "API /data/search/fasnacht HTTP 200",
+    "API /data/search/fasnacht HTTP 200",
+    "Nonempty fulltext AND search is independent of word order",
+    "API /data/mediaobject/id/bmg_archive_0024_001_stamm_1912_fotos_fasnacht_004 HTTP 200",
+    "Signed IIIF metadata delivered by home media service",
+    "Signed image delivered as JPEG",
+    "fasnacht.home.org page available",
+    "app.home.org page available"
+  ],
+  "images": {
+    "oldap-api": "lrosenth/oldap-api@sha256:3b8ac028083d46e0a03da9b77e6dfa2896094ef4978e615172ef35796ed41a87",
+    "compose-oldap-jena-1": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+    "compose-oldap-jena-identity-1": "lrosenth/oldap-api@sha256:3b8ac028083d46e0a03da9b77e6dfa2896094ef4978e615172ef35796ed41a87",
+    "graphdb": "ontotext/graphdb:11.3.0",
+    "redis": "redis:7-alpine",
+    "caddy": "caddy:2.8"
+  },
+  "stories": 30,
+  "stories_sha256": "00b8ac9492c63d24e169831cd42876d102bf754e0544176770d6e8cf2b653f97",
+  "fulltext_matches": 10,
+  "image_bytes": 9898,
+  "status": "passed",
+  "export": {
+    "state": "READY",
+    "files_done": 13,
+    "files_total": 13,
+    "source_bytes": 12721419,
+    "archive_bytes": 12724905,
+    "archive_sha256": "527d864208ef40ef5de7d31109bd470abbca8fd6df49f8fdb1fd4850cee6fd2b",
+    "zip_integrity": "passed",
+    "zip_entries": 22,
+    "claimed_at": "2026-11-03T13:52:42.283Z",
+    "artifact_completed_at": "2026-11-03T13:52:42.648124Z",
+    "worker_completed_at": "2026-11-03T13:52:44.123Z",
+    "existing_job_preserved": true
+  },
+  "story_comparison": {
+    "frozen_baseline_equal": false,
+    "previous_and_current_image_responses_equal_on_current_data": true,
+    "note": "Frozen baseline digest no longer matches. Separate disposable RC1/RC2 read-only Flask requests against the same current dataset returned identical 30-story responses. No frozen source parity claimed."
+  }
+}

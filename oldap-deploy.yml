@@ -47,6 +47,14 @@
         - "':salsah-compose.yml' in (existing_feature_selection.content | b64decode)"
       no_log: true
 
+    - name: Refuse GraphDB provisioning over an installed Jena deployment
+      ansible.builtin.assert:
+        that:
+          - "':jena-compose.yml' not in (existing_feature_selection.content | b64decode)"
+        fail_msg: "Jena requires its coordinated deployment workflow; see README.md. No configuration was replaced."
+      when: existing_compose_env.stat.exists
+      no_log: true
+
     - name: Validate deployment phase
       ansible.builtin.assert:
         that:

@@ -1,0 +1,10 @@
+[Unit]
+Description=Check OLDAP Jena namespace connections periodically
+
+[Timer]
+OnBootSec=30s
+OnUnitInactiveSec=10s
+AccuracySec=1s
+
+[Install]
+WantedBy=timers.target

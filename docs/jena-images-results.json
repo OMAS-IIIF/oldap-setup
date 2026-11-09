@@ -1,0 +1,87 @@
+{
+  "date": "2026-11-02 23:25",
+  "status": "published and accepted",
+  "images": {
+    "oldap-api": {
+      "digest": "sha256:e452566c33ed12f98a0e49f7af09e12afd1490c1174f727f4b5116fe74a01628",
+      "platform_manifests": [
+        "lrosenth/oldap-api@sha256:1c265102d2dd058da69a6f6108d12378bc2e82747a26a78b455c306b73d35f3b",
+        "lrosenth/oldap-api@sha256:14f88d08deae119e7c40393ed720c8b65d3fca29be52fc8d38e18ba09ce5c200"
+      ],
+      "reference": "lrosenth/oldap-api:jena-0.2.37-rc1-c1cb0919375a"
+    },
+    "oldap-tools": {
+      "digest": "sha256:da6a7ccc60eebe4b38090d56dcf0dce2830297e1c4644c220022c18fb4474a33",
+      "platform_manifests": [
+        "lrosenth/oldap-tools@sha256:c1491f836da89ae66c742027e2d59af19d118626ab77bb041826f9a145fa5fbc",
+        "lrosenth/oldap-tools@sha256:dc7f6a1f50a889e2268e39f6ceddf16b7feb1d77a4b97c0ce380734f2b3e27e5"
+      ],
+      "reference": "lrosenth/oldap-tools:jena-0.3.22-rc1-c1cb0919375a"
+    }
+  },
+  "versions": {
+    "oldap-api": "0.2.37+jena.rc1.c1cb0919375a",
+    "oldap-tools": "0.3.22+jena.rc1.c1cb0919375a",
+    "oldaplib": "0.7.29+jena.rc1.c1cb0919375a"
+  },
+  "source_fingerprint": "c1cb0919375a17e1d27c5ea0e22070c39bff6e2330d67d66d7d0ce34e8405b83",
+  "source_revisions": {
+    "oldap-api": {
+      "commit": "4d13567bdf9c87a48c653e2588d4d1b2a94c6b89",
+      "dirty": true
+    },
+    "oldap-tools": {
+      "commit": "1949fc5015b22a3a99b2d02908f1c7daecc2f48c",
+      "dirty": true
+    },
+    "oldaplib": {
+      "commit": "75a31b096c2cacc218283b203db4345ce16d8858",
+      "dirty": true
+    }
+  },
+  "base_image": "python@sha256:ae14d4ce8771606477a81446e7ef429edd6762305fc50c84507c1041fa8285d1",
+  "protected_before": {
+    "lrosenth/oldap-api:latest": "sha256:38b66073d531945dc32f3beaa0a5a1ead5ce9fc9adacb2a466feb82f35c0b305",
+    "lrosenth/oldap-api:v0.2.37": "sha256:38b66073d531945dc32f3beaa0a5a1ead5ce9fc9adacb2a466feb82f35c0b305",
+    "lrosenth/oldap-tools:latest": null,
+    "lrosenth/oldap-tools:v0.3.22": "sha256:4769f8bb368d7220cc5e47b0f696fd429278e0b3b8be917ea89064ecee589619"
+  },
+  "protected_after": {
+    "lrosenth/oldap-api:latest": "sha256:38b66073d531945dc32f3beaa0a5a1ead5ce9fc9adacb2a466feb82f35c0b305",
+    "lrosenth/oldap-api:v0.2.37": "sha256:38b66073d531945dc32f3beaa0a5a1ead5ce9fc9adacb2a466feb82f35c0b305",
+    "lrosenth/oldap-tools:latest": null,
+    "lrosenth/oldap-tools:v0.3.22": "sha256:4769f8bb368d7220cc5e47b0f696fd429278e0b3b8be917ea89064ecee589619"
+  },
+  "tests": {
+    "publication_and_deployment": 10,
+    "wheel_contents": "no repository env, tests, source-path dependencies; exact library pin verified",
+    "architectures": [
+      "linux/amd64",
+      "linux/arm64"
+    ],
+    "image_checks": [
+      "installed migration package versions",
+      "pip check",
+      "tools CLI startup",
+      "API UID/GID 100/101 retained; tools root retained"
+    ],
+    "transport": "packaged API on both architectures locally, then published API digest on native x86_64 api.home.org; real identity/transactions, invalid credentials, bridge isolation, persisted data after recreation",
+    "registry_indexes": "both Linux architectures verified; unknown/unknown entries are build attestations",
+    "ansible": "candidate preparation syntax check passed"
+  },
+  "release_artifacts": "/Users/rosenth/Library/Application Support/OLDAP-Jena/releases/images-rc1-final",
+  "workflow_sha256": {
+    "scripts/jena-images.py": "5fb012ee9fc78485c858b9011228b03df2cefdb7fa8f0bf728789a1f292c587a",
+    "release/Dockerfile.jena": "78b04eea1a4043d67dbf22543a78817129b622d43ddbd5b0177e3b262b3eebee",
+    "jena-compose.yml": "846aeb4b7c326ca837e9f4d4b7486b0b0e2b099c401d5d633384e53b340a9049",
+    "scripts/check-jena-network.py": "48f4e2601929e17fe40e3c4421855b3ef69506b6491c70246c6ddf0c04eb3122"
+  },
+  "limits": [
+    "No full API/account/data migration acceptance; identity blueprint fixture only",
+    "No harvester image release; tools direct legacy commands remain GraphDB-specific",
+    "No PyPI upload or Git commit/push; source snapshots and per-file hashes retained in bundle",
+    "Existing registry tags refused; use a single publisher since registry checks are not an atomic lock",
+    "Dependency resolution occurs at build time; deploy tested digests rather than rebuilding"
+  ],
+  "cleanup": "Owned test containers/data/uploads removed; superseded local candidate tags removed. Published API image cached on home.org; running GraphDB stack unchanged and API healthy."
+}

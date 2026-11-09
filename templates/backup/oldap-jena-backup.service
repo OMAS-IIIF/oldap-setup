@@ -1,0 +1,15 @@
+[Unit]
+Description=Coordinated OLDAP Jena and media snapshot with status mail
+Requires=docker.service
+Wants=network-online.target
+After=docker.service network-online.target
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+UMask=0077
+EnvironmentFile=/etc/oldap-harvest.env
+ExecStart=/usr/bin/python3 /opt/oldap-backup-controller/scripts/run-jena-backup.py
+TimeoutStartSec=infinity
+# A failed snapshot may intentionally retain maintenance ownership. Never retry automatically.

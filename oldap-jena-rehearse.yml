@@ -1,0 +1,115 @@
+---
+# Import a reviewed snapshot and start an isolated full API for acceptance.
+# This does not freeze/export the source, migrate its model, or switch public URLs.
+- name: Rehearse full Jena API against a private copy of source data
+  hosts: oldap
+  become: true
+  vars:
+    oldap_jena_root: /srv/storage/oldap-jena-candidate
+    oldap_jena_runtime_image: eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0
+  tasks:
+    - name: Require explicit reviewed snapshot and candidate root
+      ansible.builtin.assert:
+        that:
+          - oldap_jena_root is match('^/srv/storage/oldap-jena-[a-zA-Z0-9_-]+$')
+          - oldap_jena_snapshot is defined
+          - oldap_jena_snapshot_sha256 is match('^[a-f0-9]{64}$')
+          - oldap_jena_runtime_image is match('^eclipse-temurin@sha256:[a-f0-9]{64}$')
+    - name: Refuse an already imported target
+      ansible.builtin.stat:
+        path: '{{ oldap_jena_root }}/data/dataset'
+      register: existing
+    - name: Require new dataset
+      ansible.builtin.assert:
+        that: not existing.stat.exists
+    - name: Create private snapshot directory
+      ansible.builtin.file:
+        path: '{{ oldap_jena_root }}/snapshot'
+        state: directory
+        owner: '1000'
+        group: '1000'
+        mode: '0700'
+    - name: Copy private reviewed RDF without exposing accounts
+      ansible.builtin.copy:
+        src: '{{ oldap_jena_snapshot }}'
+        dest: '{{ oldap_jena_root }}/snapshot/converted.trig'
+        owner: '1000'
+        group: '1000'
+        mode: '0600'
+      no_log: true
+    - name: Initialize and verify the new offline dataset
+      ansible.builtin.command:
+        argv:
+          - docker
+          - run
+          - --rm
+          - --network=none
+          - --user=1000:1000
+          - --cap-drop=ALL
+          - --security-opt=no-new-privileges
+          - --volume
+          - '{{ oldap_jena_root }}/release:/release:ro'
+          - --volume
+          - '{{ oldap_jena_root }}/snapshot:/snapshot:ro'
+          - --volume
+          - '{{ oldap_jena_root }}/data:/data'
+          - '{{ oldap_jena_runtime_image }}'
+          - java
+          - -Xmx2g
+          - -cp
+          - /release/lib/*
+          - JenaInitialImport
+          - /snapshot/converted.trig
+          - '{{ oldap_jena_snapshot_sha256 }}'
+          - /data/dataset
+      # Parser diagnostics can contain source literals. Keep them private.
+      no_log: true
+      changed_when: true
+    - name: Create isolated writable API directories with its existing UID
+      ansible.builtin.file:
+        path: '{{ oldap_jena_root }}/data/api'
+        state: directory
+        owner: '100'
+        group: '101'
+        mode: '0700'
+    - name: Install the reviewed base for exact application configuration acceptance
+      # Do not hide missing base settings with rehearsal-only environment defaults.
+      ansible.builtin.copy:
+        src: docker-compose.yml
+        dest: '{{ oldap_jena_root }}/base-compose.yml'
+        mode: '0644'
+    - name: Install the isolated acceptance overlay
+      ansible.builtin.copy:
+        src: jena-rehearsal-compose.yml
+        dest: '{{ oldap_jena_root }}/rehearsal-compose.yml'
+        mode: '0644'
+    - name: Start isolated API, Jena and Redis only
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --project-name
+          - oldap-jena-review
+          - --env-file
+          - /opt/oldap/compose/.env
+          - --env-file
+          - '{{ oldap_jena_root }}/config/jena.env'
+          - -f
+          - '{{ oldap_jena_root }}/base-compose.yml'
+          - -f
+          - '{{ oldap_jena_root }}/jena-compose.yml'
+          - -f
+          - '{{ oldap_jena_root }}/rehearsal-compose.yml'
+          - up
+          - -d
+          - oldap-api
+      no_log: true
+      changed_when: true
+    - name: Wait for the complete API startup
+      ansible.builtin.uri:
+        url: http://127.0.0.1:18000/status
+        status_code: 200
+      register: health
+      retries: 30
+      delay: 2
+      until: health.status == 200

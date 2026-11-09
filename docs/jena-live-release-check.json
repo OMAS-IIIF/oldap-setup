@@ -1,0 +1,253 @@
+{
+  "observed_at": "2026-11-06T23:22:26.351864+00:00",
+  "images": {
+    "api": {
+      "caddy": {
+        "architecture": "amd64",
+        "configured_reference": "caddy:2.8",
+        "image_id": "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f",
+        "os": "linux",
+        "repo_digests": [
+          "caddy@sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f"
+        ],
+        "variant": ""
+      },
+      "compose-oldap-jena-1": {
+        "architecture": "amd64",
+        "configured_reference": "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+        "image_id": "sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0",
+        "os": "linux",
+        "repo_digests": [
+          "eclipse-temurin@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0"
+        ],
+        "variant": ""
+      },
+      "compose-oldap-jena-identity-1": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+        "image_id": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def"
+        ],
+        "variant": ""
+      },
+      "compose-salsah-2-1": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/salsah-2:jena-0.0.2-rc1-47f138b8070c-amd64@sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3",
+        "image_id": "sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/salsah-2@sha256:83ef7d4910f10826639ab2e5078b4445413ddb0f71d581c4378e1be6d0c1a8c3"
+        ],
+        "variant": ""
+      },
+      "fasnachts-page": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/fasnachts-page:jena-0.1.49-rc1-21d046f8dd07-amd64@sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9",
+        "image_id": "sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/fasnachts-page@sha256:e363050b4ae3d45689c58afbd47125809b26781d015c2d3b8a116287629800b9"
+        ],
+        "variant": ""
+      },
+      "oldap-api": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+        "image_id": "sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/oldap-api@sha256:f9db6fd371d3aecac5bc9d0958e62ddb64df95cf558937f7dacbae40016f3def"
+        ],
+        "variant": ""
+      },
+      "oldap-app": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/oldap-app:jena-0.2.7-rc1-6e5e392b8e5a-amd64@sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7",
+        "image_id": "sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/oldap-app@sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7"
+        ],
+        "variant": ""
+      },
+      "redis": {
+        "architecture": "amd64",
+        "configured_reference": "redis:7-alpine",
+        "image_id": "sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99",
+        "os": "linux",
+        "repo_digests": [
+          "redis@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99"
+        ],
+        "variant": ""
+      }
+    },
+    "media": {
+      "oldap-export-worker": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+        ],
+        "variant": ""
+      },
+      "oldap-imageserver": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/sipi-2:0.1.0",
+        "image_id": "sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/sipi-2@sha256:b67c714185cbd839425cd47511a1d01946e7d2f666a33fb45dd96a97574efea5"
+        ],
+        "variant": ""
+      },
+      "oldap-ingest-worker": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+        ],
+        "variant": ""
+      },
+      "oldap-media-caddy": {
+        "architecture": "amd64",
+        "configured_reference": "caddy:2.8",
+        "image_id": "sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f",
+        "os": "linux",
+        "repo_digests": [
+          "caddy@sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f"
+        ],
+        "variant": ""
+      },
+      "oldap-mediahelper": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+        ],
+        "variant": ""
+      },
+      "oldap-mobile-media-worker": {
+        "architecture": "amd64",
+        "configured_reference": "lrosenth/oldap-mediahelper:jena-0.2.17-rc1-a7b5d97ba17b-amd64@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "image_id": "sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf",
+        "os": "linux",
+        "repo_digests": [
+          "lrosenth/oldap-mediahelper@sha256:a1f9b384929050910e13db74bacc876add2f7cb750f1f6531e10fd341bac3ecf"
+        ],
+        "variant": ""
+      }
+    }
+  },
+  "matches_accepted_snapshot_images": {
+    "api": {
+      "caddy": true,
+      "compose-oldap-jena-1": true,
+      "compose-oldap-jena-identity-1": true,
+      "compose-salsah-2-1": true,
+      "fasnachts-page": true,
+      "oldap-api": true,
+      "oldap-app": true,
+      "redis": true
+    },
+    "media": {
+      "oldap-export-worker": true,
+      "oldap-imageserver": true,
+      "oldap-ingest-worker": true,
+      "oldap-media-caddy": true,
+      "oldap-mediahelper": true,
+      "oldap-mobile-media-worker": true
+    }
+  },
+  "snapshot_health": {
+    "status": "attention",
+    "checks": "sha256",
+    "issues": [
+      "Completion timestamp missing/invalid; freshness unverified"
+    ],
+    "archives": {
+      "api": "sha256-verified",
+      "media": "sha256-verified"
+    },
+    "free_percent": 62.68
+  },
+  "snapshot_id": "20261106-studio-staged-03",
+  "jena_jars": {
+    "service_sha256": "42901bf6b98d8a92df2fce65b3799ee5dd45abb6e843ef7016a5a6d6da038694",
+    "fuseki_sha256": "2c92c598e65ab69d99820052e05f4277ed1d77980a8845f87545ad35b71a76ee",
+    "both_match_deployed_build_manifest": true
+  },
+  "tdb_observation": {
+    "allocated_kib": 32419192,
+    "apparent_kib": 32534388,
+    "generation": "Data-0001",
+    "POSG_idn_bytes": 3430940672,
+    "SPOG_idn_bytes": 3430940672,
+    "cause": "not yet established",
+    "compaction_performed": false,
+    "samples": [
+      {
+        "utc": "2026-11-06T23:23:16Z",
+        "POSG_idn": {
+          "bytes": 3430940672,
+          "blocks_512": 6698696
+        },
+        "SPOG_idn": {
+          "bytes": 3430940672,
+          "blocks_512": 6697680
+        }
+      },
+      {
+        "utc": "2026-11-06T23:27:00Z",
+        "POSG_idn": {
+          "bytes": 3439329280,
+          "blocks_512": 6704120
+        },
+        "SPOG_idn": {
+          "bytes": 3439329280,
+          "blocks_512": 6703120
+        }
+      }
+    ]
+  },
+  "jena_source_matches_build": {
+    "tools/migration/JenaSessionEngine.java": true,
+    "tools/migration/JenaSessionServlet.java": true,
+    "tools/migration/ProtectedApplicationDataset.java": true,
+    "tools/migration/JenaManagedText.java": true,
+    "tools/migration/JenaProjectTransfer.java": true,
+    "tools/migration/OldapTextAnalyzer.java": true,
+    "tools/migration/JenaTextFixture.java": true,
+    "services/jena/src/JenaService.java": true,
+    "services/jena/src/JenaAdministration.java": true,
+    "services/jena/src/JenaInitialImport.java": true,
+    "tools/migration/ConvertLegacyRdfStar.java": true
+  },
+  "retained_transfers": [
+    {
+      "source": "/home/rosenth/media-dump-2027-11-02.tar.gz",
+      "retained_at": "/data/oldap-retained-transfers-20261107/media-dump-2027-11-02.tar.gz",
+      "bytes": 10935121787,
+      "sha256": "525d5966a037be2c5f243152cb9f61bbee624b672727122d9058570692a4f035"
+    },
+    {
+      "source": "/home/rosenth/media-transfer-2026-10.10.tar.gz",
+      "retained_at": "/data/oldap-retained-transfers-20261107/media-transfer-2026-10.10.tar.gz",
+      "bytes": 10527240859,
+      "sha256": "dfcc4c68f1531b9a486c5622aa6ef41b53d72e96fcb372b9c15ab47711aeb472"
+    }
+  ],
+  "media_system_disk": {
+    "before_used_percent": 93,
+    "after_used_percent": 47,
+    "after_available_kib": 24581968,
+    "relocation_sha256_verified": true
+  }
+}

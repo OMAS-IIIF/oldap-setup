@@ -1,0 +1,35 @@
+{
+  "projects": {
+    "fasnacht": {
+      "enabled": true,
+      "structureEditorRoleIris": [
+        "http://fasnacht.digital/ns/ArchiveStructureEditor"
+      ],
+      "archiveEditorRoleIris": [
+        "http://fasnacht.digital/ns/ArchiveMediaEditor"
+      ],
+      "cataloguedMediaClassIris": [
+        "http://fasnacht.digital/ns/ArchiveMediaObject"
+      ],
+      "preparationNotePropertyIri": "https://schema.org/comment",
+      "grantEditorRolesOnCreation": true,
+      "publication": {
+        "publisherRoleIris": [
+          "http://fasnacht.digital/ns/ArchiveMediaEditor"
+        ],
+        "rootClassIris": [
+          "http://fasnacht.digital/ns/ArchiveObject",
+          "http://fasnacht.digital/ns/CarnivalEvent"
+        ],
+        "mediaClassIris": [
+          "http://fasnacht.digital/ns/ArchiveMediaObject"
+        ],
+        "statusPropertyIri": "http://fasnacht.digital/ns/publicationStatus",
+        "publishedStatusIri": "http://fasnacht.digital/ns/PublicationStatus#Published",
+        "mediaToRootPropertyIri": "http://fasnacht.digital/ns/archiveMediaObjectOf",
+        "publicRoleIri": "http://oldap.org/base#Unknown",
+        "maxResources": 100
+      }
+    }
+  }
+}

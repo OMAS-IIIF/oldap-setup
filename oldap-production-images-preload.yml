@@ -1,0 +1,67 @@
+---
+# Cache reviewed immutable release images without changing the running stack.
+- name: Preload accepted Jena production images
+  hosts: oldap_prod
+  become: true
+  gather_facts: false
+  vars:
+    ansible_user: rosenth
+    ansible_python_interpreter: /usr/bin/python3
+    image_hosts: [dhlab-oldap.dhlab.unibas.ch, dhlab-iii.dhlab.unibas.ch]
+    running_inventory: >-
+      import json,subprocess;
+      ids=subprocess.check_output(['docker','ps','-q'],text=True).split();
+      rows=json.loads(subprocess.check_output(['docker','inspect',*ids])) if ids else [];
+      print(json.dumps(sorted([(r['Id'],r['Image'],r['State']['StartedAt']) for r in rows])))
+  tasks:
+    - name: Require reviewed production endpoints and immutable references
+      ansible.builtin.assert:
+        that:
+          - ansible_host == 'dhlab-oldap.dhlab.unibas.ch'
+          - item.host in image_hosts
+          - item.image_id is match('^sha256:[a-f0-9]{64}$')
+          - item.reference is match('^[a-z0-9/_-]+@sha256:[a-f0-9]{64}$')
+          - item.reference.split('@')[1] == item.image_id
+      loop: '{{ production_image_plan }}'
+    - name: Record running service identities before image preload
+      ansible.builtin.command:
+        argv: [python3, -c, '{{ running_inventory }}']
+      delegate_to: '{{ item }}'
+      loop: '{{ image_hosts }}'
+      register: running_before
+      changed_when: false
+    - name: Pull accepted AMD64 images without starting containers
+      ansible.builtin.command:
+        argv: [docker, pull, --platform, linux/amd64, '{{ item.reference }}']
+      delegate_to: '{{ item.host }}'
+      loop: '{{ production_image_plan }}'
+      register: loaded_images
+    - name: Require registry digest identities and target architecture
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - 'import json,subprocess,sys; d=json.loads(subprocess.check_output(["docker","image","inspect",sys.argv[1]]))[0]; assert sys.argv[1] in d["RepoDigests"] and d["Architecture"]=="amd64" and d["Os"]=="linux"; print(json.dumps({"reference":sys.argv[1],"local_image_id":d["Id"]}))'
+          - '{{ item.reference }}'
+      delegate_to: '{{ item.host }}'
+      loop: '{{ production_image_plan }}'
+      changed_when: false
+      register: verified_images
+    - name: Record running service identities after image preload
+      ansible.builtin.command:
+        argv: [python3, -c, '{{ running_inventory }}']
+      delegate_to: '{{ item }}'
+      loop: '{{ image_hosts }}'
+      register: running_after
+      changed_when: false
+    - name: Require original service identities and start times
+      ansible.builtin.assert:
+        that: running_before.results[item].stdout == running_after.results[item].stdout
+      loop: [0, 1]
+    - name: Retain sanitized preload evidence on the controller
+      ansible.builtin.copy:
+        content: '{{ {"images": verified_images.results | map(attribute="stdout") | map("from_json") | list, "running_before": running_before.results | map(attribute="stdout") | map("from_json") | list, "running_after": running_after.results | map(attribute="stdout") | map("from_json") | list} | to_nice_json }}'
+        dest: '{{ production_preload_evidence }}'
+        mode: '0600'
+      delegate_to: localhost
+      become: false

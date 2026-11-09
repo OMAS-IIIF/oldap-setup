@@ -1,0 +1,147 @@
+---
+# Home-only memory rollout. No service image, dataset or API contract changes.
+# Existing coordinated maintenance tasks reconnect every namespace consumer.
+- name: Bound Jena memory on the home test system
+  hosts: oldap_home
+  become: true
+  vars:
+    ansible_become_exe: /usr/bin/sudo.ws
+    compose_dir: /opt/oldap/compose
+    media_host: media.home.org
+    media_writers: [oldap-mediahelper, oldap-ingest-worker, oldap-export-worker, oldap-mobile-media-worker]
+    mobile_stop_signal: SIGTERM
+    oldap_jena_heap_mb: 6144
+    oldap_jena_direct_mb: 512
+    oldap_jena_memory_mb: 10240
+    backup_dir: '/srv/storage/oldap-memory-before-{{ ansible_date_time.iso8601_basic_short }}'
+  tasks:
+    - name: Require home and reserve memory for native allocations and other services
+      ansible.builtin.assert:
+        that:
+          - ansible_host == 'api.home.org'
+          - oldap_jena_heap_mb | int >= 512
+          - oldap_jena_direct_mb | int >= 64
+          - oldap_jena_memory_mb | int >= (oldap_jena_heap_mb | int + oldap_jena_direct_mb | int + 2048)
+          - oldap_jena_memory_mb | int <= (ansible_memtotal_mb | int - 4096)
+    - name: Inventory running API services
+      ansible.builtin.command: docker ps --format '{{ "{{.Names}}" }}'
+      register: api_running
+      changed_when: false
+    - name: Inventory running media services
+      ansible.builtin.command: docker ps --format '{{ "{{.Names}}" }}'
+      delegate_to: '{{ media_host }}'
+      register: media_running
+      changed_when: false
+    - name: Require the reviewed stack without unknown writers
+      ansible.builtin.assert:
+        that:
+          - api_running.stdout_lines | difference(['compose-salsah-2-1']) | sort == ['oldap-api', 'compose-oldap-jena-1', 'compose-oldap-jena-identity-1', 'redis', 'caddy', 'fasnachts-page', 'oldap-app'] | sort
+          - media_running.stdout_lines | sort == (media_writers + ['oldap-imageserver', 'oldap-media-caddy']) | sort
+    - name: Read exact rollback configuration privately
+      ansible.builtin.slurp:
+        src: '{{ compose_dir }}/{{ item }}'
+      loop: [.env, jena-compose.yml]
+      register: original_files
+      no_log: true
+    - name: Retain original configuration and prepare only memory variables
+      ansible.builtin.set_fact:
+        previous_env: '{{ original_files.results[0].content | b64decode }}'
+        previous_compose: '{{ original_files.results[1].content | b64decode }}'
+      no_log: true
+    - name: Require the installed native administration and Jena selection
+      ansible.builtin.assert:
+        that:
+          - "':jena-compose.yml' in previous_env"
+          - "':fuseki-admin-compose.yml' in previous_env"
+          - "'OLDAP_JENA_ADMIN_KEY=' in previous_env"
+      no_log: true
+    - name: Prepare candidate environment and native readiness key
+      ansible.builtin.set_fact:
+        candidate_env: |
+          {{ previous_env | regex_replace('(?m)^OLDAP_JENA_(HEAP|DIRECT|MEMORY)_MB=.*\n?', '') }}
+          OLDAP_JENA_HEAP_MB={{ oldap_jena_heap_mb }}
+          OLDAP_JENA_DIRECT_MB={{ oldap_jena_direct_mb }}
+          OLDAP_JENA_MEMORY_MB={{ oldap_jena_memory_mb }}
+        jena_admin_ready_key: '{{ (previous_env.splitlines() | select("match", "^OLDAP_JENA_ADMIN_KEY=") | first).split("=", 1)[1] }}'
+      no_log: true
+    - name: Stage candidate Compose without changing installed selection
+      ansible.builtin.copy:
+        src: jena-compose.yml
+        dest: '{{ compose_dir }}/jena-compose.memory-candidate.yml'
+        mode: '0644'
+    - name: Stage private candidate environment for resolution
+      ansible.builtin.copy:
+        dest: '{{ compose_dir }}/.env.memory-candidate'
+        content: '{{ candidate_env | replace(":jena-compose.yml", ":jena-compose.memory-candidate.yml") }}'
+        mode: '0600'
+      no_log: true
+    - name: Validate complete Compose before maintenance
+      ansible.builtin.command: docker compose --env-file .env.memory-candidate config --quiet
+      args: {chdir: '{{ compose_dir }}'}
+      changed_when: false
+      no_log: true
+    - name: Exercise recreation without starting or stopping containers
+      ansible.builtin.command: docker compose --env-file .env.memory-candidate --dry-run up --no-start --no-deps oldap-jena
+      args: {chdir: '{{ compose_dir }}'}
+      changed_when: false
+      no_log: true
+    - name: Create private configuration rollback directory
+      ansible.builtin.file: {path: '{{ backup_dir }}', state: directory, mode: '0700'}
+    - name: Save exact installed configuration
+      ansible.builtin.copy:
+        dest: '{{ backup_dir }}/{{ item.name }}'
+        content: '{{ item.content }}'
+        mode: '0600'
+      loop:
+        - {name: .env, content: '{{ previous_env }}'}
+        - {name: jena-compose.yml, content: '{{ previous_compose }}'}
+      no_log: true
+    - name: Activate with coordinated shutdown and configuration rollback
+      block:
+        - name: Drain writers and stop namespace consumers
+          ansible.builtin.include_tasks: tasks/jena-home-stop.yml
+        - name: Install tested memory configuration
+          ansible.builtin.copy:
+            src: jena-compose.yml
+            dest: '{{ compose_dir }}/jena-compose.yml'
+            mode: '0644'
+        - name: Select memory budgets
+          ansible.builtin.copy:
+            dest: '{{ compose_dir }}/.env'
+            content: '{{ candidate_env }}'
+            mode: '0600'
+          no_log: true
+        - name: Recreate stopped namespace owner
+          ansible.builtin.command: docker compose up --no-start --no-deps oldap-jena
+          args: {chdir: '{{ compose_dir }}'}
+          no_log: true
+        - name: Recover storage and namespace consumers before opening ingress
+          ansible.builtin.include_tasks: tasks/jena-home-start.yml
+        - name: Verify effective kernel memory and swap limits
+          ansible.builtin.command:
+            argv: [docker, exec, compose-oldap-jena-1, sh, -c, 'test "$(cat /sys/fs/cgroup/memory.max)" = "{{ oldap_jena_memory_mb | int * 1048576 }}" && test "$(cat /sys/fs/cgroup/memory.swap.max)" = 0']
+          changed_when: false
+      rescue:
+        - name: Close ingress and stop namespace consumers
+          ansible.builtin.command: docker stop --timeout 90 caddy oldap-api compose-oldap-jena-identity-1 compose-oldap-jena-1
+        - name: Restore original memory configuration
+          ansible.builtin.copy:
+            dest: '{{ compose_dir }}/{{ item.name }}'
+            content: '{{ item.content }}'
+            mode: '0600'
+          loop:
+            - {name: .env, content: '{{ previous_env }}'}
+            - {name: jena-compose.yml, content: '{{ previous_compose }}'}
+          no_log: true
+        - name: Recreate previous namespace owner
+          ansible.builtin.command: docker compose up --no-start --no-deps oldap-jena
+          args: {chdir: '{{ compose_dir }}'}
+          no_log: true
+        - name: Recover previous services
+          ansible.builtin.include_tasks: tasks/jena-home-start.yml
+        - name: Report failed activation after rollback
+          ansible.builtin.fail:
+            msg: Memory rollout failed; original configuration restored. Inspect the private run log.
+    - name: Record rollback location
+      ansible.builtin.debug:
+        msg: 'Memory configuration backup: {{ backup_dir }}'

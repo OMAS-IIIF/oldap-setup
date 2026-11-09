@@ -1,0 +1,116 @@
+---
+# Shared by explicit installation and routine updates of an already installed timer.
+- name: Require backup and batch jobs to be idle before changing their launchers
+  ansible.builtin.command:
+    argv: [systemctl, is-active, "{{ item }}"]
+  loop: [oldap-backup.service, oldap-harvest.service]
+  register: job_activity
+  changed_when: false
+  failed_when: job_activity.rc not in [0, 3, 4] or job_activity.stdout in ['active', 'activating', 'deactivating', 'reloading']
+
+- name: Refuse launcher updates while any Compose harvester is running
+  ansible.builtin.command:
+    argv: [docker, ps, --filter, label=com.docker.compose.service=oldap-harvesters, --format, '{{ "{{.ID}}" }}']
+  register: running_harvesters
+  changed_when: false
+  failed_when: running_harvesters.rc != 0 or running_harvesters.stdout | trim | length > 0
+
+- name: Require installed backup script and Swisscovery configuration
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop:
+    - /usr/local/bin/oldap-backup.sh
+    - /etc/oldap-backup.env
+    - /etc/systemd/system/oldap-backup.service
+    - /etc/systemd/system/oldap-backup.timer
+    - "{{ compose_dir }}/swisscovery-compose.yml"
+  register: schedule_inputs
+
+- name: Validate installation inputs
+  ansible.builtin.assert:
+    that: item.stat.exists
+  loop: "{{ schedule_inputs.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Verify the manually installed backup command before overriding ExecStart
+  ansible.builtin.command:
+    argv: [grep, -Fx, 'ExecStart=/usr/local/bin/oldap-backup.sh', /etc/systemd/system/oldap-backup.service]
+  changed_when: false
+
+- name: Check local lock filesystem
+  ansible.builtin.command:
+    argv: [findmnt, -n, -o, FSTYPE, --target, /srv/storage/oldap-data]
+  register: lock_filesystem
+  changed_when: false
+  failed_when: lock_filesystem.stdout | trim not in ['ext4', 'xfs', 'btrfs']
+
+- name: Create persistent private logs and shared lock directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+  loop:
+    - /srv/storage/oldap-data/job-locks
+    - /srv/storage/oldap-data/oldap-harvesters/scheduled-runs
+    - /etc/systemd/system/oldap-backup.service.d
+
+- name: Install harvesting launchers and lock overlay
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ compose_dir }}/{{ item.dest }}"
+    mode: "{{ item.mode }}"
+    owner: root
+    group: root
+  loop:
+    - {src: scripts/run-locked.py, dest: run-locked.py, mode: '0755'}
+    - {src: scripts/run-weekly-harvest.py, dest: run-weekly-harvest.py, mode: '0755'}
+    - {src: scripts/run-harvester.sh, dest: run-harvester.sh, mode: '0755'}
+    - {src: scripts/run-swisscovery.sh, dest: run-swisscovery.sh, mode: '0755'}
+    - {src: harvest-schedule-compose.yml, dest: harvest-schedule-compose.yml, mode: '0644'}
+
+- name: Create mail settings once preserving subsequent operator changes
+  ansible.builtin.copy:
+    dest: /etc/oldap-harvest.env
+    content: |
+      HARVEST_MAIL_TO=lukas.rosenthaler@unibas.ch
+      HARVEST_MAIL_FROM=lukas.rosenthaler@unibas.ch
+    mode: '0600'
+    owner: root
+    group: root
+    force: false
+
+- name: Require the existing host mail client
+  ansible.builtin.command:
+    argv: [/usr/bin/test, -x, /usr/bin/mail]
+  changed_when: false
+
+- name: Validate deployed launcher and image without importing records
+  ansible.builtin.command:
+    argv: ["{{ compose_dir }}/run-harvester.sh", "{{ item }}", --help]
+  loop: [europeana, swisscovery]
+  changed_when: false
+
+- name: Install service timer and backup lock drop-in
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0644'
+    backup: true
+  loop:
+    - {src: templates/harvesting/oldap-harvest.timer, dest: /etc/systemd/system/oldap-harvest.timer}
+    - {src: templates/harvesting/oldap-harvest.service, dest: /etc/systemd/system/oldap-harvest.service}
+    - {src: templates/harvesting/backup-lock.conf, dest: /etc/systemd/system/oldap-backup.service.d/harvest-lock.conf}
+
+- name: Reload systemd definitions without starting a backup or harvest
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+
+- name: Enable the weekly timer only at explicit first installation
+  ansible.builtin.systemd_service:
+    name: oldap-harvest.timer
+    enabled: true
+    state: started
+  when: install_harvest_schedule | default(false) | bool

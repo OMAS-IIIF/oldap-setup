@@ -1,3 +1,9 @@
+### Update 2026-11-09 11:44
+- Decisions: Keep central SSH ownership intact; use its already-supported secondary authorization file and enforce ticket-independent backup authentication. Require media preflight before maintenance ownership.
+- Implementation: Diagnosed 03:15 failure: central Ansible replaced primary authorized_keys at 03:03:54 and removed the backup key. Installed restricted key in authorized_keys2, forced public-key-only controller SSH, added pre-lock peer check and secondary-file snapshot coverage. Ticket-free systemd positive test and actual invalid-key negative test pass; two lock-lifetime tests and syntax checks pass. All 14 services remained running; diagnosed stale lock released safely.
+- Open: Owner choice of full backup retry time, subsequent office restore and next scheduled/central management cycle.
+- Risks/Assumptions: Previous SSH acceptance silently permitted Kerberos; now excluded. Secondary path is currently accepted by host policy; central management source is outside this repository. No new full snapshot has run during this repair.
+
 ### Update 2026-11-09 01:15
 - Decisions: Accept owner confirmation that both real first-backup SUCCESS emails arrived.
 - Implementation: Recorded delivery confirmation for production producer and office receiver in the final cutover evidence.

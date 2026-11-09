@@ -35,6 +35,7 @@
       - data/oldap-mobile-uploads
       - data/oldap-exports
       - opt/oldap-mediaserver
+      - root/.ssh/authorized_keys2
     backup_lock_unit: 'oldap-jena-backup-lock-{{ snapshot_id }}'
     backup_lock_ready: '/run/oldap-jena-backup-{{ snapshot_id }}.ready'
   tasks:
@@ -49,6 +50,16 @@
       ansible.builtin.command:
         argv: [docker, exec, oldap-api, python, -c, 'import os; assert os.environ["OLDAP_BACKEND"] == "jena"']
       changed_when: false
+    # Fail before acquiring maintenance if unattended peer authentication is broken.
+    # The controller inventory requires public-key-only SSH, never a login ticket.
+    - name: Verify media access before holding the shared lock
+      ansible.builtin.command: /usr/bin/id -u
+      delegate_to: '{{ media_host }}'
+      register: media_preflight_identity
+      changed_when: false
+    - name: Require privileged media access before maintenance
+      ansible.builtin.assert:
+        that: media_preflight_identity.stdout == '0'
     - name: Refuse an existing lock readiness marker
       ansible.builtin.stat: {path: '{{ backup_lock_ready }}'}
       register: lock_marker

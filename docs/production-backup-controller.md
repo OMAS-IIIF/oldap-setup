@@ -95,3 +95,13 @@ confirmed independent key custody in Apple Passwords. See
 and tested with disposable encrypted fixtures. The first real production Jena
 backup and coordinated schedule activation remain open. The shared producer
 publishes its latest marker only after the completed per-pair marker.
+
+## SSH maintenance after the first scheduled run
+
+The media host centrally manages root `authorized_keys`; the backup key belongs
+in the already-enabled `authorized_keys2` instead. The installer validates this
+policy and preserves source restriction and other keys. Use its `--tags backup-ssh`
+path for access-only repair of an installed controller. Both inventory and test
+commands force public-key authentication so a Kerberos ticket cannot mask missing
+key access. Media preflight precedes maintenance locking. See
+[the incident and acceptance record](production-backup-ssh-incident-20261109.md).

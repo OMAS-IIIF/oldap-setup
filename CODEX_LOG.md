@@ -1,3 +1,9 @@
+### Update 2026-11-09 12:03
+- Decisions: Accept owner confirmation of both replacement-backup SUCCESS emails.
+- Implementation: Recorded producer and office mail delivery for snapshot 20261109T104533Z-4d7208ef in the incident acceptance evidence.
+- Open: Observe the next central-management and scheduled backup cycle.
+- Risks/Assumptions: Confirmed delivery applies to this completed retry, not future scheduled runs.
+
 ### Update 2026-11-09 11:59
 - Decisions: Owner approved immediate production interruption for the replacement backup and office verification.
 - Implementation: Same systemd service completed snapshot 20261109T104533Z-4d7208ef; 204.894-second ingress stop. All 19 post-restart public checks match baseline. Complete office runner exit 0 proves Borg restored-byte checks, paired acknowledgement, retention and mail. Office key-only/agent-free access to both servers also passes; source repair retained off-host. Next timer remains 03:15, office 04:00.

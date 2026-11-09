@@ -37,7 +37,7 @@
   ],
   "next_scheduled_backup": "2026-11-10 03:15 Europe/Zurich",
   "open": [
-    "next nightly central management/scheduler cycle",
-    "owner confirmation of retry mail delivery"
-  ]
+    "next nightly central management/scheduler cycle"
+  ],
+  "owner_confirmed_both_success_emails": true
 }

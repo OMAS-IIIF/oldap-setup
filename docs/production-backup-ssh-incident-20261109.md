@@ -67,5 +67,4 @@ Next producer trigger remains November 10, 03:15 Europe/Zurich; office pull 04:0
 Observe the next central-management/nightly cycle: that separate management system
 was not executed or altered during repair. If its policy later changes the
 secondary key path, coordinate the key with the host managers instead of
-repeatedly editing centrally owned configuration. Owner confirmation of the new
-SUCCESS emails remains pending; prior mail delivery was separately confirmed.
+repeatedly editing centrally owned configuration. The owner confirmed receipt of both replacement SUCCESS emails on November 9.

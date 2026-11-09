@@ -32,6 +32,7 @@ stopped (23:56:19 to 23:59:11 UTC); this is not a continuous external availabili
 measurement. The office receiver exited 0 at 00:10:19 UTC after complete pull,
 encrypted Borg creation, streamed restoration/SHA verification of both archives,
 paired source acknowledgements, guarded retention and SUCCESS mail submission.
+The owner confirmed receipt of both real SUCCESS emails (producer and office).
 This verifies restored archive bytes; full application restore was rehearsed
 previously on home, not repeated against the live production store.
 

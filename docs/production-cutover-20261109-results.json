@@ -236,7 +236,8 @@
         "path": "/data/oldap-jena-snapshot-20261108T235609Z-1b5ca95a/media.tar",
         "sha256": "ced385be871b5fd50e12a690a7795f5ac1f6f7ea7b8074d51b853bc08a4153d8"
       }
-    }
+    },
+    "owner_confirmed_both_success_emails": true
   },
   "schedules": {
     "server_backup": "daily 03:15 Europe/Zurich",

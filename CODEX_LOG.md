@@ -1,3 +1,9 @@
+### Update 2026-11-09 01:15
+- Decisions: Accept owner confirmation that both real first-backup SUCCESS emails arrived.
+- Implementation: Recorded delivery confirmation for production producer and office receiver in the final cutover evidence.
+- Open: Observe first scheduled backup cycle and normal owner functional testing.
+- Risks/Assumptions: Confirmation applies to snapshot 20261108T235609Z-1b5ca95a; it does not establish success of future scheduled runs.
+
 ### Update 2026-11-09 01:13
 - Decisions: Owner authorized public Jena opening and first real backup. Activate schedules only after complete office receiver acceptance; retain frozen GraphDB data but prohibit simple post-opening rollback.
 - Implementation: Public endpoints/browser and 19 API/media checks pass before/after backup. First pair 20261108T235609Z-1b5ca95a completed; 172.067-second ingress stop, encrypted office Borg streamed SHA restoration, paired receipts, retention and mail all pass (receiver exit 0). Enabled 03:15 producer, 04:00 office receiver, Sunday harvest and namespace recovery; retired legacy backup schedules without deleting archives. Shared home/production recovery installer stages production inactive; 13 recovery tests and syntax checks pass. Public probe now accepts RESTORE_API_URL.

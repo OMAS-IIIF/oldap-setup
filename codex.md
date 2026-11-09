@@ -1,5 +1,7 @@
 # OLDAP Setup Context
 
+- Final release workflow (2026-11-09): jena-images.py supports explicit --final with clean stable core sources and optional retained third-party constraints; it never overwrites existing tags/latest. Core 1.0.0 and oldap-app 0.2.8 preparation is described in docs/oldap-1.0.0-release.md. Final Java bytes match production; preserve its namespace owner. Publication/rollout evidence remains pending.
+
 - Jena mainline integration (2026-11-09): the accepted migration is integrated into `main` with its complete ancestry. Core runtime/package versions remain the tested RC versions; this Git integration does not publish final 1.0.0 packages or change deployed images. Prior primary ref is retained by `pre-jena-merge-20261109`; this tag records Git history, not the deployed GraphDB baseline. Migration branches and old GraphDB checkouts are retained. Coordinated evidence: docs/jena-mainline-merge-20261109.md. Older pending-merge notes below are historical.
 
 - Production Fasnacht performance rollout (2026-11-09): all three reviewed frontend optimizations are live on fasnacht.digital from source dd316a4, digest-pinned image jena-0.1.49-rc1-31da5ef618c6-amd64. Only FasnachtsPage replaced; seven other API-host containers unchanged. Two public samples show overview 7.5–8.0 → 4.1–4.5 s and selected detail 4.3–4.8 → 1.8–2.3 s; desktop/mobile smoke passes. Home unchanged. Image provenance and exact rollback: docs/fasnacht-performance-rollout-20261109.md. This supersedes earlier pending-publication notes for the three frontend optimizations.

@@ -1,3 +1,9 @@
+### Update 2026-11-09 18:02
+- Decisions: Owner-approved final core 1.0.0 plus app 0.2.8; retain independent versions and accepted Zod 3 risk. Keep the byte-identical running Java service/namespace untouched.
+- Implementation: Added explicit final release mode with clean-source/stable-version requirements, real final wheels, immutable v-tags and existing-tag protection; retain accepted third-party constraints inside hashed contexts. Frontend freezer reads package version. Prepare playbook accepts final service metadata. Twelve release/lock tests pass; source finalization committed in core/app.
+- Open: Final clean builds, packaged acceptance, exact-wheel PyPI publication, immutable image publication, production rollout and release tags/results.
+- Risks/Assumptions: RC publication path remains unchanged. No live deployment yet; production uses consolidated Compose and needs scoped image replacement rather than home-only playbooks.
+
 ### Update 2026-11-09 17:36
 - Decisions: Close the coordinated mainline integration after verifying all remote refs; retain migration branches and original GraphDB checkouts.
 - Implementation: All nine exact primary merge IDs, migration tips and peeled pre-jena-merge-20261109 tags verified by ls-remote. Working trees clean. Setup merge b0fa78e5ebcc744225c06eda8e92b0ebfab32036; completion evidence recorded in docs/jena-mainline-merge-20261109.json.

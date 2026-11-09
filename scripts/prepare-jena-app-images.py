@@ -21,6 +21,9 @@ for name, repository, version in [('oldap-app', 'oldap-app', '0.2.7'),
                                   ('oldap-mediaserver', 'oldap-mediahelper', '0.2.17')]:
     source = workspace / name
     media = name == 'oldap-mediaserver'
+    if not media:
+        # Frontend tags follow the source package version, including final releases.
+        version = json.loads((source / 'package.json').read_text())['version']
     directories = {'mediaserver'} if media else {'src', 'static', 'messages', 'project.inlang', 'scripts'}
     roots = ({'pyproject.toml', 'poetry.lock', 'README.md'} if media else
              {'package.json', 'package-lock.json', 'Dockerfile', '.dockerignore', 'docker-entrypoint.sh',

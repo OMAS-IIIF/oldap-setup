@@ -52,6 +52,33 @@ class ReleaseTests(unittest.TestCase):
         release.save(root / 'accepted.json', built)
         return manifest
 
+    def test_stable_references_require_explicit_final_mode(self):
+        self.assertFalse(release.valid_reference('lrosenth/oldap-api:v1.0.0'))
+        self.assertTrue(release.valid_reference('lrosenth/oldap-api:v1.0.0', final=True))
+        self.assertTrue(release.valid_reference('lrosenth/oldap-tools:v1.0.0-amd64', final=True))
+        for tag in ('latest', 'v1.0.0rc1', 'v1.0.0+local'):
+            self.assertFalse(release.valid_reference('lrosenth/oldap-api:' + tag, final=True))
+
+    def test_final_manifest_rejects_relabelled_rc_or_wrong_version(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            manifest = self.fixture(root)
+            manifest['final'] = True
+            manifest['versions'] = {name: '1.0.0' for name in release.PACKAGES}
+            manifest['sources'] = {name: {'version': '1.0.0'} for name in release.PACKAGES}
+            manifest['components']['oldap-api']['reference'] = 'lrosenth/oldap-api:v1.0.0'
+            release.save(root / 'release.json', manifest)
+            release.verify(root)
+            manifest['versions']['oldaplib'] = '1.0.0rc1'
+            release.save(root / 'release.json', manifest)
+            with self.assertRaises(ValueError):
+                release.verify(root)
+            manifest['versions']['oldaplib'] = '1.0.0'
+            manifest['components']['oldap-api']['reference'] = 'lrosenth/oldap-api:v1.0.1'
+            release.save(root / 'release.json', manifest)
+            with self.assertRaises(ValueError):
+                release.verify(root)
+
     def test_changed_context_refused(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)

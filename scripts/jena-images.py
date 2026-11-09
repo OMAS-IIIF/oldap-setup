@@ -5,7 +5,8 @@ work), builds wheels with exact private library versions, and records hashes.
 Build loads and checks each architecture locally. Publish pushes those tested
 image IDs, never rebuilds, refuses existing tags and records registry digests.
 Registry tags are not an atomic lock: use one publisher per release bundle.
-No PyPI upload, Git commit, stable tag or latest tag is performed.
+No PyPI upload or Git commit is performed. Stable tags require explicit --final
+preparation; existing tags and latest are never replaced.
 """
 import argparse
 import hashlib
@@ -61,8 +62,10 @@ def registry(reference):
         raise
 
 
-def valid_reference(reference):
+def valid_reference(reference, final=False):
     """Only this workflow's repositories and content-qualified Jena RC tags."""
+    if final:
+        return bool(re.fullmatch(r'lrosenth/oldap-(?:api|tools):v\d+\.\d+\.\d+(?:-(?:amd64|arm64))?', reference))
     return bool(re.fullmatch(r'lrosenth/oldap-(?:api|tools):jena-\d+\.\d+\.\d+-rc[1-9]\d*-[a-f0-9]{12}(?:-(?:amd64|arm64))?', reference))
 
 
@@ -80,7 +83,7 @@ def candidate_tag(version, rc, fingerprint):
     return f'jena-{match[1]}-rc{rc}-{fingerprint[:12]}'
 
 
-def prepare(output, rc):
+def prepare(output, rc, final=False, constraints=None):
     """Create a new wheel bundle; original version files and Git stay unchanged."""
     if rc < 1:
         raise ValueError('RC number must be positive')
@@ -112,15 +115,22 @@ def prepare(output, rc):
         records[project] = {'commit': command('git', 'rev-parse', 'HEAD', cwd=source),
                             'dirty': bool(command('git', 'status', '--porcelain', cwd=source)),
                             'version': version, 'files': hashes}
+    if final and any(record['dirty'] for record in records.values()):
+        raise ValueError('Final release requires clean committed core sources')
     recipe_hash = digest(ROOT / 'release/Dockerfile.jena')
     fingerprint = hashlib.sha256(json.dumps({'sources': records, 'recipe': recipe_hash, 'builder': digest(Path(__file__)), 'python_image': PYTHON_IMAGE}, sort_keys=True).encode()).hexdigest()
     for record in records.values():
         candidate_tag(record['version'], rc, fingerprint)
-    lib_version = records['oldaplib']['version'] + f'+jena.rc{rc}.{fingerprint[:12]}'
+    # Final wheels carry their actual public version, never a relabelled RC.
+    if final and (len({r['version'] for r in records.values()}) != 1 or
+                  any(not re.fullmatch(r'\d+\.\d+\.\d+', r['version']) for r in records.values())):
+        raise ValueError('Final release requires matching stable core versions')
+    suffix = '' if final else f'+jena.rc{rc}.{fingerprint[:12]}'
+    lib_version = records['oldaplib']['version'] + suffix
     versions = {}
     for project in PACKAGES:
         snapshot = output / 'sources' / project
-        version = records[project]['version'] + f'+jena.rc{rc}.{fingerprint[:12]}'
+        version = records[project]['version'] + suffix
         versions[project] = version
         path = snapshot / 'pyproject.toml'
         text = re.sub(r'^version = "[^"]+"', f'version = "{version}"', path.read_text(), count=1, flags=re.M)
@@ -135,18 +145,23 @@ def prepare(output, rc):
         wheels = output / 'wheels' / project
         wheels.mkdir(parents=True)
         subprocess.run([sys.executable, '-c', 'from poetry.core.masonry.api import build_wheel; import sys; build_wheel(sys.argv[1])', str(wheels)], cwd=snapshot, check=True)
-    manifest = {'fingerprint': fingerprint, 'rc': rc, 'sources': records, 'versions': versions,
+    manifest = {'fingerprint': fingerprint, 'rc': rc, 'final': final, 'sources': records, 'versions': versions,
                 'python_image': PYTHON_IMAGE, 'recipe_sha256': recipe_hash, 'components': {}}
     for project in ('oldap-api', 'oldap-tools'):
-        tag = candidate_tag(records[project]['version'], rc, fingerprint)
+        tag = ('v' + records[project]['version']) if final else candidate_tag(records[project]['version'], rc, fingerprint)
         reference = f'lrosenth/{project}:{tag}'
-        assert valid_reference(reference)
+        assert valid_reference(reference, final)
         context = output / project
         (context / 'wheels').mkdir(parents=True)
         for package in ('oldaplib', project):
             for wheel in (output / 'wheels' / package).glob('*.whl'):
                 shutil.copyfile(wheel, context / 'wheels' / wheel.name)
         dockerfile = (ROOT / 'release/Dockerfile.jena').read_text()
+        if constraints is not None:
+            # Reuse the accepted installed dependency set when making a release.
+            shutil.copyfile(constraints, context / 'constraints.txt')
+            dockerfile = dockerfile.replace('RUN pip install --no-cache-dir /tmp/wheels/*.whl',
+                'COPY constraints.txt /tmp/constraints.txt\nRUN pip install --no-cache-dir -c /tmp/constraints.txt /tmp/wheels/*.whl')
         if project == 'oldap-tools':
             # Preserve existing tools/root and API uid=100,gid=101 volume contracts.
             dockerfile = dockerfile.replace('USER app\n', '')
@@ -165,8 +180,18 @@ def prepare(output, rc):
 def verify(output):
     """Reject modified contexts and unsafe publication targets."""
     manifest = json.loads((output / 'release.json').read_text())
+    if manifest.get('final', False):
+        versions = manifest.get('versions', {})
+        if set(versions) != set(PACKAGES) or len(set(versions.values())) != 1:
+            raise ValueError('Final package versions must match')
+        for project, version in versions.items():
+            if not re.fullmatch(r'\d+\.\d+\.\d+', version) or manifest['sources'][project]['version'] != version:
+                raise ValueError('Final metadata must contain exact stable versions')
+        for project, info in manifest['components'].items():
+            if info['reference'] != f'lrosenth/{project}:v{versions[project]}':
+                raise ValueError('Final image tag must match its package version')
     for project, info in manifest['components'].items():
-        if project not in ('oldap-api', 'oldap-tools') or not valid_reference(info['reference']) or not info['reference'].startswith('lrosenth/' + project + ':'):
+        if project not in ('oldap-api', 'oldap-tools') or not valid_reference(info['reference'], manifest.get('final', False)) or not info['reference'].startswith('lrosenth/' + project + ':'):
             raise ValueError('Unsafe image target')
         context = output / project
         actual = {str(p.relative_to(context)): digest(p) for p in context.rglob('*') if p.is_file()}
@@ -227,11 +252,13 @@ def publish(output):
     if acceptance != built:
         raise ValueError('Integration acceptance does not match these image IDs')
     protected = [ref for p in manifest['components'] for ref in (f'lrosenth/{p}:latest', f'lrosenth/{p}:v' + manifest['sources'][p]['version'])]
+    if manifest.get('final', False):
+        protected = [ref for ref in protected if ref.endswith(':latest')]
     baseline = {ref: registry(ref) for ref in protected}
     save(output / 'protected-before.json', baseline)
     for project, info in manifest['components'].items():
         for reference in [info['reference'], *(built[project][a]['reference'] for a in ARCHES)]:
-            if not valid_reference(reference) or registry(reference) is not None:
+            if not valid_reference(reference, manifest.get('final', False)) or registry(reference) is not None:
                 raise ValueError('Refusing existing/unsafe registry tag: ' + reference)
         for arch in ARCHES:
             item = built[project][arch]
@@ -266,11 +293,13 @@ if __name__ == '__main__':
     parser.add_argument('action', choices=('prepare', 'build', 'accept', 'publish'))
     parser.add_argument('--bundle', type=Path, required=True)
     parser.add_argument('--rc', type=int, default=1)
+    parser.add_argument('--final', action='store_true', help='Prepare exact stable wheels and new vX.Y.Z tags')
+    parser.add_argument('--constraints', type=Path, help='Accepted third-party pip constraints to retain in build contexts')
     parser.add_argument('--service-release', type=Path)
     args = parser.parse_args()
     output = args.bundle.resolve()
     if args.action == 'prepare':
-        prepare(output, args.rc)
+        prepare(output, args.rc, args.final, args.constraints)
     elif args.action == 'accept':
         if args.service_release is None:
             parser.error('accept requires --service-release')

@@ -1,0 +1,305 @@
+{
+  "date": "2026-11-09",
+  "status": "published and deployed to production",
+  "build_environment": {
+    "wheel_builder": "poetry-core 2.3.2",
+    "bundle": "core-release",
+    "discarded_preparations": [
+      "core (precommit provenance)",
+      "core-final (different Poetry metadata; unpublished)"
+    ]
+  },
+  "source_revisions": {
+    "oldaplib": "90e961607ab119fa7d999e066253227e9c0ed796",
+    "oldap-api": "3e7c8f3b25fd4fcb95d8fcf0eec6109c9884eef8",
+    "oldap-tools": "d17583bba3b0610f3de9b976fc2c245386cc6ddf",
+    "oldap-app": "d1410f50b016b23cd1834e0638b839e40cc395f3",
+    "oldap-setup": "7e01b65c8fcd31f62beeda1d696c923a916c494b"
+  },
+  "pypi": {
+    "oldaplib": {
+      "version": "1.0.0",
+      "filename": "oldaplib-1.0.0-py3-none-any.whl",
+      "sha256": "4ea95373d4b90f572f4582d4ae66b047ea08795e7aaecc86f06456b673e5dda4",
+      "url": "https://files.pythonhosted.org/packages/ac/41/159b5abfba00837cb8a82f378127710b815b3b929ed153a019d69e428d2d/oldaplib-1.0.0-py3-none-any.whl"
+    },
+    "oldap-api": {
+      "version": "1.0.0",
+      "filename": "oldap_api-1.0.0-py3-none-any.whl",
+      "sha256": "327780525120450df607ac37da5fbdbffc56f42d8861b1b031ca42656167b5df",
+      "url": "https://files.pythonhosted.org/packages/3f/48/4fb282627ccde6178d468bbd7a96db12e420f034a76389450ebdccb6888d/oldap_api-1.0.0-py3-none-any.whl"
+    },
+    "oldap-tools": {
+      "version": "1.0.0",
+      "filename": "oldap_tools-1.0.0-py3-none-any.whl",
+      "sha256": "f6d45e9dee0ff21e53bf4ea8cbd856cc1283e1a4cfc0fc3a6b65ad6a2b121b9f",
+      "url": "https://files.pythonhosted.org/packages/68/4b/0144dc592595fa6520212069de41985d0cebe0faa71b20ccd216a0308e31/oldap_tools-1.0.0-py3-none-any.whl"
+    }
+  },
+  "images": {
+    "oldap-api": {
+      "digest": "sha256:e94d8c9ac250938eb0a456bcf636654de0fa814f4ddd06726f4169a887f6e554",
+      "platform_manifests": [
+        "lrosenth/oldap-api@sha256:6b560da746cab838cc59a7803f376cf313ab823a3bb11591f1ee8a1f123477ad",
+        "lrosenth/oldap-api@sha256:64692a75ee02c8de7ae90f2682555bba365ad19958b4a4695a5bf03eae7cb828"
+      ],
+      "reference": "lrosenth/oldap-api:v1.0.0"
+    },
+    "oldap-tools": {
+      "digest": "sha256:e39b99b939f14994c5bab6498ebb3dfd264c55fb66786d7e57dbd956df3aaade",
+      "platform_manifests": [
+        "lrosenth/oldap-tools@sha256:0b684e87de19b91e91cc97972aed5b42b5725f062bf6ee2dd3759fed6c80a857",
+        "lrosenth/oldap-tools@sha256:8db844ecb08b352527bc1a30b8614b0e0b1345f98c26c60335afab8470f407fa"
+      ],
+      "reference": "lrosenth/oldap-tools:v1.0.0"
+    }
+  },
+  "app": {
+    "reference": "lrosenth/oldap-app:v0.2.8",
+    "id": "sha256:ab26ef04108cf37980aa542ff36ed7757d9966ea4a704b28faba5e01210c6061",
+    "latest_before": "sha256:f897cabaaee370e639aed0365f25c00eabd68133365e4b1da80831961c4e9cba",
+    "checks": [
+      "Runtime version 0.2.8",
+      "HTTP 200",
+      "Chromium page without JavaScript errors",
+      "Dependency remediation tests retained in repository"
+    ],
+    "digest": "sha256:ab26ef04108cf37980aa542ff36ed7757d9966ea4a704b28faba5e01210c6061",
+    "latest_after": "sha256:f897cabaaee370e639aed0365f25c00eabd68133365e4b1da80831961c4e9cba"
+  },
+  "app_source_equivalence": {
+    "frozen_source_commit": "18b2622aab006e08f64dbd9ac6767222cf7cfd72",
+    "committed_release": "d1410f50b016b23cd1834e0638b839e40cc395f3",
+    "all_frozen_files_match_release_commit": true,
+    "file_count": 220,
+    "fingerprint": "2dd38490890d71ab1da2a9c17778cb2f6716eab66d9f32cb86d9fd7a874da8dd"
+  },
+  "dependencies": {
+    "oldap-api/amd64": {
+      "third_party_versions_unchanged": true,
+      "count": 76
+    },
+    "oldap-api/arm64": {
+      "third_party_versions_unchanged": true,
+      "count": 76
+    },
+    "oldap-tools/amd64": {
+      "third_party_versions_unchanged": true,
+      "count": 60
+    },
+    "oldap-tools/arm64": {
+      "third_party_versions_unchanged": true,
+      "count": 60
+    }
+  },
+  "deployment": {
+    "after": {
+      "archive-writer": {
+        "id": "1ff3689c82ef4656b3f0c3ec62462f4f54b3864ee4b7574f3f3fcfd11a4c3405",
+        "image": "sha256:5f703438f575677037751d8350dc8ca2b8a1075655247757048c8a86f0fb4f02"
+      },
+      "caddy": {
+        "id": "510cd9a84aeae2d40d5517790c7e9da0311c55d1e17c4f026a925fbddc6fa5a4",
+        "image": "sha256:612f0ff47f33888e3b61a8db399ff2dc22c2cefb8cb652d86a619e52eabcd51f"
+      },
+      "fasnachts-page": {
+        "id": "06e4b1d429864e1b931da76fdf0b38e3f948d3908d6de6150ceafdd534bd2eb3",
+        "image": "sha256:203a7740f43fbcacefaec22fb4d34ac0d075984633aab44b7a3e675203afd165"
+      },
+      "graphdb": {
+        "id": "02e8aca23c5b1a5715c2ad1b15f705a2ac6151fd053b22aad1b261de034332ef",
+        "image": "sha256:86feb16aa79f90ef4c22833397251980728d97a9428c8ead1ba566bc7c1e0037"
+      },
+      "graphdb-init": {
+        "id": "aa9a7be2f371d0b9767e030ac0acf24e6512ab49c257110ec3369b5c8e4674e5",
+        "image": "sha256:b3a031457b211162ec8e94ff576eb9093b7812ae034f5f2c42d32fc91faa9430"
+      },
+      "oldap-api": {
+        "id": "d727ab8a318f4aff4ea57f01c6fc189a3bc8d2f37a3b7fa82c3eb1c48c228978",
+        "image": "sha256:55a7b32f31fd2fbe7878d15d591fd4423290e91c34f37fea4a65d2d3f312d5c1"
+      },
+      "oldap-app": {
+        "id": "f84d9ce9a650fcca7640d22392975c83565a8e58571ae1bf119266e45a392c0a",
+        "image": "sha256:a17da85fe92259253852cb9c8c073b88524a8604a70a6d7f639d587ad63a9627"
+      },
+      "oldap-jena": {
+        "id": "adc4f0a1ca930cdb3f0a7c408b3dca30b94e8a1c0fd649534ff82d3551d9a081",
+        "image": "sha256:3b0c5a2ef254c787a8efaa090bcba8f424453d1fc8f3a07d9d9e0033cba26f77"
+      },
+      "oldap-jena-identity": {
+        "id": "673677036e33b07cead1b67021d9e90859763c7fe6ccb8aa32b9ff85732aad2d",
+        "image": "sha256:55a7b32f31fd2fbe7878d15d591fd4423290e91c34f37fea4a65d2d3f312d5c1"
+      },
+      "redis": {
+        "id": "3b3524fe90c94aac8cc4b86f1983134abb2965aec56109fad80a8d395a0ebfd8",
+        "image": "sha256:487efc0616382465781b8fdc3d6d1db449e6fd80ae23bf48432a2da6b6929908"
+      },
+      "salsah-2": {
+        "id": "21ab98dc3f86c75c9d1f59eb7c1a1a9df1139597b11fe4e99d09bf8f09000404",
+        "image": "sha256:0e6f376aa5fbd65c474cf5659bb7db9417d9f23afb3d2adcdf225a09e0fff855"
+      }
+    },
+    "before": {
+      "archive-writer": {
+        "id": "1ff3689c82ef4656b3f0c3ec62462f4f54b3864ee4b7574f3f3fcfd11a4c3405",
+        "image": "sha256:5f703438f575677037751d8350dc8ca2b8a1075655247757048c8a86f0fb4f02"
+      },
+      "caddy": {
+        "id": "510cd9a84aeae2d40d5517790c7e9da0311c55d1e17c4f026a925fbddc6fa5a4",
+        "image": "sha256:612f0ff47f33888e3b61a8db399ff2dc22c2cefb8cb652d86a619e52eabcd51f"
+      },
+      "fasnachts-page": {
+        "id": "06e4b1d429864e1b931da76fdf0b38e3f948d3908d6de6150ceafdd534bd2eb3",
+        "image": "sha256:203a7740f43fbcacefaec22fb4d34ac0d075984633aab44b7a3e675203afd165"
+      },
+      "graphdb": {
+        "id": "02e8aca23c5b1a5715c2ad1b15f705a2ac6151fd053b22aad1b261de034332ef",
+        "image": "sha256:86feb16aa79f90ef4c22833397251980728d97a9428c8ead1ba566bc7c1e0037"
+      },
+      "graphdb-init": {
+        "id": "aa9a7be2f371d0b9767e030ac0acf24e6512ab49c257110ec3369b5c8e4674e5",
+        "image": "sha256:b3a031457b211162ec8e94ff576eb9093b7812ae034f5f2c42d32fc91faa9430"
+      },
+      "oldap-api": {
+        "id": "c8daa03aa8baea26c3567c5b8f0a22c605c29e7df4b0e19fa63e396f50ae5a5c",
+        "image": "sha256:99f4bb525f55a34a3f920c4a1a05f34fba9dde9dfc5ceeef871bc08e23f006ed"
+      },
+      "oldap-app": {
+        "id": "4a35e6449296cb9bb5693190ad8a94cd00b7e4ecbf4df6f52716ffbe9459f12b",
+        "image": "sha256:6579efecdce4c19084f1630a804f59bb25766a62d379f30faef38a88003b63af"
+      },
+      "oldap-jena": {
+        "id": "adc4f0a1ca930cdb3f0a7c408b3dca30b94e8a1c0fd649534ff82d3551d9a081",
+        "image": "sha256:3b0c5a2ef254c787a8efaa090bcba8f424453d1fc8f3a07d9d9e0033cba26f77"
+      },
+      "oldap-jena-identity": {
+        "id": "e65b5bca09ef55a3d1b089f1e534aadf31361ce5ee2ff42489bdc5ff4e68f5a2",
+        "image": "sha256:99f4bb525f55a34a3f920c4a1a05f34fba9dde9dfc5ceeef871bc08e23f006ed"
+      },
+      "redis": {
+        "id": "3b3524fe90c94aac8cc4b86f1983134abb2965aec56109fad80a8d395a0ebfd8",
+        "image": "sha256:487efc0616382465781b8fdc3d6d1db449e6fd80ae23bf48432a2da6b6929908"
+      },
+      "salsah-2": {
+        "id": "21ab98dc3f86c75c9d1f59eb7c1a1a9df1139597b11fe4e99d09bf8f09000404",
+        "image": "sha256:0e6f376aa5fbd65c474cf5659bb7db9417d9f23afb3d2adcdf225a09e0fff855"
+      }
+    },
+    "rollback": "/opt/oldap/compose/docker-compose.yml.before-final-1.0.0-20261109T181259",
+    "tools": "lrosenth/oldap-tools:v1.0.0@sha256:e39b99b939f14994c5bab6498ebb3dfd264c55fb66786d7e57dbd956df3aaade",
+    "changed_services": [
+      "oldap-api",
+      "oldap-app",
+      "oldap-jena-identity"
+    ]
+  },
+  "http": {
+    "https://api.oldap.org/status": {
+      "status": 200,
+      "body": {
+        "status": "ok"
+      }
+    },
+    "https://api.oldap.org/health": {
+      "status": 200,
+      "body": {
+        "services": {
+          "jena": "reachable"
+        },
+        "status": "ok",
+        "version": "v1.0.0"
+      }
+    },
+    "https://app.oldap.org/": {
+      "status": 200
+    },
+    "https://fasnacht.digital/archive": {
+      "status": 200
+    }
+  },
+  "app_browser": {
+    "status": 200,
+    "errors": [],
+    "failures": [],
+    "pending": [
+      "/admin/auth/refresh"
+    ],
+    "hydrated": true
+  },
+  "archive_browser": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "tabs": [
+        "Alle 1103",
+        "Medien 666",
+        "Gegenst\u00e4nde 422",
+        "Anl\u00e4sse 15"
+      ],
+      "heading": "\"Ar-te-plage am Rhy!\" Querschnitt durch die Basler Fasnacht 2002 : Live-Aufnahmen von den Vorfasnachts-Veranstaltungen und den Schnitzelb\u00e4nken",
+      "medium": "Tambouren des Stamms BMG 1913 und Laterne",
+      "errors": [],
+      "failures": []
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "tabs": [
+        "Alle 1103",
+        "Medien 666",
+        "Gegenst\u00e4nde 422",
+        "Anl\u00e4sse 15"
+      ],
+      "heading": "\"Ar-te-plage am Rhy!\" Querschnitt durch die Basler Fasnacht 2002 : Live-Aufnahmen von den Vorfasnachts-Veranstaltungen und den Schnitzelb\u00e4nken",
+      "medium": "Tambouren des Stamms BMG 1913 und Laterne",
+      "errors": [],
+      "failures": []
+    }
+  ],
+  "service": {
+    "checks": [
+      "Closed stdin does not stop the service",
+      "No raw SPARQL route",
+      "Transport credential required",
+      "Unavailable identity verification fails closed",
+      "300 sequential commits succeed",
+      "Probe fault flags and diagnostic headers are inert",
+      "Committed identifier and receipt remain actor-bound",
+      "Abort consumes identifier without committing data",
+      "Expiry releases writer but consumes identifier",
+      "Graceful restart preserves all admissions and committed data",
+      "Restart does not invent a commit receipt",
+      "Hard crash preserves reservation and rolls back pending data",
+      "Committed receipt survives hard crash",
+      "Admission and receipt metadata stay invisible",
+      "Application cannot clear protected admission metadata",
+      "Managed fulltext administration is enabled",
+      "Production ignores fulltext fault injection",
+      "Managed index and folding analyzer serve committed text",
+      "Fulltext configuration and searchable data survive hard restart",
+      "Fulltext administration requires its separate key",
+      "Credential bootstrap remains available",
+      "Missing storage requires explicit initialization"
+    ],
+    "sha256": "b112fc4db082b315f2297eb1d3527321ec85c2de8943beaa466284209b8a76ad",
+    "production_byte_identical": true,
+    "production_namespace_restarted": false
+  },
+  "release_tests": {
+    "run": 12,
+    "passed": 12,
+    "skipped": 0
+  },
+  "limitations": [
+    "First archive browser sequence timed out on object heading; independent diagnostic and full desktop/mobile repeat passed. Cause not proven; retain existing intermittent timeout observation.",
+    "First app networkidle wait timed out; explicit hydrated-content readiness passes.",
+    "Existing mobile-media lifecycle missing-secret log remains outside this release scope.",
+    "Zod 3 high advisory remains explicitly accepted; npm audit has zero critical entries, GitHub alert reconciliation is separate.",
+    "Tools image is cached for operator use, not an active production service.",
+    "Home remains unchanged; no authenticated production edits/uploads in read-only release smoke."
+  ]
+}

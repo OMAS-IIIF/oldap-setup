@@ -1,3 +1,9 @@
+### Update 2026-11-09 18:17
+- Decisions: Complete the approved final release; preserve existing tags and database namespace.
+- Implementation: Published exact core 1.0.0 wheels/images and app 0.2.8, mainline commits/tags; scoped production activation changes only API, identity and app. Evidence in oldap-setup/docs/oldap-1.0.0-release-results.json.
+- Open: Observe routine operations; retain accepted Zod 3 finding and intermittent browser timeout observation. Home unchanged.
+- Risks/Assumptions: Real service and both-architecture integration checks pass; public desktop/mobile repeat passes. Read-only production smoke does not cover authenticated writes/uploads; old Compose/images retained for rollback.
+
 ### Update 2026-11-09 18:02
 - Decisions: Owner-approved final core 1.0.0 plus app 0.2.8; retain independent versions and accepted Zod 3 risk. Keep the byte-identical running Java service/namespace untouched.
 - Implementation: Added explicit final release mode with clean-source/stable-version requirements, real final wheels, immutable v-tags and existing-tag protection; retain accepted third-party constraints inside hashed contexts. Frontend freezer reads package version. Prepare playbook accepts final service metadata. Twelve release/lock tests pass; source finalization committed in core/app.

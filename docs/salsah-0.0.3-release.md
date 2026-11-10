@@ -38,5 +38,16 @@ Private build, architecture smoke and deployment logs reside under
 
 ## Production acceptance
 
-Pending VPN access and deployment. Live authenticated edits/uploads have not
-been repeated during this frontend-only release; browser workflow tests use mocks.
+- Applied successfully through the shared Jena updater; only SALSAH restarted.
+- All seven sibling container identities remained unchanged.
+- Runtime version is 0.0.3; origin is https://salsah.org, API is
+  https://api.salsah.org and media is https://media.oldap.org.
+- Container health, public SALSAH/API HTTPS health and browser-rendered login pass.
+- Configuration rollback: `/opt/oldap/compose/routine-update-20261110T182028946040Z`.
+- Previous image is the same digest as the home predecessor recorded above.
+- First apply attempt refused a busy coordination lock before making changes.
+  A read-only lock inventory confirmed it was released; the subsequent attempt
+  completed normally without bypassing or deleting locks.
+
+Live authenticated edits/uploads have not been repeated during this
+frontend-only release; browser workflow tests use mocks.

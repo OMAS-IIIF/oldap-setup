@@ -1,3 +1,9 @@
+### Update 2026-11-10 19:21
+- Decisions: Promote the home-accepted SALSAH 0.0.3 digest to production without rebuilding or updating other components.
+- Implementation: Shared updater preview/apply passed; only SALSAH replaced, seven sibling identities retained. Runtime version/origins, container health, public SALSAH/API health and browser login page pass. Recorded exact rollback directory in docs/salsah-0.0.3-release.md.
+- Open: Optional user functional acceptance; authenticated edits/uploads were not repeated.
+- Risks/Assumptions: Initial busy-lock refusal made no changes; lock inventory showed release before the successful retry. No lock bypass, API/database restart or migration.
+
 ### Update 2026-11-10 17:08
 - Decisions: Publish SALSAH 0.0.3 once and deploy its immutable digest through the shared Jena application updater, selecting only SALSAH.
 - Implementation: Added dedicated release selection and current-release pin; documented AMD64/ARM64 acceptance and successful home rollout with exact rollback reference. Home health/browser login pass; seven sibling container identities retained.

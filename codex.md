@@ -1,6 +1,6 @@
 # OLDAP Setup Context
 
-- SALSAH 0.0.3 (2026-11-10): published/locally accepted AMD64+ARM64 image 27cf49a30537; home image-only rollout, unchanged sibling containers, health and browser login checks pass. Dedicated release selection and rollback are in docs/salsah-0.0.3-release.md; production awaits VPN access. releases/current.json now includes SALSAH.
+- SALSAH 0.0.3 (2026-11-10): published/locally accepted AMD64+ARM64 image 27cf49a30537; home image-only rollout, unchanged sibling containers, health and browser login checks pass. Dedicated release selection and rollback are in docs/salsah-0.0.3-release.md; production rollout also passes (only SALSAH restarted, public health/browser login successful). releases/current.json now includes SALSAH.
 
 - Consolidated image commands (2026-11-10): API docker-prepare, docker-image/docker-build, docker-accept and docker-push delegate to setup’s reviewed wheel-only Jena pipeline. Explicit absolute bundle path, separate component versions with library-range checking, no implicit publication/deployment. See docs/image-build-workflow.md. Native local Jena services are now configured in sibling oldap-api; see its doc/jena-local-development.md.
 

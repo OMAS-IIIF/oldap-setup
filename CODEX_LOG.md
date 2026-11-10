@@ -1,3 +1,9 @@
+### Update 2026-11-10 22:42
+- Decisions: Deploy the owner-accepted current oldap-app as 0.2.9; retain wider functional defects as separate work.
+- Implementation: Added immutable app-only release selection/current pin. AMD64/ARM64 local startup/version/HTML checks pass; production scoped apply, HTTP/API health and browser shell pass, seven sibling IDs retained. Documented exact rollback.
+- Open: Home deployment after VPN shutdown; broader product review and live authenticated workflow acceptance.
+- Risks/Assumptions: No database/API migration or restart; existing source test acceptance is not full product acceptance. Only versioned image tag published.
+
 ### Update 2026-11-10 19:21
 - Decisions: Promote the home-accepted SALSAH 0.0.3 digest to production without rebuilding or updating other components.
 - Implementation: Shared updater preview/apply passed; only SALSAH replaced, seven sibling identities retained. Runtime version/origins, container health, public SALSAH/API health and browser login page pass. Recorded exact rollback directory in docs/salsah-0.0.3-release.md.

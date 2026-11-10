@@ -33,7 +33,7 @@ use the explicit plan targets instead.
 `RELEASE_FILE` defaults to `releases/current.json`, containing verified published
 image digests. It is a partial selection: omitted components retain their current
 versions. Currently it selects API/library 1.0.1, tools 1.0.1, FasnachtsPage 0.1.51
-standard/OCR harvesters 0.1.14 and SALSAH 0.0.3. App remains at its installed version.
+standard/OCR harvesters 0.1.14, SALSAH 0.0.3 and oldap-app 0.2.9.
 Update this file only after publication and image acceptance, recording evidence.
 
 A custom file can select just one component:

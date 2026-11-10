@@ -1,6 +1,6 @@
 """Build and publish isolated Jena release candidates without touching stable tags.
 
-Prepare snapshots allowlisted package inputs (including uncommitted migration
+Prepare snapshots allowlisted package inputs (including uncommitted candidate
 work), builds wheels with exact private library versions, and records hashes.
 Build loads and checks each architecture locally. Publish pushes those tested
 image IDs, never rebuilds, refuses existing tags and records registry digests.
@@ -20,6 +20,7 @@ import certifi
 import subprocess
 import sys
 import tomllib
+from poetry.core.constraints.version import Version, parse_constraint
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
@@ -63,7 +64,7 @@ def registry(reference):
 
 
 def valid_reference(reference, final=False):
-    """Only this workflow's repositories and content-qualified Jena RC tags."""
+    """Allow candidate tags or explicitly selected stable version tags only."""
     if final:
         return bool(re.fullmatch(r'lrosenth/oldap-(?:api|tools):v\d+\.\d+\.\d+(?:-(?:amd64|arm64))?', reference))
     return bool(re.fullmatch(r'lrosenth/oldap-(?:api|tools):jena-\d+\.\d+\.\d+-rc[1-9]\d*-[a-f0-9]{12}(?:-(?:amd64|arm64))?', reference))
@@ -83,13 +84,31 @@ def candidate_tag(version, rc, fingerprint):
     return f'jena-{match[1]}-rc{rc}-{fingerprint[:12]}'
 
 
-def prepare(output, rc, final=False, constraints=None):
+def check_library_requirement(metadata, version):
+    """Refuse a sibling library outside the application's declared Poetry range.
+
+    Snapshot pinning makes builds reproducible; it must not silently relax the
+    application's dependency contract when API/tools versions evolve separately.
+    """
+    requirement = metadata['tool']['poetry']['dependencies']['oldaplib']
+    if isinstance(requirement, dict):
+        requirement = requirement.get('version')
+    if not isinstance(requirement, str) or not parse_constraint(requirement).allows(Version.parse(version)):
+        raise ValueError('Sibling oldaplib does not satisfy the declared version requirement')
+
+
+def prepare(output, rc, final=False, constraints=None, components=None):
     """Create a new wheel bundle; original version files and Git stay unchanged."""
+    components = tuple(components or ('oldap-api', 'oldap-tools'))
+    if not components or len(set(components)) != len(components) or any(
+            name not in ('oldap-api', 'oldap-tools') for name in components):
+        raise ValueError('Select API and/or tools exactly once')
+    packages = {'oldaplib': PACKAGES['oldaplib'], **{name: PACKAGES[name] for name in components}}
     if rc < 1:
         raise ValueError('RC number must be positive')
     output.mkdir(parents=True, exist_ok=False)
     records = {}
-    for project, package in PACKAGES.items():
+    for project, package in packages.items():
         source = ROOT.parent / project
         snapshot = output / 'sources' / project
         snapshot.mkdir(parents=True)
@@ -122,13 +141,15 @@ def prepare(output, rc, final=False, constraints=None):
     for record in records.values():
         candidate_tag(record['version'], rc, fingerprint)
     # Final wheels carry their actual public version, never a relabelled RC.
-    if final and (len({r['version'] for r in records.values()}) != 1 or
-                  any(not re.fullmatch(r'\d+\.\d+\.\d+', r['version']) for r in records.values())):
-        raise ValueError('Final release requires matching stable core versions')
+    if final and any(not re.fullmatch(r'\d+\.\d+\.\d+', r['version']) for r in records.values()):
+        raise ValueError('Final release requires stable package versions')
+    for project in components:
+        metadata = tomllib.loads((output / 'sources' / project / 'pyproject.toml').read_text())
+        check_library_requirement(metadata, records['oldaplib']['version'])
     suffix = '' if final else f'+jena.rc{rc}.{fingerprint[:12]}'
     lib_version = records['oldaplib']['version'] + suffix
     versions = {}
-    for project in PACKAGES:
+    for project in packages:
         snapshot = output / 'sources' / project
         version = records[project]['version'] + suffix
         versions[project] = version
@@ -147,7 +168,7 @@ def prepare(output, rc, final=False, constraints=None):
         subprocess.run([sys.executable, '-c', 'from poetry.core.masonry.api import build_wheel; import sys; build_wheel(sys.argv[1])', str(wheels)], cwd=snapshot, check=True)
     manifest = {'fingerprint': fingerprint, 'rc': rc, 'final': final, 'sources': records, 'versions': versions,
                 'python_image': PYTHON_IMAGE, 'recipe_sha256': recipe_hash, 'components': {}}
-    for project in ('oldap-api', 'oldap-tools'):
+    for project in components:
         tag = ('v' + records[project]['version']) if final else candidate_tag(records[project]['version'], rc, fingerprint)
         reference = f'lrosenth/{project}:{tag}'
         assert valid_reference(reference, final)
@@ -182,8 +203,8 @@ def verify(output):
     manifest = json.loads((output / 'release.json').read_text())
     if manifest.get('final', False):
         versions = manifest.get('versions', {})
-        if set(versions) != set(PACKAGES) or len(set(versions.values())) != 1:
-            raise ValueError('Final package versions must match')
+        if set(versions) != {'oldaplib', *manifest['components']} or not manifest['components']:
+            raise ValueError('Final package set must match selected components and library')
         for project, version in versions.items():
             if not re.fullmatch(r'\d+\.\d+\.\d+', version) or manifest['sources'][project]['version'] != version:
                 raise ValueError('Final metadata must contain exact stable versions')
@@ -237,15 +258,16 @@ def accept(output, release):
             subprocess.run(['docker', 'run', '--rm', '--platform', 'linux/' + arch,
                             '--entrypoint', 'python', item['id'], '-c',
                             f'import os; assert (os.getuid(), os.getgid()) == {expected!r}'], check=True)
-    for arch in ARCHES:
-        item = built['oldap-api'][arch]
-        subprocess.run([sys.executable, str(ROOT / 'scripts/check-jena-network.py'),
-                        '--release', str(release), '--api-image', item['id'], '--packaged'], check=True)
+    if 'oldap-api' in built:
+        for arch in ARCHES:
+            item = built['oldap-api'][arch]
+            subprocess.run([sys.executable, str(ROOT / 'scripts/check-jena-network.py'),
+                            '--release', str(release), '--api-image', item['id'], '--packaged'], check=True)
     save(output / 'accepted.json', built)
 
 
 def publish(output):
-    """Publish tested IDs under new RC tags only, then assemble a multiarch index."""
+    """Publish tested IDs under new approved tags, then assemble a multiarch index."""
     manifest = verify(output)
     built = json.loads((output / 'built.json').read_text())
     acceptance = json.loads((output / 'accepted.json').read_text())
@@ -292,6 +314,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('action', choices=('prepare', 'build', 'accept', 'publish'))
     parser.add_argument('--bundle', type=Path, required=True)
+    parser.add_argument('--component', action='append', choices=('oldap-api', 'oldap-tools'),
+                        help='Prepare only selected component(s), always with sibling oldaplib')
     parser.add_argument('--rc', type=int, default=1)
     parser.add_argument('--final', action='store_true', help='Prepare exact stable wheels and new vX.Y.Z tags')
     parser.add_argument('--constraints', type=Path, help='Accepted third-party pip constraints to retain in build contexts')
@@ -299,10 +323,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
     output = args.bundle.resolve()
     if args.action == 'prepare':
-        prepare(output, args.rc, args.final, args.constraints)
+        prepare(output, args.rc, args.final, args.constraints, args.component)
     elif args.action == 'accept':
-        if args.service_release is None:
+        if args.service_release is None and 'oldap-api' in verify(output)['components']:
             parser.error('accept requires --service-release')
-        accept(output, args.service_release.resolve())
+        accept(output, args.service_release.resolve() if args.service_release else None)
     else:
         {'build': build, 'publish': publish}[args.action](output)

@@ -16,10 +16,11 @@ Official Apache Fuseki administration: [deployment and access](docs/jena-console
 
 ## Publishing Jena candidate images
 
-The migration checkout disables the old API/tools Makefile publication targets.
-They previously pushed normal tags (API also `latest`) or published tools on
-PyPI. Use `scripts/jena-images.py` from this setup checkout instead. The original
-GraphDB checkouts are unchanged.
+The normal API Make targets now delegate to this reviewed workflow. See
+[image build commands](docs/image-build-workflow.md) for preparation, local build,
+acceptance and publication. No API PyPI publication is needed. The low-level CLI
+below remains available; `--component oldap-api` or `--component oldap-tools`
+selects a single application with its sibling library.
 
 ```sh
 # Use a NEW bundle directory outside Git. This Python environment has poetry-core.
@@ -58,7 +59,8 @@ converts every legacy CLI command. Harvester images are a separate release gate.
 Publish requires acceptance matching the built image IDs. It verifies bundle
 hashes, refuses existing tags and registry errors, pushes exactly the tested
 architecture images and creates the multiarch index from their digests. It does
-not rebuild or write any stable/latest tag. Before/after digest snapshots check
+not rebuild or replace existing tags or `latest`. Explicit `--final` preparation
+uses new stable version tags; candidate preparation uses isolated RC tags. Before/after digest snapshots check
 `latest` and the current normal version tags. Registry tags are mutable and this
 check is not an atomic registry lock: use one publisher per bundle. If publishing
 partially fails, retain the manifest and inspect uploaded digests; do not blindly

@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-10",
+  "tests_passed": 43,
+  "prepared_components": [
+    "oldap-api"
+  ],
+  "built": {
+    "oldap-api": {
+      "amd64": {
+        "id": "sha256:e15513ab0433a9883b6eaa7299113c0f2869c3a946cee0e0af9e0df00b41d5aa",
+        "reference": "lrosenth/oldap-api:jena-1.0.1-rc1-f67cb64c0c22-amd64"
+      },
+      "arm64": {
+        "id": "sha256:18796b6d506a18db63e866fbd7a516b6a2c99739a01d90ad9a6cdd277ab332c6",
+        "reference": "lrosenth/oldap-api:jena-1.0.1-rc1-f67cb64c0c22-arm64"
+      }
+    }
+  },
+  "native_jena_acceptance": "passed both images: transaction, persistence, callback and bridge isolation",
+  "published": false,
+  "deployed": false
+}

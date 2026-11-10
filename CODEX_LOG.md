@@ -1,3 +1,9 @@
+### Update 2026-11-10 15:22
+- Decisions: Reuse the reviewed Jena image pipeline for normal OLDAP development; separate prepare/build/accept/publish from deployment and local native service installation.
+- Implementation: Added shared image Make targets and single-component bundles; stable application/library versions can differ within the declared library constraint. Preserved immutable context/acceptance and existing-tag refusal. Added Make routing and dependency-range regressions; documented the release workflow.
+- Open: Local native Jena service configuration and data source; current services controls still target the old GraphDB installation. No publication or remote deployment requested in this step.
+- Risks/Assumptions: Candidate builds may resolve newer third-party dependencies unless IMAGE_CONSTRAINTS is supplied; never promote without image acceptance. 43 focused tests and real AMD64/ARM64 image builds plus isolated Jena transaction/persistence/network acceptance pass. See setup docs/image-build-workflow.md.
+
 ### Update 2026-11-10 14:40
 - Decisions: Accept shared routine updates on home; require only genuinely installed coordination locks while failing closed for damaged scheduling installations.
 - Implementation: Added installed-lock selection and two regression tests; documented initial safe refusal, successful API/identity/frontend update, future-job image pins and unchanged replay. Updated stable context and operator runbook.

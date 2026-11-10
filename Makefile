@@ -153,3 +153,26 @@ install-swisscovery-vm:
 .PHONY: install-harvest-schedule-vm
 install-harvest-schedule-vm:
 	ansible-playbook -i inventory.ini oldap-harvest-schedule-install.yml -l oldap_prod --ask-become-pass
+
+# Explicit bundle path keeps candidate/final artifacts separate from deployment.
+IMAGE_PYTHON ?= ../oldap-api/.venv/bin/python
+IMAGE_BUNDLE ?=
+IMAGE_COMPONENT ?= oldap-api
+IMAGE_FINAL ?= false
+IMAGE_RC ?= 1
+IMAGE_CONSTRAINTS ?=
+JENA_SERVICE_RELEASE ?=
+.PHONY: image-prepare image-build image-accept image-publish check-image-bundle
+check-image-bundle:
+	@test -n "$(IMAGE_BUNDLE)" || { echo "Set IMAGE_BUNDLE to an absolute, private release directory." >&2; exit 2; }
+	@case "$(IMAGE_BUNDLE)" in /*) ;; *) echo "IMAGE_BUNDLE must be absolute." >&2; exit 2;; esac
+image-prepare: check-image-bundle
+	@test "$(IMAGE_FINAL)" = true -o "$(IMAGE_FINAL)" = false
+	"$(IMAGE_PYTHON)" scripts/jena-images.py prepare --bundle "$(IMAGE_BUNDLE)" \
+		--component "$(IMAGE_COMPONENT)" --rc "$(IMAGE_RC)" $(if $(filter true,$(IMAGE_FINAL)),--final,) \
+		$(if $(IMAGE_CONSTRAINTS),--constraints "$(IMAGE_CONSTRAINTS)",)
+image-build image-publish: check-image-bundle
+	"$(IMAGE_PYTHON)" scripts/jena-images.py $(patsubst image-%,%,$@) --bundle "$(IMAGE_BUNDLE)"
+image-accept: check-image-bundle
+	"$(IMAGE_PYTHON)" scripts/jena-images.py accept --bundle "$(IMAGE_BUNDLE)" \
+		$(if $(JENA_SERVICE_RELEASE),--service-release "$(JENA_SERVICE_RELEASE)",)

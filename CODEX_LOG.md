@@ -1,3 +1,9 @@
+### Update 2026-11-10 15:40
+- Decisions: Record completion of the sibling native Jena workflow without changing remote deployment.
+- Implementation: Updated master context to point to oldap-api local Jena service documentation; the identity worker reuses this repository's existing entry point.
+- Open: Remaining OLDAP-Jena active-path audit before archive; no production changes.
+- Risks/Assumptions: Separate November 8 home snapshot and private local credentials; full native lifecycle/read acceptance recorded by oldap-api.
+
 ### Update 2026-11-10 15:22
 - Decisions: Reuse the reviewed Jena image pipeline for normal OLDAP development; separate prepare/build/accept/publish from deployment and local native service installation.
 - Implementation: Added shared image Make targets and single-component bundles; stable application/library versions can differ within the declared library constraint. Preserved immutable context/acceptance and existing-tag refusal. Added Make routing and dependency-range regressions; documented the release workflow.

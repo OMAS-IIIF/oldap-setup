@@ -20,14 +20,14 @@ class RoutineUpdateTests(unittest.TestCase):
             executable.chmod(0o755)
             result = subprocess.run(
                 ['make', '--no-print-directory', 'deploy-vm',
-                 'API_VERSION=v0.2.24', 'APP_VERSION=v0.2.4',
-                 'TOOLS_VERSION=v0.3.12', 'HARVESTERS_VERSION=0.1.3',
-                 'FASNACHTS_VERSION=v0.1.37', 'AUTH_SECRETS_FILE=/nonexistent'],
+                 'AUTH_SECRETS_FILE=/nonexistent'],
                 cwd=ROOT, env={**os.environ, 'PATH': directory + ':' + os.environ['PATH']},
                 check=True, capture_output=True, text=True,
             )
-            self.assertIn('oldap-update.yml', result.stdout)
-            self.assertIn('oldap_api_tag=v0.2.24', result.stdout)
+            self.assertIn('oldap-jena-update.yml', result.stdout)
+            self.assertIn('oldap_update_apply=true', result.stdout)
+            self.assertIn('oldap_prod', result.stdout)
+            self.assertNotIn('oldap_api_tag=', result.stdout)
             self.assertNotIn('oldap-deploy.yml', result.stdout)
             self.assertNotIn('/nonexistent', result.stdout)
 

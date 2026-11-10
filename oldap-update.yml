@@ -1,5 +1,5 @@
 ---
-# Routine application releases on an already migrated production installation.
+# Legacy GraphDB/Writer update path; routine Jena updates use oldap-jena-update.yml.
 # Keep installed secrets, writer configuration and infrastructure authoritative.
 - name: Update installed OLDAP applications
   hosts: oldap

@@ -1,3 +1,9 @@
+### Update 2026-11-10 14:27
+- Decisions: Use one explicit image-only update path for both installed Jena layouts; preserve provisioning/migration and local service control as separate workflows.
+- Implementation: Added shared Python operator/Ansible entry point, digest release selection, preview/deploy Make targets and compatibility wrapper. Retain installed config through small image overrides; serialize existing locks, validate non-image equivalence, couple API/identity, avoid starting batches/tools, and retain private rollback files. Updated runbook and README; reject ignored legacy version overrides.
+- Open: Home preview/no-change/update/rollback acceptance before production use. Restore general image-build targets and local API services separately. No remote operation in this implementation.
+- Risks/Assumptions: 29 focused tests pass, including real Compose parsing and secret-free preview CLI, both layouts, Make routing/paths with spaces, lock refusal, registry failure, activation rollback and no-op replay. Both playbooks pass syntax validation. Runtime/container behavior is simulated except local Compose parsing; no live OCR/import or home acceptance claimed. Requires existing maintenance/recovery locks and the installed namespace/identity boundary.
+
 ### Update 2026-11-10 14:12
 - Decisions: Consolidate setup into OLDAP/main without changing deployment behavior or running services.
 - Implementation: Backed up both Git histories and working changes; compared all old local edits against Jena. Old additions are identical or superseded, with log entries and test cases retained. Checkpointed existing proxy/client-update/acceptance fixes and evidence; documented reconciliation and remaining workflow work.

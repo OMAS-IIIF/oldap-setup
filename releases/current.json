@@ -1,0 +1,7 @@
+{
+  "api": "lrosenth/oldap-api@sha256:7fed616c31b8c298d02778e807bb0713746f0f21cb722662548796d9a573070a",
+  "fasnacht": "lrosenth/fasnachts-page@sha256:b53439bad2e4bf170150d32451d7faef771609a6feffeb8850281f7e1b92dd80",
+  "tools": "lrosenth/oldap-tools@sha256:339056aba1906c834a8a365e490b2a88e432fedf4f883eb7a0bf2a680a921d16",
+  "harvesters": "lrosenth/oldap-harvesters@sha256:1c1790eada33a92ff8883805fff0e2f04f3fb3af18712f17e56684c2262b05a2",
+  "harvesters_ocr": "lrosenth/oldap-harvesters@sha256:7a4fe70446198a0cb617830bcf31062beeb47dcaacb11edc745c37b3b49fccc2"
+}

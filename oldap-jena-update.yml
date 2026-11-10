@@ -1,0 +1,34 @@
+---
+# One image-only update path for both installed Jena layouts. Never bootstrap.
+- name: Plan or update installed Jena applications
+  hosts: oldap
+  become: true
+  serial: 1
+  gather_facts: false
+  vars:
+    oldap_update_apply: false
+  tasks:
+    - name: Require an explicit target and release file
+      ansible.builtin.assert:
+        that:
+          - ansible_play_hosts_all | length == 1
+          - oldap_release_file is defined or oldap_update_images is defined
+          - not ansible_check_mode
+        fail_msg: Use plan-home/plan-vm for preview; select exactly one host and a release JSON file.
+    - name: Read the credential-free release selection
+      ansible.builtin.set_fact:
+        oldap_update_selection: >-
+          {{ oldap_update_images if oldap_update_images is defined else
+             (lookup('ansible.builtin.file', oldap_release_file) | from_json) }}
+    - name: Execute the shared installed-stack update boundary
+      ansible.builtin.script:
+        cmd: >-
+          scripts/update-jena-applications.py
+          --images {{ oldap_update_selection | to_json | quote }}
+          {{ (oldap_update_apply | bool) | ternary('--apply', '') }}
+        executable: /usr/bin/python3
+      register: oldap_update_result
+      changed_when: '"\"status\": \"updated\"" in oldap_update_result.stdout'
+    - name: Show reviewed image selection and result
+      ansible.builtin.debug:
+        msg: '{{ oldap_update_result.stdout | trim | from_json }}'

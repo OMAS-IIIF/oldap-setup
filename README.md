@@ -1,5 +1,11 @@
 # Deployment of the OLDAP framework
 
+Routine Jena releases now use **make plan-home / deploy-home** and
+**make plan-vm / deploy-vm**, with explicit image digests in `releases/current.json`.
+See [the shared update workflow](docs/routine-production-updates.md). Local
+acceptance is complete; home/live rollout validation remains a separate step.
+Older migration/first-install procedures below are not routine release commands.
+
 Restored write/worker acceptance: [runbook and results](docs/home-restore-writes.md).
 
 Home application candidate rollout and rollback: [runbook](docs/jena-apps-home.md).
@@ -383,12 +389,13 @@ up the stack under `/opt/oldap/compose`.
 
 ## Deploying
 
-Use the Makefile targets so image tags are passed consistently from the sibling
-repositories:
+For installed Jena systems, review the immutable release selection before updating:
 
 ```bash
-make show-versions
+make show-release
+make plan-home
 make deploy-home
+make plan-vm
 make deploy-vm
 ```
 
@@ -400,7 +407,7 @@ The home environment mirrors the production host layout under the local
 
 - API: `https://api.home.org`
 - App: `https://app.home.org`
-- GraphDB: `https://graphdb.home.org`
+- Fuseki console: `https://fuseki.home.org`
 - Fasnacht page: `https://fasnacht.home.org`
 - Media/IIIF: `https://media.home.org`, with uploads below `/upload`
 
@@ -453,18 +460,11 @@ test deployment keeps browser traffic on `https://media.home.org` but uses
 in the API container. Production import-mail links use
 `https://fasnacht.digital`.
 
-`make deploy-home` and `make deploy-vm` automatically pass the shared Vault
-file and use `--ask-vault-pass`. To override either default, use:
-
-```bash
-make deploy-vm \
-  AUTH_SECRETS_FILE=/secure/path/oldap-auth.vault.yml \
-  ANSIBLE_VAULT_ARGS='--vault-id production@prompt'
-```
-
-The playbook rejects missing, short, or reused signing keys before changing the
-host. It renders `/opt/oldap/compose/.env` as root-only mode `0600`, validates
-the final Compose configuration, and only then recreates containers.
+Routine `make deploy-home` and `make deploy-vm` retain installed secrets and do
+not request a Vault file. Select images with `RELEASE_FILE` and use the installed
+SSH/sudo access. They never render a complete replacement environment or rotate
+keys. Vault inputs described above belong to first-install/migration playbooks,
+not the routine Jena update. See [update and rollback](docs/routine-production-updates.md).
 
 ## Production password-reset mail
 
@@ -649,12 +649,10 @@ requires recreation: reloading inside the old container reads its old inode.
 Only `/internal/jena` and `/internal/jena/*` are proxy-blocked. Export, import and
 mobile worker routes must reach their existing purpose-specific JWT guards.
 
-`oldap-jena-client-update.yml` accepts explicit immutable API/tools digests for
-an already active home Jena installation. It preserves the installed environment
-and policy overlays, pulls images, then recreates identity verification and API
-without restarting the Jena namespace owner, Redis or media workers. It neither
-imports data nor starts tools. Use the normal prepare/build/accept/publish release
-workflow before this update; never reuse a stable or existing RC tag.
+`oldap-jena-client-update.yml` is now a compatibility wrapper for explicit
+API/tools image arguments. It delegates to the same `oldap-jena-update.yml`
+workflow used by both Make deployment targets. Select exactly one host with `-l`;
+use the documented plan targets before applying. It does not start tools or imports.
 
 API-owned worker service connections must issue internal access tokens with Jena;
 GraphDB retains tokenless service connections. Worker signing credentials and

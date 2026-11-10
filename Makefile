@@ -38,6 +38,7 @@ define latest_tag
 endef
 
 show-versions:
+	@echo "Repository versions only; routine deployments use RELEASE_FILE (make show-release)."
 	@echo "API-VERSION=$(API_VERSION)"
 	@echo "APP-VERSION=$(APP_VERSION)"
 	@echo "TOOLS-VERSION=$(TOOLS_VERSION)"
@@ -69,17 +70,21 @@ check-auth-secrets:
 test-deployment-config:
 	python3 -m unittest tests/test_production_auth_config.py
 
-deploy-home: check-auth-secrets
-	ansible-playbook -i inventory.ini oldap-deploy.yml \
-		-e "@$(AUTH_SECRETS_FILE)" $(ANSIBLE_VAULT_ARGS) \
-		$(if $(API_VERSION),-e oldap_api_tag=$(API_VERSION),) \
-		$(if $(APP_VERSION),-e oldap_app_tag=$(APP_VERSION),) \
-		$(if $(TOOLS_VERSION),-e oldap_tools_tag=$(TOOLS_VERSION),) \
-		$(if $(HARVESTERS_VERSION),-e oldap_harvesters_tag=$(HARVESTERS_VERSION),) \
-		$(if $(FASNACHTS_VERSION),-e fasnachts_page_tag=$(FASNACHTS_VERSION),) \
-		-e salsah_tag=$(SALSAH_VERSION) \
-		-l oldap_home \
-		--ask-become-pass
+# Routine Jena updates use published immutable images, never sibling HEAD guesses.
+RELEASE_FILE ?= $(CURDIR)/releases/current.json
+ANSIBLE_BECOME_ARGS ?= --ask-become-pass
+LEGACY_RELEASE_OVERRIDES = $(foreach var,API_VERSION APP_VERSION TOOLS_VERSION HARVESTERS_VERSION FASNACHTS_VERSION SALSAH_VERSION,$(if $(filter command,$(origin $(var))),$(var)))
+.PHONY: plan-home plan-vm show-release
+show-release:
+	@python3 -m json.tool "$(RELEASE_FILE)"
+plan-home plan-vm deploy-home deploy-vm:
+	@test -z "$(strip $(LEGACY_RELEASE_OVERRIDES))" || { echo "Use RELEASE_FILE instead of version overrides: $(strip $(LEGACY_RELEASE_OVERRIDES))" >&2; exit 2; }
+	@test -f "$(RELEASE_FILE)"
+	ansible-playbook -i inventory.ini oldap-jena-update.yml \
+		-e 'oldap_release_file="$(RELEASE_FILE)"' \
+		-e oldap_update_apply=$(if $(filter deploy-home deploy-vm,$@),true,false) \
+		-l $(if $(filter plan-home deploy-home,$@),oldap_home,oldap_prod) \
+		$(ANSIBLE_BECOME_ARGS)
 
 soft-reset-home:
 	ansible-playbook -i inventory.ini oldap-playbook.yaml \
@@ -87,22 +92,6 @@ soft-reset-home:
 		-l oldap_home \
 		--ask-become-pass
 
-# Routine production updates: publish immutable release images first.
-# Uses installed secrets and Writer configuration; only application versions change.
-# Does not provision Docker, restart GraphDB/Redis, migrate data, or change timers.
-# Versions come from sibling repositories (make show-versions); override explicitly
-# when keeping another component pinned, e.g. make deploy-vm APP_VERSION=v0.2.4.
-# Media VM deployment remains separate. Initial setup uses prepare-vm/activate-vm.
-deploy-vm:
-	ansible-playbook -i inventory.ini oldap-update.yml \
-		$(if $(API_VERSION),-e oldap_api_tag=$(API_VERSION),) \
-		$(if $(APP_VERSION),-e oldap_app_tag=$(APP_VERSION),) \
-		$(if $(TOOLS_VERSION),-e oldap_tools_tag=$(TOOLS_VERSION),) \
-		$(if $(HARVESTERS_VERSION),-e oldap_harvesters_tag=$(HARVESTERS_VERSION),) \
-		$(if $(FASNACHTS_VERSION),-e fasnachts_page_tag=$(FASNACHTS_VERSION),) \
-		-e salsah_tag=$(SALSAH_VERSION) \
-		-l oldap_prod \
-		--ask-become-pass
 
 
 

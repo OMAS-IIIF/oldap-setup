@@ -1,6 +1,6 @@
 # OLDAP Setup Context
 
-- oldap-app 0.2.9 (2026-11-10): multi-platform image 0a5bd7223775 accepted and published; production image-only update passed, seven other container IDs unchanged, public HTTP/API health and browser shell pass. Owner accepts existing functional gaps pending a later review. Home awaits VPN shutdown. Selection/rollback: docs/oldap-app-0.2.9-release.md.
+- oldap-app 0.2.9 (2026-11-10): multi-platform image 0a5bd7223775 accepted and published; production image-only update passed, seven other container IDs unchanged, public HTTP/API health and browser shell pass. Owner accepts existing functional gaps pending a later review. Home now runs the identical digest; HTTP/API health, browser shell and unchanged sibling IDs verified. Selection/rollback: docs/oldap-app-0.2.9-release.md.
 
 - SALSAH 0.0.3 (2026-11-10): published/locally accepted AMD64+ARM64 image 27cf49a30537; home image-only rollout, unchanged sibling containers, health and browser login checks pass. Dedicated release selection and rollback are in docs/salsah-0.0.3-release.md; production rollout also passes (only SALSAH restarted, public health/browser login successful). releases/current.json now includes SALSAH.
 

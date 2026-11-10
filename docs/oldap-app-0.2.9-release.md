@@ -33,7 +33,11 @@ Authenticated edits/uploads were not repeated.
 - Previous production image: `lrosenth/oldap-app@sha256:ab26ef04108cf37980aa542ff36ed7757d9966ea4a704b28faba5e01210c6061`.
 - Image-only rollback: select that previous digest in a partial release JSON and
   apply through the shared updater; do not restore the database.
-- Home deployment awaits VPN shutdown (home is blocked while Uni VPN is active).
+- Home deployment also completed successfully with the exact same image digest.
+  Runtime 0.2.9 and home API origins verified; public HTTP/API health and browser
+  shell pass. Only oldap-app replaced; seven sibling container IDs retained.
+- Home configuration rollback: `/opt/oldap/compose/routine-update-20261110T214828714837Z`.
+- Previous home image: `lrosenth/oldap-app@sha256:ad3308b9e4c18054ed431e24ebec953efcfd5253fc910a39014da9ace28220e7`.
 
 Private build/smoke/deployment logs are under
 `~/Library/Application Support/OLDAP/releases/oldap-app-0.2.9` on the control machine.

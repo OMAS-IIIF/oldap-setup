@@ -1,3 +1,9 @@
+### Update 2026-11-10 22:49
+- Decisions: Align home with the production-accepted oldap-app 0.2.9 artifact.
+- Implementation: App-only preview/apply passed; runtime version and home API origins verified, HTTP/API health and browser shell pass. Seven sibling container IDs retained; home rollback digest/directory recorded.
+- Open: Broader oldap-app functional review remains separate; authenticated edits/uploads not repeated.
+- Risks/Assumptions: No rebuild, database changes or other service restart.
+
 ### Update 2026-11-10 22:42
 - Decisions: Deploy the owner-accepted current oldap-app as 0.2.9; retain wider functional defects as separate work.
 - Implementation: Added immutable app-only release selection/current pin. AMD64/ARM64 local startup/version/HTML checks pass; production scoped apply, HTTP/API health and browser shell pass, seven sibling IDs retained. Documented exact rollback.

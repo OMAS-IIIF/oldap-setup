@@ -25,7 +25,12 @@
         # Backend identity callbacks stay inside the shared API/Jena namespace.
         @private path /internal/jena /internal/jena/*
         respond @private 404
-        reverse_proxy oldap-api:8000
+        reverse_proxy oldap-api:8000 {
+            # Gunicorn closes idle connections after 2s; retire ours first.
+            transport http {
+                keepalive 1s
+            }
+        }
     }
 
     @fasnacht host fasnacht.home.org
@@ -66,6 +71,10 @@ api.oldap.org {
     # Flask owns the exact-origin, credentialed CORS policy for all requests,
     # including preflight responses.
     reverse_proxy oldap-api:8000 {
+        # Gunicorn closes idle connections after 2s; retire ours first.
+        transport http {
+            keepalive 1s
+        }
         # forward Authorization header upstream (Flask needs it)
         header_up Authorization {http.request.header.Authorization}
     }
@@ -109,7 +118,12 @@ api.salsah.org {
     # Keep the alternate API origin behind the same private callback boundary.
     @private path /internal/jena /internal/jena/*
     respond @private 404
-    reverse_proxy oldap-api:8000
+    reverse_proxy oldap-api:8000 {
+        # Gunicorn closes idle connections after 2s; retire ours first.
+        transport http {
+            keepalive 1s
+        }
+    }
 }
 {% else %}
 https://salsah.home.org {

@@ -1,3 +1,45 @@
+### Update 2026-11-10 14:12
+- Decisions: Consolidate setup into OLDAP/main without changing deployment behavior or running services.
+- Implementation: Backed up both Git histories and working changes; compared all old local edits against Jena. Old additions are identical or superseded, with log entries and test cases retained. Checkpointed existing proxy/client-update/acceptance fixes and evidence; documented reconciliation and remaining workflow work.
+- Open: Unified Jena routine updates, Make release/deploy targets, local Jena service controls and home acceptance remain separate steps. Retain both clones and safety archives.
+- Risks/Assumptions: 15 focused tests and Ansible syntax validation pass; no real imports or mail delivery. New JSON evidence validates and whitespace checks pass. Old local edits are preserved as setup-consolidation-20261110-superseded-local, not replayed over their newer counterparts. This commit records existing operational code; no remote deployment or runtime configuration changes.
+
+### Update 2026-11-10 00:22
+- Decisions: Owner-authorized Docker publication and production promotion of API/library 1.0.1; preserve existing tags, namespace and other services.
+- Implementation: Published accepted AMD64/ARM64 IDs and multiarch digest 7fed616c31b8c298d02778e807bb0713746f0f21cb722662548796d9a573070a. Scoped maintenance-locked rollout replaced API/identity only; saved Compose before-api-1.0.1-20261110T002006. Readiness/auth/media/search checks pass. Browser comparison: text 1845→1500 ms, year 1621→1324, image 1934→1478, detail 2387→2289; three repeats, equal visible content, 231 successful API responses.
+- Open: Routine observation and user acceptance; live measurements are small warm samples, not load-test guarantees.
+- Risks/Assumptions: No RDF migration, real upload or data-write test in this rollout. Rollback uses retained Compose/images; maintenance lock released. Detailed evidence retained in the 20261110-performance-1.0.1 release directory.
+
+### Update 2026-11-09 23:51
+- Decisions: Owner-authorized production release of FasnachtsPage 0.1.50 and promotion of the tested API proxy keepalive correction; keep API/identity v1.0.0 and all other service images unchanged.
+- Implementation: Accepted/published source f80d6f7f5d6b, digest 691e6730e0f5; replaced only frontend with guarded image-only rollback. Validated/reloaded only API transports to keepalive 1s. Saved Compose before-fasnacht-0.1.50-20261109T234719 and Caddyfile before-fasnacht-0.1.50-20261109T233805. Live source/version/API origin verified.
+- Open: Normal observation; API/library performance candidate promotion remains separate. See docs/fasnacht-0.1.50-production-20261109.md and results for provenance/rollback.
+- Risks/Assumptions: 552 comparison responses without errors; visible content equal, filter medians 3498 -> 1990 / 3797 -> 1656 / 4163 -> 1925 ms. Unchanged detail control 2058 -> 2424 ms; small samples, no detail gain claim. Direct desktop/mobile refresh/object/story/version and TLS checks pass. No Caddy 5xx since correction through 22:50 UTC. Initial assertion syntax failure caused no frontend mutation; corrected guarded rollout passed. No RDF/media changes.
+
+### Update 2026-11-09 23:29
+- Decisions: Publish only the source-addressed Fasnacht metadata candidate and activate it on home; production and other components unchanged.
+- Implementation: Froze 418 files (ca38b05dc7f7), built/accepted AMD64 and published digest 70a5b4ab750a. Guarded old image, saved .env.before-archive-metadata-20261109T232611 and replaced only fasnachts-page; all seven other container identities/images unchanged. Scoped rollback prepared, unused.
+- Open: User acceptance on home; any production promotion remains separate. See docs/archive-metadata-home-20261109.md and results.
+- Risks/Assumptions: Three matched samples/action: text 1663 -> 905 ms, year 1296 -> 782, image 1445 -> 856; ten fewer requests, displayed content equal. 552 comparison API responses without errors; named/public/mobile and direct archive/object/story smoke pass. No Caddy 5xx since 22:02 UTC fix through 22:28 UTC; short warm observations, not production percentiles. Old image retained; no data changes.
+
+### Update 2026-11-09 23:15
+- Decisions: Retire Caddy API upstream idle connections before Gunicorn's 2-second default; avoid retrying arbitrary POST requests.
+- Implementation: Added 1s keepalive to canonical and legacy API proxy templates (including SALSAH alias). Narrow validated in-place home patch and Caddy reload; live transport JSON confirms 1s. No container restarts or production change. Saved Caddyfile.before-keepalive-20261109T230246.
+- Open: Observe normal operation and promote the template change during a separately scoped production deployment. Separate mobile-media lifecycle credential log noise remains.
+- Risks/Assumptions: Reset/broken-pipe logs and timeout mismatch support diagnosis; no API OOM/restarts/timeouts observed. 552 final comparison responses and post-reload Caddy logs through 22:13 UTC have no 5xx; not a long-duration guarantee. 14 deployment tests pass. See docs/caddy-api-keepalive-20261109.md.
+
+### Update 2026-11-09 22:33
+- Decisions: Align home FasnachtsPage with the exact accepted production image, preserving the API performance candidate for comparison.
+- Implementation: Activated digest f8e1e718f558; only frontend container changed. Five fresh browser samples per phase: overview median 2721 -> 1635 ms, object 1628 -> 784 ms; overview searches 18 -> 9. Desktop/mobile smoke and single route mount pass, no JS/API errors or production API requests.
+- Open: User acceptance and separate decision on production API/library promotion. Evidence: docs/home-frontend-alignment-20261109.md.
+- Risks/Assumptions: Warm local browser samples, not a load test. Same already-built image; no source rebuild, publication or production change. Restore only the frontend image key for rollback, preserving later settings.
+
+### Update 2026-11-09 22:21
+- Decisions: Publish isolated candidate images and verify on home only; keep production/stable tags and namespace owner unchanged.
+- Implementation: API/Tools 40e6a2f777e3 accepted on AMD64/ARM64; dependency parity and 29 installed API tests per architecture pass. Home API/identity replaced; 27 live checks, 18 complete response comparisons and desktop/mobile smoke pass. Date medians public 1010 -> 653 ms, admin 2063 -> 786 ms. Setup adds recovery-lock/rollback protection and permits retired GraphDB absence in its checker.
+- Open: Home frontend retains duplicate searches; browser median ~2.7 s unchanged within noise. Review frontend alignment and user acceptance before any production rollout. Evidence: docs/archive-performance-home-20261109.md.
+- Risks/Assumptions: Candidate snapshots include uncommitted source; no Git/PyPI release. Read-only home checks plus isolated packaged transactions, not live imports/writes. Known taxonomy alias normalized only for semantic comparison; retained rollback environment needs no RDF restore.
+
 ### Update 2026-11-09 18:17
 - Decisions: Complete the approved final release; preserve existing tags and database namespace.
 - Implementation: Published exact core 1.0.0 wheels/images and app 0.2.8, mainline commits/tags; scoped production activation changes only API, identity and app. Evidence in oldap-setup/docs/oldap-1.0.0-release-results.json.

@@ -1,0 +1,174 @@
+{
+  "published": {
+    "image": "lrosenth/fasnachts-page:jena-0.1.49-rc1-ca38b05dc7f7-amd64@sha256:70a5b4ab750aee44b67d6e4a93dcfaaa2d6c92c14e2e63d8f17bd60691b6b119",
+    "source_commit": "69d12d47b77139af3a12593048490519a15c4225",
+    "source_fingerprint": "ca38b05dc7f7c238f85cf7df706b2a86f8c729145b64352a79ec4ca7ee3f4e85",
+    "local_image_id": "sha256:70a5b4ab750aee44b67d6e4a93dcfaaa2d6c92c14e2e63d8f17bd60691b6b119"
+  },
+  "installed": {
+    "changed_containers": [
+      "fasnachts-page"
+    ],
+    "unchanged_containers": [
+      "oldap-api",
+      "compose-oldap-jena-identity-1",
+      "caddy",
+      "oldap-app",
+      "redis",
+      "compose-oldap-jena-1",
+      "compose-salsah-2-1"
+    ],
+    "image": "lrosenth/fasnachts-page:jena-0.1.49-rc1-ca38b05dc7f7-amd64@sha256:70a5b4ab750aee44b67d6e4a93dcfaaa2d6c92c14e2e63d8f17bd60691b6b119",
+    "source_fingerprint": "ca38b05dc7f7c238f85cf7df706b2a86f8c729145b64352a79ec4ca7ee3f4e85",
+    "started_at": "2026-11-09T22:26:38.112302815Z",
+    "public_api_url": "https://api.home.org"
+  },
+  "comparison": {
+    "text": {
+      "before_ms": [
+        1899,
+        1663.3,
+        1402.9
+      ],
+      "after_ms": [
+        904.7,
+        912.8,
+        878.1
+      ],
+      "before_median_ms": 1663.3,
+      "after_median_ms": 904.7,
+      "reduction_percent": 45.6,
+      "before_calls": [
+        14,
+        14,
+        14
+      ],
+      "after_calls": [
+        4,
+        4,
+        4
+      ],
+      "displayed_content_equal": true
+    },
+    "year": {
+      "before_ms": [
+        1624.6,
+        1190.2,
+        1295.7
+      ],
+      "after_ms": [
+        771.8,
+        783.4,
+        781.8
+      ],
+      "before_median_ms": 1295.7,
+      "after_median_ms": 781.8,
+      "reduction_percent": 39.7,
+      "before_calls": [
+        12,
+        12,
+        12
+      ],
+      "after_calls": [
+        2,
+        2,
+        2
+      ],
+      "displayed_content_equal": true
+    },
+    "image": {
+      "before_ms": [
+        1440.6,
+        1445.4,
+        1481.5
+      ],
+      "after_ms": [
+        823.6,
+        857.2,
+        856.4
+      ],
+      "before_median_ms": 1445.4,
+      "after_median_ms": 856.4,
+      "reduction_percent": 40.7,
+      "before_calls": [
+        13,
+        13,
+        13
+      ],
+      "after_calls": [
+        3,
+        3,
+        3
+      ],
+      "displayed_content_equal": true
+    },
+    "detail": {
+      "before_ms": [
+        966.2,
+        1279.4,
+        1208.4
+      ],
+      "after_ms": [
+        1061.5,
+        1406.4,
+        949.2
+      ],
+      "before_median_ms": 1208.4,
+      "after_median_ms": 1061.5,
+      "reduction_percent": 12.2,
+      "before_calls": [
+        12,
+        12,
+        12
+      ],
+      "after_calls": [
+        12,
+        12,
+        12
+      ],
+      "displayed_content_equal": true
+    },
+    "api_responses": 552,
+    "api_errors": 0
+  },
+  "smoke": [
+    {
+      "case": "named reader, refresh, logout and public re-entry",
+      "passed": true
+    },
+    {
+      "case": "mobile public filter and refresh",
+      "passed": true
+    }
+  ],
+  "direct_smoke": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "errors": [],
+      "failures": [],
+      "mainCount": 1,
+      "objectPath": "/archive/urn%3Auuid%3A0990c14d-a131-41ff-a6c5-6d86f0975fde",
+      "objectHeading": "\"Ar-te-plage am Rhy!\" Querschnitt durch die Basler Fasnacht 2002 : Live-Aufnahmen von den Vorfasnachts-Veranstaltungen und den Schnitzelb\u00e4nken",
+      "storyPath": "/geschichten/urn:uuid:9cfc90ac-bb8f-4204-bf23-e2f3bb550743",
+      "status": "passed"
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "errors": [],
+      "failures": [],
+      "mainCount": 1,
+      "objectPath": "/archive/urn%3Auuid%3A0990c14d-a131-41ff-a6c5-6d86f0975fde",
+      "objectHeading": "\"Ar-te-plage am Rhy!\" Querschnitt durch die Basler Fasnacht 2002 : Live-Aufnahmen von den Vorfasnachts-Veranstaltungen und den Schnitzelb\u00e4nken",
+      "storyPath": "/geschichten/urn:uuid:9cfc90ac-bb8f-4204-bf23-e2f3bb550743",
+      "status": "passed"
+    }
+  ],
+  "caddy_5xx_since_fix": [],
+  "checked_at_utc": "2026-11-09T22:28:48.820904+00:00"
+}

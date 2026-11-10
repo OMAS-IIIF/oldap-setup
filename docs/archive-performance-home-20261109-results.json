@@ -1,0 +1,547 @@
+{
+  "status": "published and deployed to home; production unchanged",
+  "date": "2026-11-09",
+  "fingerprint": "40e6a2f777e375ce31fcd28c876691d849369e6dd7fba98b14cb84190ebf8fb5",
+  "images": {
+    "oldap-api": {
+      "digest": "sha256:02c42245bb49a53e6bd709c4a511542b0d1925b535aacb20440324b1877e977a",
+      "platform_manifests": [
+        "lrosenth/oldap-api@sha256:1243768562c6fa9c93f75649b2c17cec5ec19586dd9442052e0e9fbf837ba0ab",
+        "lrosenth/oldap-api@sha256:cc781182ccfa5929fd8ea4fae3de88dd272c8842fe84ecaff31a426d492ad202"
+      ],
+      "reference": "lrosenth/oldap-api:jena-1.0.0-rc1-40e6a2f777e3"
+    },
+    "oldap-tools": {
+      "digest": "sha256:ca66014bca0093415d363f5d84bd19a8bc042be0fb46bc5d94b3d1562ee9c324",
+      "platform_manifests": [
+        "lrosenth/oldap-tools@sha256:879cd190f9de0658e6ba9ba19c755ec72a6c174b3f0715d7c253f44ed9834fe1",
+        "lrosenth/oldap-tools@sha256:31126f2fab9a72bbf93e055b293c91a480e5365a80dd4a95a89c84f958190d59"
+      ],
+      "reference": "lrosenth/oldap-tools:jena-1.0.0-rc1-40e6a2f777e3"
+    }
+  },
+  "versions": {
+    "oldap-api": "1.0.0+jena.rc1.40e6a2f777e3",
+    "oldap-tools": "1.0.0+jena.rc1.40e6a2f777e3",
+    "oldaplib": "1.0.0+jena.rc1.40e6a2f777e3"
+  },
+  "installed_checks": {
+    "oldap-api": {
+      "amd64": {
+        "image_id": "sha256:1243768562c6fa9c93f75649b2c17cec5ec19586dd9442052e0e9fbf837ba0ab",
+        "third_party_count": 76,
+        "dependency_parity": true,
+        "installed_tests": true
+      },
+      "arm64": {
+        "image_id": "sha256:cc781182ccfa5929fd8ea4fae3de88dd272c8842fe84ecaff31a426d492ad202",
+        "third_party_count": 76,
+        "dependency_parity": true,
+        "installed_tests": true
+      }
+    },
+    "oldap-tools": {
+      "amd64": {
+        "image_id": "sha256:879cd190f9de0658e6ba9ba19c755ec72a6c174b3f0715d7c253f44ed9834fe1",
+        "third_party_count": 60,
+        "dependency_parity": true,
+        "installed_tests": false
+      },
+      "arm64": {
+        "image_id": "sha256:31126f2fab9a72bbf93e055b293c91a480e5365a80dd4a95a89c84f958190d59",
+        "third_party_count": 60,
+        "dependency_parity": true,
+        "installed_tests": false
+      }
+    }
+  },
+  "source_commits": {
+    "oldap-api": "dbdc053306681490034265dc5cda61a3c73395ec",
+    "oldap-tools": "abfc627659e310401302440a2d332d74faf40f57",
+    "oldaplib": "0cbfcf3187d86417597b4231c0948efcb6e81fe0"
+  },
+  "source_state": "Frozen allowlisted experiment working trees; source fingerprint identifies uncommitted implementation. No Git/PyPI publication.",
+  "wheels": {
+    "wheels/oldaplib/oldaplib-1.0.0+jena.rc1.40e6a2f777e3-py3-none-any.whl": "8046825d380727d29089a40a60c244fab85c44d1b3b5dce64f490e8fd07fe52d",
+    "wheels/oldap-tools/oldap_tools-1.0.0+jena.rc1.40e6a2f777e3-py3-none-any.whl": "b944608eebc39db9269aeee21cb25d99d08f4c69730b72c4c398eb0b2b5a9d9c",
+    "wheels/oldap-api/oldap_api-1.0.0+jena.rc1.40e6a2f777e3-py3-none-any.whl": "49cf98e5217eb97f2f43b038211728342235b2eaa28683ae6fe74ced21bfe380"
+  },
+  "changed_containers": [
+    "oldap-api",
+    "compose-oldap-jena-identity-1"
+  ],
+  "unchanged_namespace_owner": "a506d803417eeaf4bbf657f70af54a375b5bd18658582d21be4d66e33ab78d6f",
+  "rollback": "/opt/oldap/compose/.env.before-client-update-20261109T221348",
+  "home_checks": {
+    "before": 26,
+    "after": 27,
+    "all_overview_responses_equal": true,
+    "normalization": "Only known dcterms:type L-ObjectTaxonomy aliases expanded; unordered inner RDF value collections sorted, outer row order retained."
+  },
+  "timings_ms": {
+    "before": {
+      "public": {
+        "0": {
+          "median_ms": 218.52649649372324,
+          "samples_ms": [
+            215.67252895329148,
+            221.94041695911437,
+            217.24842302501202,
+            219.80456996243447
+          ],
+          "rows": 27,
+          "sha256": "775a28bba9f470d21fb434d42d6a66f7bf81f7c37cdfe90e0e5ca84e65009c70"
+        },
+        "1": {
+          "median_ms": 266.72189350938424,
+          "samples_ms": [
+            267.578043974936,
+            265.8657430438325,
+            343.769692000933,
+            262.14995596092194
+          ],
+          "rows": 666,
+          "sha256": "e4835d966f3295653509df5fb796181e5c3fab74c71b5f48211133f1c77a9304"
+        },
+        "2": {
+          "median_ms": 214.98077345313504,
+          "samples_ms": [
+            244.25904999952763,
+            187.27718701120466,
+            242.4930689157918,
+            187.46847799047828
+          ],
+          "rows": 21,
+          "sha256": "96835f67cb1c00a9132134297dee3e09aaa39ca402180956c24264dbd4df23e6"
+        },
+        "3": {
+          "median_ms": 190.7534904894419,
+          "samples_ms": [
+            193.86659003794193,
+            187.64039094094187,
+            205.94613591674715,
+            187.10906198248267
+          ],
+          "rows": 6,
+          "sha256": "b5319980fa7833fe4739a3606537db5dd0b1298aa49a851c74be5862a74ee46b"
+        },
+        "4": {
+          "median_ms": 202.9759809956886,
+          "samples_ms": [
+            204.815901000984,
+            200.6237889872864,
+            203.35648697800934,
+            202.59547501336783
+          ],
+          "rows": 1,
+          "sha256": "d92c462be326e8445a78dadffc7699f3e524a2313b7f373699ae24589b5fa807"
+        },
+        "5": {
+          "median_ms": 176.05062504298985,
+          "samples_ms": [
+            173.97516104392707,
+            177.53992602229118,
+            174.56132406368852,
+            180.29139994177967
+          ],
+          "rows": 422,
+          "sha256": "6f097fa132e57301d7f52881064ce124c9b909391604d3cc00a2d2e4cc543f62"
+        },
+        "6": {
+          "median_ms": 185.68826996488497,
+          "samples_ms": [
+            181.10971990972757,
+            186.8964519817382,
+            190.0096769677475,
+            184.48008794803172
+          ],
+          "rows": 15,
+          "sha256": "59a802121252d333451b95106628c8eba5341a49cab72aa078b21e16dfab55e6"
+        },
+        "7": {
+          "median_ms": 1010.4837150429375,
+          "samples_ms": [
+            1046.6498750029132,
+            974.3175550829619,
+            950.1195880584419,
+            1130.0379959866405
+          ],
+          "rows": 437,
+          "sha256": "84af480778200a6a2631c92b4fb1da923b080bd81f6b2219a99570b55bd3029c"
+        },
+        "8": {
+          "median_ms": 256.71061547473073,
+          "samples_ms": [
+            282.87179593462497,
+            258.9104729704559,
+            252.41295294836164,
+            254.51075797900558
+          ],
+          "rows": 666,
+          "sha256": "b213d00dd4e6fde0d6762c66933237a931a53f8a8a0b5fe6e09224ba2d7fdfcb"
+        }
+      },
+      "admin": {
+        "0": {
+          "median_ms": 551.1725384858437,
+          "samples_ms": [
+            540.3681999305263,
+            565.2681570500135,
+            534.3670339789242,
+            561.9768770411611
+          ],
+          "rows": 27,
+          "sha256": "775a28bba9f470d21fb434d42d6a66f7bf81f7c37cdfe90e0e5ca84e65009c70"
+        },
+        "1": {
+          "median_ms": 442.9459099774249,
+          "samples_ms": [
+            429.6169379958883,
+            454.83180799055845,
+            433.731545927003,
+            452.16027402784675
+          ],
+          "rows": 691,
+          "sha256": "b427d0f8c4bfc42e22ed7a826cfd839ea6276224eac5aee39e2d1804fd686f88"
+        },
+        "2": {
+          "median_ms": 351.95554594974965,
+          "samples_ms": [
+            353.0190859455615,
+            350.89200595393777,
+            414.03894196264446,
+            349.98710500076413
+          ],
+          "rows": 21,
+          "sha256": "96835f67cb1c00a9132134297dee3e09aaa39ca402180956c24264dbd4df23e6"
+        },
+        "3": {
+          "median_ms": 360.1215480011888,
+          "samples_ms": [
+            381.62339001428336,
+            356.0514490818605,
+            356.0242170933634,
+            364.1916469205171
+          ],
+          "rows": 6,
+          "sha256": "b5319980fa7833fe4739a3606537db5dd0b1298aa49a851c74be5862a74ee46b"
+        },
+        "4": {
+          "median_ms": 381.3474209746346,
+          "samples_ms": [
+            464.9285360937938,
+            390.7880149781704,
+            371.9068269710988,
+            365.9126040292904
+          ],
+          "rows": 1,
+          "sha256": "d92c462be326e8445a78dadffc7699f3e524a2313b7f373699ae24589b5fa807"
+        },
+        "5": {
+          "median_ms": 344.0477389958687,
+          "samples_ms": [
+            348.32548804115504,
+            333.4194360068068,
+            339.7699899505824,
+            350.91101191937923
+          ],
+          "rows": 424,
+          "sha256": "c99ef15d0ad86c137a21e96c1d97b05b5148567354aff85d0c49d1c985f4237d"
+        },
+        "6": {
+          "median_ms": 351.14617401268333,
+          "samples_ms": [
+            387.93291593901813,
+            350.9955999907106,
+            347.9204489849508,
+            351.29674803465605
+          ],
+          "rows": 17,
+          "sha256": "2baa89c1abe445cf3990820a03d2715d5b05676436cedfe0c99c2e9ea1407036"
+        },
+        "7": {
+          "median_ms": 2062.543112493586,
+          "samples_ms": [
+            2135.492878034711,
+            1989.5933469524607,
+            2356.3067470677197,
+            1937.9427019739524
+          ],
+          "rows": 441,
+          "sha256": "4ec0da1f9b34a6590bea9d2775a00161cb55afa87c8042416af9098665790339"
+        },
+        "8": {
+          "median_ms": 428.1012830324471,
+          "samples_ms": [
+            425.8622160414234,
+            510.0267279194668,
+            427.3085870081559,
+            428.8939790567383
+          ],
+          "rows": 691,
+          "sha256": "843f14c5739db936a0253c0fcd4b6ba550096e7b4d234c477155c85120e26a1f"
+        }
+      }
+    },
+    "after": {
+      "public": {
+        "0": {
+          "median_ms": 211.84341801563278,
+          "samples_ms": [
+            245.96459604799747,
+            202.7209009975195,
+            218.69878005236387,
+            204.98805597890168
+          ],
+          "rows": 27,
+          "sha256": "775a28bba9f470d21fb434d42d6a66f7bf81f7c37cdfe90e0e5ca84e65009c70"
+        },
+        "1": {
+          "median_ms": 267.7498569828458,
+          "samples_ms": [
+            250.01324096228927,
+            245.25351007468998,
+            324.1970419185236,
+            285.48647300340235
+          ],
+          "rows": 666,
+          "sha256": "e4835d966f3295653509df5fb796181e5c3fab74c71b5f48211133f1c77a9304"
+        },
+        "2": {
+          "median_ms": 187.065901060123,
+          "samples_ms": [
+            177.50724509824067,
+            196.62455702200532,
+            212.67979010008276,
+            174.81561203021556
+          ],
+          "rows": 21,
+          "sha256": "96835f67cb1c00a9132134297dee3e09aaa39ca402180956c24264dbd4df23e6"
+        },
+        "3": {
+          "median_ms": 176.39421648345888,
+          "samples_ms": [
+            179.76925801485777,
+            177.42201394867152,
+            175.36641901824623,
+            175.0619460362941
+          ],
+          "rows": 6,
+          "sha256": "b5319980fa7833fe4739a3606537db5dd0b1298aa49a851c74be5862a74ee46b"
+        },
+        "4": {
+          "median_ms": 193.01626103697345,
+          "samples_ms": [
+            191.50452804751694,
+            194.52799402642995,
+            188.5466439416632,
+            195.56787004694343
+          ],
+          "rows": 1,
+          "sha256": "d92c462be326e8445a78dadffc7699f3e524a2313b7f373699ae24589b5fa807"
+        },
+        "5": {
+          "median_ms": 161.22186300344765,
+          "samples_ms": [
+            217.97525009606034,
+            161.4941000007093,
+            160.949626006186,
+            160.08622094523162
+          ],
+          "rows": 422,
+          "sha256": "6f097fa132e57301d7f52881064ce124c9b909391604d3cc00a2d2e4cc543f62"
+        },
+        "6": {
+          "median_ms": 186.4677350386046,
+          "samples_ms": [
+            178.68560005445033,
+            194.24987002275884,
+            219.7189290309325,
+            178.58041205909103
+          ],
+          "rows": 15,
+          "sha256": "59a802121252d333451b95106628c8eba5341a49cab72aa078b21e16dfab55e6"
+        },
+        "7": {
+          "median_ms": 653.0902675003745,
+          "samples_ms": [
+            659.250803058967,
+            787.8609899198636,
+            646.9297319417819,
+            646.9127900199965
+          ],
+          "rows": 437,
+          "sha256": "84af480778200a6a2631c92b4fb1da923b080bd81f6b2219a99570b55bd3029c"
+        },
+        "8": {
+          "median_ms": 253.89162002829835,
+          "samples_ms": [
+            246.7461470514536,
+            247.6989789865911,
+            321.72593497671187,
+            260.0842610700056
+          ],
+          "rows": 666,
+          "sha256": "b213d00dd4e6fde0d6762c66933237a931a53f8a8a0b5fe6e09224ba2d7fdfcb"
+        }
+      },
+      "admin": {
+        "0": {
+          "median_ms": 229.26659451331943,
+          "samples_ms": [
+            227.5413000024855,
+            230.99188902415335,
+            225.68318503908813,
+            245.27551198843867
+          ],
+          "rows": 27,
+          "sha256": "775a28bba9f470d21fb434d42d6a66f7bf81f7c37cdfe90e0e5ca84e65009c70"
+        },
+        "1": {
+          "median_ms": 272.1398125286214,
+          "samples_ms": [
+            268.7695139320567,
+            273.1117099756375,
+            278.7984759779647,
+            271.1679150816053
+          ],
+          "rows": 691,
+          "sha256": "b427d0f8c4bfc42e22ed7a826cfd839ea6276224eac5aee39e2d1804fd686f88"
+        },
+        "2": {
+          "median_ms": 190.48838299931958,
+          "samples_ms": [
+            190.5921830330044,
+            188.43511503655463,
+            190.38458296563476,
+            194.11182100884616
+          ],
+          "rows": 21,
+          "sha256": "96835f67cb1c00a9132134297dee3e09aaa39ca402180956c24264dbd4df23e6"
+        },
+        "3": {
+          "median_ms": 192.4078864394687,
+          "samples_ms": [
+            191.6047369595617,
+            191.97561393957585,
+            212.72893296554685,
+            192.84015893936157
+          ],
+          "rows": 6,
+          "sha256": "b5319980fa7833fe4739a3606537db5dd0b1298aa49a851c74be5862a74ee46b"
+        },
+        "4": {
+          "median_ms": 208.25552596943453,
+          "samples_ms": [
+            208.04307190701365,
+            206.61131793167442,
+            208.595409989357,
+            208.4679800318554
+          ],
+          "rows": 1,
+          "sha256": "d92c462be326e8445a78dadffc7699f3e524a2313b7f373699ae24589b5fa807"
+        },
+        "5": {
+          "median_ms": 179.48774946853518,
+          "samples_ms": [
+            178.36775293108076,
+            185.53391995374113,
+            177.44647001381963,
+            180.6077460059896
+          ],
+          "rows": 424,
+          "sha256": "c99ef15d0ad86c137a21e96c1d97b05b5148567354aff85d0c49d1c985f4237d"
+        },
+        "6": {
+          "median_ms": 191.6504729888402,
+          "samples_ms": [
+            191.49011198896915,
+            191.81083398871124,
+            186.85751897282898,
+            198.5856438986957
+          ],
+          "rows": 17,
+          "sha256": "2baa89c1abe445cf3990820a03d2715d5b05676436cedfe0c99c2e9ea1407036"
+        },
+        "7": {
+          "median_ms": 786.3550379988737,
+          "samples_ms": [
+            825.6994499824941,
+            747.0106260152534,
+            742.5881390227005,
+            851.8249118933454
+          ],
+          "rows": 441,
+          "sha256": "4ec0da1f9b34a6590bea9d2775a00161cb55afa87c8042416af9098665790339"
+        },
+        "8": {
+          "median_ms": 277.1016139886342,
+          "samples_ms": [
+            266.4973409846425,
+            282.37304801587015,
+            276.1690999614075,
+            278.0341280158609
+          ],
+          "rows": 691,
+          "sha256": "843f14c5739db936a0253c0fcd4b6ba550096e7b4d234c477155c85120e26a1f"
+        }
+      }
+    }
+  },
+  "browser": {
+    "before": {
+      "samples_ms": [
+        5523.4000000059605,
+        2690.1000000089407,
+        2751.2999999970198
+      ],
+      "median_ms": 2751.2999999970198,
+      "search_requests": [
+        18,
+        18,
+        16
+      ],
+      "errors": []
+    },
+    "after": {
+      "samples_ms": [
+        2675.7999999970198,
+        2771.5,
+        2525.0999999940395
+      ],
+      "median_ms": 2675.7999999970198,
+      "search_requests": [
+        18,
+        18,
+        18
+      ],
+      "errors": []
+    }
+  },
+  "browser_smoke": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "status": "passed",
+      "errors": [],
+      "failures": []
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "status": "passed",
+      "errors": [],
+      "failures": []
+    }
+  ],
+  "limits": [
+    "Warm sequential single-case API medians, four measured samples after warmup.",
+    "Browser three fresh contexts per phase; total page gain is not established.",
+    "Home frontend retains its older duplicate-fetch behavior; unchanged for comparison.",
+    "No live write/import test; packaged real transactions and read-only home/media checks passed."
+  ]
+}

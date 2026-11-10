@@ -1,0 +1,187 @@
+{
+  "published": {
+    "image": "lrosenth/fasnachts-page:jena-0.1.50-f80d6f7f5d6b-amd64@sha256:691e6730e0f5015653dd76dac4cbd94c0b619e6248cef89be5b35e967103b8d0",
+    "source_commit": "69d12d47b77139af3a12593048490519a15c4225",
+    "source_fingerprint": "f80d6f7f5d6be0515eb1bab29b05fecf1d787e7fe4543135b03024c0e7cf47cf",
+    "local_image_id": "sha256:691e6730e0f5015653dd76dac4cbd94c0b619e6248cef89be5b35e967103b8d0"
+  },
+  "installed": {
+    "image": "lrosenth/fasnachts-page:jena-0.1.50-f80d6f7f5d6b-amd64@sha256:691e6730e0f5015653dd76dac4cbd94c0b619e6248cef89be5b35e967103b8d0",
+    "source_fingerprint": "f80d6f7f5d6be0515eb1bab29b05fecf1d787e7fe4543135b03024c0e7cf47cf",
+    "version": "0.1.50",
+    "started_at": "2026-11-09T22:47:38.407620292Z",
+    "public_api_url": "https://api.oldap.org",
+    "changed_containers": [
+      "fasnachts-page"
+    ],
+    "unchanged_containers": [
+      "oldap-app",
+      "oldap-api",
+      "compose-oldap-jena-identity-1",
+      "caddy",
+      "redis",
+      "compose-oldap-jena-1",
+      "compose-salsah-2-1"
+    ]
+  },
+  "comparison": {
+    "text": {
+      "before_ms": [
+        3498.2,
+        3377.2,
+        3654.2
+      ],
+      "after_ms": [
+        1993.2,
+        1855.6,
+        1989.7
+      ],
+      "before_median_ms": 3498.2,
+      "after_median_ms": 1989.7,
+      "reduction_percent": 43.1,
+      "before_calls": [
+        14,
+        14,
+        14
+      ],
+      "after_calls": [
+        4,
+        4,
+        4
+      ],
+      "displayed_content_equal": true
+    },
+    "year": {
+      "before_ms": [
+        4252.4,
+        3485.3,
+        3796.6
+      ],
+      "after_ms": [
+        1655.9,
+        1731.6,
+        1639.8
+      ],
+      "before_median_ms": 3796.6,
+      "after_median_ms": 1655.9,
+      "reduction_percent": 56.4,
+      "before_calls": [
+        12,
+        12,
+        12
+      ],
+      "after_calls": [
+        2,
+        2,
+        2
+      ],
+      "displayed_content_equal": true
+    },
+    "image": {
+      "before_ms": [
+        4376.7,
+        4163.1,
+        4064.8
+      ],
+      "after_ms": [
+        2009.5,
+        1854.8,
+        1925
+      ],
+      "before_median_ms": 4163.1,
+      "after_median_ms": 1925,
+      "reduction_percent": 53.8,
+      "before_calls": [
+        13,
+        13,
+        13
+      ],
+      "after_calls": [
+        3,
+        3,
+        3
+      ],
+      "displayed_content_equal": true
+    },
+    "detail": {
+      "before_ms": [
+        2058,
+        1719.7,
+        2134.1
+      ],
+      "after_ms": [
+        2423.6,
+        1924.5,
+        2548.7
+      ],
+      "before_median_ms": 2058,
+      "after_median_ms": 2423.6,
+      "reduction_percent": -17.8,
+      "before_calls": [
+        12,
+        12,
+        12
+      ],
+      "after_calls": [
+        12,
+        12,
+        12
+      ],
+      "displayed_content_equal": true
+    },
+    "api_responses": 552,
+    "api_errors": 0
+  },
+  "smoke": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "errors": [],
+      "failures": [],
+      "mainCount": 1,
+      "refresh": "passed",
+      "objectPath": "/archive/urn%3Auuid%3A0990c14d-a131-41ff-a6c5-6d86f0975fde",
+      "objectHeading": "\"Ar-te-plage am Rhy!\" Querschnitt durch die Basler Fasnacht 2002 : Live-Aufnahmen von den Vorfasnachts-Veranstaltungen und den Schnitzelb\u00e4nken",
+      "storyPath": "/geschichten/urn:uuid:9cfc90ac-bb8f-4204-bf23-e2f3bb550743",
+      "version": "0.1.50",
+      "status": "passed"
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "errors": [],
+      "failures": [],
+      "mainCount": 1,
+      "refresh": "passed",
+      "objectPath": "/archive/urn%3Auuid%3A0990c14d-a131-41ff-a6c5-6d86f0975fde",
+      "objectHeading": "\"Ar-te-plage am Rhy!\" Querschnitt durch die Basler Fasnacht 2002 : Live-Aufnahmen von den Vorfasnachts-Veranstaltungen und den Schnitzelb\u00e4nken",
+      "storyPath": "/geschichten/urn:uuid:9cfc90ac-bb8f-4204-bf23-e2f3bb550743",
+      "version": "0.1.50",
+      "status": "passed"
+    }
+  ],
+  "caddy": {
+    "transports": [
+      {
+        "keep_alive": {
+          "idle_timeout": 1000000000
+        },
+        "protocol": "http"
+      },
+      {
+        "keep_alive": {
+          "idle_timeout": 1000000000
+        },
+        "protocol": "http"
+      }
+    ],
+    "checked_at": "2026-11-09T22:39:30.018111+00:00"
+  },
+  "caddy_5xx_since_fix": [],
+  "caddy_fix_time_utc": "2026-11-09T22:38:09+00:00",
+  "checked_at_utc": "2026-11-09T22:50:49.537783+00:00"
+}

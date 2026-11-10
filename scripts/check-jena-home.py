@@ -68,11 +68,15 @@ def run(expected_stories, expected_semantic_stories=None):
         return json.loads(content)
 
     containers = json.loads(subprocess.check_output(['docker', 'inspect',
-        'oldap-api', 'compose-oldap-jena-1', 'compose-oldap-jena-identity-1', 'graphdb', 'redis', 'caddy']))
+        'oldap-api', 'compose-oldap-jena-1', 'compose-oldap-jena-identity-1', 'redis', 'caddy']))
+    # Retired GraphDB containers may already have been removed after cutover.
+    legacy_ids = subprocess.check_output(['docker', 'ps', '-aq', '--filter', 'name=^/graphdb$'], text=True).split()
+    if legacy_ids:
+        containers.extend(json.loads(subprocess.check_output(['docker', 'inspect', *legacy_ids])))
     state = {item['Name'].lstrip('/'): item for item in containers}
     env = dict(item.split('=', 1) for item in state['oldap-api']['Config']['Env'])
     check('API selects Jena', env.get('OLDAP_BACKEND') == 'jena')
-    check('GraphDB is stopped', not state['graphdb']['State']['Running'])
+    check('GraphDB is absent or stopped', not state.get('graphdb', {}).get('State', {}).get('Running', False))
     check('Private Jena backend has no published ports',
           not any(state['compose-oldap-jena-1']['NetworkSettings']['Ports'].values()))
     for name in ('oldap-api', 'compose-oldap-jena-1', 'compose-oldap-jena-identity-1', 'redis', 'caddy'):

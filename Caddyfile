@@ -21,7 +21,12 @@
 
     @api host api.home.org
     handle @api {
-        reverse_proxy oldap-api:8000
+        reverse_proxy oldap-api:8000 {
+            # Gunicorn closes idle connections after 2s; retire ours first.
+            transport http {
+                keepalive 1s
+            }
+        }
     }
 
     @fasnacht host fasnacht.home.org
@@ -57,7 +62,12 @@ app.oldap.org {
     reverse_proxy oldap-app:3000
 }
 api.oldap.org {
-    reverse_proxy oldap-api:8000
+    reverse_proxy oldap-api:8000 {
+        # Gunicorn closes idle connections after 2s; retire ours first.
+        transport http {
+            keepalive 1s
+        }
+    }
 }
 fasnacht.digital {
     reverse_proxy fasnachts-page:3100

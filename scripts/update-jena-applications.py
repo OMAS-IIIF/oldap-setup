@@ -20,6 +20,8 @@ import subprocess
 import tempfile
 
 LOCK_PATHS = ('/srv/storage/oldap-data/job-locks/maintenance.lock', '/var/lib/oldap-jena-recovery/lock')
+SCHEDULE_UNITS = tuple(Path('/etc/systemd/system') / name for name in
+                       ('oldap-harvest.service', 'oldap-backup.service', 'oldap-jena-backup.service'))
 
 COMPONENTS = {
     'api': ('oldap-api', 'oldap-jena-identity'),
@@ -225,6 +227,20 @@ def activate(root, files, services):
                  "from urllib.request import urlopen; assert urlopen('http://127.0.0.1:3031/health',timeout=10).read().strip()==b'ready'; assert urlopen('http://127.0.0.1:8000/status',timeout=10).status==200"])
 
 
+def installed_locks(root):
+    """Require recovery coordination and every installed batch coordination lock.
+
+    Unscheduled home installations have neither the shared lock directory nor
+    scheduler units/overlay. Do not manufacture a lock no other process uses.
+    A partially installed or damaged scheduling setup must still fail closed.
+    """
+    batch, recovery = map(Path, LOCK_PATHS)
+    batch_installed = (batch.exists() or batch.is_symlink() or batch.parent.exists()
+                       or (root / 'harvest-schedule-compose.yml').exists()
+                       or any(p.exists() or p.is_symlink() for p in SCHEDULE_UNITS))
+    return ([batch] if batch_installed else []) + [recovery]
+
+
 def apply(root, images):
     """Serialize with recovery/backup, preflight, then replace images or roll back.
 
@@ -234,10 +250,9 @@ def apply(root, images):
     inspected before and after, but never included in Compose up commands.
     """
     with ExitStack() as stack:
-        for name in LOCK_PATHS:
-            p = Path(name)
+        for p in installed_locks(root):
             if p.is_symlink() or not p.is_file():
-                raise ValueError('Required installed maintenance lock is missing: ' + name)
+                raise ValueError('Required installed maintenance lock is missing: ' + str(p))
             stream = stack.enter_context(p.open('r+'))
             fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
         env_text = (root / '.env').read_bytes().decode('utf-8')

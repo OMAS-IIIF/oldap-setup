@@ -223,6 +223,25 @@ class UpdateTests(unittest.TestCase):
         self.assertFalse(list(self.root.glob('routine-*')))
 
 
+    def test_unscheduled_home_requires_recovery_but_not_nonexistent_batch_lock(self):
+        batch = self.root/'absent-job-locks'/'maintenance.lock'
+        with patch.object(routine, 'LOCK_PATHS', (batch, self.locks[1])), \
+             patch.object(routine, 'SCHEDULE_UNITS', ()):
+            self.assertEqual(routine.installed_locks(self.root), [self.locks[1]])
+            (self.root/'harvest-schedule-compose.yml').touch()
+            self.assertEqual(routine.installed_locks(self.root), [batch,self.locks[1]])
+
+    def test_installed_schedule_never_silently_ignores_missing_batch_lock(self):
+        batch = self.root/'absent-job-locks'/'maintenance.lock'
+        unit = self.root/'oldap-jena-backup.service'
+        unit.touch()
+        with patch.object(routine, 'LOCK_PATHS', (batch,self.locks[1])), \
+             patch.object(routine, 'SCHEDULE_UNITS', (unit,)):
+            self.assertEqual(routine.installed_locks(self.root), [batch,self.locks[1]])
+            with self.assertRaisesRegex(ValueError, 'maintenance lock is missing'):
+                routine.apply(self.root, {'api': IMAGE})
+
+
 class MakeTargetsTests(unittest.TestCase):
     def test_all_four_targets_select_correct_host_and_mode_without_vault(self):
         import os, subprocess

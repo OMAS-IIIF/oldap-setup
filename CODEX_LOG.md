@@ -1,3 +1,9 @@
+### Update 2026-11-10 14:40
+- Decisions: Accept shared routine updates on home; require only genuinely installed coordination locks while failing closed for damaged scheduling installations.
+- Implementation: Added installed-lock selection and two regression tests; documented initial safe refusal, successful API/identity/frontend update, future-job image pins and unchanged replay. Updated stable context and operator runbook.
+- Open: Live rollback rehearsal and production use of the shared workflow; general image-build and local API service commands remain separate work.
+- Risks/Assumptions: 31 focused tests pass (fault-injected mail/import output is simulated). Home replay reports changed=0 and all eight running container identities/images/states match. API/archive HTTPS and browser archive/detail reads pass. No import, upload, data-write test or production change. Manual home snapshots remain single-operator operations.
+
 ### Update 2026-11-10 14:27
 - Decisions: Use one explicit image-only update path for both installed Jena layouts; preserve provisioning/migration and local service control as separate workflows.
 - Implementation: Added shared Python operator/Ansible entry point, digest release selection, preview/deploy Make targets and compatibility wrapper. Retain installed config through small image overrides; serialize existing locks, validate non-image equivalence, couple API/identity, avoid starting batches/tools, and retain private rollback files. Updated runbook and README; reject ignored legacy version overrides.

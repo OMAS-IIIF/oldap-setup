@@ -2,8 +2,9 @@
 
 The shared workflow is implemented in `oldap-jena-update.yml` and
 `scripts/update-jena-applications.py`. It supports the installed home overlay
-layout and consolidated production layout. It is locally tested; the first home
-acceptance and production use remain separate operator steps.
+layout and consolidated production layout. Home preview, application update, browser reads and unchanged replay passed on
+2026-11-10. Production use and a live rollback rehearsal remain separate steps.
+See `home-routine-update-20261110.md`.
 
 ## Commands
 
@@ -57,8 +58,13 @@ four targets rather than silently deploying a different release.
 
 ## What apply does
 
-1. Acquire the existing backup/harvester and namespace-recovery locks without
-   waiting. Missing or busy locks fail before configuration changes.
+1. Acquire installed coordination locks without waiting. The namespace-recovery
+   lock is always required. The backup/harvester lock is also required whenever
+   its directory, lock, scheduler service or scheduling overlay exists. An
+   unscheduled home installation without batch coordination needs only recovery
+   locking; no unused dummy lock is created. Missing required or busy locks fail
+   before configuration changes. Manual home snapshots remain single-operator
+   operations and must not overlap deployment.
 2. Resolve all installed Compose profiles, require Jena and its identity service,
    pull selected images and check Python Jena compatibility / tool CLI startup.
    The OCR image additionally imports its isolated CPU runtime without network.
@@ -103,7 +109,7 @@ consumers. Activation failure restores the written files and the previous
 consumers. An unsuccessful rollback reports its directory and requires operator
 inspection; do not blindly retry. A concurrent change is never overwritten during
 rollback. A killed controller/process may require manual recovery from the same
-manifest: hold both maintenance locks, restore recorded files, remove only files
+manifest: hold all installed coordination locks, restore recorded files, remove only files
 marked originally absent, then activate the recorded consumers in identity/API
 order. Do not restore the database for an image-only rollback.
 

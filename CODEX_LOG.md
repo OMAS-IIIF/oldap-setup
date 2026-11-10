@@ -1,3 +1,9 @@
+### Update 2026-11-10 17:08
+- Decisions: Publish SALSAH 0.0.3 once and deploy its immutable digest through the shared Jena application updater, selecting only SALSAH.
+- Implementation: Added dedicated release selection and current-release pin; documented AMD64/ARM64 acceptance and successful home rollout with exact rollback reference. Home health/browser login pass; seven sibling container identities retained.
+- Open: Production rollout once Uni VPN is available.
+- Risks/Assumptions: No API/database/media restart or data migration. Live write/upload checks are not part of this release acceptance; existing source tests and local read-only Jena API checks passed.
+
 ### Update 2026-11-10 15:40
 - Decisions: Record completion of the sibling native Jena workflow without changing remote deployment.
 - Implementation: Updated master context to point to oldap-api local Jena service documentation; the identity worker reuses this repository's existing entry point.

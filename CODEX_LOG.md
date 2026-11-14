@@ -1,3 +1,9 @@
+### Update 2026-11-14 19:29
+- Decisions: Owner-authorized 1.2.0 home rollout complete; production selection and unrelated pending setup edits preserved.
+- Implementation: Added immutable releases/home-1.2.0.json; deployed accepted API/identity images and future tools pin through shared updater. Added nine oldap:onto triples under recovery lock, retaining before-graph and additive rollback. Documented full digests and acceptance.
+- Open: Use explicit home-1.2.0 selection for future home updates. No deployment work remains for this request.
+- Risks/Assumptions: API/library 1.2.0, public HTTP and ontology readback pass; six sibling containers unchanged. Jena remains 1.1.0; production and other pending setup work untouched. No live business-data write acceptance.
+
 ### Update 2026-11-10 22:49
 - Decisions: Align home with the production-accepted oldap-app 0.2.9 artifact.
 - Implementation: App-only preview/apply passed; runtime version and home API origins verified, HTTP/API health and browser shell pass. Seven sibling container IDs retained; home rollback digest/directory recorded.

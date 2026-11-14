@@ -1,5 +1,7 @@
 # OLDAP Setup Context
 
+- Reification 1.2.0 home deployment (2026-11-14): Published API/tools v1.2.0 multiarch images selected by releases/home-1.2.0.json. Home API/library report 1.2.0; nine additive ontology triples verified, before-graph/rollback retained. Only API/identity restarted. Jena 1.1.0, other containers and production selection unchanged. Explicit home release file is required for future updates. See docs/reification-home-1.2.0.md and receipt.
+
 - oldap-app 0.2.9 (2026-11-10): multi-platform image 0a5bd7223775 accepted and published; production image-only update passed, seven other container IDs unchanged, public HTTP/API health and browser shell pass. Owner accepts existing functional gaps pending a later review. Home now runs the identical digest; HTTP/API health, browser shell and unchanged sibling IDs verified. Selection/rollback: docs/oldap-app-0.2.9-release.md.
 
 - SALSAH 0.0.3 (2026-11-10): published/locally accepted AMD64+ARM64 image 27cf49a30537; home image-only rollout, unchanged sibling containers, health and browser login checks pass. Dedicated release selection and rollback are in docs/salsah-0.0.3-release.md; production rollout also passes (only SALSAH restarted, public health/browser login successful). releases/current.json now includes SALSAH.

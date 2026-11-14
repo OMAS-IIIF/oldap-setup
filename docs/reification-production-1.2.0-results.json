@@ -1,0 +1,65 @@
+{
+  "version": "1.2.0",
+  "images": {
+    "api": "lrosenth/oldap-api@sha256:771ea74f7b98afa6e658c55af69f07e2bb8ef96f5a803546ab747c6a29a30b20",
+    "tools": "lrosenth/oldap-tools@sha256:198772e0934e15dce5f2c1811a2e7995d9e1599f278ef8834f46fc277b6d9d53"
+  },
+  "acceptance": {
+    "changedContainers": [
+      "oldap-api",
+      "compose-oldap-jena-identity-1"
+    ],
+    "unchangedContainers": [
+      "compose-oldap-jena-1",
+      "oldap-app",
+      "compose-salsah-2-1",
+      "fasnachts-page",
+      "caddy",
+      "redis"
+    ],
+    "http": {
+      "https://api.oldap.org/health": {
+        "status": 200,
+        "body": {
+          "services": {
+            "jena": "reachable"
+          },
+          "status": "ok",
+          "version": "v1.2.0"
+        }
+      },
+      "https://api.oldap.org/status": {
+        "status": 200
+      },
+      "https://fasnacht.digital/landingpage": {
+        "status": 200
+      },
+      "https://api.oldap.org/admin/datamodel/shared/reifier-shape/shared:VisitShape": {
+        "status": 401
+      }
+    },
+    "installedLibraryAndApi": "1.2.0 1.2.0"
+  },
+  "ontology": {
+    "graph": "http://oldap.org/base#onto",
+    "before": 66,
+    "after": 75,
+    "added": 9,
+    "remainingMissing": 0,
+    "beforeGraphSha256": "5927fff55196d3da6f9a795a79b91e1b10b704fc0af18a0c257920538aa5d123",
+    "evidenceDirectory": "/srv/storage/oldap-releases/20261114-reification-1.2.0"
+  },
+  "rollback": {
+    "images": {
+      "api": "lrosenth/oldap-api@sha256:b85f35e78784106544485011e07769dd0e4c7859b556cd39a63b0df6a272c19e"
+    },
+    "composeBackup": "/opt/oldap/compose/routine-update-20261114T222409302649Z"
+  },
+  "tools": "No tools service installed; release selection updated, no service provisioned",
+  "jena": "Existing 1.1.0 backend retained",
+  "limits": [
+    "Reused home-tested immutable images without rebuild",
+    "No production business-data writes for acceptance"
+  ],
+  "privateEvidence": "/Users/rosenth/Library/Application Support/OLDAP/releases/20261114-1.2.0-production"
+}

@@ -1,3 +1,9 @@
+### Update 2026-11-14 23:25
+- Decisions: Owner-authorized production promotion of the home-tested reification 1.2.0 release completed.
+- Implementation: Deployed exact API/identity images through shared updater; added nine ontology triples under batch/recovery locks with before-graph and rollback. Updated production and current API/tools release selections; retained unrelated selections and pending setup edits.
+- Open: No requested deployment work remains. Tools is not installed as a service in production; no provisioning was performed.
+- Risks/Assumptions: Public health/status/Fasnacht, runtime versions/imports and ontology readback pass; six sibling container IDs unchanged. No production business-data write acceptance. See docs/reification-production-1.2.0.md and receipt.
+
 ### Update 2026-11-14 19:29
 - Decisions: Owner-authorized 1.2.0 home rollout complete; production selection and unrelated pending setup edits preserved.
 - Implementation: Added immutable releases/home-1.2.0.json; deployed accepted API/identity images and future tools pin through shared updater. Added nine oldap:onto triples under recovery lock, retaining before-graph and additive rollback. Documented full digests and acceptance.

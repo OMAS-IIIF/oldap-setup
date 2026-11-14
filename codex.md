@@ -1,5 +1,7 @@
 # OLDAP Setup Context
 
+- Reification 1.2.0 production live (2026-11-14): Exact home-tested API/identity images deployed; API/library report 1.2.0. Nine additive ontology triples verified with backup/rollback under batch/recovery locks. Production/current API/tools selections updated; tools has no installed service. Six sibling containers and Jena 1.1.0 unchanged. Public health and Fasnacht checks pass. See docs/reification-production-1.2.0.md and receipt.
+
 - Reification 1.2.0 home deployment (2026-11-14): Published API/tools v1.2.0 multiarch images selected by releases/home-1.2.0.json. Home API/library report 1.2.0; nine additive ontology triples verified, before-graph/rollback retained. Only API/identity restarted. Jena 1.1.0, other containers and production selection unchanged. Explicit home release file is required for future updates. See docs/reification-home-1.2.0.md and receipt.
 
 - oldap-app 0.2.9 (2026-11-10): multi-platform image 0a5bd7223775 accepted and published; production image-only update passed, seven other container IDs unchanged, public HTTP/API health and browser shell pass. Owner accepts existing functional gaps pending a later review. Home now runs the identical digest; HTTP/API health, browser shell and unchanged sibling IDs verified. Selection/rollback: docs/oldap-app-0.2.9-release.md.

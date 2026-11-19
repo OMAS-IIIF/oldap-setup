@@ -1,3 +1,9 @@
+### Update 2026-11-20 00:21
+- Decisions: Published coordinated oldaplib/tools 1.2.3 and API 1.2.4; deployed accepted API/identity to production only. No migration or home update.
+- Implementation: Git source/tags pushed; PyPI hashes verified; AMD64/ARM64 images published by immutable digest. Recorded release/deployment evidence in docs/patch-production-1.2.4-results.json.
+- Open: None for this release. Tools is not installed on production; its image is available for explicit use.
+- Risks/Assumptions: 68 wheel tests, 36 API tests, 201 tools tests and 126 installed tests per architecture pass, plus subtests and packaged Jena checks. Live archive/fulltext/TGB checks pass; final deployment plan has no changes. No business-data writes.
+
 ### Update 2026-11-14 23:25
 - Decisions: Owner-authorized production promotion of the home-tested reification 1.2.0 release completed.
 - Implementation: Deployed exact API/identity images through shared updater; added nine ontology triples under batch/recovery locks with before-graph and rollback. Updated production and current API/tools release selections; retained unrelated selections and pending setup edits.

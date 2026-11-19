@@ -1,0 +1,42 @@
+{
+  "version": "0.2.10",
+  "source_commit": "e0947438621082b961b24ce859c9caf9727a6a6e",
+  "image": "lrosenth/oldap-app@sha256:47cbd36466e6b74b678d8a2bb50cc3f571f20d938ebdcfd0fb78bb8aa6d16993",
+  "platform_checks": [
+    {
+      "architecture": "amd64",
+      "version": "0.2.10",
+      "status": 200
+    },
+    {
+      "architecture": "arm64",
+      "version": "0.2.10",
+      "status": 200
+    }
+  ],
+  "production": {
+    "url": "https://app.oldap.org/en",
+    "status": 200,
+    "javascriptErrors": [],
+    "apiHealth": {
+      "services": {
+        "jena": "reachable"
+      },
+      "status": "ok",
+      "version": "v1.2.3"
+    }
+  },
+  "changed_containers": [
+    "oldap-app"
+  ],
+  "unchanged_containers": 7,
+  "configuration_backup": "/opt/oldap/compose/routine-update-20261119T225011204746Z",
+  "final_plan_changes": false,
+  "source_checks": {
+    "unit_component_tests": 55,
+    "browser_workflows": 28,
+    "typecheck_errors": 0,
+    "typecheck_warnings": 0,
+    "updater_tests": 20
+  }
+}

@@ -1,3 +1,9 @@
+### Update 2026-11-20 00:29
+- Decisions: Deploy production-accepted API/identity 1.2.4 and on-demand tools 1.2.3 to home, both with oldaplib 1.2.3.
+- Implementation: Added explicit selection, rollback and receipt. Only API/identity containers changed.
+- Open: None for this deployment.
+- Risks/Assumptions: Health, public/authenticated archive/fulltext and tools metadata checks pass; final plan has no changes. No business-data writes or production changes. See docs/patch-home-1.2.4.md.
+
 ### Update 2026-11-20 00:21
 - Decisions: Published coordinated oldaplib/tools 1.2.3 and API 1.2.4; deployed accepted API/identity to production only. No migration or home update.
 - Implementation: Git source/tags pushed; PyPI hashes verified; AMD64/ARM64 images published by immutable digest. Recorded release/deployment evidence in docs/patch-production-1.2.4-results.json.

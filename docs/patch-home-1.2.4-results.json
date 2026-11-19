@@ -1,0 +1,120 @@
+{
+  "verified_at": "2026-11-20T00:29:01.858644+01:00",
+  "target": "api.home.org",
+  "versions": {
+    "api": "1.2.4",
+    "tools": "1.2.3",
+    "oldaplib": "1.2.3"
+  },
+  "images": {
+    "api": "lrosenth/oldap-api@sha256:0c0078fdc6cef054deb7b9e5d3f75e6d568281d6e3b565ec080cc2cc44114949",
+    "tools": "lrosenth/oldap-tools@sha256:4e2a4e80e7a9adeee737d6af2875fc8eda2a438ed94cea137d6416f15bddf378"
+  },
+  "changed_containers": [
+    "oldap-api",
+    "compose-oldap-jena-identity-1"
+  ],
+  "unchanged_containers": [
+    "fasnachts-page",
+    "compose-oldap-jena-1",
+    "oldap-app",
+    "compose-salsah-2-1",
+    "caddy",
+    "redis"
+  ],
+  "tools": "Selected for future calls; installed image versions verified with network disabled.",
+  "health": {
+    "version": "v1.2.4",
+    "status": "ok",
+    "jena": "reachable"
+  },
+  "fasnacht_archive_https": 200,
+  "live_checks": {
+    "api": "1.2.4",
+    "library": "1.2.3",
+    "checks": [
+      {
+        "reader": "public",
+        "direct_media": 20,
+        "direct_seconds": 0.168,
+        "entries": [
+          {
+            "media": 255,
+            "unassigned": 255,
+            "seconds": 0.135
+          },
+          {
+            "media": 1,
+            "unassigned": 1,
+            "seconds": 0.151
+          },
+          {
+            "media": 6,
+            "unassigned": 6,
+            "seconds": 0.108
+          }
+        ],
+        "fulltext": [
+          {
+            "field": "archiveMediaObjectTitle",
+            "term": "Laterne",
+            "sample_hits": 5,
+            "count": 21,
+            "seconds": 0.032
+          },
+          {
+            "field": "archiveMediaObjectText",
+            "term": "Fasnacht",
+            "sample_hits": 5,
+            "count": 48,
+            "seconds": 0.025
+          }
+        ]
+      },
+      {
+        "reader": "configured-account",
+        "direct_media": 20,
+        "direct_seconds": 0.138,
+        "entries": [
+          {
+            "media": 255,
+            "unassigned": 255,
+            "seconds": 0.148
+          },
+          {
+            "media": 1,
+            "unassigned": 1,
+            "seconds": 0.133
+          },
+          {
+            "media": 7,
+            "unassigned": 6,
+            "seconds": 0.13
+          }
+        ],
+        "fulltext": [
+          {
+            "field": "archiveMediaObjectTitle",
+            "term": "Laterne",
+            "sample_hits": 5,
+            "count": 21,
+            "seconds": 0.036
+          },
+          {
+            "field": "archiveMediaObjectText",
+            "term": "Fasnacht",
+            "sample_hits": 5,
+            "count": 48,
+            "seconds": 0.042
+          }
+        ]
+      }
+    ]
+  },
+  "final_plan": "no configuration changes",
+  "rollback_directory": "/opt/oldap/compose/routine-update-20261119T232800044596Z",
+  "rollback_selection": "releases/home-1.2.4-rollback.json",
+  "business_data_writes": false,
+  "production_changed": false,
+  "private_evidence": "/Users/rosenth/Library/Application Support/OLDAP/releases/20261120-home-1.2.4"
+}

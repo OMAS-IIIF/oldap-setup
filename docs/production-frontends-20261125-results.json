@@ -1,0 +1,166 @@
+{
+  "date": "2026-11-25",
+  "images": {
+    "app": "lrosenth/oldap-app@sha256:3e084fe78b30b27867e0d916fe2104b73936e05078e87615e82c0e91d0397333",
+    "fasnacht": "lrosenth/fasnachts-page@sha256:252cf39b323b8cc8dcba7a4eac81e6e9dd3da7a3232f2f1634ba0bf5b54947ec"
+  },
+  "versions": {
+    "app": "0.2.11",
+    "fasnacht": "0.1.54"
+  },
+  "deployment": {
+    "backup": "/opt/oldap/compose/routine-update-20261124T230309516443Z",
+    "plan": [
+      {
+        "component": "app",
+        "configuration_change": true,
+        "current": {
+          "oldap-app": "lrosenth/oldap-app@sha256:47cbd36466e6b74b678d8a2bb50cc3f571f20d938ebdcfd0fb78bb8aa6d16993"
+        },
+        "group": "core",
+        "image": "lrosenth/oldap-app@sha256:3e084fe78b30b27867e0d916fe2104b73936e05078e87615e82c0e91d0397333",
+        "services": [
+          "oldap-app"
+        ],
+        "status": "installed"
+      },
+      {
+        "component": "fasnacht",
+        "configuration_change": true,
+        "current": {
+          "fasnachts-page": "lrosenth/fasnachts-page@sha256:ac546194a9c784ac1315ec4c8c20128f5be8bbfd30f10ab7b52f90cb83b0f6fa"
+        },
+        "group": "core",
+        "image": "lrosenth/fasnachts-page@sha256:252cf39b323b8cc8dcba7a4eac81e6e9dd3da7a3232f2f1634ba0bf5b54947ec",
+        "services": [
+          "fasnachts-page"
+        ],
+        "status": "installed"
+      }
+    ],
+    "restarted": [
+      "fasnachts-page",
+      "oldap-app"
+    ],
+    "status": "updated"
+  },
+  "finalPlan": {
+    "plan": [
+      {
+        "component": "app",
+        "configuration_change": false,
+        "current": {
+          "oldap-app": "lrosenth/oldap-app@sha256:3e084fe78b30b27867e0d916fe2104b73936e05078e87615e82c0e91d0397333"
+        },
+        "group": "core",
+        "image": "lrosenth/oldap-app@sha256:3e084fe78b30b27867e0d916fe2104b73936e05078e87615e82c0e91d0397333",
+        "services": [
+          "oldap-app"
+        ],
+        "status": "installed"
+      },
+      {
+        "component": "fasnacht",
+        "configuration_change": false,
+        "current": {
+          "fasnachts-page": "lrosenth/fasnachts-page@sha256:252cf39b323b8cc8dcba7a4eac81e6e9dd3da7a3232f2f1634ba0bf5b54947ec"
+        },
+        "group": "core",
+        "image": "lrosenth/fasnachts-page@sha256:252cf39b323b8cc8dcba7a4eac81e6e9dd3da7a3232f2f1634ba0bf5b54947ec",
+        "services": [
+          "fasnachts-page"
+        ],
+        "status": "installed"
+      }
+    ],
+    "status": "preview"
+  },
+  "containersBefore": {
+    "oldap-api": "78a06a3df799",
+    "compose-oldap-jena-identity-1": "3c6836f162e6",
+    "oldap-app": "5404fefc3954",
+    "fasnachts-page": "1ca73f774492",
+    "compose-oldap-jena-1": "167b1630b719",
+    "compose-salsah-2-1": "aa209a9cef05",
+    "caddy": "510cd9a84aea",
+    "redis": "3b3524fe90c9"
+  },
+  "containersAfter": {
+    "fasnachts-page": "92852a9cebfa",
+    "oldap-app": "178e4af0927a",
+    "oldap-api": "78a06a3df799",
+    "compose-oldap-jena-identity-1": "3c6836f162e6",
+    "compose-oldap-jena-1": "167b1630b719",
+    "compose-salsah-2-1": "aa209a9cef05",
+    "caddy": "510cd9a84aea",
+    "redis": "3b3524fe90c9"
+  },
+  "health": {
+    "services": {
+      "jena": "reachable"
+    },
+    "status": "ok",
+    "version": "v1.2.4"
+  },
+  "browser": [
+    {
+      "url": "https://app.oldap.org/en",
+      "finalUrl": "https://app.oldap.org/en",
+      "status": 200,
+      "javascriptErrors": [],
+      "textExcerpt": "About\nen\nProjects\nHello\n\u00d7\nHello World\n\u00a9 Lukas & Manuel Rosenthaler (2025, 2026)\nPath: /en \u00a0"
+    },
+    {
+      "url": "https://fasnacht.digital/",
+      "finalUrl": "https://fasnacht.digital/landingpage",
+      "status": 200,
+      "javascriptErrors": [],
+      "textExcerpt": "Erz\u00e4hlen. Bewahren. Weitergeben.\n\nDie Basler Fasnacht ist seit 2017 immaterielles Weltkulturerbe der UNESCO. D"
+    },
+    {
+      "url": "https://fasnacht.digital/archive",
+      "finalUrl": "https://fasnacht.digital/archive",
+      "status": 200,
+      "javascriptErrors": [],
+      "textExcerpt": "Home\n/\nArchiv\nSuchen\nAktualisieren\nFilter +\nAlle 0\nMedien 0\nGegenst\u00e4nde 0\nAnl\u00e4sse 0\nAlle Daten: 0\nSortierung:\n"
+    },
+    {
+      "url": "https://fasnacht.digital/geschichten",
+      "finalUrl": "https://fasnacht.digital/geschichten",
+      "status": 200,
+      "javascriptErrors": [],
+      "textExcerpt": "Home\n/\nGeschichten\n\nDie Fasnacht schreibt viele Geschichten \u2013 hier werden sie erz\u00e4hlt: Ob aus den Vereinen, de"
+    },
+    {
+      "url": "https://fasnacht.digital/mitmachen",
+      "finalUrl": "https://fasnacht.digital/mitmachen",
+      "status": 200,
+      "javascriptErrors": [],
+      "textExcerpt": "Home\n/\nMitmachen\n\nDie Fasnacht wird von vielen getragen \u2013 und bleibt dadurch lebendig. Unter Mitmachen findest"
+    },
+    {
+      "url": "https://fasnacht.digital/login",
+      "finalUrl": "https://fasnacht.digital/login",
+      "status": 200,
+      "javascriptErrors": [],
+      "textExcerpt": "Sign in\n\nAnmeldung zu fasnacht.digital\n\nUser-ID\nPasswort\nPasswort vergessen?\nAnmelden"
+    },
+    {
+      "url": "https://fasnacht.digital/admin",
+      "finalUrl": "https://fasnacht.digital/admin",
+      "status": 200,
+      "javascriptErrors": [],
+      "textExcerpt": "Keine Berechtigung\n\nDu bist nicht eingeloggt oder deine Sitzung ist abgelaufen.\n\nZum Login"
+    }
+  ],
+  "disk": {
+    "removedUnusedCachedVersions": [
+      "fasnachts-page:v0.1.41",
+      "fasnachts-page:v0.1.42",
+      "fasnachts-page:v0.1.43"
+    ],
+    "registryAvailabilityVerified": true,
+    "freeAfter": "2.9 GiB",
+    "usedAfter": "94%"
+  }
+}

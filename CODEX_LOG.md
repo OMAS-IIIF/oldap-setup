@@ -1,3 +1,9 @@
+### Update 2026-11-25 23:41
+- Decisions: Deploy the exact production-accepted FasnachtsPage 0.1.56 image to Home after user authorization; no rebuild.
+- Implementation: Runtime app 0.1.56 / guilib 0.0.28, API/Jena health, unchanged seven peers, Chromium/WebKit viewport and injected-403 tests, and final unchanged plan pass. Recorded Home selection, previous 0.1.54 rollback and sanitized receipt.
+- Open: None for Home deployment; existing browser tabs need a reload.
+- Risks/Assumptions: Only the Home frontend was recreated. No production/media changes, archive writes or schedule changes.
+
 ### Update 2026-11-25 23:34
 - Decisions: Deploy the user-authorized FasnachtsPage patch 0.1.56 to production, retaining the earlier media-policy fix.
 - Implementation: Published/accepted multiarch image 8a3807ddab7e includes oldap-guilib 0.0.28. Runtime versions, unchanged seven peers, Chromium/WebKit viewport and injected-403 tests, and final unchanged plan pass. Recorded rollback and sanitized receipt; advanced only the default frontend image.

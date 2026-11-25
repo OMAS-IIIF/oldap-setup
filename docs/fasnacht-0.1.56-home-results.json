@@ -1,0 +1,117 @@
+{
+  "image": "lrosenth/fasnachts-page@sha256:8a3807ddab7e109c9363ec0c5552f51ce2380f25044a01936c4850daec36a89d",
+  "version": "0.1.56",
+  "guilib": "0.0.28",
+  "before": {
+    "oldap-api": "83391504b52b",
+    "compose-oldap-jena-identity-1": "e5f06764cbe0",
+    "compose-oldap-jena-1": "310c6fc86e70",
+    "fasnachts-page": "f3f07e03f7a4",
+    "oldap-app": "dc74612341ec",
+    "compose-salsah-2-1": "c7a30f47c5a1",
+    "caddy": "2f0cddf6f17c",
+    "redis": "0854556d227f"
+  },
+  "after": {
+    "fasnachts-page": "a1a1697d1631",
+    "oldap-api": "83391504b52b",
+    "compose-oldap-jena-identity-1": "e5f06764cbe0",
+    "compose-oldap-jena-1": "310c6fc86e70",
+    "oldap-app": "dc74612341ec",
+    "compose-salsah-2-1": "c7a30f47c5a1",
+    "caddy": "2f0cddf6f17c",
+    "redis": "0854556d227f"
+  },
+  "unchanged_peer_containers": true,
+  "apply": {
+    "backup": "/opt/oldap/compose/routine-update-20261125T224016099665Z",
+    "plan": [
+      {
+        "component": "fasnacht",
+        "configuration_change": true,
+        "current": {
+          "fasnachts-page": "lrosenth/fasnachts-page@sha256:252cf39b323b8cc8dcba7a4eac81e6e9dd3da7a3232f2f1634ba0bf5b54947ec"
+        },
+        "group": "core",
+        "image": "lrosenth/fasnachts-page@sha256:8a3807ddab7e109c9363ec0c5552f51ce2380f25044a01936c4850daec36a89d",
+        "services": [
+          "fasnachts-page"
+        ],
+        "status": "installed"
+      }
+    ],
+    "restarted": [
+      "fasnachts-page"
+    ],
+    "status": "updated"
+  },
+  "final_plan": {
+    "plan": [
+      {
+        "component": "fasnacht",
+        "configuration_change": false,
+        "current": {
+          "fasnachts-page": "lrosenth/fasnachts-page@sha256:8a3807ddab7e109c9363ec0c5552f51ce2380f25044a01936c4850daec36a89d"
+        },
+        "group": "core",
+        "image": "lrosenth/fasnachts-page@sha256:8a3807ddab7e109c9363ec0c5552f51ce2380f25044a01936c4850daec36a89d",
+        "services": [
+          "fasnachts-page"
+        ],
+        "status": "installed"
+      }
+    ],
+    "status": "preview"
+  },
+  "browser": [
+    {
+      "engine": "chromium",
+      "status": 200,
+      "injected403Recovered": true,
+      "images": [
+        {
+          "loaded": true,
+          "path": "/iiif/3/cs24SWL4HJdr/40,273,1895,2447/%5E!600,900/0/default.jpg"
+        },
+        {
+          "loaded": true,
+          "path": "/iiif/3/NU9qMoegX7JZ/full/%5E!900,500/0/default.jpg"
+        },
+        {
+          "loaded": true,
+          "path": "/iiif/3/cs24SWL4HJdr/40,273,1895,2447/%5E!600,900/0/default.jpg"
+        },
+        {
+          "loaded": true,
+          "path": "/iiif/3/NU9qMoegX7JZ/full/%5E!900,500/0/default.jpg"
+        }
+      ],
+      "javascriptErrors": []
+    },
+    {
+      "engine": "webkit",
+      "status": 200,
+      "injected403Recovered": true,
+      "images": [
+        {
+          "loaded": true,
+          "path": "/iiif/3/cs24SWL4HJdr/40,273,1895,2447/%5E!600,900/0/default.jpg"
+        },
+        {
+          "loaded": true,
+          "path": "/iiif/3/NU9qMoegX7JZ/full/%5E!900,500/0/default.jpg"
+        },
+        {
+          "loaded": true,
+          "path": "/iiif/3/cs24SWL4HJdr/40,273,1895,2447/%5E!600,900/0/default.jpg"
+        },
+        {
+          "loaded": true,
+          "path": "/iiif/3/NU9qMoegX7JZ/full/%5E!900,500/0/default.jpg"
+        }
+      ],
+      "javascriptErrors": []
+    }
+  ],
+  "api_health": "ok, v1.2.6, Jena reachable"
+}

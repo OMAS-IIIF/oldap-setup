@@ -1,3 +1,9 @@
+### Update 2026-11-25 23:34
+- Decisions: Deploy the user-authorized FasnachtsPage patch 0.1.56 to production, retaining the earlier media-policy fix.
+- Implementation: Published/accepted multiarch image 8a3807ddab7e includes oldap-guilib 0.0.28. Runtime versions, unchanged seven peers, Chromium/WebKit viewport and injected-403 tests, and final unchanged plan pass. Recorded rollback and sanitized receipt; advanced only the default frontend image.
+- Open: None for this release/deployment; old browser tabs need a reload to use the new frontend.
+- Risks/Assumptions: No archive writes, backend/media service updates or Home deployment. Original aged named-user Safari session is not represented by the automated public browser session.
+
 ### Update 2026-11-25 23:06
 - Decisions: Deploy the authorized story-image fixes only to production: FasnachtsPage 0.1.55 and the supported external SIPI OLDAP policy.
 - Implementation: Immutable frontend 48d687e1ba54 active; mounted policy 2251cd464871 active on SIPI 1.0.3. Health, unchanged peers, 16 immediate token probes, invalid-token denial, Chromium/WebKit 403 recovery and final unchanged plan pass. Recorded selections, rollback and sanitized receipt; reconciled only the default frontend selection.

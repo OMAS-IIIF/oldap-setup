@@ -1,0 +1,116 @@
+{
+  "image": "lrosenth/fasnachts-page@sha256:8a3807ddab7e109c9363ec0c5552f51ce2380f25044a01936c4850daec36a89d",
+  "version": "0.1.56",
+  "guilib": "0.0.28",
+  "before": {
+    "fasnachts-page": "e37673cda557",
+    "oldap-api": "cd9a7dcef9b0",
+    "compose-oldap-jena-identity-1": "4a00d3692ed2",
+    "compose-oldap-jena-1": "465124c87c2b",
+    "oldap-app": "178e4af0927a",
+    "compose-salsah-2-1": "aa209a9cef05",
+    "caddy": "510cd9a84aea",
+    "redis": "3b3524fe90c9"
+  },
+  "after": {
+    "fasnachts-page": "8b9acab5b641",
+    "oldap-api": "cd9a7dcef9b0",
+    "compose-oldap-jena-identity-1": "4a00d3692ed2",
+    "compose-oldap-jena-1": "465124c87c2b",
+    "oldap-app": "178e4af0927a",
+    "compose-salsah-2-1": "aa209a9cef05",
+    "caddy": "510cd9a84aea",
+    "redis": "3b3524fe90c9"
+  },
+  "unchanged_peer_containers": true,
+  "apply": {
+    "backup": "/opt/oldap/compose/routine-update-20261125T223250015651Z",
+    "plan": [
+      {
+        "component": "fasnacht",
+        "configuration_change": true,
+        "current": {
+          "fasnachts-page": "lrosenth/fasnachts-page@sha256:48d687e1ba54ddeda9599548d0743cc2982b793e75dcc6aea751b8068b6b4545"
+        },
+        "group": "core",
+        "image": "lrosenth/fasnachts-page@sha256:8a3807ddab7e109c9363ec0c5552f51ce2380f25044a01936c4850daec36a89d",
+        "services": [
+          "fasnachts-page"
+        ],
+        "status": "installed"
+      }
+    ],
+    "restarted": [
+      "fasnachts-page"
+    ],
+    "status": "updated"
+  },
+  "final_plan": {
+    "plan": [
+      {
+        "component": "fasnacht",
+        "configuration_change": false,
+        "current": {
+          "fasnachts-page": "lrosenth/fasnachts-page@sha256:8a3807ddab7e109c9363ec0c5552f51ce2380f25044a01936c4850daec36a89d"
+        },
+        "group": "core",
+        "image": "lrosenth/fasnachts-page@sha256:8a3807ddab7e109c9363ec0c5552f51ce2380f25044a01936c4850daec36a89d",
+        "services": [
+          "fasnachts-page"
+        ],
+        "status": "installed"
+      }
+    ],
+    "status": "preview"
+  },
+  "browser": [
+    {
+      "engine": "chromium",
+      "status": 200,
+      "injected403Recovered": true,
+      "images": [
+        {
+          "loaded": true,
+          "path": "/iiif/3/c47QM8bc6-pp/full/%5E!900,500/0/default.jpg"
+        },
+        {
+          "loaded": true,
+          "path": "/iiif/3/SdPzoRcMr2TD/full/%5E!900,500/0/default.jpg"
+        },
+        {
+          "loaded": true,
+          "path": "/iiif/3/c47QM8bc6-pp/full/%5E!900,500/0/default.jpg"
+        },
+        {
+          "loaded": true,
+          "path": "/iiif/3/SdPzoRcMr2TD/full/%5E!900,500/0/default.jpg"
+        }
+      ],
+      "javascriptErrors": []
+    },
+    {
+      "engine": "webkit",
+      "status": 200,
+      "injected403Recovered": true,
+      "images": [
+        {
+          "loaded": true,
+          "path": "/iiif/3/c47QM8bc6-pp/full/%5E!900,500/0/default.jpg"
+        },
+        {
+          "loaded": true,
+          "path": "/iiif/3/SdPzoRcMr2TD/full/%5E!900,500/0/default.jpg"
+        },
+        {
+          "loaded": true,
+          "path": "/iiif/3/c47QM8bc6-pp/full/%5E!900,500/0/default.jpg"
+        },
+        {
+          "loaded": true,
+          "path": "/iiif/3/SdPzoRcMr2TD/full/%5E!900,500/0/default.jpg"
+        }
+      ],
+      "javascriptErrors": []
+    }
+  ]
+}

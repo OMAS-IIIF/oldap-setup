@@ -1,0 +1,190 @@
+{
+  "frontend": {
+    "version": "0.1.55",
+    "image": "lrosenth/fasnachts-page@sha256:48d687e1ba54ddeda9599548d0743cc2982b793e75dcc6aea751b8068b6b4545",
+    "container_before": "92852a9cebfa",
+    "container_after": "e37673cda557",
+    "other_seven_containers_unchanged": true,
+    "backup": "/opt/oldap/compose/routine-update-20261125T220410209712Z",
+    "final_plan_unchanged": true
+  },
+  "media": {
+    "backup": "/opt/oldap-mediaserver/compose/story-policy-20261125T215953Z",
+    "policy_sha256": "2251cd464871997ab7b1aa64f128e6350686d543e8a4c8183c41273833f3921b",
+    "image": "sha256:32e34fc6596a4810407ec68925bd0dfefb6f5da555c75b4a7ed69ad6280f3824",
+    "health": "healthy",
+    "before_containers": {
+      "/oldap-export-worker": "752113c6f48515e279560ff0f44008c7b0e9bb0754ebcbce2b5ea62c132c012f",
+      "/oldap-imageserver": "7a069f6e319ed5621ee22174b02a05c1839a38b062f101475dc8e1946ee31c91",
+      "/oldap-ingest-worker": "58177e45f6b0f15bc2d61124c486b110770c74e438f27188609b84875f539cf8",
+      "/oldap-media-caddy": "0addf73f26b9117691ae97a876f7492fd0027333319c16a86dbcd922eaf43672",
+      "/oldap-mediahelper": "ce7d6056873a1ccde6cb0366467cf2395c2a3996da88e5fd0dd260ec9a890f4b",
+      "/oldap-mobile-media-worker": "0b159b178e41fac393fd662327d79575d75631076b356fca2853ca6c723e06d8"
+    },
+    "after_containers": {
+      "/oldap-export-worker": "752113c6f48515e279560ff0f44008c7b0e9bb0754ebcbce2b5ea62c132c012f",
+      "/oldap-imageserver": "9aca936c045d9a62a76d4b03c91bcaa7a5bcc63e693ff1cd6f1b101af7ef523a",
+      "/oldap-ingest-worker": "58177e45f6b0f15bc2d61124c486b110770c74e438f27188609b84875f539cf8",
+      "/oldap-media-caddy": "0addf73f26b9117691ae97a876f7492fd0027333319c16a86dbcd922eaf43672",
+      "/oldap-mediahelper": "ce7d6056873a1ccde6cb0366467cf2395c2a3996da88e5fd0dd260ec9a890f4b",
+      "/oldap-mobile-media-worker": "0b159b178e41fac393fd662327d79575d75631076b356fca2853ca6c723e06d8"
+    },
+    "peer_containers_unchanged": true
+  },
+  "timing_probes": [
+    {
+      "iteration": 0,
+      "status": 200,
+      "age_at_response": 0.782,
+      "media_date": "Wed, 25 Nov 2026 22:00:21 GMT",
+      "iat": 1795644021
+    },
+    {
+      "iteration": 1,
+      "status": 200,
+      "age_at_response": 0.848,
+      "media_date": "Wed, 25 Nov 2026 22:00:21 GMT",
+      "iat": 1795644021
+    },
+    {
+      "iteration": 2,
+      "status": 200,
+      "age_at_response": 0.91,
+      "media_date": "Wed, 25 Nov 2026 22:00:21 GMT",
+      "iat": 1795644021
+    },
+    {
+      "iteration": 3,
+      "status": 200,
+      "age_at_response": 0.977,
+      "media_date": "Wed, 25 Nov 2026 22:00:21 GMT",
+      "iat": 1795644021
+    },
+    {
+      "iteration": 4,
+      "status": 200,
+      "age_at_response": 0.075,
+      "media_date": "Wed, 25 Nov 2026 22:00:22 GMT",
+      "iat": 1795644022
+    },
+    {
+      "iteration": 5,
+      "status": 200,
+      "age_at_response": 0.14,
+      "media_date": "Wed, 25 Nov 2026 22:00:22 GMT",
+      "iat": 1795644022
+    },
+    {
+      "iteration": 6,
+      "status": 200,
+      "age_at_response": 0.199,
+      "media_date": "Wed, 25 Nov 2026 22:00:22 GMT",
+      "iat": 1795644022
+    },
+    {
+      "iteration": 7,
+      "status": 200,
+      "age_at_response": 0.261,
+      "media_date": "Wed, 25 Nov 2026 22:00:22 GMT",
+      "iat": 1795644022
+    },
+    {
+      "iteration": 8,
+      "status": 200,
+      "age_at_response": 0.324,
+      "media_date": "Wed, 25 Nov 2026 22:00:22 GMT",
+      "iat": 1795644022
+    },
+    {
+      "iteration": 9,
+      "status": 200,
+      "age_at_response": 0.39,
+      "media_date": "Wed, 25 Nov 2026 22:00:22 GMT",
+      "iat": 1795644022
+    },
+    {
+      "iteration": 10,
+      "status": 200,
+      "age_at_response": 0.454,
+      "media_date": "Wed, 25 Nov 2026 22:00:22 GMT",
+      "iat": 1795644022
+    },
+    {
+      "iteration": 11,
+      "status": 200,
+      "age_at_response": 0.59,
+      "media_date": "Wed, 25 Nov 2026 22:00:22 GMT",
+      "iat": 1795644022
+    },
+    {
+      "iteration": 12,
+      "status": 200,
+      "age_at_response": 0.656,
+      "media_date": "Wed, 25 Nov 2026 22:00:22 GMT",
+      "iat": 1795644022
+    },
+    {
+      "iteration": 13,
+      "status": 200,
+      "age_at_response": 0.724,
+      "media_date": "Wed, 25 Nov 2026 22:00:22 GMT",
+      "iat": 1795644022
+    },
+    {
+      "iteration": 14,
+      "status": 200,
+      "age_at_response": 0.786,
+      "media_date": "Wed, 25 Nov 2026 22:00:22 GMT",
+      "iat": 1795644022
+    },
+    {
+      "iteration": 15,
+      "status": 200,
+      "age_at_response": 0.848,
+      "media_date": "Wed, 25 Nov 2026 22:00:22 GMT",
+      "iat": 1795644022
+    }
+  ],
+  "invalid_token_status": 403,
+  "browser": [
+    {
+      "engine": "chromium",
+      "status": 200,
+      "injected403Recovered": true,
+      "images": [
+        {
+          "loaded": true,
+          "path": "/iiif/3/c47QM8bc6-pp/full/%5E!900,500/0/default.jpg"
+        },
+        {
+          "loaded": true,
+          "path": "/iiif/3/SdPzoRcMr2TD/full/%5E!900,500/0/default.jpg"
+        }
+      ],
+      "javascriptErrors": []
+    },
+    {
+      "engine": "webkit",
+      "status": 200,
+      "injected403Recovered": true,
+      "images": [
+        {
+          "loaded": true,
+          "path": "/iiif/3/c47QM8bc6-pp/full/%5E!900,500/0/default.jpg"
+        },
+        {
+          "loaded": true,
+          "path": "/iiif/3/SdPzoRcMr2TD/full/%5E!900,500/0/default.jpg"
+        }
+      ],
+      "javascriptErrors": [
+        "ResizeObserver loop completed with undelivered notifications."
+      ]
+    }
+  ],
+  "health": {
+    "api": "ok, v1.2.6, Jena reachable",
+    "mediahelper": "ok, 0.2.17"
+  },
+  "open": "Existing WebKit ResizeObserver warning remains; no aged named-user Safari session was exercised."
+}

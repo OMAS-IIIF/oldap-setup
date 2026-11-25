@@ -1,3 +1,9 @@
+### Update 2026-11-25 23:06
+- Decisions: Deploy the authorized story-image fixes only to production: FasnachtsPage 0.1.55 and the supported external SIPI OLDAP policy.
+- Implementation: Immutable frontend 48d687e1ba54 active; mounted policy 2251cd464871 active on SIPI 1.0.3. Health, unchanged peers, 16 immediate token probes, invalid-token denial, Chromium/WebKit 403 recovery and final unchanged plan pass. Recorded selections, rollback and sanitized receipt; reconciled only the default frontend selection.
+- Open: Existing WebKit ResizeObserver warning remains; original aged named-user Safari session not exercised.
+- Risks/Assumptions: Only frontend/imageserver recreated. No data writes, Home changes or image-cache deletion. Keep external policy selected until a bundled release includes it.
+
 ### Update 2026-11-20 00:29
 - Decisions: Deploy production-accepted API/identity 1.2.4 and on-demand tools 1.2.3 to home, both with oldaplib 1.2.3.
 - Implementation: Added explicit selection, rollback and receipt. Only API/identity containers changed.
